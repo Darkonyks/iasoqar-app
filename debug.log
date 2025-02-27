@@ -1,0 +1,549 @@
+INFO 2025-02-25 18:52:28,721 models 36816 7536 Calculating dates for NaredneProvere instance 1
+INFO 2025-02-25 18:52:28,722 models 36816 7536 Current dates - first_surv_cond: None, second_surv_due: None, second_surv_cond: None, trinial_audit_due: None
+INFO 2025-02-25 18:53:48,730 models 36816 43908 Calculating dates for NaredneProvere instance 1
+INFO 2025-02-25 18:53:48,731 models 36816 43908 Current dates - first_surv_cond: None, second_surv_due: None, second_surv_cond: None, trinial_audit_due: None
+INFO 2025-02-25 18:53:48,732 models 36816 43908 Calculating dates for NaredneProvere instance None
+INFO 2025-02-25 18:53:48,732 models 36816 43908 Current dates - first_surv_cond: None, second_surv_due: None, second_surv_cond: None, trinial_audit_due: None
+INFO 2025-02-25 18:54:47,046 models 36816 43908 Calculating dates for NaredneProvere instance 2
+INFO 2025-02-25 18:54:47,047 models 36816 43908 Current dates - first_surv_cond: 2025-02-25, second_surv_due: None, second_surv_cond: None, trinial_audit_due: None
+INFO 2025-02-25 18:54:54,366 models 36816 43908 Calculating dates for NaredneProvere instance 2
+INFO 2025-02-25 18:54:54,367 models 36816 43908 Current dates - first_surv_cond: 2025-02-25, second_surv_due: 2025-02-25, second_surv_cond: None, trinial_audit_due: None
+INFO 2025-02-25 19:11:56,415 models 6944 3004 Signal auto_calculate_dates se aktivirao
+INFO 2025-02-25 19:12:03,151 models 6944 3004 Signal auto_calculate_dates se aktivirao
+INFO 2025-02-25 19:12:03,151 models 6944 3004 Prvi nadzor održan: 2025-02-25
+INFO 2025-02-25 19:15:56,125 models 16184 10992 Signal auto_calculate_dates se aktivirao
+INFO 2025-02-25 19:15:56,125 models 16184 10992 Prvi nadzor održan: 2025-02-25
+INFO 2025-02-25 19:16:15,082 models 16184 10992 Signal auto_calculate_dates se aktivirao
+INFO 2025-02-25 19:16:15,082 models 16184 10992 Prvi nadzor održan: 2025-02-25
+INFO 2025-02-25 19:25:24,482 models 25888 46424 Signal auto_calculate_dates se aktivirao
+INFO 2025-02-25 19:25:24,482 models 25888 46424 Prvi nadzor održan: 2025-02-25
+INFO 2025-02-25 22:07:53,928 views 32776 25896 Updating event: first_surv_due_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:07:53,928 views 32776 25896 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:07:53,928 views 32776 25896 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:07:53,943 views 32776 25896 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:07:55,563 views 32776 25896 Updating event: first_surv_due_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:07:55,563 views 32776 25896 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:07:55,564 views 32776 25896 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:07:55,576 views 32776 25896 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:07:56,951 views 32776 25896 Updating event: first_surv_due_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:07:56,952 views 32776 25896 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:07:56,952 views 32776 25896 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:07:56,959 views 32776 25896 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:08:33,716 views 32776 25896 Updating event: first_surv_due_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:08:33,716 views 32776 25896 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:08:33,716 views 32776 25896 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:08:33,745 views 32776 25896 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:08:35,118 views 32776 25896 Updating event: first_surv_due_1 to start at 2025-02-26 23:00:00+00:00
+INFO 2025-02-25 22:08:35,119 views 32776 25896 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:08:35,120 views 32776 25896 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:08:35,134 views 32776 25896 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:16:21,309 views 35108 44584 Updating event: first_surv_cond_2 to start at 2025-02-26 23:00:00+00:00
+INFO 2025-02-25 22:16:21,310 views 35108 44584 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:21,310 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:21,318 views 35108 44584 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:24,906 views 35108 44584 Updating event: first_surv_due_2 to start at 2025-02-24 23:00:00+00:00
+INFO 2025-02-25 22:16:24,907 views 35108 44584 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:24,907 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:24,916 views 35108 44584 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:26,697 views 35108 44584 Updating event: first_surv_due_2 to start at 2025-02-24 23:00:00+00:00
+INFO 2025-02-25 22:16:26,697 views 35108 44584 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:26,697 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:26,706 views 35108 44584 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:28,331 views 35108 44584 Updating event: first_surv_cond_2 to start at 2025-02-26 23:00:00+00:00
+INFO 2025-02-25 22:16:28,331 views 35108 44584 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:28,331 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:28,341 views 35108 44584 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:30,040 views 35108 44584 Updating event: first_surv_cond_2 to start at 2025-02-27 23:00:00+00:00
+INFO 2025-02-25 22:16:30,041 views 35108 44584 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:30,041 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:30,050 views 35108 44584 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:33,215 views 35108 44584 Updating event: first_surv_cond_2 to start at 2025-02-22 23:00:00+00:00
+INFO 2025-02-25 22:16:33,216 views 35108 44584 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:33,216 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:33,225 views 35108 44584 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:35,194 views 35108 44584 Updating event: first_surv_due_2 to start at 2025-02-28 23:00:00+00:00
+INFO 2025-02-25 22:16:35,194 views 35108 44584 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:35,195 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:35,203 views 35108 44584 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:36,686 views 35108 44584 Updating event: first_surv_due_2 to start at 2025-02-28 23:00:00+00:00
+INFO 2025-02-25 22:16:36,687 views 35108 44584 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:36,687 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:36,695 views 35108 44584 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:37,818 views 35108 44584 Updating event: first_surv_due_2 to start at 2025-02-28 23:00:00+00:00
+INFO 2025-02-25 22:16:37,818 views 35108 44584 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:37,819 views 35108 44584 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:37,828 views 35108 44584 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:44,176 views 35108 38808 Updating event: first_surv_due_2 to start at 2025-03-06 23:00:00+00:00
+INFO 2025-02-25 22:16:44,177 views 35108 38808 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:44,177 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:44,185 views 35108 38808 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:46,003 views 35108 38808 Updating event: first_surv_due_2 to start at 2025-03-07 23:00:00+00:00
+INFO 2025-02-25 22:16:46,003 views 35108 38808 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:46,003 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:46,053 views 35108 38808 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:48,677 views 35108 38808 Updating event: first_surv_due_2 to start at 2025-03-08 23:00:00+00:00
+INFO 2025-02-25 22:16:48,677 views 35108 38808 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:48,678 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:48,687 views 35108 38808 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:50,870 views 35108 38808 Updating event: first_surv_due_2 to start at 2025-03-08 23:00:00+00:00
+INFO 2025-02-25 22:16:50,871 views 35108 38808 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:16:50,871 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:50,880 views 35108 38808 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:16:53,775 views 35108 38808 Updating event: first_surv_cond_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:16:53,776 views 35108 38808 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:53,776 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:53,785 views 35108 38808 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:55,114 views 35108 38808 Updating event: first_surv_cond_2 to start at 2025-02-26 23:00:00+00:00
+INFO 2025-02-25 22:16:55,115 views 35108 38808 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:55,115 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:55,124 views 35108 38808 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:16:56,890 views 35108 38808 Updating event: first_surv_cond_2 to start at 2025-02-27 23:00:00+00:00
+INFO 2025-02-25 22:16:56,891 views 35108 38808 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:16:56,891 views 35108 38808 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:16:56,900 views 35108 38808 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:17:13,897 admin 35108 10096 Cleaning first_surv_cond field
+INFO 2025-02-25 22:17:13,898 admin 35108 10096 Cleaned value: 2025-02-25
+INFO 2025-02-25 22:17:13,899 admin 35108 10096 Company: GeoBiz (PIB: 123456987)
+INFO 2025-02-25 22:17:13,899 admin 35108 10096 Audit days: 2.0
+INFO 2025-02-25 22:17:13,899 admin 35108 10096 Date after adding 365 days: 2026-02-25
+INFO 2025-02-25 22:17:13,900 admin 35108 10096 Final calculated date: 2026-02-23
+INFO 2025-02-25 22:17:13,900 admin 35108 10096 Set second_surv_due on instance
+INFO 2025-02-25 22:17:13,901 admin 35108 10096 Saving form
+INFO 2025-02-25 22:17:13,901 admin 35108 10096 Saving NaredneProvere for company GeoBiz (PIB: 123456987)
+INFO 2025-02-25 22:17:13,904 admin 35108 10096 After save - second_surv_due: 2025-02-25
+INFO 2025-02-25 22:17:24,511 views 35108 16228 Updating event: second_surv_cond_2 to start at 2025-02-27 23:00:00+00:00
+INFO 2025-02-25 22:17:24,511 views 35108 16228 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 22:17:24,512 views 35108 16228 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:17:24,521 views 35108 16228 Successfully updated audit event second_surv_cond_2
+INFO 2025-02-25 22:17:26,825 views 35108 16228 Updating event: first_surv_due_2 to start at 2025-02-25 23:00:00+00:00
+INFO 2025-02-25 22:17:26,825 views 35108 16228 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:17:26,826 views 35108 16228 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:17:26,875 views 35108 16228 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:17:29,125 views 35108 16228 Updating event: first_surv_due_2 to start at 2025-02-26 23:00:00+00:00
+INFO 2025-02-25 22:17:29,125 views 35108 16228 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:17:29,126 views 35108 16228 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:17:29,134 views 35108 16228 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:17:31,010 views 35108 16228 Updating event: second_surv_due_2 to start at 2025-02-28 23:00:00+00:00
+INFO 2025-02-25 22:17:31,010 views 35108 16228 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:17:31,010 views 35108 16228 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:17:31,019 views 35108 16228 Successfully updated audit event second_surv_due_2
+INFO 2025-02-25 22:18:01,034 views 35108 16228 Updating event: first_surv_due_1 to start at 2025-02-03 23:00:00+00:00
+INFO 2025-02-25 22:18:01,034 views 35108 16228 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:18:01,034 views 35108 16228 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:18:01,043 views 35108 16228 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:18:02,678 views 35108 16228 Updating event: first_surv_due_1 to start at 2025-02-04 23:00:00+00:00
+INFO 2025-02-25 22:18:02,679 views 35108 16228 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:18:02,679 views 35108 16228 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:18:02,706 views 35108 16228 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:18:21,040 views 35108 42552 Updating event: first_surv_due_2 to start at 2025-02-27 23:00:00+00:00
+INFO 2025-02-25 22:18:21,041 views 35108 42552 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:18:21,041 views 35108 42552 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:18:21,050 views 35108 42552 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:21:42,290 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-04 23:00:00+00:00
+INFO 2025-02-25 22:21:42,291 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:42,291 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:42,305 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:21:44,102 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-05 23:00:00+00:00
+INFO 2025-02-25 22:21:44,102 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:44,103 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:44,119 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:21:45,778 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-06 23:00:00+00:00
+INFO 2025-02-25 22:21:45,778 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:45,779 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:45,793 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:21:49,389 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-07 23:00:00+00:00
+INFO 2025-02-25 22:21:49,389 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:49,390 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:49,404 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:21:56,861 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-12 23:00:00+00:00
+INFO 2025-02-25 22:21:56,862 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:56,862 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:56,870 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:21:58,532 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-12 23:00:00+00:00
+INFO 2025-02-25 22:21:58,532 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:21:58,532 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:21:58,540 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:22:01,610 views 32340 42024 Updating event: first_surv_due_1 to start at 2025-02-13 23:00:00+00:00
+INFO 2025-02-25 22:22:01,611 views 32340 42024 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:22:01,611 views 32340 42024 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:22:01,619 views 32340 42024 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:22:06,852 views 32340 42024 Updating event: first_surv_cond_2 to start at 2025-02-25 07:00:00+00:00
+INFO 2025-02-25 22:22:06,853 views 32340 42024 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:22:06,853 views 32340 42024 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:22:06,863 views 32340 42024 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:22:09,304 views 32340 42024 Updating event: first_surv_cond_2 to start at 2025-02-25 10:00:00+00:00
+INFO 2025-02-25 22:22:09,305 views 32340 42024 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:22:09,305 views 32340 42024 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:22:09,320 views 32340 42024 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:22:36,582 views 32340 42024 Updating event: first_surv_cond_2 to start at 2025-02-25 03:30:00+00:00
+INFO 2025-02-25 22:22:36,583 views 32340 42024 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:22:36,583 views 32340 42024 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:22:36,592 views 32340 42024 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:22:38,710 views 32340 42024 Updating event: first_surv_cond_2 to start at 2025-02-25 07:30:00+00:00
+INFO 2025-02-25 22:22:38,711 views 32340 42024 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:22:38,711 views 32340 42024 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:22:38,718 views 32340 42024 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:24:06,617 views 39244 23420 Updating event: first_surv_due_1 to start at 2025-02-13 23:00:00+00:00
+INFO 2025-02-25 22:24:06,617 views 39244 23420 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:24:06,617 views 39244 23420 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:24:06,619 views 39244 23420 Converting datetime 2025-02-13 23:00:00+00:00 to date 2025-02-13
+INFO 2025-02-25 22:24:06,632 views 39244 23420 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:24:08,103 views 39244 23420 Updating event: first_surv_due_1 to start at 2025-02-14 23:00:00+00:00
+INFO 2025-02-25 22:24:08,103 views 39244 23420 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:24:08,103 views 39244 23420 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:24:08,105 views 39244 23420 Converting datetime 2025-02-14 23:00:00+00:00 to date 2025-02-14
+INFO 2025-02-25 22:24:08,117 views 39244 23420 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:25:23,255 views 46508 16464 Received start date: 2025-02-25T23:00:00.000Z, allDay: True
+INFO 2025-02-25 22:25:23,263 views 46508 16464 Parsed all-day date: 2025-02-25
+INFO 2025-02-25 22:25:23,263 views 46508 16464 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:25:23,263 views 46508 16464 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:25:23,265 views 46508 16464 Using date for audit: 2025-02-25
+INFO 2025-02-25 22:25:23,278 views 46508 16464 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:25:32,584 views 46508 16464 Received start date: 2025-02-25T23:00:00.000Z, allDay: True
+INFO 2025-02-25 22:25:32,585 views 46508 16464 Parsed all-day date: 2025-02-25
+INFO 2025-02-25 22:25:32,585 views 46508 16464 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:25:32,585 views 46508 16464 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:25:32,587 views 46508 16464 Using date for audit: 2025-02-25
+INFO 2025-02-25 22:25:32,599 views 46508 16464 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:25:34,634 views 46508 16464 Received start date: 2025-02-26T23:00:00.000Z, allDay: True
+INFO 2025-02-25 22:25:34,635 views 46508 16464 Parsed all-day date: 2025-02-26
+INFO 2025-02-25 22:25:34,635 views 46508 16464 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:25:34,635 views 46508 16464 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:25:34,637 views 46508 16464 Using date for audit: 2025-02-26
+INFO 2025-02-25 22:25:34,653 views 46508 16464 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:26:53,411 views 40128 20576 Received start date: 2025-02-27
+INFO 2025-02-25 22:26:53,419 views 40128 20576 Parsed date: 2025-02-27
+INFO 2025-02-25 22:26:53,419 views 40128 20576 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:26:53,420 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:26:53,434 views 40128 20576 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:26:55,360 views 40128 20576 Received start date: 2025-03-07
+INFO 2025-02-25 22:26:55,360 views 40128 20576 Parsed date: 2025-03-07
+INFO 2025-02-25 22:26:55,360 views 40128 20576 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:26:55,360 views 40128 20576 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:26:55,375 views 40128 20576 Successfully updated audit event second_surv_due_2
+INFO 2025-02-25 22:26:56,864 views 40128 20576 Received start date: 2025-02-28
+INFO 2025-02-25 22:26:56,864 views 40128 20576 Parsed date: 2025-02-28
+INFO 2025-02-25 22:26:56,864 views 40128 20576 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:26:56,865 views 40128 20576 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:26:56,879 views 40128 20576 Successfully updated audit event second_surv_due_2
+INFO 2025-02-25 22:26:59,859 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:26:59,859 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:26:59,860 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:26:59,860 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:26:59,879 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:02,166 views 40128 20576 Received start date: 2025-02-27
+INFO 2025-02-25 22:27:02,167 views 40128 20576 Parsed date: 2025-02-27
+INFO 2025-02-25 22:27:02,167 views 40128 20576 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:27:02,167 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:02,181 views 40128 20576 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:27:04,179 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:27:04,180 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:27:04,180 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:04,181 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:04,196 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:06,479 views 40128 20576 Received start date: 2025-02-27
+INFO 2025-02-25 22:27:06,480 views 40128 20576 Parsed date: 2025-02-27
+INFO 2025-02-25 22:27:06,480 views 40128 20576 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:27:06,480 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:06,488 views 40128 20576 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:27:12,579 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:27:12,580 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:27:12,580 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:12,581 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:12,589 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:15,474 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:27:15,474 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:27:15,474 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:15,475 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:15,482 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:16,665 views 40128 20576 Received start date: 2025-02-27
+INFO 2025-02-25 22:27:16,666 views 40128 20576 Parsed date: 2025-02-27
+INFO 2025-02-25 22:27:16,666 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:16,666 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:16,674 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:18,820 views 40128 20576 Received start date: 2025-03-01
+INFO 2025-02-25 22:27:18,821 views 40128 20576 Parsed date: 2025-03-01
+INFO 2025-02-25 22:27:18,821 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:18,821 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:18,830 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:22,475 views 40128 20576 Received start date: 2025-02-18
+INFO 2025-02-25 22:27:22,475 views 40128 20576 Parsed date: 2025-02-18
+INFO 2025-02-25 22:27:22,476 views 40128 20576 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:22,476 views 40128 20576 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:27:22,484 views 40128 20576 Successfully updated audit event second_surv_cond_2
+INFO 2025-02-25 22:27:27,838 views 40128 20576 Received start date: 2025-02-21
+INFO 2025-02-25 22:27:27,838 views 40128 20576 Parsed date: 2025-02-21
+INFO 2025-02-25 22:27:27,838 views 40128 20576 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:27:27,838 views 40128 20576 Parsed event ID - type: first, status: surv, id: 1
+INFO 2025-02-25 22:27:27,847 views 40128 20576 Successfully updated audit event first_surv_due_1
+INFO 2025-02-25 22:27:29,313 views 40128 20576 Received start date: 2025-02-28
+INFO 2025-02-25 22:27:29,314 views 40128 20576 Parsed date: 2025-02-28
+INFO 2025-02-25 22:27:29,314 views 40128 20576 Event ID parts: ['first', 'surv', 'due', '2']
+INFO 2025-02-25 22:27:29,314 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:29,323 views 40128 20576 Successfully updated audit event first_surv_due_2
+INFO 2025-02-25 22:27:32,434 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:27:32,435 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:27:32,435 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:32,435 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:32,443 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:27:39,829 views 40128 20576 Received start date: 2025-02-27
+INFO 2025-02-25 22:27:39,829 views 40128 20576 Parsed date: 2025-02-27
+INFO 2025-02-25 22:27:39,830 views 40128 20576 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:27:39,830 views 40128 20576 Parsed event ID - type: first, status: surv, id: 2
+INFO 2025-02-25 22:27:39,838 views 40128 20576 Successfully updated audit event first_surv_cond_2
+INFO 2025-02-25 22:29:06,847 views 40128 20576 Received start date: 2025-02-26
+INFO 2025-02-25 22:29:06,849 views 40128 20576 Parsed date: 2025-02-26
+INFO 2025-02-25 22:29:06,849 views 40128 20576 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 22:29:06,849 views 40128 20576 Parsed event ID - type: second, status: surv, id: 2
+INFO 2025-02-25 22:29:06,866 views 40128 20576 Successfully updated audit event second_surv_cond_2
+INFO 2025-02-25 22:33:07,895 views 34604 14860 Received start date: 2025-02-28
+INFO 2025-02-25 22:33:07,904 views 34604 14860 Parsed date: 2025-02-28
+INFO 2025-02-25 22:33:07,905 views 34604 14860 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 22:33:07,905 views 34604 14860 Field name: second_surv_cond, provera_id: 2
+INFO 2025-02-25 22:33:07,912 views 34604 14860 Successfully updated second_surv_cond to 2025-02-28 for provera 2
+INFO 2025-02-25 22:33:11,236 views 34604 14860 Received start date: 2025-03-02
+INFO 2025-02-25 22:33:11,237 views 34604 14860 Parsed date: 2025-03-02
+INFO 2025-02-25 22:33:11,237 views 34604 14860 Event ID parts: ['first', 'surv', 'cond', '2']
+INFO 2025-02-25 22:33:11,237 views 34604 14860 Field name: first_surv_cond, provera_id: 2
+INFO 2025-02-25 22:33:11,253 views 34604 14860 Successfully updated first_surv_cond to 2025-03-02 for provera 2
+INFO 2025-02-25 22:33:13,286 views 34604 14860 Received start date: 2025-02-23
+INFO 2025-02-25 22:33:13,286 views 34604 14860 Parsed date: 2025-02-23
+INFO 2025-02-25 22:33:13,287 views 34604 14860 Event ID parts: ['first', 'surv', 'due', '1']
+INFO 2025-02-25 22:33:13,287 views 34604 14860 Field name: first_surv_due, provera_id: 1
+INFO 2025-02-25 22:33:13,302 views 34604 14860 Successfully updated first_surv_due to 2025-02-23 for provera 1
+INFO 2025-02-25 22:35:13,425 views 46692 33848 Received start date: 2025-02-25, allDay: True
+INFO 2025-02-25 22:35:13,432 views 46692 33848 Parsed datetime: 2025-02-25 00:00:00
+INFO 2025-02-25 22:35:13,433 views 46692 33848 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:35:13,433 views 46692 33848 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:35:13,457 views 46692 33848 Successfully updated second_surv_due to 2025-02-25 00:00:00 for provera 2
+INFO 2025-02-25 22:35:17,788 views 46692 33848 Received start date: 2025-02-25T15:00:00, allDay: False
+INFO 2025-02-25 22:35:17,790 views 46692 33848 Parsed datetime: 2025-02-25 15:00:00
+INFO 2025-02-25 22:35:17,798 views 46692 33848 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 22:35:17,798 views 46692 33848 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 22:35:17,806 views 46692 33848 Successfully updated first_surv_cond to 2025-02-25 15:00:00 for provera 1
+INFO 2025-02-25 22:35:22,263 views 46692 33848 Received start date: 2025-02-25T16:30:00, allDay: False
+INFO 2025-02-25 22:35:22,263 views 46692 33848 Parsed datetime: 2025-02-25 16:30:00
+INFO 2025-02-25 22:35:22,264 views 46692 33848 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 22:35:22,264 views 46692 33848 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 22:35:22,279 views 46692 33848 Successfully updated first_surv_cond to 2025-02-25 16:30:00 for provera 1
+INFO 2025-02-25 22:36:55,258 views 14428 12512 Received start date: 2025-02-25, allDay: True
+INFO 2025-02-25 22:36:55,264 views 14428 12512 Parsed datetime: 2025-02-25 00:00:00
+INFO 2025-02-25 22:36:55,264 views 14428 12512 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 22:36:55,264 views 14428 12512 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 22:36:55,284 views 14428 12512 Successfully updated first_surv_cond to 2025-02-25 00:00:00 for provera 1
+INFO 2025-02-25 22:37:01,026 views 14428 12512 Received start date: 2025-02-25, allDay: True
+INFO 2025-02-25 22:37:01,026 views 14428 12512 Parsed datetime: 2025-02-25 00:00:00
+INFO 2025-02-25 22:37:01,027 views 14428 12512 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 22:37:01,027 views 14428 12512 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 22:37:01,041 views 14428 12512 Successfully updated first_surv_cond to 2025-02-25 00:00:00 for provera 1
+INFO 2025-02-25 22:39:05,171 views 14428 12512 Received start date: 2025-02-19T01:00:00, allDay: False
+INFO 2025-02-25 22:39:05,171 views 14428 12512 Parsed datetime: 2025-02-19 01:00:00
+INFO 2025-02-25 22:39:05,172 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:05,172 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:05,187 views 14428 12512 Successfully updated second_surv_due to 2025-02-19 01:00:00 for provera 2
+INFO 2025-02-25 22:39:09,053 views 14428 12512 Received start date: 2025-02-20T02:00:00, allDay: False
+INFO 2025-02-25 22:39:09,053 views 14428 12512 Parsed datetime: 2025-02-20 02:00:00
+INFO 2025-02-25 22:39:09,053 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:09,054 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:09,093 views 14428 12512 Successfully updated second_surv_due to 2025-02-20 02:00:00 for provera 2
+INFO 2025-02-25 22:39:11,650 views 14428 12512 Received start date: 2025-02-21T03:00:00, allDay: False
+INFO 2025-02-25 22:39:11,651 views 14428 12512 Parsed datetime: 2025-02-21 03:00:00
+INFO 2025-02-25 22:39:11,651 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:11,651 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:11,658 views 14428 12512 Successfully updated second_surv_due to 2025-02-21 03:00:00 for provera 2
+INFO 2025-02-25 22:39:16,754 views 14428 12512 Received start date: 2025-02-22T04:00:00, allDay: False
+INFO 2025-02-25 22:39:16,755 views 14428 12512 Parsed datetime: 2025-02-22 04:00:00
+INFO 2025-02-25 22:39:16,755 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:16,755 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:16,800 views 14428 12512 Successfully updated second_surv_due to 2025-02-22 04:00:00 for provera 2
+INFO 2025-02-25 22:39:18,230 views 14428 12512 Received start date: 2025-02-19T05:00:00, allDay: False
+INFO 2025-02-25 22:39:18,231 views 14428 12512 Parsed datetime: 2025-02-19 05:00:00
+INFO 2025-02-25 22:39:18,231 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:18,231 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:18,247 views 14428 12512 Successfully updated second_surv_due to 2025-02-19 05:00:00 for provera 2
+INFO 2025-02-25 22:39:19,911 views 14428 12512 Received start date: 2025-02-12T06:00:00, allDay: False
+INFO 2025-02-25 22:39:19,911 views 14428 12512 Parsed datetime: 2025-02-12 06:00:00
+INFO 2025-02-25 22:39:19,912 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:19,912 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:19,927 views 14428 12512 Successfully updated second_surv_due to 2025-02-12 06:00:00 for provera 2
+INFO 2025-02-25 22:39:24,575 views 14428 12512 Received start date: 2025-02-15T07:00:00, allDay: False
+INFO 2025-02-25 22:39:24,575 views 14428 12512 Parsed datetime: 2025-02-15 07:00:00
+INFO 2025-02-25 22:39:24,575 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:24,576 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:24,583 views 14428 12512 Successfully updated second_surv_due to 2025-02-15 07:00:00 for provera 2
+INFO 2025-02-25 22:39:28,430 views 14428 12512 Received start date: 2025-02-25T08:00:00, allDay: False
+INFO 2025-02-25 22:39:28,430 views 14428 12512 Parsed datetime: 2025-02-25 08:00:00
+INFO 2025-02-25 22:39:28,431 views 14428 12512 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 22:39:28,431 views 14428 12512 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 22:39:28,440 views 14428 12512 Successfully updated second_surv_due to 2025-02-25 08:00:00 for provera 2
+INFO 2025-02-25 23:15:32,410 views 14428 42768 Received start date: 2025-02-25T01:00:00, allDay: False
+INFO 2025-02-25 23:15:32,411 views 14428 42768 Parsed datetime: 2025-02-25 01:00:00
+INFO 2025-02-25 23:15:32,411 views 14428 42768 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:15:32,411 views 14428 42768 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:15:32,426 views 14428 42768 Successfully updated first_surv_cond to 2025-02-25 01:00:00 for provera 1
+INFO 2025-02-25 23:15:38,201 views 14428 42768 Received start date: 2025-02-25T04:00:00, allDay: False
+INFO 2025-02-25 23:15:38,201 views 14428 42768 Parsed datetime: 2025-02-25 04:00:00
+INFO 2025-02-25 23:15:38,201 views 14428 42768 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:15:38,202 views 14428 42768 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:15:38,216 views 14428 42768 Successfully updated first_surv_cond to 2025-02-25 04:00:00 for provera 1
+INFO 2025-02-25 23:15:52,518 views 14428 42768 Received start date: 2025-02-25T03:28:00, allDay: False
+INFO 2025-02-25 23:15:52,518 views 14428 42768 Parsed datetime: 2025-02-25 03:28:00
+INFO 2025-02-25 23:15:52,518 views 14428 42768 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 23:15:52,519 views 14428 42768 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 23:15:52,533 views 14428 42768 Successfully updated second_surv_due to 2025-02-25 03:28:00 for provera 2
+INFO 2025-02-25 23:17:30,536 views 14428 42768 Received start date: 2025-02-25T09:04:00, allDay: False
+INFO 2025-02-25 23:17:30,537 views 14428 42768 Parsed datetime: 2025-02-25 09:04:00
+INFO 2025-02-25 23:17:30,537 views 14428 42768 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:17:30,537 views 14428 42768 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:17:30,552 views 14428 42768 Successfully updated first_surv_cond to 2025-02-25 09:04:00 for provera 1
+INFO 2025-02-25 23:18:06,785 views 14428 42768 Received start date: 2025-02-25T09:00:00, allDay: False
+INFO 2025-02-25 23:18:06,786 views 14428 42768 Parsed datetime: 2025-02-25 09:00:00
+INFO 2025-02-25 23:18:06,786 views 14428 42768 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:18:06,786 views 14428 42768 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:18:06,801 views 14428 42768 Successfully updated first_surv_cond to 2025-02-25 09:00:00 for provera 1
+INFO 2025-02-25 23:20:17,743 views 21612 33040 Received start date: 2025-02-25T05:29, allDay: False
+INFO 2025-02-25 23:20:17,750 views 21612 33040 Parsed datetime: 2025-02-25 05:29:00
+INFO 2025-02-25 23:20:17,750 views 21612 33040 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 23:20:17,750 views 21612 33040 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 23:20:17,771 views 21612 33040 Successfully updated second_surv_due to 2025-02-25 05:29:00 for provera 2
+INFO 2025-02-25 23:20:24,717 views 21612 33040 Received start date: 2025-02-25T01:03, allDay: False
+INFO 2025-02-25 23:20:24,717 views 21612 33040 Parsed datetime: 2025-02-25 01:03:00
+INFO 2025-02-25 23:20:24,717 views 21612 33040 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:20:24,718 views 21612 33040 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:20:24,732 views 21612 33040 Successfully updated first_surv_cond to 2025-02-25 01:03:00 for provera 1
+INFO 2025-02-25 23:22:05,603 views 23020 30372 Received start date: 2025-02-03T00:35, allDay: False
+INFO 2025-02-25 23:22:05,610 views 23020 30372 Parsed datetime: 2025-02-03 00:35:00
+INFO 2025-02-25 23:22:05,610 views 23020 30372 Event ID parts: ['']
+ERROR 2025-02-25 23:22:05,611 views 23020 30372 Error parsing event ID : Invalid event ID format
+INFO 2025-02-25 23:22:38,897 views 23020 16132 Received start date: 2025-02-25T02:04, allDay: False
+INFO 2025-02-25 23:22:38,898 views 23020 16132 Parsed datetime: 2025-02-25 02:04:00
+INFO 2025-02-25 23:22:38,898 views 23020 16132 Event ID parts: ['first', 'surv', 'cond', '1']
+INFO 2025-02-25 23:22:38,898 views 23020 16132 Field name: first_surv_cond, provera_id: 1
+INFO 2025-02-25 23:22:38,913 views 23020 16132 Successfully updated first_surv_cond to 2025-02-25 02:04:00 for provera 1
+INFO 2025-02-25 23:22:44,442 views 23020 16132 Received start date: 2025-02-25T08:32, allDay: False
+INFO 2025-02-25 23:22:44,443 views 23020 16132 Parsed datetime: 2025-02-25 08:32:00
+INFO 2025-02-25 23:22:44,443 views 23020 16132 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 23:22:44,443 views 23020 16132 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 23:22:44,459 views 23020 16132 Successfully updated second_surv_due to 2025-02-25 08:32:00 for provera 2
+INFO 2025-02-25 23:25:28,003 views 16852 41416 Received start date: 2025-02-25, allDay: True
+INFO 2025-02-25 23:25:28,010 views 16852 41416 Parsed datetime: 2025-02-25 00:00:00
+INFO 2025-02-25 23:25:28,010 views 16852 41416 Event ID parts: ['second', 'surv', 'due', '2']
+INFO 2025-02-25 23:25:28,011 views 16852 41416 Field name: second_surv_due, provera_id: 2
+INFO 2025-02-25 23:25:28,020 views 16852 41416 Successfully updated second_surv_due to 2025-02-25 00:00:00 for provera 2
+INFO 2025-02-25 23:25:39,546 views 16852 41416 Received start date: 2025-02-03, allDay: True
+INFO 2025-02-25 23:25:39,546 views 16852 41416 Parsed datetime: 2025-02-03 00:00:00
+INFO 2025-02-25 23:25:39,547 views 16852 41416 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 23:25:39,547 views 16852 41416 Field name: second_surv_cond, provera_id: 2
+INFO 2025-02-25 23:25:39,562 views 16852 41416 Successfully updated second_surv_cond to 2025-02-03 00:00:00 for provera 2
+INFO 2025-02-25 23:25:42,146 views 16852 41416 Received start date: 2025-02-03T00:00, allDay: False
+INFO 2025-02-25 23:25:42,147 views 16852 41416 Parsed datetime: 2025-02-03 00:00:00
+INFO 2025-02-25 23:25:42,148 views 16852 41416 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 23:25:42,148 views 16852 41416 Field name: second_surv_cond, provera_id: 2
+INFO 2025-02-25 23:25:42,162 views 16852 41416 Successfully updated second_surv_cond to 2025-02-03 00:00:00 for provera 2
+INFO 2025-02-25 23:25:52,573 views 16852 41416 Received start date: 2025-02-26, allDay: True
+INFO 2025-02-25 23:25:52,573 views 16852 41416 Parsed datetime: 2025-02-26 00:00:00
+INFO 2025-02-25 23:25:52,573 views 16852 41416 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 23:25:52,573 views 16852 41416 Field name: second_surv_cond, provera_id: 2
+INFO 2025-02-25 23:25:52,588 views 16852 41416 Successfully updated second_surv_cond to 2025-02-26 00:00:00 for provera 2
+INFO 2025-02-25 23:26:14,057 views 16852 41416 Received start date: 2025-02-26T00:00, allDay: False
+INFO 2025-02-25 23:26:14,057 views 16852 41416 Parsed datetime: 2025-02-26 00:00:00
+INFO 2025-02-25 23:26:14,057 views 16852 41416 Event ID parts: ['second', 'surv', 'cond', '2']
+INFO 2025-02-25 23:26:14,058 views 16852 41416 Field name: second_surv_cond, provera_id: 2
+INFO 2025-02-25 23:26:14,072 views 16852 41416 Successfully updated second_surv_cond to 2025-02-26 00:00:00 for provera 2
+INFO 2025-02-25 23:30:30,383 views 20796 44736 Found 0 calendar events
+INFO 2025-02-25 23:30:30,385 views 20796 44736 Found 2 nadzorne provere
+INFO 2025-02-25 23:37:31,496 views 9520 20556 Found 0 calendar events
+INFO 2025-02-25 23:37:31,498 views 9520 20556 Found 2 nadzorne provere
+ERROR 2025-02-25 23:37:31,500 views 9520 20556 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:37:31,500 views 9520 20556 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:37:31,500 views 9520 20556 Returning total 0 events
+INFO 2025-02-25 23:44:50,221 views 6676 7684 Found 0 calendar events
+INFO 2025-02-25 23:44:50,225 views 6676 7684 Found 2 nadzorne provere
+ERROR 2025-02-25 23:44:50,226 views 6676 7684 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:44:50,226 views 6676 7684 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:44:50,227 views 6676 7684 Returning total 0 events
+INFO 2025-02-25 23:46:00,637 views 6676 22448 Found 0 calendar events
+INFO 2025-02-25 23:46:00,640 views 6676 22448 Found 2 nadzorne provere
+ERROR 2025-02-25 23:46:00,641 views 6676 22448 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:46:00,641 views 6676 22448 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:46:00,642 views 6676 22448 Returning total 0 events
+INFO 2025-02-25 23:46:29,273 views 6676 8032 Found 0 calendar events
+INFO 2025-02-25 23:46:29,275 views 6676 8032 Found 2 nadzorne provere
+ERROR 2025-02-25 23:46:29,276 views 6676 8032 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:46:29,276 views 6676 8032 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:46:29,277 views 6676 8032 Returning total 0 events
+INFO 2025-02-25 23:47:52,892 views 6676 2344 Found 0 calendar events
+INFO 2025-02-25 23:47:52,895 views 6676 2344 Found 2 nadzorne provere
+ERROR 2025-02-25 23:47:52,897 views 6676 2344 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:47:52,897 views 6676 2344 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:47:52,898 views 6676 2344 Returning total 0 events
+INFO 2025-02-25 23:54:06,040 views 6676 25740 Found 0 calendar events
+INFO 2025-02-25 23:54:06,043 views 6676 25740 Found 2 nadzorne provere
+ERROR 2025-02-25 23:54:06,044 views 6676 25740 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:54:06,045 views 6676 25740 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:54:06,045 views 6676 25740 Returning total 0 events
+INFO 2025-02-25 23:55:24,268 views 39216 33352 Found 0 calendar events
+INFO 2025-02-25 23:55:24,270 views 39216 33352 Found 2 nadzorne provere
+ERROR 2025-02-25 23:55:24,271 views 39216 33352 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:55:24,271 views 39216 33352 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:55:24,271 views 39216 33352 Returning total 0 events
+INFO 2025-02-25 23:55:32,833 views 39216 27220 Found 0 calendar events
+INFO 2025-02-25 23:55:32,835 views 39216 27220 Found 2 nadzorne provere
+ERROR 2025-02-25 23:55:32,837 views 39216 27220 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:55:32,837 views 39216 27220 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:55:32,837 views 39216 27220 Returning total 0 events
+INFO 2025-02-25 23:57:03,488 views 39216 29060 Found 0 calendar events
+INFO 2025-02-25 23:57:03,490 views 39216 29060 Found 2 nadzorne provere
+ERROR 2025-02-25 23:57:03,491 views 39216 29060 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:57:03,491 views 39216 29060 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:57:03,491 views 39216 29060 Returning total 0 events
+INFO 2025-02-25 23:58:04,156 views 31460 13864 Found 0 calendar events
+INFO 2025-02-25 23:58:04,158 views 31460 13864 Found 2 nadzorne provere
+ERROR 2025-02-25 23:58:04,160 views 31460 13864 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-25 23:58:04,161 views 31460 13864 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-25 23:58:04,161 views 31460 13864 Returning total 0 events
+INFO 2025-02-26 00:02:57,753 views 18412 38324 Found 0 calendar events
+INFO 2025-02-26 00:02:57,755 views 18412 38324 Found 2 nadzorne provere
+ERROR 2025-02-26 00:02:57,757 views 18412 38324 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-26 00:02:57,757 views 18412 38324 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-26 00:02:57,757 views 18412 38324 Returning total 0 events
+INFO 2025-02-26 00:03:06,732 views 18412 28840 Found 0 calendar events
+INFO 2025-02-26 00:03:06,735 views 18412 28840 Found 2 nadzorne provere
+ERROR 2025-02-26 00:03:06,736 views 18412 28840 Error processing nadzorna provera 1: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+ERROR 2025-02-26 00:03:06,737 views 18412 28840 Error processing nadzorna provera 2: '>' not supported between instances of 'datetime.datetime' and 'datetime.date'
+INFO 2025-02-26 00:03:06,737 views 18412 28840 Returning total 0 events
+INFO 2025-02-26 00:04:23,178 views 21932 6376 Found 0 calendar events
+INFO 2025-02-26 00:04:23,180 views 21932 6376 Found 2 nadzorne provere
+ERROR 2025-02-26 00:04:23,181 views 21932 6376 Error processing nadzorna provera 1: 'NoneType' object is not callable
+ERROR 2025-02-26 00:04:23,181 views 21932 6376 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 00:04:23,182 views 21932 6376 Returning total 0 events
+INFO 2025-02-26 00:05:28,243 views 21932 29488 Found 0 calendar events
+INFO 2025-02-26 00:05:28,245 views 21932 29488 Found 2 nadzorne provere
+ERROR 2025-02-26 00:05:28,247 views 21932 29488 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 00:05:28,248 views 21932 29488 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 00:05:28,248 views 21932 29488 Returning total 0 events
+INFO 2025-02-26 00:34:58,209 views 21932 39048 Found 0 calendar events
+INFO 2025-02-26 00:34:58,210 views 21932 39048 Found 2 nadzorne provere
+ERROR 2025-02-26 00:34:58,211 views 21932 39048 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 00:34:58,211 views 21932 39048 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 00:34:58,212 views 21932 39048 Returning total 0 events
+INFO 2025-02-26 09:25:21,796 views 32480 25940 Found 0 calendar events
+INFO 2025-02-26 09:25:21,800 views 32480 25940 Found 2 nadzorne provere
+ERROR 2025-02-26 09:25:21,801 views 32480 25940 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 09:25:21,802 views 32480 25940 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 09:25:21,802 views 32480 25940 Returning total 0 events
+INFO 2025-02-26 09:25:24,362 views 32480 16808 Found 0 calendar events
+INFO 2025-02-26 09:25:24,365 views 32480 16808 Found 2 nadzorne provere
+ERROR 2025-02-26 09:25:24,366 views 32480 16808 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 09:25:24,367 views 32480 16808 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 09:25:24,367 views 32480 16808 Returning total 0 events
+INFO 2025-02-26 09:26:00,159 views 32480 8888 Found 0 calendar events
+INFO 2025-02-26 09:26:00,162 views 32480 8888 Found 2 nadzorne provere
+ERROR 2025-02-26 09:26:00,164 views 32480 8888 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 09:26:00,164 views 32480 8888 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 09:26:00,164 views 32480 8888 Returning total 0 events
+INFO 2025-02-26 09:27:34,165 views 32480 17324 Found 0 calendar events
+INFO 2025-02-26 09:27:34,166 views 32480 17324 Found 2 nadzorne provere
+ERROR 2025-02-26 09:27:34,167 views 32480 17324 Error processing nadzorna provera 1: 'dict' object is not callable
+ERROR 2025-02-26 09:27:34,167 views 32480 17324 Error processing nadzorna provera 2: 'dict' object is not callable
+INFO 2025-02-26 09:27:34,167 views 32480 17324 Returning total 0 events

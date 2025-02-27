@@ -1,0 +1,173 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Dashboard</h1>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ total_companies }}</h3>
+                            <p>Total Companies</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>{{ active_companies }}</h3>
+                            <p>Active Companies</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                        <div class="inner">
+                            <h3>{{ expired_certificates }}</h3>
+                            <p>Expired Certificates</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <!-- Main row -->
+            <div class="row">
+                <!-- Left col -->
+                <section class="col-lg-7 connectedSortable">
+                    <!-- Standards Distribution Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Standards Distribution</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="standardsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </section>
+                <!-- /.Left col -->
+
+                <!-- Right col -->
+                <section class="col-lg-5 connectedSortable">
+                    <!-- Certificate Status Chart -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Certificate Status</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="certificateChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </section>
+                <!-- /.Right col -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Standards Distribution Chart
+var standardsCtx = document.getElementById('standardsChart').getContext('2d');
+var standardsChart = new Chart(standardsCtx, {
+    type: 'bar',
+    data: {
+        labels: JSON.parse('{{ standards_labels|safe }}'),
+        datasets: [{
+            label: 'Number of Companies',
+            data: JSON.parse('{{ standards_data|safe }}'),
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Certificate Status Chart
+var certificateCtx = document.getElementById('certificateChart').getContext('2d');
+var certificateChart = new Chart(certificateCtx, {
+    type: 'pie',
+    data: {
+        labels: JSON.parse('{{ certificate_labels|safe }}'),
+        datasets: [{
+            data: JSON.parse('{{ certificate_data|safe }}'),
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(199, 199, 199, 0.2)'
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(199, 199, 199, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Certificate Status Distribution'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

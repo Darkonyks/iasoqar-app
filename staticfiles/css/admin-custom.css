@@ -1,0 +1,77 @@
+/* Admin form layout fixes */
+.form-horizontal .control-group {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.form-horizontal .form-row {
+    margin-right: 0;
+    margin-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-horizontal .form-group {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+/* Remove horizontal scroll */
+.content-wrapper {
+    overflow-x: hidden;
+}
+
+/* Form container width */
+#content-main form {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Tab content padding */
+.tab-content {
+    padding: 20px;
+}
+
+/* Field layout */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* Submit row buttons alignment */
+.submit-row {
+    text-align: right !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    border-top: 1px solid #ddd !important;
+    background: #f8f9fa !important;
+}
+
+.submit-row input, .submit-row a {
+    margin-left: 8px !important;
+}
+
+.submit-row a.deletelink {
+    margin-right: auto !important;
+    float: left !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    #content-main form {
+        padding: 10px;
+    }
+    
+    .tab-content {
+        padding: 10px;
+    }
+    
+    .submit-row {
+        text-align: center !important;
+    }
+    
+    .submit-row input, .submit-row a {
+        margin: 4px !important;
+    }
+}

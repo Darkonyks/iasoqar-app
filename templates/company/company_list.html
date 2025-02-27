@@ -1,0 +1,56 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="content-wrapper">
+    
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Companies</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Company List</h3>
+                </div>
+                <div class="card-body">
+        <table id="companyTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>ISO Standards</th>
+                    <th>Certificate Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for company in companies %}
+                <tr>
+                    <td>{{ company.name }}</td>
+                    <td>{{ company.address }}</td>
+                    <td>{{ company.city }}</td>
+                    <td>
+                        {% for standard in company.standards.all %}
+                            {{ standard.standard }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ company.get_certificate_status_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% include 'layouts/footer.html' %}
+{% endblock %}

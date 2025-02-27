@@ -1,0 +1,54 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Kalendar{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'plugins/fullcalendar/lib/main.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Kalendar</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <div id="calendar-container">
+            <div id="calendar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'plugins/fullcalendar/lib/main.min.js' %}"></script>
+<script src="{% static 'plugins/fullcalendar/lib/locales/sr.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: 'sr',
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    }
+  });
+  calendar.render();
+});
+</script>
+{% endblock %}
