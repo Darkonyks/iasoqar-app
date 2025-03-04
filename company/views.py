@@ -1,11 +1,16 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.db.models import Count, Q
 import json
 from .models import Company, NaredneProvere
 from datetime import datetime
 from django.db.models import Count
 import random
+
+class CompanyListView(ListView):
+    model = Company
+    template_name = 'company/company-list.html'
+    context_object_name = 'companies'
 
 class CalendarView(TemplateView):
     template_name = 'calendar/calendar.html'
@@ -106,7 +111,3 @@ def dashboard(request):
     }
     
     return render(request, 'dashboard.html', context)
-
-def company_list(request):
-    companies = Company.objects.all().order_by('name')
-    return render(request, 'company/company_list.html', {'companies': companies})

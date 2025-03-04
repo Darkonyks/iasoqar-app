@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
   <!-- jQuery UI -->
   <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
-  {% block extrastyle %}{% endblock %}
+  {% block extrastyle %}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  {% endblock %}
 </head>
 <body class="{% block bodyclass %}{% endblock %}">
 <div class="wrapper">
@@ -31,6 +33,8 @@
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <!-- jQuery UI -->
 <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
@@ -38,5 +42,3 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% block extra_scripts %}{% endblock %}
-</body>
-</html>
