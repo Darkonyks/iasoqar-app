@@ -1,0 +1,130 @@
+.fc-event {
+  cursor: pointer;
+}
+.appointment-type-audit { background-color: #3788d8 !important; border-color: #3788d8 !important; }
+.appointment-type-meeting { background-color: #28a745 !important; border-color: #28a745 !important; }
+.appointment-type-consultation { background-color: #17a2b8 !important; border-color: #17a2b8 !important; }
+.appointment-type-training { background-color: #ffc107 !important; border-color: #ffc107 !important; }
+.appointment-type-other { background-color: #6c757d !important; border-color: #6c757d !important; }
+
+.status-scheduled { border-left: 5px solid #007bff !important; }
+.status-completed { border-left: 5px solid #28a745 !important; }
+.status-cancelled { border-left: 5px solid #dc3545 !important; }
+.status-postponed { border-left: 5px solid #ffc107 !important; }
+
+#calendar .fc-toolbar-title {
+  font-size: 1.5rem;
+}
+
+/* Fix calendar display */
+#calendar-container {
+  height: 75vh;
+  width: 100%;
+}
+
+#calendar {
+  height: 100%;
+  width: 100%;
+}
+
+.fc-view-harness {
+  height: auto !important;
+  min-height: 500px;
+}
+
+.fc-scrollgrid-sync-table {
+  height: 100% !important;
+}
+
+/* Contact person tags */
+.contact-tag {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 2px 8px;
+  margin: 2px;
+  border-radius: 3px;
+}
+
+.contact-tag .remove-contact {
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+#contact-tags-container {
+  margin-top: 5px;
+}
+
+/* Multi-select styling */
+.ui-autocomplete {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 9999 !important;
+}
+
+/* Audit event styling */
+.audit-event {
+  border-radius: 4px;
+  border-left: 4px solid #FF9800;
+  font-weight: 500;
+}
+
+/* Planned audit styling */
+.audit-event[data-audit-status="planned"] {
+  border-style: solid;
+}
+
+/* Completed audit styling */
+.audit-event[data-audit-status="completed"] {
+  border-style: dashed;
+  border-width: 2px;
+  opacity: 0.9;
+}
+
+.audit-first[data-audit-status="planned"] {
+  background-color: rgba(255, 152, 0, 0.2) !important;
+  border-color: #FF9800 !important;
+}
+
+.audit-first[data-audit-status="completed"] {
+  background-color: rgba(76, 175, 80, 0.2) !important;
+  border-color: #4CAF50 !important;
+}
+
+.audit-second[data-audit-status="planned"] {
+  background-color: rgba(255, 152, 0, 0.3) !important;
+  border-color: #FF9800 !important;
+}
+
+.audit-second[data-audit-status="completed"] {
+  background-color: rgba(76, 175, 80, 0.3) !important;
+  border-color: #4CAF50 !important;
+}
+
+.audit-recert[data-audit-status="planned"] {
+  background-color: rgba(233, 30, 99, 0.2) !important;
+  border-color: #E91E63 !important;
+}
+
+.audit-recert[data-audit-status="completed"] {
+  background-color: rgba(33, 150, 243, 0.2) !important;
+  border-color: #2196F3 !important;
+}
+
+/* Make audit events stand out */
+.audit-event .fc-event-title {
+  font-weight: bold;
+}
+
+/* Add some hover effect */
+.audit-event:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Ensure the tooltip is visible */
+.tooltip {
+  z-index: 10000;
+}

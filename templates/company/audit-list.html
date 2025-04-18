@@ -1,0 +1,253 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Nadzorne Provere{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.bootstrap4.min.css">
+<style>
+    .status-pending {
+        background-color: #007bff; /* Blue */
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .status-completed {
+        background-color: #28a745; /* Green */
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .status-delayed {
+        background-color: #ffc107; /* Yellow */
+        color: black;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .status-overdue {
+        background-color: #6c757d; /* Gray */
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .date-highlight {
+        font-weight: bold;
+        color: #dc3545; /* Red */
+    }
+    .date-passed {
+        text-decoration: line-through;
+        color: #6c757d; /* Gray */
+    }
+    .date-upcoming {
+        font-weight: bold;
+        color: #28a745; /* Green */
+    }
+    .filter-card {
+        margin-bottom: 20px;
+    }
+    .action-buttons {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Nadzorne Provere</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:audit_create' %}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Nova nadzorna provera
+            </a>
+            <a href="{% url 'company:calendar' %}" class="btn btn-info">
+              <i class="fas fa-calendar"></i> Kalendar
+            </a>
+            <a href="{% url 'company:list' %}" class="btn btn-secondary">
+              <i class="fas fa-building"></i> Kompanije
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <!-- Filter form -->
+      <div class="card filter-card">
+        <div class="card-header">
+          <h3 class="card-title">Filteri</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <form method="get" action="{% url 'company:audit_list' %}">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Kompanija</label>
+                  <select name="company" class="form-control">
+                    <option value="">Sve kompanije</option>
+                    {% for company in companies %}
+                      <option value="{{ company.id }}" {% if selected_company == company.id|stringformat:"s" %}selected{% endif %}>
+                        {{ company.name }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Status</label>
+                  <select name="status" class="form-control">
+                    <option value="">Svi statusi</option>
+                    {% for status_value, status_label in status_choices %}
+                      <option value="{{ status_value }}" {% if selected_status == status_value %}selected{% endif %}>
+                        {{ status_label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Datum od</label>
+                  <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label>Datum do</label>
+                  <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-filter"></i> Filtriraj
+                </button>
+                <a href="{% url 'company:audit_list' %}" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Poništi filtere
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <table id="auditsTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Kompanija</th>
+                <th>Prvi nadzor - planiran</th>
+                <th>Prvi nadzor - održan</th>
+                <th>Drugi nadzor - planiran</th>
+                <th>Drugi nadzor - održan</th>
+                <th>Resertifikacija - planirana</th>
+                <th>Resertifikacija - održana</th>
+                <th>Status</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for audit in audits %}
+              <tr>
+                <td>
+                  <a href="{% url 'company:detail' audit.company.id %}">{{ audit.company.name }}</a>
+                </td>
+                <td class="{% if audit.first_surv_due and audit.first_surv_due.date < today.date and not audit.first_surv_cond %}date-highlight{% elif audit.first_surv_due and audit.first_surv_due.date > today.date %}date-upcoming{% elif audit.first_surv_cond %}date-passed{% endif %}">
+                  {% if audit.first_surv_due %}{{ audit.first_surv_due|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td>
+                  {% if audit.first_surv_cond %}{{ audit.first_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td class="{% if audit.second_surv_due and audit.second_surv_due.date < today.date and not audit.second_surv_cond %}date-highlight{% elif audit.second_surv_due and audit.second_surv_due.date > today.date %}date-upcoming{% elif audit.second_surv_cond %}date-passed{% endif %}">
+                  {% if audit.second_surv_due %}{{ audit.second_surv_due|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td>
+                  {% if audit.second_surv_cond %}{{ audit.second_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td class="{% if audit.trinial_audit_due and audit.trinial_audit_due.date < today.date and not audit.trinial_audit_cond %}date-highlight{% elif audit.trinial_audit_due and audit.trinial_audit_due.date > today.date %}date-upcoming{% elif audit.trinial_audit_cond %}date-passed{% endif %}">
+                  {% if audit.trinial_audit_due %}{{ audit.trinial_audit_due|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td>
+                  {% if audit.trinial_audit_cond %}{{ audit.trinial_audit_cond|date:"d.m.Y" }}{% else %}-{% endif %}
+                </td>
+                <td>
+                  <span class="status-{{ audit.status }}">{{ audit.get_status_display }}</span>
+                </td>
+                <td class="action-buttons">
+                  <a href="{% url 'company:audit_detail' audit.id %}" class="btn btn-sm btn-info" title="Detalji">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="{% url 'company:audit_update' audit.id %}" class="btn btn-sm btn-primary" title="Izmeni">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'company:audit_delete' audit.id %}" class="btn btn-sm btn-danger" title="Obriši">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                  <a href="{% url 'company:calendar' %}" class="btn btn-sm btn-warning" title="Kalendar">
+                    <i class="fas fa-calendar"></i>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
+<script>
+$(function () {
+    $("#auditsTable").DataTable({
+      "responsive": true, 
+      "lengthChange": true, 
+      "autoWidth": false,
+      "language": {
+        "search": "Pretraži:",
+        "lengthMenu": "Prikaži _MENU_ redova po stranici",
+        "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ redova",
+        "infoEmpty": "Nema podataka za prikaz",
+        "infoFiltered": "(filtrirano od ukupno _MAX_ redova)",
+        "paginate": {
+          "first": "Prva",
+          "last": "Poslednja",
+          "next": "Sledeća",
+          "previous": "Prethodna"
+        }
+      },
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#auditsTable_wrapper .col-md-6:eq(0)');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,357 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ company.name }} - Detalji{% endblock %}
+
+{% block extrastyle %}
+<style>
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .status-active {
+    background-color: #28a745;
+    color: white;
+  }
+  .status-suspended {
+    background-color: #ffc107;
+    color: black;
+  }
+  .status-withdrawn {
+    background-color: #dc3545;
+    color: white;
+  }
+  .status-expired {
+    background-color: #6c757d;
+    color: white;
+  }
+  .status-pending {
+    background-color: #17a2b8;
+    color: white;
+  }
+  .status-cancelled {
+    background-color: #343a40;
+    color: white;
+  }
+  .info-box {
+    margin-bottom: 20px;
+  }
+  .section-title {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  .contact-card {
+    margin-bottom: 15px;
+  }
+  .primary-contact {
+    border-left: 4px solid #007bff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ company.name }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:update' company.id %}" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Izmeni
+            </a>
+            <a href="{% url 'company:delete' company.id %}" class="btn btn-danger">
+              <i class="fas fa-trash"></i> Obriši
+            </a>
+            <a href="{% url 'company:list' %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Osnovne informacije -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Osnovne informacije</h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-box">
+                    <strong>PIB:</strong>
+                    <p>{{ company.pib }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-box">
+                    <strong>Matični broj:</strong>
+                    <p>{{ company.mb }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="info-box">
+                <strong>Adresa:</strong>
+                <p>{{ company.street }} {{ company.street_number }}, {{ company.city }}, {{ company.postal_code }}</p>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="info-box">
+                    <strong>Telefon:</strong>
+                    <p>{{ company.phone|default:"Nije unet" }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-box">
+                    <strong>Email:</strong>
+                    <p>{{ company.email|default:"Nije unet" }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="info-box">
+                <strong>Website:</strong>
+                <p>{% if company.website %}<a href="{{ company.website }}" target="_blank">{{ company.website }}</a>{% else %}Nije unet{% endif %}</p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Industrija:</strong>
+                <p>{{ company.get_industry_display }}</p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Status sertifikata:</strong>
+                <p><span class="status-badge status-{{ company.certificate_status }}">{{ company.get_certificate_status_display }}</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Standardi i napomene -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Standardi</h3>
+            </div>
+            <div class="card-body">
+              {% if standards %}
+                <ul class="list-group">
+                  {% for standard in standards %}
+                    <li class="list-group-item">{{ standard.get_standard_display }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <p class="text-muted">Nema dodeljenih standarda</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <div class="card-header">
+              <h3 class="card-title">Napomene</h3>
+            </div>
+            <div class="card-body">
+              {% if company.notes %}
+                <p>{{ company.notes|linebreaks }}</p>
+              {% else %}
+                <p class="text-muted">Nema napomena</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Kontakt osobe -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Kontakt osobe</h3>
+            </div>
+            <div class="card-body">
+              {% if contact_persons %}
+                <div class="row">
+                  {% for contact in contact_persons %}
+                    <div class="col-md-4">
+                      <div class="card contact-card {% if contact.is_primary %}primary-contact{% endif %}">
+                        <div class="card-body">
+                          <h5 class="card-title">{{ contact.ime_prezime }} {% if contact.is_primary %}<span class="badge badge-primary">Primarni kontakt</span>{% endif %}</h5>
+                          {% if contact.pozicija %}<p class="card-text"><strong>Pozicija:</strong> {{ contact.pozicija }}</p>{% endif %}
+                          {% if contact.telefon %}<p class="card-text"><strong>Telefon:</strong> {{ contact.telefon }}</p>{% endif %}
+                          {% if contact.email %}<p class="card-text"><strong>Email:</strong> {{ contact.email }}</p>{% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="text-muted">Nema kontakt osoba</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ostale lokacije -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Ostale lokacije</h3>
+            </div>
+            <div class="card-body">
+              {% if locations %}
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Naziv lokacije</th>
+                        <th>Adresa</th>
+                        <th>Telefon</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for location in locations %}
+                        <tr>
+                          <td>{{ location.name }}</td>
+                          <td>{{ location.full_address }}</td>
+                          <td>{{ location.phone|default:"-" }}</td>
+                          <td>{{ location.email|default:"-" }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="text-muted">Nema dodatnih lokacija</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Naredne provere -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Naredne provere</h3>
+            </div>
+            <div class="card-body">
+              {% if audit_info %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Prvi nadzor - planiran:</strong>
+                      <p>{% if audit_info.first_surv_due %}{{ audit_info.first_surv_due|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Prvi nadzor - održan:</strong>
+                      <p>{% if audit_info.first_surv_cond %}{{ audit_info.first_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Status:</strong>
+                      <p><span class="badge badge-{{ audit_info.get_status_color }}">{{ audit_info.get_status_display }}</span></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Drugi nadzor - planiran:</strong>
+                      <p>{% if audit_info.second_surv_due %}{{ audit_info.second_surv_due|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Drugi nadzor - održan:</strong>
+                      <p>{% if audit_info.second_surv_cond %}{{ audit_info.second_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Resertifikacija - planirana:</strong>
+                      <p>{% if audit_info.trinial_audit_due %}{{ audit_info.trinial_audit_due|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-box">
+                      <strong>Resertifikacija - održana:</strong>
+                      <p>{% if audit_info.trinial_audit_cond %}{{ audit_info.trinial_audit_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <p class="text-muted">Nema informacija o narednim proverama</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sastanci -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Nedavni sastanci</h3>
+              <div class="card-tools">
+                <a href="{% url 'company:calendar' %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-calendar"></i> Svi sastanci
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              {% if appointments %}
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Naslov</th>
+                        <th>Tip</th>
+                        <th>Datum</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for appointment in appointments %}
+                        <tr>
+                          <td>{{ appointment.title }}</td>
+                          <td>{{ appointment.get_appointment_type_display }}</td>
+                          <td>{{ appointment.start_datetime|date:"d.m.Y H:i" }}</td>
+                          <td><span class="badge badge-{{ appointment.get_status_color }}">{{ appointment.get_status_display }}</span></td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="text-muted">Nema zakazanih sastanaka</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Company List{% endblock %}
+{% block title %}Lista Kompanija{% endblock %}
 
 {% block extrastyle %}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
@@ -14,17 +14,26 @@
         padding: 5px;
         border-radius: 5px;
     }
-    .status-inactive {
+    .status-suspended, .status-pending {
+        background-color: #ffc107; /* Yellow */
+        color: black;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .status-withdrawn, .status-cancelled {
         background-color: #dc3545; /* Red */
         color: white;
         padding: 5px;
         border-radius: 5px;
     }
-    .status-pending {
-        background-color: #ffc107; /* Yellow */
-        color: black;
+    .status-expired {
+        background-color: #6c757d; /* Gray */
+        color: white;
         padding: 5px;
         border-radius: 5px;
+    }
+    .action-buttons {
+        white-space: nowrap;
     }
 </style>
 {% endblock %}
@@ -35,13 +44,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0">Company List</h1>
+          <h1 class="m-0">Lista Kompanija</h1>
         </div>
         <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Company List</li>
-          </ol>
+          <div class="float-sm-right">
+            <a href="{% url 'company:create' %}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Nova kompanija
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -49,31 +59,69 @@
 
   <div class="content">
     <div class="container-fluid">
+      <!-- Search form -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <form method="get" action="{% url 'company:list' %}" class="form-inline">
+            <div class="input-group w-100">
+              <input type="text" name="search" class="form-control" placeholder="Pretraži po nazivu, PIB-u ili MB-u" value="{{ search_query }}">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-search"></i> Pretraži
+                </button>
+                {% if search_query %}
+                <a href="{% url 'company:list' %}" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Poništi
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-body">
           <table id="companiesTable" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>City</th>
-                <th>Industry</th>
-                <th>Standards</th>
-                <th>Certificate Status</th>
+                <th>Naziv</th>
+                <th>PIB</th>
+                <th>Grad</th>
+                <th>Industrija</th>
+                <th>Standardi</th>
+                <th>Status sertifikata</th>
+                <th>Akcije</th>
               </tr>
             </thead>
             <tbody>
               {% for company in companies %}
               <tr>
                 <td>{{ company.name }}</td>
+                <td>{{ company.pib }}</td>
                 <td>{{ company.city }}</td>
-                <td>{{ company.industry }}</td>
+                <td>{{ company.get_industry_display }}</td>
                 <td>
                   {% for standard in company.standards.all %}
                     {{ standard.standard }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
                 </td>
                 <td>
-                  <span class="status-{{ company.get_certificate_status_display|lower }}">{{ company.get_certificate_status_display }}</span>
+                  <span class="status-{{ company.certificate_status }}">{{ company.get_certificate_status_display }}</span>
+                </td>
+                <td class="action-buttons">
+                  <a href="{% url 'company:detail' company.id %}" class="btn btn-sm btn-info" title="Detalji">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a href="{% url 'company:update' company.id %}" class="btn btn-sm btn-primary" title="Izmeni">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a href="{% url 'company:delete' company.id %}" class="btn btn-sm btn-danger" title="Obriši">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                  <a href="{% url 'company:audit_list' %}?company={{ company.id }}" class="btn btn-sm btn-warning" title="Nadzorne provere">
+                    <i class="fas fa-clipboard-check"></i>
+                  </a>
                 </td>
               </tr>
               {% endfor %}
@@ -102,7 +150,22 @@
 <script>
 $(function () {
     $("#companiesTable").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
+      "responsive": true, 
+      "lengthChange": true, 
+      "autoWidth": false,
+      "language": {
+        "search": "Pretraži:",
+        "lengthMenu": "Prikaži _MENU_ redova po stranici",
+        "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ redova",
+        "infoEmpty": "Nema podataka za prikaz",
+        "infoFiltered": "(filtrirano od ukupno _MAX_ redova)",
+        "paginate": {
+          "first": "Prva",
+          "last": "Poslednja",
+          "next": "Sledeća",
+          "previous": "Prethodna"
+        }
+      },
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#companiesTable_wrapper .col-md-6:eq(0)');
 });

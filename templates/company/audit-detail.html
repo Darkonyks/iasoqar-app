@@ -1,0 +1,334 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Detalji Nadzorne Provere - {{ company.name }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .status-pending {
+    background-color: #007bff;
+    color: white;
+  }
+  .status-completed {
+    background-color: #28a745;
+    color: white;
+  }
+  .status-delayed {
+    background-color: #ffc107;
+    color: black;
+  }
+  .status-overdue {
+    background-color: #6c757d;
+    color: white;
+  }
+  .info-box {
+    margin-bottom: 20px;
+  }
+  .section-title {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  .date-highlight {
+    font-weight: bold;
+    color: #dc3545; /* Red */
+  }
+  .date-passed {
+    text-decoration: line-through;
+    color: #6c757d; /* Gray */
+  }
+  .date-upcoming {
+    font-weight: bold;
+    color: #28a745; /* Green */
+  }
+  .timeline-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 20px;
+  }
+  .timeline-item:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background-color: #dee2e6;
+  }
+  .timeline-item:after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background-color: #007bff;
+  }
+  .timeline-item.completed:after {
+    background-color: #28a745;
+  }
+  .timeline-item.pending:after {
+    background-color: #007bff;
+  }
+  .timeline-item.delayed:after {
+    background-color: #ffc107;
+  }
+  .timeline-item.overdue:after {
+    background-color: #6c757d;
+  }
+  .event-card {
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Nadzorne Provere: {{ company.name }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:audit_update' audit.id %}" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Izmeni
+            </a>
+            <a href="{% url 'company:audit_delete' audit.id %}" class="btn btn-danger">
+              <i class="fas fa-trash"></i> Obriši
+            </a>
+            <a href="{% url 'company:calendar' %}" class="btn btn-info">
+              <i class="fas fa-calendar"></i> Kalendar
+            </a>
+            <a href="{% url 'company:audit_list' %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Osnovne informacije -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Informacije o kompaniji</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-box">
+                <strong>Kompanija:</strong>
+                <p><a href="{% url 'company:detail' company.id %}">{{ company.name }}</a></p>
+              </div>
+              
+              <div class="info-box">
+                <strong>PIB:</strong>
+                <p>{{ company.pib }}</p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Adresa:</strong>
+                <p>{{ company.street }} {{ company.street_number }}, {{ company.city }}</p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Status sertifikata:</strong>
+                <p><span class="status-badge status-{{ company.certificate_status }}">{{ company.get_certificate_status_display }}</span></p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Standardi:</strong>
+                {% if standards %}
+                  <ul>
+                    {% for standard in standards %}
+                      <li>{{ standard.get_standard_display }}</li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="text-muted">Nema dodeljenih standarda</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Status nadzorne provere -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Status nadzorne provere</h3>
+            </div>
+            <div class="card-body">
+              <div class="info-box">
+                <strong>Trenutni status:</strong>
+                <p><span class="status-badge status-{{ audit.status }}">{{ audit.get_status_display }}</span></p>
+              </div>
+              
+              <div class="info-box">
+                <strong>Sledeća provera:</strong>
+                {% if audit.get_next_audit_date %}
+                  <p>{{ audit.get_next_audit_date.type }} - {{ audit.get_next_audit_date.date|date:"d.m.Y" }}</p>
+                {% else %}
+                  <p class="text-muted">Nema planiranih provera</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Timeline nadzornih provera -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Vremenski tok nadzornih provera</h3>
+            </div>
+            <div class="card-body">
+              <div class="timeline">
+                <!-- Prvi nadzor -->
+                <div class="timeline-item {% if audit.first_surv_cond %}completed{% elif audit.first_surv_due and audit.first_surv_due.date < today.date %}overdue{% elif audit.status == 'delayed' %}delayed{% else %}pending{% endif %}">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>Prvi nadzor</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Planirano:</strong>
+                            <p class="{% if audit.first_surv_due and audit.first_surv_due.date < today.date and not audit.first_surv_cond %}date-highlight{% elif audit.first_surv_due and audit.first_surv_due.date > today.date %}date-upcoming{% elif audit.first_surv_cond %}date-passed{% endif %}">
+                              {% if audit.first_surv_due %}
+                                {{ audit.first_surv_due|date:"d.m.Y" }}
+                              {% else %}
+                                -
+                              {% endif %}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Održano:</strong>
+                            <p>{% if audit.first_surv_cond %}{{ audit.first_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Drugi nadzor -->
+                <div class="timeline-item {% if audit.second_surv_cond %}completed{% elif audit.second_surv_due and audit.second_surv_due.date < today.date %}overdue{% elif audit.status == 'delayed' %}delayed{% else %}pending{% endif %}">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>Drugi nadzor</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Planirano:</strong>
+                            <p class="{% if audit.second_surv_due and audit.second_surv_due.date < today.date and not audit.second_surv_cond %}date-highlight{% elif audit.second_surv_due and audit.second_surv_due.date > today.date %}date-upcoming{% elif audit.second_surv_cond %}date-passed{% endif %}">
+                              {% if audit.second_surv_due %}
+                                {{ audit.second_surv_due|date:"d.m.Y" }}
+                              {% else %}
+                                -
+                              {% endif %}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Održano:</strong>
+                            <p>{% if audit.second_surv_cond %}{{ audit.second_surv_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Resertifikacija -->
+                <div class="timeline-item {% if audit.trinial_audit_cond %}completed{% elif audit.trinial_audit_due and audit.trinial_audit_due.date < today.date %}overdue{% elif audit.status == 'delayed' %}delayed{% else %}pending{% endif %}">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4>Resertifikacija</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Planirano:</strong>
+                            <p class="{% if audit.trinial_audit_due and audit.trinial_audit_due.date < today.date and not audit.trinial_audit_cond %}date-highlight{% elif audit.trinial_audit_due and audit.trinial_audit_due.date > today.date %}date-upcoming{% elif audit.trinial_audit_cond %}date-passed{% endif %}">
+                              {% if audit.trinial_audit_due %}
+                                {{ audit.trinial_audit_due|date:"d.m.Y" }}
+                              {% else %}
+                                -
+                              {% endif %}
+                            </p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="info-box">
+                            <strong>Održano:</strong>
+                            <p>{% if audit.trinial_audit_cond %}{{ audit.trinial_audit_cond|date:"d.m.Y" }}{% else %}-{% endif %}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Povezani događaji u kalendaru -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Povezani događaji u kalendaru</h3>
+              <div class="card-tools">
+                <a href="{% url 'company:calendar' %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-calendar"></i> Otvori kalendar
+                </a>
+              </div>
+            </div>
+            <div class="card-body">
+              {% if calendar_events %}
+                <div class="row">
+                  {% for event in calendar_events %}
+                    <div class="col-md-4">
+                      <div class="card event-card">
+                        <div class="card-body">
+                          <h5 class="card-title">{{ event.title }}</h5>
+                          <p><strong>Datum:</strong> {{ event.start|date:"d.m.Y H:i" }}</p>
+                          <p><strong>Tip:</strong> {{ event.get_audit_type_display }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="text-muted">Nema povezanih događaja u kalendaru</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

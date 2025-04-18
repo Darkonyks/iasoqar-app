@@ -1,10 +1,13 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Kalendar{% endblock %}
+{% block title %}Kalendar Sastanaka{% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" href="{% static 'plugins/fullcalendar/lib/main.min.css' %}">
+<!-- FullCalendar CSS from CDN -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<!-- Custom Calendar CSS -->
+<link href="{% static 'css/calendar.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -13,7 +16,14 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1 class="m-0">Kalendar</h1>
+          <h1 class="m-0">Kalendar Sastanaka</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <button id="createAppointmentBtn" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Novi sastanak
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -31,24 +41,184 @@
     </div>
   </div>
 </div>
+
+<!-- Appointment Modal -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="appointmentModalLabel">Novi sastanak</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="appointmentForm">
+        <div class="modal-body">
+          <input type="hidden" id="appointmentId" name="appointmentId">
+          
+          <div class="form-group">
+            <label for="title">Naslov sastanka</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="company">Kompanija</label>
+                <select class="form-control" id="company" name="company" required>
+                  <option value="">Izaberite kompaniju</option>
+                  {% for company in companies %}
+                  <option value="{{ company.id }}">{{ company.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="appointment_type">Tip sastanka</label>
+                <select class="form-control" id="appointment_type" name="appointment_type" required>
+                  <option value="">Izaberite tip</option>
+                  <option value="audit">Audit</option>
+                  <option value="meeting">Sastanak</option>
+                  <option value="consultation">Konsultacija</option>
+                  <option value="training">Trening</option>
+                  <option value="other">Ostalo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="start_datetime">Vreme početka</label>
+                <input type="datetime-local" class="form-control" id="start_datetime" name="start_datetime" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="end_datetime">Vreme završetka</label>
+                <input type="datetime-local" class="form-control" id="end_datetime" name="end_datetime" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="all_day" name="all_day">
+              <label class="custom-control-label" for="all_day">Celodnevni događaj</label>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="location">Lokacija</label>
+                <input type="text" class="form-control" id="location" name="location">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox mt-4">
+                  <input type="checkbox" class="custom-control-input" id="is_online" name="is_online">
+                  <label class="custom-control-label" for="is_online">Online sastanak</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group" id="meeting_link_group">
+            <label for="meeting_link">Link za sastanak</label>
+            <input type="url" class="form-control" id="meeting_link" name="meeting_link" placeholder="https://...">
+          </div>
+          
+          <div class="form-group">
+            <label for="contact_person">Kontakt osobe</label>
+            <input type="text" class="form-control" id="contact_person" placeholder="Počnite da kucate ime kontakt osobe...">
+            <div id="contact-tags-container"></div>
+            <input type="hidden" id="contact_persons" name="contact_persons">
+          </div>
+          
+          <div class="form-group">
+            <label for="external_attendees">Eksterni učesnici</label>
+            <textarea class="form-control" id="external_attendees" name="external_attendees" rows="2" placeholder="Ime, email, telefon (jedan po liniji)"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" name="status" required>
+              <option value="scheduled">Zakazano</option>
+              <option value="completed">Završeno</option>
+              <option value="cancelled">Otkazano</option>
+              <option value="postponed">Odloženo</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="notes">Napomene</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="deleteAppointmentBtn">Obriši</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
+          <button type="submit" class="btn btn-primary">Sačuvaj</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Appointment Detail Modal -->
+<div class="modal fade" id="appointmentDetailModal" tabindex="-1" role="dialog" aria-labelledby="appointmentDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji sastanka</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="appointmentDetailContent">
+        <!-- Content will be loaded dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+        <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="{% static 'plugins/fullcalendar/lib/main.min.js' %}"></script>
-<script src="{% static 'plugins/fullcalendar/lib/locales/sr.js' %}"></script>
+<!-- Moment.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<!-- FullCalendar from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+<!-- Add FullCalendar plugins -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/bootstrap@5.11.3/main.min.js"></script>
+<!-- jQuery UI -->
+<script src="{% static 'plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+
+<!-- CSRF Token for AJAX requests -->
+{% csrf_token %}
+
+<!-- URLs for AJAX requests -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var calendarEl = document.getElementById('calendar');
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: 'sr',
-    initialView: 'dayGridMonth',
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek,timeGridDay'
-    }
-  });
-  calendar.render();
-});
+  // Define URLs for the JavaScript file
+  var eventsApiUrl = "{% url 'company:appointment_calendar_json' %}";
+  var contactsApiUrl = "{% url 'company:get_company_contacts' %}";
+  var appointmentCreateUrl = "{% url 'company:appointment_create' %}";
+  var appointmentUpdateUrl = "/company/appointments/0/update/";
+  var appointmentDeleteUrl = "/company/appointments/0/delete/";
+  var appointmentDetailUrl = "/company/appointments/0/";
 </script>
+
+<!-- Custom Calendar JavaScript -->
+<script src="{% static 'js/calendar.js' %}"></script>
 {% endblock %}

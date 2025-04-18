@@ -49,6 +49,19 @@
                 <!-- ./col -->
                 <div class="col-lg-3 col-6">
                     <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>{{ active_certificates }}</h3>
+                            <p>Active Certificates</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
                     <div class="small-box bg-danger">
                         <div class="inner">
                             <h3>{{ expired_certificates }}</h3>
@@ -73,6 +86,49 @@
                         </div>
                         <div class="card-body">
                             <canvas id="standardsChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- This Week's Audits -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Auditi za tekuću radnu nedelju</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if this_week_audits %}
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Kompanija</th>
+                                                <th>Tip audita</th>
+                                                <th>Datum</th>
+                                                <th>Status</th>
+                                                <th>Akcije</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for audit in this_week_audits %}
+                                                <tr>
+                                                    <td>{{ audit.company }}</td>
+                                                    <td>{{ audit.type }}</td>
+                                                    <td>{{ audit.date|date:"d.m.Y H:i" }}</td>
+                                                    <td>{{ audit.status }}</td>
+                                                    <td>
+                                                        <a href="{% url 'company:audit_detail' audit.id %}" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-eye"></i> Detalji
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    Nema zakazanih audita za tekuću radnu nedelju.
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </section>

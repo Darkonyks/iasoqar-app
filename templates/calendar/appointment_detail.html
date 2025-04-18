@@ -1,0 +1,61 @@
+<div class="appointment-details">
+  <h4>{{ appointment.title }}</h4>
+  
+  <div class="badge badge-{{ appointment.get_status_color }}">
+    {{ appointment.get_status_display }}
+  </div>
+  
+  <hr>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <p><strong>Kompanija:</strong> {{ appointment.company.name }}</p>
+      <p><strong>Tip sastanka:</strong> {{ appointment.get_appointment_type_display }}</p>
+      <p><strong>Datum i vreme:</strong><br>
+        {% if appointment.all_day %}
+          {{ appointment.start_datetime|date:"d.m.Y" }} (celodnevni događaj)
+        {% else %}
+          {{ appointment.start_datetime|date:"d.m.Y H:i" }} - {{ appointment.end_datetime|date:"H:i" }}
+        {% endif %}
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p>
+        <strong>Lokacija:</strong> 
+        {% if appointment.is_online %}
+          Online
+          {% if appointment.meeting_link %}
+            <br><a href="{{ appointment.meeting_link }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+              <i class="fas fa-video"></i> Pristupi sastanku
+            </a>
+          {% endif %}
+        {% else %}
+          {{ appointment.location|default:"Nije navedeno" }}
+        {% endif %}
+      </p>
+      
+      {% if contact_persons %}
+        <p><strong>Kontakt osobe:</strong></p>
+        <ul class="list-unstyled">
+          {% for person in contact_persons %}
+            <li>{{ person.ime_prezime }}{% if person.pozicija %} ({{ person.pozicija }}){% endif %}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+  
+  {% if appointment.external_attendees %}
+    <div class="mt-3">
+      <p><strong>Eksterni učesnici:</strong></p>
+      <pre class="bg-light p-2 rounded">{{ appointment.external_attendees }}</pre>
+    </div>
+  {% endif %}
+  
+  {% if appointment.notes %}
+    <div class="mt-3">
+      <p><strong>Napomene:</strong></p>
+      <pre class="bg-light p-2 rounded">{{ appointment.notes }}</pre>
+    </div>
+  {% endif %}
+</div>

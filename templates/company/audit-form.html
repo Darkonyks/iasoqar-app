@@ -1,0 +1,257 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+  .form-section {
+    margin-bottom: 30px;
+  }
+  .form-section-title {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+  }
+  .date-pair {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:audit_list' %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-section">
+              <h4 class="form-section-title">Osnovne informacije</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.company.id_for_label }}">Kompanija *</label>
+                    {{ form.company.errors }}
+                    <select name="{{ form.company.name }}" id="{{ form.company.id_for_label }}" 
+                           class="form-control {% if form.company.errors %}is-invalid{% endif %}" required>
+                      <option value="">Izaberite kompaniju</option>
+                      {% for choice in form.company.field.choices %}
+                        {% if choice.0 %}
+                          <option value="{{ choice.0 }}" 
+                            {% if form.company.value|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}
+                            {% if preselected_company and preselected_company.id|stringformat:"s" == choice.0|stringformat:"s" %}selected{% endif %}>
+                            {{ choice.1 }}
+                          </option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">Status *</label>
+                    {{ form.status.errors }}
+                    <select name="{{ form.status.name }}" id="{{ form.status.id_for_label }}" 
+                           class="form-control {% if form.status.errors %}is-invalid{% endif %}" required>
+                      <option value="">Izaberite status</option>
+                      {% for choice in form.status.field.choices %}
+                        {% if choice.0 %}
+                          <option value="{{ choice.0 }}" 
+                            {% if form.status.value == choice.0 %}selected{% endif %}>
+                            {{ choice.1 }}
+                          </option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h4 class="form-section-title">Prvi nadzor</h4>
+              <div class="date-pair">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.first_surv_due.id_for_label }}">Planirano</label>
+                      {{ form.first_surv_due.errors }}
+                      <input type="datetime-local" name="{{ form.first_surv_due.name }}" 
+                             id="{{ form.first_surv_due.id_for_label }}" 
+                             class="form-control {% if form.first_surv_due.errors %}is-invalid{% endif %}" 
+                             value="{{ form.first_surv_due.value|default:'' }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.first_surv_cond.id_for_label }}">Održano</label>
+                      {{ form.first_surv_cond.errors }}
+                      <input type="datetime-local" name="{{ form.first_surv_cond.name }}" 
+                             id="{{ form.first_surv_cond.id_for_label }}" 
+                             class="form-control {% if form.first_surv_cond.errors %}is-invalid{% endif %}" 
+                             value="{{ form.first_surv_cond.value|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h4 class="form-section-title">Drugi nadzor</h4>
+              <div class="date-pair">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.second_surv_due.id_for_label }}">Planirano</label>
+                      {{ form.second_surv_due.errors }}
+                      <input type="datetime-local" name="{{ form.second_surv_due.name }}" 
+                             id="{{ form.second_surv_due.id_for_label }}" 
+                             class="form-control {% if form.second_surv_due.errors %}is-invalid{% endif %}" 
+                             value="{{ form.second_surv_due.value|default:'' }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.second_surv_cond.id_for_label }}">Održano</label>
+                      {{ form.second_surv_cond.errors }}
+                      <input type="datetime-local" name="{{ form.second_surv_cond.name }}" 
+                             id="{{ form.second_surv_cond.id_for_label }}" 
+                             class="form-control {% if form.second_surv_cond.errors %}is-invalid{% endif %}" 
+                             value="{{ form.second_surv_cond.value|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-section">
+              <h4 class="form-section-title">Resertifikacija</h4>
+              <div class="date-pair">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.trinial_audit_due.id_for_label }}">Planirano</label>
+                      {{ form.trinial_audit_due.errors }}
+                      <input type="datetime-local" name="{{ form.trinial_audit_due.name }}" 
+                             id="{{ form.trinial_audit_due.id_for_label }}" 
+                             class="form-control {% if form.trinial_audit_due.errors %}is-invalid{% endif %}" 
+                             value="{{ form.trinial_audit_due.value|default:'' }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.trinial_audit_cond.id_for_label }}">Održano</label>
+                      {{ form.trinial_audit_cond.errors }}
+                      <input type="datetime-local" name="{{ form.trinial_audit_cond.name }}" 
+                             id="{{ form.trinial_audit_cond.id_for_label }}" 
+                             class="form-control {% if form.trinial_audit_cond.errors %}is-invalid{% endif %}" 
+                             value="{{ form.trinial_audit_cond.value|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> {{ submit_text }}
+              </button>
+              <a href="{% url 'company:audit_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Otkaži
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(function() {
+    // Add form validation if needed
+    $('form').on('submit', function() {
+      var requiredFields = $(this).find('[required]');
+      var valid = true;
+      
+      requiredFields.each(function() {
+        if (!$(this).val()) {
+          $(this).addClass('is-invalid');
+          valid = false;
+        } else {
+          $(this).removeClass('is-invalid');
+        }
+      });
+      
+      return valid;
+    });
+    
+    // Auto-calculate second audit and recertification dates based on first audit date
+    $('#{{ form.first_surv_due.id_for_label }}').on('change', function() {
+      var firstAuditDate = $(this).val();
+      if (firstAuditDate) {
+        // Parse the datetime-local value
+        var date = new Date(firstAuditDate);
+        
+        // Only auto-fill if second audit and recertification fields are empty
+        var secondAuditField = $('#{{ form.second_surv_due.id_for_label }}');
+        var recertificationField = $('#{{ form.trinial_audit_due.id_for_label }}');
+        
+        if (!secondAuditField.val()) {
+          // Set second audit date to one year after first audit
+          var secondAuditDate = new Date(date);
+          secondAuditDate.setFullYear(date.getFullYear() + 1);
+          secondAuditField.val(formatDateTimeForInput(secondAuditDate));
+        }
+        
+        if (!recertificationField.val()) {
+          // Set recertification date to two years after first audit
+          var recertificationDate = new Date(date);
+          recertificationDate.setFullYear(date.getFullYear() + 2);
+          recertificationField.val(formatDateTimeForInput(recertificationDate));
+        }
+      }
+    });
+    
+    // Helper function to format date for datetime-local input
+    function formatDateTimeForInput(date) {
+      // Format: YYYY-MM-DDThh:mm
+      return date.getFullYear() + '-' + 
+             padZero(date.getMonth() + 1) + '-' + 
+             padZero(date.getDate()) + 'T' + 
+             padZero(date.getHours()) + ':' + 
+             padZero(date.getMinutes());
+    }
+    
+    // Helper function to pad with leading zero
+    function padZero(num) {
+      return (num < 10 ? '0' : '') + num;
+    }
+  });
+</script>
+{% endblock %}

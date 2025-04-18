@@ -1,0 +1,228 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:list' %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.name.id_for_label }}">Naziv kompanije *</label>
+                  {{ form.name.errors }}
+                  <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" 
+                         class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                         value="{{ form.name.value|default:'' }}" required>
+                </div>
+              </div>
+              
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="{{ form.pib.id_for_label }}">PIB *</label>
+                  {{ form.pib.errors }}
+                  <input type="text" name="{{ form.pib.name }}" id="{{ form.pib.id_for_label }}" 
+                         class="form-control {% if form.pib.errors %}is-invalid{% endif %}" 
+                         value="{{ form.pib.value|default:'' }}" required>
+                </div>
+              </div>
+              
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="{{ form.mb.id_for_label }}">Matični broj *</label>
+                  {{ form.mb.errors }}
+                  <input type="text" name="{{ form.mb.name }}" id="{{ form.mb.id_for_label }}" 
+                         class="form-control {% if form.mb.errors %}is-invalid{% endif %}" 
+                         value="{{ form.mb.value|default:'' }}" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.industry.id_for_label }}">Industrija *</label>
+                  {{ form.industry.errors }}
+                  <select name="{{ form.industry.name }}" id="{{ form.industry.id_for_label }}" 
+                          class="form-control {% if form.industry.errors %}is-invalid{% endif %}" required>
+                    <option value="">Izaberite industriju</option>
+                    {% for value, text in form.fields.industry.choices %}
+                      <option value="{{ value }}" {% if form.industry.value == value %}selected{% endif %}>
+                        {{ text }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.certificate_status.id_for_label }}">Status sertifikata *</label>
+                  {{ form.certificate_status.errors }}
+                  <select name="{{ form.certificate_status.name }}" id="{{ form.certificate_status.id_for_label }}" 
+                          class="form-control {% if form.certificate_status.errors %}is-invalid{% endif %}" required>
+                    <option value="">Izaberite status</option>
+                    {% for value, text in form.fields.certificate_status.choices %}
+                      <option value="{{ value }}" {% if form.certificate_status.value == value %}selected{% endif %}>
+                        {{ text }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <h4 class="mt-4 mb-3">Adresa</h4>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="{{ form.street.id_for_label }}">Ulica *</label>
+                  {{ form.street.errors }}
+                  <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
+                         class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
+                         value="{{ form.street.value|default:'' }}" required>
+                </div>
+              </div>
+              
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="{{ form.street_number.id_for_label }}">Broj *</label>
+                  {{ form.street_number.errors }}
+                  <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
+                         class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
+                         value="{{ form.street_number.value|default:'' }}" required>
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="{{ form.city.id_for_label }}">Grad *</label>
+                  {{ form.city.errors }}
+                  <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                          class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
+                    <option value="">Izaberite grad</option>
+                    {% for value, text in form.fields.city.choices %}
+                      <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
+                        {{ text }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="{{ form.postal_code.id_for_label }}">Poštanski broj</label>
+                  {{ form.postal_code.errors }}
+                  <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
+                         class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
+                         value="{{ form.postal_code.value|default:'' }}">
+                </div>
+              </div>
+            </div>
+            
+            <h4 class="mt-4 mb-3">Kontakt informacije</h4>
+            
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="{{ form.phone.id_for_label }}">Telefon</label>
+                  {{ form.phone.errors }}
+                  <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                         class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                         value="{{ form.phone.value|default:'' }}">
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="{{ form.email.id_for_label }}">Email</label>
+                  {{ form.email.errors }}
+                  <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                         class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                         value="{{ form.email.value|default:'' }}">
+                </div>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="{{ form.website.id_for_label }}">Website</label>
+                  {{ form.website.errors }}
+                  <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
+                         class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
+                         value="{{ form.website.value|default:'' }}" placeholder="https://">
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group mt-3">
+              <label for="{{ form.notes.id_for_label }}">Napomene</label>
+              {{ form.notes.errors }}
+              <textarea name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" 
+                        class="form-control {% if form.notes.errors %}is-invalid{% endif %}" 
+                        rows="4">{{ form.notes.value|default:'' }}</textarea>
+            </div>
+            
+            <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> {{ submit_text }}
+              </button>
+              <a href="{% url 'company:list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Otkaži
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  $(function() {
+    // Add form validation if needed
+    $('form').on('submit', function() {
+      var requiredFields = $(this).find('[required]');
+      var valid = true;
+      
+      requiredFields.each(function() {
+        if (!$(this).val()) {
+          $(this).addClass('is-invalid');
+          valid = false;
+        } else {
+          $(this).removeClass('is-invalid');
+        }
+      });
+      
+      return valid;
+    });
+  });
+</script>
+{% endblock %}
