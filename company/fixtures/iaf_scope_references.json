@@ -1,0 +1,392 @@
+[
+  {
+    "model": "company.iafscopereference",
+    "pk": 1,
+    "fields": {
+      "reference": "1",
+      "description": "Agriculture, forestry and fishing",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 2,
+    "fields": {
+      "reference": "2",
+      "description": "Mining and quarrying",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 3,
+    "fields": {
+      "reference": "3",
+      "description": "Food products, beverages and tobacco",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 4,
+    "fields": {
+      "reference": "4",
+      "description": "Textiles and textile products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 5,
+    "fields": {
+      "reference": "5",
+      "description": "Leather and leather products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 6,
+    "fields": {
+      "reference": "6",
+      "description": "Wood and wood products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 7,
+    "fields": {
+      "reference": "7",
+      "description": "Pulp, paper and paper products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 8,
+    "fields": {
+      "reference": "8",
+      "description": "Publishing companies",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 9,
+    "fields": {
+      "reference": "9",
+      "description": "Printing companies",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 10,
+    "fields": {
+      "reference": "10",
+      "description": "Manufacture of coke and refined petroleum products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 11,
+    "fields": {
+      "reference": "11",
+      "description": "Nuclear fuel",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 12,
+    "fields": {
+      "reference": "12",
+      "description": "Chemicals, chemical products and fibres",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 13,
+    "fields": {
+      "reference": "13",
+      "description": "Pharmaceuticals",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 14,
+    "fields": {
+      "reference": "14",
+      "description": "Rubber and plastic products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 15,
+    "fields": {
+      "reference": "15",
+      "description": "Non-metallic mineral products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 16,
+    "fields": {
+      "reference": "16",
+      "description": "Concrete, cement, lime, plaster, etc.",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 17,
+    "fields": {
+      "reference": "17",
+      "description": "Basic metals and fabricated metal products",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 18,
+    "fields": {
+      "reference": "18",
+      "description": "Machinery and equipment",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 19,
+    "fields": {
+      "reference": "19",
+      "description": "Electrical and optical equipment",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 20,
+    "fields": {
+      "reference": "20",
+      "description": "Shipbuilding",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 21,
+    "fields": {
+      "reference": "21",
+      "description": "Aerospace",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 22,
+    "fields": {
+      "reference": "22",
+      "description": "Other transport equipment",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 23,
+    "fields": {
+      "reference": "23",
+      "description": "Manufacturing not elsewhere classified",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 24,
+    "fields": {
+      "reference": "24",
+      "description": "Recycling",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 25,
+    "fields": {
+      "reference": "25",
+      "description": "Electricity supply",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 26,
+    "fields": {
+      "reference": "26",
+      "description": "Gas supply",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 27,
+    "fields": {
+      "reference": "27",
+      "description": "Water supply",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 28,
+    "fields": {
+      "reference": "28",
+      "description": "Construction",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 29,
+    "fields": {
+      "reference": "29",
+      "description": "Wholesale and retail trade; Repair of motor vehicles, motorcycles and personal and household goods",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 30,
+    "fields": {
+      "reference": "30",
+      "description": "Hotels and restaurants",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 31,
+    "fields": {
+      "reference": "31",
+      "description": "Transport, storage and communication",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 32,
+    "fields": {
+      "reference": "32",
+      "description": "Financial intermediation; real estate; renting",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 33,
+    "fields": {
+      "reference": "33",
+      "description": "Information technology",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 34,
+    "fields": {
+      "reference": "34",
+      "description": "Engineering services",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 35,
+    "fields": {
+      "reference": "35",
+      "description": "Other services",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 36,
+    "fields": {
+      "reference": "36",
+      "description": "Public administration",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 37,
+    "fields": {
+      "reference": "37",
+      "description": "Education",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 38,
+    "fields": {
+      "reference": "38",
+      "description": "Health and social work",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  },
+  {
+    "model": "company.iafscopereference",
+    "pk": 39,
+    "fields": {
+      "reference": "39",
+      "description": "Other social services",
+      "created_at": "2025-05-08T15:30:00",
+      "updated_at": "2025-05-08T15:30:00"
+    }
+  }
+]

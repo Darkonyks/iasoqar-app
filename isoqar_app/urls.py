@@ -18,12 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 from company.views import dashboard
 from massadmin import urls as massadmin_urls
+import nested_admin.views
+
+# Eksplicitno pozivamo autodiscover() da bi pronašao sve admin module
+admin.autodiscover()
 
 urlpatterns = [
     path('', dashboard, name='home'),
     path('admin/', admin.site.urls),
-    path('admin/', include(massadmin_urls)),
+    # Preusmeravanje za admin/company URL na admin/company/company/
+    path('admin/company', RedirectView.as_view(url='/admin/company/company/'), name='admin-company-redirect'),
+    path('mass_admin/', include(massadmin_urls)),  # Promenjen URL za massadmin
+    path('nested_admin/', include('nested_admin.urls')),
     path('company/', include('company.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

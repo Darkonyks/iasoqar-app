@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'company',
+    'nested_admin',
+    'company.apps.CompanyConfig',  # Koristimo punu putanju do CompanyConfig
 ]
 
 MIDDLEWARE = [

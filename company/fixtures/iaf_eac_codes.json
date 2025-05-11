@@ -1,0 +1,353 @@
+[
+  {
+    "model": "company.iafeaccode",
+    "pk": 1,
+    "fields": {
+      "iaf_code": "1",
+      "description": "Agriculture, forestry and fishing",
+      "sub_descriptors": "Farming; fishing; livestock production; animal breeding; plant growing; forestry; logging; related service activities."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 2,
+    "fields": {
+      "iaf_code": "2",
+      "description": "Mining and quarrying",
+      "sub_descriptors": "Mining of coal and lignite; extraction of crude petroleum and natural gas; mining of metal ores; other mining and quarrying; mining support service activities."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 3,
+    "fields": {
+      "iaf_code": "3",
+      "description": "Food products, beverages and tobacco",
+      "sub_descriptors": "Production, processing and preserving of meat, fish, fruit, vegetables, oils and fats; manufacture of dairy products; grain milling; starches; animal feeds; other food products; beverages; tobacco products."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 4,
+    "fields": {
+      "iaf_code": "4",
+      "description": "Textiles and textile products",
+      "sub_descriptors": "Preparation and spinning of textile fibres; weaving; finishing; made-up textile articles; carpets; cordage; nonwovens; technical textiles; knitted and crocheted fabrics and articles; wearing apparel."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 5,
+    "fields": {
+      "iaf_code": "5",
+      "description": "Leather and leather products",
+      "sub_descriptors": "Tanning and dressing of leather; luggage; handbags; saddlery and harness; footwear."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 6,
+    "fields": {
+      "iaf_code": "6",
+      "description": "Wood and wood products",
+      "sub_descriptors": "Sawmilling and planing of wood; veneer sheets; plywood; laminboard; fibreboard; carpentry and joinery; wooden containers; other products of wood; articles of cork, straw and plaiting materials."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 7,
+    "fields": {
+      "iaf_code": "7",
+      "description": "Pulp, paper and paper products",
+      "sub_descriptors": "Manufacture of pulp, paper and paperboard; corrugated paper and paperboard; containers of paper and paperboard; other articles of paper and paperboard."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 8,
+    "fields": {
+      "iaf_code": "8",
+      "description": "Publishing companies",
+      "sub_descriptors": "Publishing of books, newspapers, journals and periodicals; sound recording; music publishing."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 9,
+    "fields": {
+      "iaf_code": "9",
+      "description": "Printing companies",
+      "sub_descriptors": "Printing of newspapers; bookbinding and finishing; reproduction of recorded media."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 10,
+    "fields": {
+      "iaf_code": "10",
+      "description": "Manufacture of coke and refined petroleum products",
+      "sub_descriptors": "Manufacture of coke oven products; refined petroleum products."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 11,
+    "fields": {
+      "iaf_code": "11",
+      "description": "Nuclear fuel",
+      "sub_descriptors": "Processing of nuclear fuel."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 12,
+    "fields": {
+      "iaf_code": "12",
+      "description": "Chemicals, chemical products and fibres",
+      "sub_descriptors": "Manufacture of basic chemicals; agricultural chemicals and other chemical products; synthetic fibres."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 13,
+    "fields": {
+      "iaf_code": "13",
+      "description": "Pharmaceuticals",
+      "sub_descriptors": "Manufacture of basic pharmaceutical products and pharmaceutical preparations."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 14,
+    "fields": {
+      "iaf_code": "14",
+      "description": "Rubber and plastic products",
+      "sub_descriptors": "Manufacture of rubber and plastic products."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 15,
+    "fields": {
+      "iaf_code": "15",
+      "description": "Non-metallic mineral products",
+      "sub_descriptors": "Manufacture of glass and glass products; ceramic products; bricks, tiles and construction products in baked clay."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 16,
+    "fields": {
+      "iaf_code": "16",
+      "description": "Concrete, cement, lime, plaster etc.",
+      "sub_descriptors": "Manufacture of cement, lime and plaster; articles of concrete, plaster and cement."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 17,
+    "fields": {
+      "iaf_code": "17",
+      "description": "Basic metals and fabricated metal products",
+      "sub_descriptors": "Manufacture of basic iron and steel and of ferro-alloys; tubes, pipes, hollow profiles; other first processing of iron and steel; precious and non-ferrous metals; casting of metals; structural metal products; tanks, reservoirs and containers of metal; steam generators; forging, pressing, stamping and roll forming of metal; powder metallurgy; treatment and coating of metals; machining; cutlery, tools and general hardware; other fabricated metal products."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 18,
+    "fields": {
+      "iaf_code": "18",
+      "description": "Machinery and equipment",
+      "sub_descriptors": "Manufacture of machinery for the production and use of mechanical power; other general purpose machinery; agricultural and forestry machinery; machine tools; other special purpose machinery."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 19,
+    "fields": {
+      "iaf_code": "19",
+      "description": "Electrical and optical equipment",
+      "sub_descriptors": "Manufacture of office machinery and computers; electric motors, generators and transformers; electricity distribution and control apparatus; insulated wire and cable; accumulators, primary cells and primary batteries; lighting equipment and electric lamps; electrical equipment; electronic valves and tubes and other electronic components; television and radio transmitters and apparatus for line telephony and line telegraphy; television and radio receivers, sound or video recording or reproducing apparatus and associated goods; medical, precision and optical instruments, watches and clocks; motor vehicles, trailers and semi-trailers; other transport equipment."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 20,
+    "fields": {
+      "iaf_code": "20",
+      "description": "Shipbuilding",
+      "sub_descriptors": "Building and repair of ships, boats, floating structures, including splitting."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 21,
+    "fields": {
+      "iaf_code": "21",
+      "description": "Aerospace",
+      "sub_descriptors": "Manufacture of aircraft and spacecraft."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 22,
+    "fields": {
+      "iaf_code": "22",
+      "description": "Other transport equipment",
+      "sub_descriptors": "Manufacture of railway and tramway locomotives and rolling stock; motorcycles and bicycles; other transport equipment."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 23,
+    "fields": {
+      "iaf_code": "23",
+      "description": "Manufacturing not elsewhere classified",
+      "sub_descriptors": "Manufacture of furniture; jewellery, musical instruments, sports goods, games and toys; recycling."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 24,
+    "fields": {
+      "iaf_code": "24",
+      "description": "Recycling",
+      "sub_descriptors": "Recycling of metal and non-metal waste and scrap."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 25,
+    "fields": {
+      "iaf_code": "25",
+      "description": "Electricity supply",
+      "sub_descriptors": "Production, transmission and distribution of electricity."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 26,
+    "fields": {
+      "iaf_code": "26",
+      "description": "Gas supply",
+      "sub_descriptors": "Manufacture of gas; distribution of gaseous fuels through mains."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 27,
+    "fields": {
+      "iaf_code": "27",
+      "description": "Water supply",
+      "sub_descriptors": "Collection, purification and distribution of water."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 28,
+    "fields": {
+      "iaf_code": "28",
+      "description": "Construction",
+      "sub_descriptors": "General construction and civil engineering works; building installation; building completion; renting of construction or demolition equipment with operator."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 29,
+    "fields": {
+      "iaf_code": "29",
+      "description": "Wholesale and retail trade; repair of motor vehicles, motorcycles and personal and household goods",
+      "sub_descriptors": "Sale, maintenance and repair of motor vehicles and motorcycles; retail sale of automotive fuel; wholesale trade and commission trade; retail trade; repair of personal and household goods."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 30,
+    "fields": {
+      "iaf_code": "30",
+      "description": "Hotels and restaurants",
+      "sub_descriptors": "Hotels; camping sites and other provision of short-stay accommodation; restaurants, bars, canteens and catering."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 31,
+    "fields": {
+      "iaf_code": "31",
+      "description": "Transport, storage and communication",
+      "sub_descriptors": "Transport via railways; transport via pipelines; other land transport; sea and coastal water transport; inland water transport; air transport; supporting and auxiliary transport activities; activities of travel agencies; post and telecommunications."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 32,
+    "fields": {
+      "iaf_code": "32",
+      "description": "Financial intermediation; real estate; renting",
+      "sub_descriptors": "Financial intermediation; insurance and pension funding; activities auxiliary to financial intermediation; real estate activities; renting of machinery and equipment without operator and of personal and household goods."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 33,
+    "fields": {
+      "iaf_code": "33",
+      "description": "Information technology",
+      "sub_descriptors": "Computer and related activities; hardware consultancy; software consultancy and supply; data processing; database activities; maintenance and repair of office, accounting and computing machinery; other computer related activities."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 34,
+    "fields": {
+      "iaf_code": "34",
+      "description": "Engineering services",
+      "sub_descriptors": "Research and development; architectural and engineering activities and related technical consultancy; technical testing and analysis; other business activities."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 35,
+    "fields": {
+      "iaf_code": "35",
+      "description": "Other services",
+      "sub_descriptors": "Legal, accounting, book-keeping and auditing activities; tax consultancy; market research and public opinion polling; business and management consultancy; holdings; advertising; labour recruitment and provision of personnel; investigation and security activities; industrial cleaning; photographic activities; packaging activities; secretarial and translation activities; call centres; other business services."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 36,
+    "fields": {
+      "iaf_code": "36",
+      "description": "Public administration",
+      "sub_descriptors": "Public administration and defence; compulsory social security."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 37,
+    "fields": {
+      "iaf_code": "37",
+      "description": "Education",
+      "sub_descriptors": "Primary, secondary and higher education; driving school and other education."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 38,
+    "fields": {
+      "iaf_code": "38",
+      "description": "Health and social work",
+      "sub_descriptors": "Hospital activities; medical practice and other human health activities; veterinary activities; social work activities."
+    }
+  },
+  {
+    "model": "company.iafeaccode",
+    "pk": 39,
+    "fields": {
+      "iaf_code": "39",
+      "description": "Other social services",
+      "sub_descriptors": "Sewage and refuse disposal, sanitation and similar activities; activities of membership organizations; recreational, cultural and sporting activities; washing and dry-cleaning of textile and fur products; hairdressing and other beauty treatment; funeral and related activities; other service activities."
+    }
+  }
+]

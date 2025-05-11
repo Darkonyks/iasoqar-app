@@ -1,0 +1,218 @@
+[
+  {
+    "model": "company.subdescriptor",
+    "pk": 1,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "01a - Growing of crops",
+      "description": "Growing of cereals (except rice), leguminous crops and oil seeds",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 2,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of rice",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 3,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of vegetables and melons, roots and tubers",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 4,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of sugar cane",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 5,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of tobacco",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 6,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of fibre crops",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 7,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of other non-perennial crops",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 8,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of grapes",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 9,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of tropical and subtropical fruits",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 10,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of citrus fruits",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 11,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of pome fruits and stone fruits",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 12,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of other tree and bush fruits and nuts",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 13,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of oleaginous fruits",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 14,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of beverage crops",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 15,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of spices, aromatic, drug and pharmaceutical crops",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 16,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Growing of other perennial crops",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 17,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Support activities for crop production",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  },
+  {
+    "model": "company.subdescriptor",
+    "pk": 18,
+    "fields": {
+      "iaf_eac_code": 1,
+      "name": "Post-harvest crop activities",
+      "description": "",
+      "active": true,
+      "created_at": "2025-05-07 09:47:40",
+      "updated_at": "2025-05-07 09:47:40"
+    }
+  }
+]

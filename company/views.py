@@ -301,7 +301,7 @@ def dashboard(request):
     
     # Check first surveillance audits
     first_audits = NaredneProvere.objects.filter(
-        first_surv_due__date__range=(start_of_week, end_of_week)
+        first_surv_due__range=(start_of_week, end_of_week)
     ).select_related('company')
     
     for audit in first_audits:
@@ -315,7 +315,7 @@ def dashboard(request):
     
     # Check second surveillance audits
     second_audits = NaredneProvere.objects.filter(
-        second_surv_due__date__range=(start_of_week, end_of_week)
+        second_surv_due__range=(start_of_week, end_of_week)
     ).select_related('company')
     
     for audit in second_audits:
@@ -329,7 +329,7 @@ def dashboard(request):
     
     # Check recertification audits
     recert_audits = NaredneProvere.objects.filter(
-        trinial_audit_due__date__range=(start_of_week, end_of_week)
+        trinial_audit_due__range=(start_of_week, end_of_week)
     ).select_related('company')
     
     for audit in recert_audits:
