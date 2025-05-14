@@ -76,6 +76,9 @@ class Company(models.Model):
     visits_per_year = models.DecimalField(_("Poseta godišnje"), max_digits=18, decimal_places=0, blank=True, null=True)
     audit_days_each = models.DecimalField(_("Dana po auditu"), max_digits=18, decimal_places=1, blank=True, null=True)
 
+    # Registration Area
+    oblast_registracije = models.TextField(_("Oblast registracije"), blank=True, null=True, help_text=_("Unesite oblast registracije kompanije"))
+    
     # Notes
     notes = models.TextField(_("Napomene"), blank=True, null=True)
     

@@ -6,6 +6,7 @@ registruju odmah nakon što se aplikacija inicijalizira.
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+import nested_admin
 
 # Import svih modela
 from .company_models import Company, KontaktOsoba, OstalaLokacija
@@ -50,6 +51,10 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
         ('Kontakt informacije', {
             'fields': ['phone', 'email', 'website']
+        }),
+        ('Oblast registracije', {
+            'fields': ['oblast_registracije'],
+            'classes': ['collapse']
         }),
         ('Dodatne informacije', {
             'fields': ['notes', 'is_active']
@@ -157,6 +162,37 @@ class AppointmentAdmin(admin.ModelAdmin):
         })
     ]
 
+# Inline klase za model Auditor sa nested_admin podrškom
+class AuditorStandardIAFEACCodeInline(nested_admin.NestedTabularInline):
+    model = AuditorStandardIAFEACCode
+    extra = 1
+    fields = ['iaf_eac_code', 'is_primary', 'notes']
+
+class AuditorStandardInline(nested_admin.NestedStackedInline):
+    model = AuditorStandard
+    extra = 1
+    fields = ['standard', 'datum_potpisivanja', 'napomena']
+    inlines = [AuditorStandardIAFEACCodeInline]
+
+# Admin klasa za Auditor model
+class AuditorAdmin(nested_admin.NestedModelAdmin):
+    list_display = ['ime_prezime', 'email', 'telefon', 'kategorija']
+    list_filter = ['kategorija']
+    search_fields = ['ime_prezime', 'email']
+    fieldsets = [
+        ('Osnovne informacije', {
+            'fields': ['ime_prezime', 'email', 'telefon', 'kategorija']
+        }),
+    ]
+    inlines = [AuditorStandardInline]
+
+# Admin klasa za AuditorStandard model
+class AuditorStandardAdmin(nested_admin.NestedModelAdmin):
+    list_display = ['auditor', 'standard', 'datum_potpisivanja']
+    list_filter = ['standard', 'auditor']
+    search_fields = ['auditor__ime_prezime', 'standard__name']
+    inlines = [AuditorStandardIAFEACCodeInline]
+
 # Eksplicitna registracija svih modela
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(KontaktOsoba, KontaktOsobaAdmin)
@@ -167,8 +203,8 @@ admin.site.register(CompanyIAFEACCode)
 admin.site.register(StandardDefinition, StandardDefinitionAdmin)
 admin.site.register(StandardIAFScopeReference)
 admin.site.register(CompanyStandard)
-admin.site.register(Auditor)
-admin.site.register(AuditorStandard)
+admin.site.register(Auditor, AuditorAdmin)
+admin.site.register(AuditorStandard, AuditorStandardAdmin)
 admin.site.register(AuditorStandardIAFEACCode)
 admin.site.register(NaredneProvere)
 admin.site.register(CalendarEvent)

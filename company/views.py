@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 import json
-from .models import Company, NaredneProvere, Appointment, KontaktOsoba, Standard, OstalaLokacija
+from .models import Company, NaredneProvere, Appointment, KontaktOsoba, OstalaLokacija
+from .standard_models import StandardDefinition, CompanyStandard
 from datetime import datetime, timedelta
 from django.db.models import Count
 import random
@@ -46,7 +47,7 @@ class CompanyDetailView(DetailView):
         
         # Get related data
         context['contact_persons'] = company.kontakt_osobe.all().order_by('-is_primary', 'ime_prezime')
-        context['standards'] = company.standards.all()
+        context['standards'] = company.company_standards.all()  # Ispravka: standards -> company_standards
         context['locations'] = company.ostale_lokacije.all()
         context['appointments'] = company.appointments.all().order_by('-start_datetime')[:5]
         
@@ -282,7 +283,7 @@ def dashboard(request):
     ).count()
     
     # Count active certificates (standards associated with active companies)
-    active_certificates = Standard.objects.filter(
+    active_certificates = CompanyStandard.objects.filter(
         company__certificate_status=Company.STATUS_ACTIVE
     ).count()
     
@@ -345,12 +346,12 @@ def dashboard(request):
     this_week_audits.sort(key=lambda x: x['date'])
     
     # Get standards distribution
-    standards_distribution = Company.objects.values('standards__standard').annotate(
-        total=Count('standards')
+    standards_distribution = CompanyStandard.objects.values('standard_definition__standard').annotate(
+        total=Count('standard_definition')
     ).order_by('-total')
     
     # Prepare chart data
-    standards_labels = [item['standards__standard'] for item in standards_distribution]
+    standards_labels = [item['standard_definition__standard'] for item in standards_distribution]
     standards_data = [item['total'] for item in standards_distribution]
     
     # Get all companies for the list
@@ -377,12 +378,12 @@ def dashboard(request):
     audit_data = [status['total'] for status in audit_status]
     
     # Prepare standards distribution for pie chart
-    standards_distribution = Company.objects.values('standards__standard').annotate(
-        total=Count('standards')
+    standards_distribution = CompanyStandard.objects.values('standard_definition__standard').annotate(
+        total=Count('standard_definition')
     ).order_by('-total')
     
     # Handle null standards and format for Chart.js
-    standards_labels = [item['standards__standard'] or 'No Standard' for item in standards_distribution]
+    standards_labels = [item['standard_definition__standard'] or 'No Standard' for item in standards_distribution]
     standards_data = [item['total'] for item in standards_distribution]
     
     # Generate random colors for each standard
