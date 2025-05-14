@@ -1,6 +1,7 @@
 from django import forms
-from .models import NaredneProvere, Company
+from .models import NaredneProvere, Company, IAFEACCode, CompanyIAFEACCode
 from datetime import datetime, timedelta
+import json
 
 class AuditForm(forms.ModelForm):
     class Meta:
@@ -53,3 +54,112 @@ class AuditForm(forms.ModelForm):
             cleaned_data['trinial_audit_due'] = first_surv_due.replace(year=first_surv_due.year + 2)
             
         return cleaned_data
+
+
+class CompanyForm(forms.ModelForm):
+    """Forma za kreiranje i ažuriranje kompanija sa podrškom za IAF/EAC kodove i standarde"""
+    
+    iaf_eac_codes_data = forms.CharField(widget=forms.HiddenInput(), required=False)
+    standards_data = forms.CharField(widget=forms.HiddenInput(), required=False)
+    
+    class Meta:
+        model = Company
+        fields = [
+            # Osnovne informacije
+            'name', 'pib', 'mb', 'industry', 'number_of_employees',
+            'certificate_status', 'certificate_number',
+            
+            # Informacije o sertifikatu
+            'suspension_until_date', 'audit_days', 'initial_audit_conducted_date',
+            'visits_per_year', 'audit_days_each', 'oblast_registracije',
+            
+            # Adresa
+            'street', 'street_number', 'city', 'postal_code',
+            
+            # Kontakt informacije
+            'phone', 'email', 'website',
+            
+            # Dodatne informacije
+            'notes'
+        ]
+        widgets = {
+            # Datumska polja
+            'initial_audit_conducted_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'suspension_until_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            
+            # Numerička polja
+            'audit_days': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'visits_per_year': forms.NumberInput(attrs={'class': 'form-control'}),
+            'audit_days_each': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'number_of_employees': forms.NumberInput(attrs={'class': 'form-control'}),
+            
+            # Tekstualna polja
+            'oblast_registracije': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        if commit:
+            instance.save()
+            
+            # Procesiranje IAF/EAC kodova ako su prosleđeni
+            iaf_eac_data = self.cleaned_data.get('iaf_eac_codes_data')
+            if iaf_eac_data:
+                try:
+                    iaf_eac_codes = json.loads(iaf_eac_data)
+                    
+                    # Ukloni sve postojeće kodove ako postoje novi
+                    # Ovo nije najbolji pristup za performanse, ali osigurava tačnost
+                    if iaf_eac_codes:
+                        CompanyIAFEACCode.objects.filter(company=instance).delete()
+                    
+                    # Dodaj nove kodove
+                    for code_data in iaf_eac_codes:
+                        code_id = code_data.get('id')
+                        is_primary = code_data.get('is_primary', False)
+                        notes = code_data.get('notes', '')
+                        
+                        if code_id:
+                            CompanyIAFEACCode.objects.create(
+                                company=instance,
+                                iaf_eac_code_id=code_id,
+                                is_primary=is_primary,
+                                notes=notes
+                            )
+                except (json.JSONDecodeError, Exception) as e:
+                    # Logiraj grešku, ali nemoj prekinuti čuvanje
+                    print(f"Error processing IAF/EAC codes: {e}")
+            
+            # Procesiranje standarda ako su prosleđeni
+            standards_data = self.cleaned_data.get('standards_data')
+            if standards_data:
+                try:
+                    standards = json.loads(standards_data)
+                    
+                    # Ukloni sve postojeće standarde ako postoje novi
+                    if standards:
+                        from .standard_models import CompanyStandard
+                        CompanyStandard.objects.filter(company=instance).delete()
+                    
+                    # Dodaj nove standarde
+                    for standard_data in standards:
+                        standard_id = standard_data.get('id')
+                        issue_date = standard_data.get('issue_date', '')
+                        expiry_date = standard_data.get('expiry_date', '')
+                        notes = standard_data.get('notes', '')
+                        
+                        if standard_id:
+                            from .standard_models import CompanyStandard, StandardDefinition
+                            CompanyStandard.objects.create(
+                                company=instance,
+                                standard_definition_id=standard_id,
+                                issue_date=issue_date or None,
+                                expiry_date=expiry_date or None,
+                                notes=notes
+                            )
+                except (json.JSONDecodeError, Exception) as e:
+                    # Logiraj grešku, ali nemoj prekinuti čuvanje
+                    print(f"Error processing standards: {e}")
+        
+        return instance

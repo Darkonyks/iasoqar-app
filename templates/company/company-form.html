@@ -23,169 +23,531 @@
 
   <div class="content">
     <div class="container-fluid">
+      <div class="card shadow">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">Unos podataka</h6>
+          <button type="button" class="btn btn-info btn-sm" id="showRequiredFieldsBtn">
+            <i class="fas fa-info-circle"></i> Obavezna polja
+          </button>
+        </div>
+        <div class="card-body">
+          
+          <!-- Modal za prikaz obaveznih polja -->
+          <div class="modal fade" id="requiredFieldsModal" tabindex="-1" role="dialog" aria-labelledby="requiredFieldsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="requiredFieldsModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Obavezna polja
+                  </h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Sledeća polja su obavezna za unos:</p>
+                  <div id="requiredFieldsList" class="list-group mb-3">
+                    <!-- JavaScript će dinamički popuniti ovu listu -->
+                  </div>
+                  
+                  <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Kliknite na neko od polja iz liste da biste prešli na odgovarajući tab i uneli podatak.
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
       <div class="card">
         <div class="card-body">
           <form method="post">
             {% csrf_token %}
             
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="{{ form.name.id_for_label }}">Naziv kompanije *</label>
-                  {{ form.name.errors }}
-                  <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" 
-                         class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
-                         value="{{ form.name.value|default:'' }}" required>
+            <!-- Tabs navigation -->
+            <ul class="nav nav-tabs" id="companyFormTabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">
+                  <i class="fas fa-info-circle"></i> Osnovne informacije
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="certificate-tab" data-toggle="tab" href="#certificate" role="tab" aria-controls="certificate" aria-selected="false">
+                  <i class="fas fa-certificate"></i> Sertifikat
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="standards-tab" data-toggle="tab" href="#standards" role="tab" aria-controls="standards" aria-selected="false">
+                  <i class="fas fa-award"></i> Standardi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="address-tab" data-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="false">
+                  <i class="fas fa-map-marker-alt"></i> Adresa i kontakt
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="iaf-tab" data-toggle="tab" href="#iaf" role="tab" aria-controls="iaf" aria-selected="false">
+                  <i class="fas fa-tags"></i> IAF/EAC kodovi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">
+                  <i class="fas fa-sticky-note"></i> Napomene
+                </a>
+              </li>
+            </ul>
+            
+            <!-- Tab content -->
+            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="companyFormTabsContent">
+              
+              <!-- Tab: Osnovne informacije -->
+              <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.name.id_for_label }}">Naziv kompanije *</label>
+                      {{ form.name.errors }}
+                      <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" 
+                             class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                             value="{{ form.name.value|default:'' }}" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.pib.id_for_label }}">PIB *</label>
+                      {{ form.pib.errors }}
+                      <input type="text" name="{{ form.pib.name }}" id="{{ form.pib.id_for_label }}" 
+                             class="form-control {% if form.pib.errors %}is-invalid{% endif %}" 
+                             value="{{ form.pib.value|default:'' }}" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.mb.id_for_label }}">Matični broj *</label>
+                      {{ form.mb.errors }}
+                      <input type="text" name="{{ form.mb.name }}" id="{{ form.mb.id_for_label }}" 
+                             class="form-control {% if form.mb.errors %}is-invalid{% endif %}" 
+                             value="{{ form.mb.value|default:'' }}" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.industry.id_for_label }}">Industrija *</label>
+                      {{ form.industry.errors }}
+                      <select name="{{ form.industry.name }}" id="{{ form.industry.id_for_label }}" 
+                              class="form-control {% if form.industry.errors %}is-invalid{% endif %}" required>
+                        <option value="">Izaberite industriju</option>
+                        {% for value, text in form.fields.industry.choices %}
+                          <option value="{{ value }}" {% if form.industry.value == value %}selected{% endif %}>
+                            {{ text }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.number_of_employees.id_for_label }}">Broj zaposlenih</label>
+                      {{ form.number_of_employees.errors }}
+                      <input type="number" name="{{ form.number_of_employees.name }}" id="{{ form.number_of_employees.id_for_label }}" 
+                             class="form-control {% if form.number_of_employees.errors %}is-invalid{% endif %}" 
+                             value="{{ form.number_of_employees.value|default:'' }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.certificate_status.id_for_label }}">Status sertifikata *</label>
+                      {{ form.certificate_status.errors }}
+                      <select name="{{ form.certificate_status.name }}" id="{{ form.certificate_status.id_for_label }}" 
+                              class="form-control {% if form.certificate_status.errors %}is-invalid{% endif %}" required>
+                        <option value="">Izaberite status</option>
+                        {% for value, text in form.fields.certificate_status.choices %}
+                          <option value="{{ value }}" {% if form.certificate_status.value == value %}selected{% endif %}>
+                            {{ text }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="{{ form.pib.id_for_label }}">PIB *</label>
-                  {{ form.pib.errors }}
-                  <input type="text" name="{{ form.pib.name }}" id="{{ form.pib.id_for_label }}" 
-                         class="form-control {% if form.pib.errors %}is-invalid{% endif %}" 
-                         value="{{ form.pib.value|default:'' }}" required>
+              <!-- Tab: Sertifikat -->
+              <div class="tab-pane fade" id="certificate" role="tabpanel" aria-labelledby="certificate-tab">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.certificate_number.id_for_label }}">Broj sertifikata</label>
+                      {{ form.certificate_number.errors }}
+                      <input type="text" name="{{ form.certificate_number.name }}" id="{{ form.certificate_number.id_for_label }}" 
+                             class="form-control {% if form.certificate_number.errors %}is-invalid{% endif %}" 
+                             value="{{ form.certificate_number.value|default:'' }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.initial_audit_conducted_date.id_for_label }}">Datum inicijalnog audita</label>
+                      {{ form.initial_audit_conducted_date.errors }}
+                      <input type="date" name="{{ form.initial_audit_conducted_date.name }}" id="{{ form.initial_audit_conducted_date.id_for_label }}" 
+                             class="form-control {% if form.initial_audit_conducted_date.errors %}is-invalid{% endif %}" 
+                             value="{{ form.initial_audit_conducted_date.value|date:'Y-m-d'|default:'' }}">
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.suspension_until_date.id_for_label }}">Suspenzija do datuma</label>
+                      {{ form.suspension_until_date.errors }}
+                      <input type="date" name="{{ form.suspension_until_date.name }}" id="{{ form.suspension_until_date.id_for_label }}" 
+                             class="form-control {% if form.suspension_until_date.errors %}is-invalid{% endif %}" 
+                             value="{{ form.suspension_until_date.value|date:'Y-m-d'|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.audit_days.id_for_label }}">Broj dana audita</label>
+                      {{ form.audit_days.errors }}
+                      <input type="number" step="0.1" name="{{ form.audit_days.name }}" id="{{ form.audit_days.id_for_label }}" 
+                             class="form-control {% if form.audit_days.errors %}is-invalid{% endif %}" 
+                             value="{{ form.audit_days.value|default:'' }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.visits_per_year.id_for_label }}">Poseta godišnje</label>
+                      {{ form.visits_per_year.errors }}
+                      <input type="number" name="{{ form.visits_per_year.name }}" id="{{ form.visits_per_year.id_for_label }}" 
+                             class="form-control {% if form.visits_per_year.errors %}is-invalid{% endif %}" 
+                             value="{{ form.visits_per_year.value|default:'' }}">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.audit_days_each.id_for_label }}">Dana po auditu</label>
+                      {{ form.audit_days_each.errors }}
+                      <input type="number" step="0.1" name="{{ form.audit_days_each.name }}" id="{{ form.audit_days_each.id_for_label }}" 
+                             class="form-control {% if form.audit_days_each.errors %}is-invalid{% endif %}" 
+                             value="{{ form.audit_days_each.value|default:'' }}">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
+                      {{ form.oblast_registracije.errors }}
+                      <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
+                           class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
+                           rows="3">{{ form.oblast_registracije.value|default:'' }}</textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="{{ form.mb.id_for_label }}">Matični broj *</label>
-                  {{ form.mb.errors }}
-                  <input type="text" name="{{ form.mb.name }}" id="{{ form.mb.id_for_label }}" 
-                         class="form-control {% if form.mb.errors %}is-invalid{% endif %}" 
-                         value="{{ form.mb.value|default:'' }}" required>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="{{ form.industry.id_for_label }}">Industrija *</label>
-                  {{ form.industry.errors }}
-                  <select name="{{ form.industry.name }}" id="{{ form.industry.id_for_label }}" 
-                          class="form-control {% if form.industry.errors %}is-invalid{% endif %}" required>
-                    <option value="">Izaberite industriju</option>
-                    {% for value, text in form.fields.industry.choices %}
-                      <option value="{{ value }}" {% if form.industry.value == value %}selected{% endif %}>
-                        {{ text }}
-                      </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-              
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="{{ form.certificate_status.id_for_label }}">Status sertifikata *</label>
-                  {{ form.certificate_status.errors }}
-                  <select name="{{ form.certificate_status.name }}" id="{{ form.certificate_status.id_for_label }}" 
-                          class="form-control {% if form.certificate_status.errors %}is-invalid{% endif %}" required>
-                    <option value="">Izaberite status</option>
-                    {% for value, text in form.fields.certificate_status.choices %}
-                      <option value="{{ value }}" {% if form.certificate_status.value == value %}selected{% endif %}>
-                        {{ text }}
-                      </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <h4 class="mt-4 mb-3">Adresa</h4>
-            
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="{{ form.street.id_for_label }}">Ulica *</label>
-                  {{ form.street.errors }}
-                  <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
-                         class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
-                         value="{{ form.street.value|default:'' }}" required>
-                </div>
-              </div>
-              
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label for="{{ form.street_number.id_for_label }}">Broj *</label>
-                  {{ form.street_number.errors }}
-                  <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
-                         class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
-                         value="{{ form.street_number.value|default:'' }}" required>
-                </div>
-              </div>
-              
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="{{ form.city.id_for_label }}">Grad *</label>
-                  {{ form.city.errors }}
-                  <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
-                          class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
-                    <option value="">Izaberite grad</option>
-                    {% for value, text in form.fields.city.choices %}
-                      <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
-                        {{ text }}
-                      </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="{{ form.postal_code.id_for_label }}">Poštanski broj</label>
-                  {{ form.postal_code.errors }}
-                  <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
-                         class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
-                         value="{{ form.postal_code.value|default:'' }}">
-                </div>
-              </div>
-            </div>
-            
-            <h4 class="mt-4 mb-3">Kontakt informacije</h4>
-            
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="{{ form.phone.id_for_label }}">Telefon</label>
-                  {{ form.phone.errors }}
-                  <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
-                         class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
-                         value="{{ form.phone.value|default:'' }}">
+              <!-- Tab: Standardi -->
+              <div class="tab-pane fade" id="standards" role="tabpanel" aria-labelledby="standards-tab">
+                <h5 class="mb-3">Standardi</h5>
+                <div class="card">
+                  <div class="card-body">
+                    {% if object and object.company_standards.all %}
+                      <div class="table-responsive mb-4">
+                        <table class="table table-sm table-striped table-hover">
+                          <thead class="thead-light">
+                            <tr>
+                              <th width="30%">Standard</th>
+                              <th width="15%">Datum izdavanja</th>
+                              <th width="15%">Datum isteka</th>
+                              <th width="25%">Napomena</th>
+                              <th width="15%">Akcije</th>
+                            </tr>
+                          </thead>
+                          <tbody id="standards-list">
+                            {% for standard in object.company_standards.all %}
+                              <tr id="standard-{{ standard.id }}">
+                                <td><strong>{{ standard.standard_definition.get_standard_display }}</strong></td>
+                                <td>{{ standard.issue_date|date:"d.m.Y."|default:"-" }}</td>
+                                <td>{{ standard.expiry_date|date:"d.m.Y."|default:"-" }}</td>
+                                <td>{{ standard.notes|default:"-" }}</td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="{{ standard.id }}">
+                                      <i class="fas fa-trash"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      <div class="alert alert-info" id="no-standards-message">
+                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
+                      </div>
+                    {% endif %}
+
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="standard_definition_select">Izaberite standard</label>
+                          <select id="standard_definition_select" class="form-control">
+                            <option value="">-- Izaberite standard --</option>
+                            {% for standard in all_standard_definitions %}
+                              <option value="{{ standard.id }}">
+                                {{ standard.get_standard_display }}
+                              </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="standard_issue_date">Datum izdavanja</label>
+                          <input type="date" id="standard_issue_date" class="form-control" placeholder="Datum izdavanja">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="standard_expiry_date">Datum isteka</label>
+                          <input type="date" id="standard_expiry_date" class="form-control" placeholder="Datum isteka">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="standard_notes">Napomena</label>
+                          <input type="text" id="standard_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="button" id="add-standard" class="btn btn-info">
+                        <i class="fas fa-plus"></i> Dodaj standard
+                      </button>
+                    </div>
+                    
+                    <!-- Skriveno polje za standarde -->
+                    <input type="hidden" name="standards_data" id="standards_data" value="">
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="{{ form.email.id_for_label }}">Email</label>
-                  {{ form.email.errors }}
-                  <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
-                         class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
-                         value="{{ form.email.value|default:'' }}">
+              <!-- Tab: Adresa i kontakt -->
+              <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                <h5 class="mb-3">Adresa</h5>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="{{ form.street.id_for_label }}">Ulica *</label>
+                      {{ form.street.errors }}
+                      <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
+                             class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
+                             value="{{ form.street.value|default:'' }}" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="{{ form.street_number.id_for_label }}">Broj *</label>
+                      {{ form.street_number.errors }}
+                      <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
+                             class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
+                             value="{{ form.street_number.value|default:'' }}" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.city.id_for_label }}">Grad *</label>
+                      {{ form.city.errors }}
+                      <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                              class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
+                        <option value="">Izaberite grad</option>
+                        {% for value, text in form.fields.city.choices %}
+                          <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
+                            {{ text }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.postal_code.id_for_label }}">Poštanski broj</label>
+                      {{ form.postal_code.errors }}
+                      <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
+                             class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
+                             value="{{ form.postal_code.value|default:'' }}">
+                    </div>
+                  </div>
+                </div>
+                
+                <h5 class="mt-4 mb-3">Kontakt informacije</h5>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.phone.id_for_label }}">Telefon</label>
+                      {{ form.phone.errors }}
+                      <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                             class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                             value="{{ form.phone.value|default:'' }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.email.id_for_label }}">Email</label>
+                      {{ form.email.errors }}
+                      <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                             class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                             value="{{ form.email.value|default:'' }}">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.website.id_for_label }}">Website</label>
+                      {{ form.website.errors }}
+                      <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
+                             class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
+                             value="{{ form.website.value|default:'' }}" placeholder="https://">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+            <!-- Tab: IAF/EAC Kodovi -->
+              <div class="tab-pane fade" id="iaf" role="tabpanel" aria-labelledby="iaf-tab">
+                <h5 class="mb-3">IAF/EAC Kodovi</h5>
+                <div class="card">
+                  <div class="card-body">
+                    {% if object and object.iaf_eac_codes.all %}
+                      <div class="table-responsive mb-4">
+                        <table class="table table-sm table-striped table-hover">
+                          <thead class="thead-light">
+                            <tr>
+                              <th width="15%">IAF/EAC Kod</th>
+                              <th>Opis</th>
+                              <th width="15%">Status</th>
+                              <th width="20%">Napomena</th>
+                              <th width="15%">Akcije</th>
+                            </tr>
+                          </thead>
+                          <tbody id="iaf-eac-codes-list">
+                            {% for code_relation in object.iaf_eac_codes.all %}
+                              <tr id="iaf-eac-code-{{ code_relation.id }}">
+                                <td><strong>{{ code_relation.iaf_eac_code.iaf_code }}</strong></td>
+                                <td>{{ code_relation.iaf_eac_code.description }}</td>
+                                <td>
+                                  {% if code_relation.is_primary %}
+                                    <span class="badge badge-primary">Primarni kod</span>
+                                  {% else %}
+                                    <span class="badge badge-secondary">Sekundarni kod</span>
+                                  {% endif %}
+                                </td>
+                                <td>{{ code_relation.notes|default:"-" }}</td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    {% if not code_relation.is_primary %}
+                                      <button type="button" class="btn btn-outline-primary btn-make-primary" data-id="{{ code_relation.id }}">
+                                        <i class="fas fa-star"></i>
+                                      </button>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-outline-danger btn-remove-iaf-code" data-id="{{ code_relation.id }}">
+                                      <i class="fas fa-trash"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      <div class="alert alert-info" id="no-iaf-codes-message">
+                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
+                      </div>
+                    {% endif %}
+
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label for="iaf_eac_code_select">Izaberite IAF/EAC kod</label>
+                          <select id="iaf_eac_code_select" class="form-control">
+                            <option value="">-- Izaberite kod --</option>
+                            {% for code in all_iaf_eac_codes %}
+                              <option value="{{ code.id }}" data-description="{{ code.description }}">
+                                {{ code.iaf_code }} - {{ code.description|truncatechars:50 }}
+                              </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label for="iaf_eac_code_notes">Napomena</label>
+                          <input type="text" id="iaf_eac_code_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="iaf_eac_is_primary" class="d-block">Primarni</label>
+                          <div class="form-check">
+                            <input type="checkbox" id="iaf_eac_is_primary" class="form-check-input">
+                            <label class="form-check-label" for="iaf_eac_is_primary">Postavi kao primarni</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="button" id="add-iaf-eac-code" class="btn btn-info">
+                        <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                      </button>
+                    </div>
+                    
+                    <!-- Skriveno polje za IAF/EAC kodove -->
+                    <input type="hidden" name="iaf_eac_codes_data" id="iaf_eac_codes_data" value="">
+                  </div>
                 </div>
               </div>
               
-              <div class="col-md-4">
+              <!-- Tab: Napomene -->
+              <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
                 <div class="form-group">
-                  <label for="{{ form.website.id_for_label }}">Website</label>
-                  {{ form.website.errors }}
-                  <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
-                         class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
-                         value="{{ form.website.value|default:'' }}" placeholder="https://">
+                  <label for="{{ form.notes.id_for_label }}">Napomene</label>
+                  {{ form.notes.errors }}
+                  <textarea name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" 
+                            class="form-control {% if form.notes.errors %}is-invalid{% endif %}" 
+                            rows="8">{{ form.notes.value|default:'' }}</textarea>
                 </div>
               </div>
-            </div>
-            
-            <div class="form-group mt-3">
-              <label for="{{ form.notes.id_for_label }}">Napomene</label>
-              {{ form.notes.errors }}
-              <textarea name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" 
-                        class="form-control {% if form.notes.errors %}is-invalid{% endif %}" 
-                        rows="4">{{ form.notes.value|default:'' }}</textarea>
             </div>
             
             <div class="form-group mt-4">
@@ -204,10 +566,38 @@
 </div>
 {% endblock %}
 
-{% block extra_scripts %}
+{% block script %}
 <script>
   $(function() {
-    // Add form validation if needed
+    // Aktiviraj tabove
+    $('#companyFormTabs a').on('click', function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+      $('#companyFormTabs a').on('shown.bs.tab', function(e) {
+        var activeTab = $(e.target).attr('href');
+        localStorage.setItem('companyFormActiveTab', activeTab);
+      });
+      
+      // Postavi hash u URL za bookmarkovanje
+      var hash = window.location.hash;
+      if (hash && $(hash).length) {
+        $('#companyFormTabs a[href="' + hash + '"]').tab('show');
+      }
+      
+      // Ažuriraj hash pri promeni taba
+      $('#companyFormTabs a').on('shown.bs.tab', function(e) {
+        if (history.pushState) {
+          history.pushState(null, null, $(e.target).attr('href'));
+        } else {
+          location.hash = $(e.target).attr('href');
+        }
+      });
+    }
+    
+    // Inicijalizacija tabova
+    initTabs();
+    
+    // Validacija forme
     $('form').on('submit', function() {
       var requiredFields = $(this).find('[required]');
       var valid = true;
@@ -220,8 +610,550 @@
           $(this).removeClass('is-invalid');
         }
       });
+
+      // Pripremi IAF/EAC kodove podatke pre slanja forme
+      prepareIAFEACData();
       
       return valid;
+    });
+
+    // Inicijalizacija datepicker-a za datumska polja
+    $('.datepicker').datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true,
+      todayHighlight: true,
+      language: 'sr-latin'
+    });
+
+    // Funkcionalnosti za IAF/EAC kodove
+    var iafEacCodesData = [];
+
+    // Pripremi postojeće kodove (ako postoje)
+    {% if object and object.iaf_eac_codes.all %}
+      {% for code_relation in object.iaf_eac_codes.all %}
+        iafEacCodesData.push({
+          id: {{ code_relation.iaf_eac_code.id }},
+          code: '{{ code_relation.iaf_eac_code.iaf_code }}',
+          description: '{{ code_relation.iaf_eac_code.description|escapejs }}',
+          is_primary: {% if code_relation.is_primary %}true{% else %}false{% endif %},
+          notes: '{{ code_relation.notes|default:""|escapejs }}',
+          relation_id: {{ code_relation.id }}
+        });
+      {% endfor %}
+    {% endif %}
+
+    // Funkcija koja priprema IAF/EAC podatke za slanje
+    function prepareIAFEACData() {
+      $('#iaf_eac_codes_data').val(JSON.stringify(iafEacCodesData));
+    }
+
+    // Inicijalno ažuriranje prikaza ako već postoje kodovi
+    if (iafEacCodesData.length > 0) {
+      updateIAFEACCodesDisplay();
+    }
+    
+    // Dodavanje novog IAF/EAC koda
+    $('#add-iaf-eac-code').on('click', function() {
+      var codeSelect = $('#iaf_eac_code_select');
+      var codeId = codeSelect.val();
+      
+      if (!codeId) {
+        alert('Molimo izaberite IAF/EAC kod');
+        return;
+      }
+      
+      var codeText = codeSelect.find('option:selected').text();
+      var codeParts = codeText.split(' - ');
+      var codeValue = codeParts[0] || '';
+      var codeDescription = codeSelect.find('option:selected').data('description') || '';
+      var notes = $('#iaf_eac_code_notes').val() || '';
+      var isPrimary = $('#iaf_eac_is_primary').prop('checked');
+      
+      // Proveri da li kod već postoji
+      var codeExists = false;
+      for (var i = 0; i < iafEacCodesData.length; i++) {
+        if (iafEacCodesData[i].id == codeId) {
+          codeExists = true;
+          break;
+        }
+      }
+      
+      if (codeExists) {
+        alert('Ovaj IAF/EAC kod je već dodeljen kompaniji');
+        return;
+      }
+      
+      // Ako je izabran kao primarni ili ako je prvi kod, resetuj ostale primarne kodove
+      if (isPrimary || iafEacCodesData.length === 0) {
+        for (var j = 0; j < iafEacCodesData.length; j++) {
+          iafEacCodesData[j].is_primary = false;
+        }
+        isPrimary = true;
+      }
+      
+      // Dodaj novi kod u niz
+      var newCode = {
+        id: codeId,
+        code: codeValue,
+        description: codeDescription,
+        is_primary: isPrimary,
+        notes: notes,
+        is_new: true
+      };
+      
+      iafEacCodesData.push(newCode);
+      
+      // Ažuriraj prikaz
+      updateIAFEACCodesDisplay();
+      
+      // Resetuj polja za unos
+      codeSelect.val('');
+      $('#iaf_eac_code_notes').val('');
+      $('#iaf_eac_is_primary').prop('checked', false);
+    });
+    
+    // Postavljanje koda kao primarnog
+    $(document).on('click', '.btn-make-primary', function() {
+      var codeId = $(this).data('id');
+      var codeIndex = -1;
+      
+      // Resetuj sve postojeće primarne kodove
+      for (var i = 0; i < iafEacCodesData.length; i++) {
+        if (iafEacCodesData[i].relation_id == codeId) {
+          codeIndex = i;
+        }
+        iafEacCodesData[i].is_primary = false;
+      }
+      
+      // Postavi izabrani kod kao primarni
+      if (codeIndex >= 0) {
+        iafEacCodesData[codeIndex].is_primary = true;
+      }
+      
+      // Ažuriraj prikaz
+      updateIAFEACCodesDisplay();
+    });
+    
+    // Uklanjanje koda
+    $(document).on('click', '.btn-remove-iaf-code', function() {
+      var codeId = $(this).data('id');
+      var wasPrimary = false;
+      var newIafEacCodesData = [];
+      
+      // Pronađi i ukloni kod iz niza
+      for (var i = 0; i < iafEacCodesData.length; i++) {
+        if (iafEacCodesData[i].relation_id == codeId) {
+          wasPrimary = iafEacCodesData[i].is_primary;
+        } else {
+          newIafEacCodesData.push(iafEacCodesData[i]);
+        }
+      }
+      
+      // Ažuriraj glavni niz
+      iafEacCodesData = newIafEacCodesData;
+      
+      // Ako je uklonjeni kod bio primarni, postavi prvi preostali kod kao primarni
+      if (wasPrimary && iafEacCodesData.length > 0) {
+        iafEacCodesData[0].is_primary = true;
+      }
+      
+      // Ažuriraj prikaz
+      updateIAFEACCodesDisplay();
+    });
+    
+    // Funkcija za ažuriranje prikaza IAF/EAC kodova
+    function updateIAFEACCodesDisplay() {
+      var tableContainer = $('#iaf-eac-codes-list');
+      var noCodesMessage = $('#no-iaf-codes-message');
+      
+      if (iafEacCodesData.length === 0) {
+        tableContainer.html('');
+        if (noCodesMessage.length) {
+          noCodesMessage.show();
+        }
+        return;
+      }
+      
+      if (noCodesMessage.length) {
+        noCodesMessage.hide();
+      }
+      
+      var html = '';
+      
+      for (var i = 0; i < iafEacCodesData.length; i++) {
+        var item = iafEacCodesData[i];
+        var rowId = item.relation_id ? 'iaf-eac-code-' + item.relation_id : 'new-iaf-eac-code-' + item.id;
+        var primaryBadge = item.is_primary ? 
+          '<span class="badge badge-primary">Primarni kod</span>' : 
+          '<span class="badge badge-secondary">Sekundarni kod</span>';
+        
+        var actionButtons = '<div class="btn-group btn-group-sm">';
+        
+        if (!item.is_primary) {
+          var dataId = item.relation_id || 'new-' + item.id;
+          actionButtons += '<button type="button" class="btn btn-outline-primary btn-make-primary" data-id="' + dataId + '">' +
+                          '<i class="fas fa-star"></i></button>';
+        }
+        
+        actionButtons += '<button type="button" class="btn btn-outline-danger btn-remove-iaf-code" data-id="' + 
+                          (item.relation_id || 'new-' + item.id) + '">' +
+                          '<i class="fas fa-trash"></i></button>';
+        actionButtons += '</div>';
+        
+        html += '<tr id="' + rowId + '">' +
+                '<td><strong>' + (item.code || '') + '</strong></td>' +
+                '<td>' + (item.description || '') + '</td>' +
+                '<td>' + primaryBadge + '</td>' +
+                '<td>' + (item.notes || '-') + '</td>' +
+                '<td>' + actionButtons + '</td>' +
+                '</tr>';
+      }
+      
+      tableContainer.html(html);
+    }
+    
+    // Funkcionalnosti za standarde
+    var standardsData = [];
+    
+    // Pripremi postojeće standarde (ako postoje)
+    {% if object and object.company_standards.all %}
+      {% for standard in object.company_standards.all %}
+        standardsData.push({
+          id: {{ standard.standard_definition.id }},
+          name: '{{ standard.standard_definition.get_standard_display|escapejs }}',
+          issue_date: '{{ standard.issue_date|date:"Y-m-d"|default:"" }}',
+          expiry_date: '{{ standard.expiry_date|date:"Y-m-d"|default:"" }}',
+          notes: '{{ standard.notes|default:""|escapejs }}',
+          standard_id: {{ standard.id }}
+        });
+      {% endfor %}
+    {% endif %}
+    
+    // Funkcija koja priprema podatke o standardima za slanje
+    function prepareStandardsData() {
+      $('#standards_data').val(JSON.stringify(standardsData));
+    }
+    
+    // Funkcija za prikaz standarda u tabeli
+    function renderStandardsTable() {
+      var tableContainer = $('#standards-table-body');
+      var noStandardsMessage = $('#no-standards-message');
+      
+      if (standardsData.length === 0) {
+        tableContainer.html('');
+        if (noStandardsMessage.length) {
+          noStandardsMessage.show();
+        }
+        return;
+      }
+      
+      if (noStandardsMessage.length) {
+        noStandardsMessage.hide();
+      }
+      
+      var html = '';
+      
+      for (var i = 0; i < standardsData.length; i++) {
+        var standard = standardsData[i];
+        var rowId = standard.standard_id ? 'standard-' + standard.standard_id : 'new-standard-' + standard.id;
+        
+        var actionButtons = '<div class="btn-group btn-group-sm">' +
+          '<button type="button" class="btn btn-outline-danger btn-remove-standard" data-index="' + i + '">' +
+          '<i class="fas fa-trash"></i></button>' +
+          '</div>';
+        
+        html += '<tr id="' + rowId + '">' +
+                '<td><strong>' + (standard.name || '') + '</strong></td>' +
+                '<td>' + formatDateDisplay(standard.issue_date) + '</td>' +
+                '<td>' + formatDateDisplay(standard.expiry_date) + '</td>' +
+                '<td>' + (standard.notes || '-') + '</td>' +
+                '<td>' + actionButtons + '</td>' +
+                '</tr>';
+      }
+      
+      tableContainer.html(html);
+      
+      // Postavljanje event handler-a za dugme za brisanje standarda
+      $('.btn-remove-standard').on('click', function() {
+        var index = $(this).data('index');
+        standardsData.splice(index, 1);
+        renderStandardsTable();
+      });
+    }
+    
+    // Funkcija za dodavanje novog standarda
+    function addStandard() {
+      var standardId = $('#standard_definition').val();
+      var standardName = $('#standard_definition option:selected').text();
+      var issueDate = $('#standard_issue_date').val();
+      var expiryDate = $('#standard_expiry_date').val();
+      var notes = $('#standard_notes').val();
+      
+      if (!standardId) {
+        alert('Morate izabrati standard!');
+        return;
+      }
+      
+      // Proveri da li standard već postoji u listi
+      for (var i = 0; i < standardsData.length; i++) {
+        if (standardsData[i].id === parseInt(standardId)) {
+          alert('Ovaj standard je već dodat!');
+          return;
+        }
+      }
+      
+      var standardText = standardSelect.find('option:selected').text();
+      var issueDate = $('#standard_issue_date').val() || '';
+      var expiryDate = $('#standard_expiry_date').val() || '';
+      var notes = $('#standard_notes').val() || '';
+      
+{{ ... }}
+      // Proveri da li standard već postoji
+      var standardExists = false;
+      for (var i = 0; i < standardsData.length; i++) {
+        if (standardsData[i].id == standardId) {
+          standardExists = true;
+          break;
+        }
+      }
+      
+      if (standardExists) {
+        alert('Ovaj standard je već dodeljen kompaniji');
+        return;
+      }
+      
+      // Dodaj novi standard u niz
+      var newStandard = {
+        id: standardId,
+        name: standardText.trim(),
+        issue_date: issueDate,
+        expiry_date: expiryDate,
+        notes: notes,
+        is_new: true
+      };
+      
+      standardsData.push(newStandard);
+      
+      // Ažuriraj prikaz
+      updateStandardsDisplay();
+      
+      // Resetuj polja za unos
+      standardSelect.val('');
+      $('#standard_issue_date').val('');
+      $('#standard_expiry_date').val('');
+      $('#standard_notes').val('');
+    });
+    
+    // Uklanjanje standarda
+    $(document).on('click', '.btn-remove-standard', function() {
+      var standardId = $(this).data('id');
+      var newStandardsData = [];
+      
+      // Pronađi i ukloni standard iz niza
+      for (var i = 0; i < standardsData.length; i++) {
+        if (standardsData[i].standard_id != standardId) {
+          newStandardsData.push(standardsData[i]);
+        }
+      }
+      
+      // Ažuriraj glavni niz
+      standardsData = newStandardsData;
+      
+      // Ažuriraj prikaz
+      updateStandardsDisplay();
+    });
+    
+    // Funkcija za ažuriranje prikaza standarda
+    function updateStandardsDisplay() {
+      var tableContainer = $('#standards-list');
+      var noStandardsMessage = $('#no-standards-message');
+      
+      if (standardsData.length === 0) {
+        tableContainer.html('');
+        if (noStandardsMessage.length) {
+          noStandardsMessage.show();
+        }
+        return;
+      }
+      
+      if (noStandardsMessage.length) {
+        noStandardsMessage.hide();
+      }
+      
+      var html = '';
+      
+      for (var i = 0; i < standardsData.length; i++) {
+        var item = standardsData[i];
+        var rowId = item.standard_id ? 'standard-' + item.standard_id : 'new-standard-' + item.id;
+        
+        var formattedIssueDate = item.issue_date ? formatDateDisplay(item.issue_date) : '-';
+        var formattedExpiryDate = item.expiry_date ? formatDateDisplay(item.expiry_date) : '-';
+        
+        var actionButtons = '<div class="btn-group btn-group-sm">';
+        actionButtons += '<button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="' + 
+                         (item.standard_id || 'new-' + item.id) + '">' +
+                         '<i class="fas fa-trash"></i></button>';
+        actionButtons += '</div>';
+        
+        html += '<tr id="' + rowId + '">' +
+                '<td><strong>' + (item.name || '') + '</strong></td>' +
+                '<td>' + formattedIssueDate + '</td>' +
+                '<td>' + formattedExpiryDate + '</td>' +
+                '<td>' + (item.notes || '-') + '</td>' +
+                '<td>' + actionButtons + '</td>' +
+                '</tr>';
+      }
+      
+      tableContainer.html(html);
+    }
+    
+    // Pomoćna funkcija za formatiranje datuma u lepši prikaz
+    function formatDateDisplay(dateString) {
+      if (!dateString) return '-';
+      
+      // Pretpostavi ISO format (YYYY-MM-DD)
+      var parts = dateString.split('-');
+      if (parts.length === 3) {
+        return parts[2] + '.' + parts[1] + '.' + parts[0] + '.';
+      }
+      
+      return dateString;
+    }
+    
+    // Funkcionalnost za prikaz i navigaciju obaveznih polja
+    $('#showRequiredFieldsBtn').on('click', function() {
+      updateRequiredFieldsList();
+      $('#requiredFieldsModal').modal('show');
+    });
+    
+    // Funkcija za proveru i prikaz obaveznih polja koja nisu popunjena
+    function updateRequiredFieldsList() {
+      var requiredFields = [];
+      
+      // Pronađi sva polja koja su obavezna i nisu popunjena
+      $('input[required], select[required], textarea[required]').each(function() {
+        var $field = $(this);
+        
+        if (!$field.val()) {
+          // Dobavi informacije o polju
+          var fieldId = $field.attr('id');
+          var fieldName = $('label[for="' + fieldId + '"]').text().trim();
+          var tabId = $field.closest('.tab-pane').attr('id');
+          var tabName = $('a[href="#' + tabId + '"]').text().trim();
+          
+          requiredFields.push({
+            id: fieldId,
+            name: fieldName,
+            tabId: tabId,
+            tabName: tabName
+          });
+        }
+      });
+      
+      // Pripremi HTML za listu obaveznih polja
+      var $requiredFieldsList = $('#requiredFieldsList');
+      $requiredFieldsList.empty();
+      
+      if (requiredFields.length === 0) {
+        $requiredFieldsList.html('<div class="alert alert-success"><i class="fas fa-check-circle"></i> Sva obavezna polja su popunjena.</div>');
+        return;
+      }
+      
+      // Grupiši polja po tabu
+      var fieldsByTab = {};
+      requiredFields.forEach(function(field) {
+        if (!fieldsByTab[field.tabId]) {
+          fieldsByTab[field.tabId] = {
+            tabName: field.tabName,
+            fields: []
+          };
+        }
+        fieldsByTab[field.tabId].fields.push(field);
+      });
+      
+      // Kreiraj HTML za svaku grupu
+      Object.keys(fieldsByTab).forEach(function(tabId) {
+        var tabGroup = fieldsByTab[tabId];
+        
+        var $tabHeader = $('<div class="list-group-item list-group-item-action active">' + 
+                          '<i class="fas fa-folder"></i> ' + tabGroup.tabName + ' (' + tabGroup.fields.length + ' polja)' +
+                          '</div>');
+        
+        $requiredFieldsList.append($tabHeader);
+        
+        tabGroup.fields.forEach(function(field) {
+          var $fieldItem = $('<a href="#' + field.tabId + '" class="list-group-item list-group-item-action required-field-item" ' +
+                           'data-field-id="' + field.id + '" data-tab="' + field.tabId + '">' +
+                           '<i class="fas fa-exclamation-circle text-danger"></i> ' + field.name +
+                           '</a>');
+          $requiredFieldsList.append($fieldItem);
+        });
+      });
+      
+      // Postavi event handler za klik na stavku iz liste
+      $('.required-field-item').on('click', function() {
+        var $this = $(this);
+        var fieldId = $this.data('field-id');
+        var tabId = $this.data('tab');
+        
+        // Zatvori modal
+        $('#requiredFieldsModal').modal('hide');
+        
+        // Aktiviraj odgovarajući tab
+        $('#companyFormTabs a[href="#' + tabId + '"]').tab('show');
+        
+        // Fokusiraj polje nakon kratke pauze (da bi se tab učitao)
+        setTimeout(function() {
+          $('#' + fieldId).focus();
+          // Dodaj blink efekat
+          $('#' + fieldId).addClass('highlight-field');
+          setTimeout(function() {
+            $('#' + fieldId).removeClass('highlight-field');
+          }, 2000);
+        }, 300);
+      });
+    }
+    
+    // Dodavanje CSS-a za blink efekat
+    $('<style>\n' +
+      '@keyframes highlight {\n' +
+      '  0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.8); }\n' +
+      '  70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }\n' +
+      '  100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }\n' +
+      '}\n' +
+      '.highlight-field {\n' +
+      '  animation: highlight 1.5s ease-in-out 2;\n' +
+      '  border-color: #ffc107;\n' +
+      '}\n' +
+      '</style>').appendTo('head');
+    
+    // Pripremi i prepareStandardsData funkcije pri slanju forme
+    $('form').on('submit', function() {
+      // Pripremi IAF/EAC kodove i standarde podatke pre slanja forme
+      prepareIAFEACData();
+      prepareStandardsData();
+      
+      // Proveri obavezna polja
+      var requiredFields = $(this).find('[required]');
+      var valid = true;
+      
+      requiredFields.each(function() {
+        if (!$(this).val()) {
+          $(this).addClass('is-invalid');
+          valid = false;
+        } else {
+          $(this).removeClass('is-invalid');
+        }
+      });
+      
+      // Ako ima nepopunjenih polja, prikaži modal
+      if (!valid) {
+        updateRequiredFieldsList();
+        $('#requiredFieldsModal').modal('show');
+        return false;
+      }
+      
+      return true;
     });
   });
 </script>

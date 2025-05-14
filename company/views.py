@@ -5,12 +5,12 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 import json
-from .models import Company, NaredneProvere, Appointment, KontaktOsoba, OstalaLokacija
+from .models import Company, NaredneProvere, Appointment, KontaktOsoba, OstalaLokacija, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
 from datetime import datetime, timedelta
 from django.db.models import Count
 import random
-from .forms import AuditForm
+from .forms import AuditForm, CompanyForm
 
 class CompanyListView(ListView):
     model = Company
@@ -63,17 +63,18 @@ class CompanyDetailView(DetailView):
 class CompanyCreateView(CreateView):
     model = Company
     template_name = 'company/company-form.html'
-    fields = [
-        'name', 'pib', 'mb', 'industry', 'certificate_status',
-        'street', 'street_number', 'city', 'postal_code',
-        'phone', 'email', 'website', 'notes'
-    ]
+    form_class = CompanyForm
     success_url = reverse_lazy('company:list')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Nova kompanija'
         context['submit_text'] = 'Sačuvaj'
+        # Dodaj sve IAF/EAC kodove za izbor
+        context['all_iaf_eac_codes'] = IAFEACCode.objects.all().order_by('iaf_code')
+        # Dodaj sve definicije standarda za izbor
+        from .standard_models import StandardDefinition
+        context['all_standard_definitions'] = StandardDefinition.objects.filter(active=True).order_by('code')
         return context
     
     def form_valid(self, form):
@@ -84,16 +85,17 @@ class CompanyCreateView(CreateView):
 class CompanyUpdateView(UpdateView):
     model = Company
     template_name = 'company/company-form.html'
-    fields = [
-        'name', 'pib', 'mb', 'industry', 'certificate_status',
-        'street', 'street_number', 'city', 'postal_code',
-        'phone', 'email', 'website', 'notes'
-    ]
+    form_class = CompanyForm
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Izmena kompanije'
         context['submit_text'] = 'Sačuvaj izmene'
+        # Dodaj sve IAF/EAC kodove za izbor
+        context['all_iaf_eac_codes'] = IAFEACCode.objects.all().order_by('iaf_code')
+        # Dodaj sve definicije standarda za izbor
+        from .standard_models import StandardDefinition
+        context['all_standard_definitions'] = StandardDefinition.objects.filter(active=True).order_by('code')
         return context
     
     def get_success_url(self):
