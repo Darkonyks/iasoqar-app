@@ -44,7 +44,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_filter = ['city', 'is_active']
     fieldsets = [
         ('Osnovne informacije', {
-            'fields': ['name', 'pib', 'mb', 'industry', 'number_of_employees', 'certificate_status']
+            'fields': ['name', 'pib', 'mb', 'industry', 'number_of_employees', 'certificate_status', 'certificate_number']
         }),
         ('Adresa', {
             'fields': ['street', 'street_number', 'city', 'postal_code', 'country']

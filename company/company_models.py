@@ -70,6 +70,7 @@ class Company(models.Model):
         choices=CERTIFICATE_STATUS_CHOICES,
         default=STATUS_PENDING
     )
+    certificate_number = models.CharField(_("Broj sertifikata"), max_length=100, blank=True, null=True)
     suspension_until_date = models.DateField(_("Suspenzija do datuma"), blank=True, null=True)
     audit_days = models.DecimalField(_("Broj dana audita"), max_digits=18, decimal_places=1, blank=True, null=True)
     initial_audit_conducted_date = models.DateField(_("Datum inicijalnog audita"), blank=True, null=True)

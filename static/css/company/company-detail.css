@@ -1,0 +1,96 @@
+/* Status badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  display: inline-block;
+}
+.status-active {
+  background-color: #28a745;
+  color: white;
+}
+.status-suspended {
+  background-color: #ffc107;
+  color: black;
+}
+.status-withdrawn {
+  background-color: #dc3545;
+  color: white;
+}
+.status-expired {
+  background-color: #6c757d;
+  color: white;
+}
+.status-pending {
+  background-color: #17a2b8;
+  color: white;
+}
+.status-cancelled {
+  background-color: #343a40;
+  color: white;
+}
+
+/* Layout styling */
+.info-box {
+  margin-bottom: 10px;
+}
+
+/* Tabelarni prikaz */
+.info-table {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.info-table td {
+  padding: 8px 12px;
+  vertical-align: top;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-table td:first-child {
+  width: 35%;
+  font-weight: 600;
+}
+
+.info-table tr:last-child td {
+  border-bottom: none;
+}
+.section-title {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.contact-card {
+  margin-bottom: 15px;
+}
+.primary-contact {
+  border-left: 4px solid #007bff;
+}
+
+/* Tab styling */
+.company-tabs {
+  margin-bottom: 20px;
+}
+.company-tabs .nav-link {
+  font-weight: 500;
+}
+.company-tabs .nav-link.active {
+  font-weight: 600;
+}
+.tab-content {
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+  padding: 20px;
+}
+.tab-content .card {
+  border: none;
+  box-shadow: none;
+}
+.tab-content .card-header {
+  background-color: transparent;
+  border-bottom: 1px solid #eee;
+  padding-left: 0;
+  padding-right: 0;
+}
