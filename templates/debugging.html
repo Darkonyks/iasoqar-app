@@ -1,0 +1,97 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}JavaScript Debugging{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">JavaScript Debugging</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">JavaScript Test</h3>
+        </div>
+        <div class="card-body">
+          <p>This page is for debugging JavaScript issues. Look at the browser console for output.</p>
+          
+          <h4>Bootstrap Modal Test</h4>
+          <button type="button" class="btn btn-primary" id="testModalBtn">
+            Test Modal Dialog
+          </button>
+          
+          <h4>jQuery Loaded Test</h4>
+          <p id="jquery-version">Checking jQuery...</p>
+          
+          <h4>Bootstrap Version Test</h4>
+          <p id="bootstrap-version">Checking Bootstrap...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Test Modal -->
+<div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="testModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="testModalLabel">Test Modal Dialog</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>This is a test modal dialog. If you can see this, the Bootstrap modal functionality is working correctly.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded');
+    
+    // Test jQuery
+    if (typeof jQuery !== 'undefined') {
+      document.getElementById('jquery-version').textContent = 'jQuery version: ' + jQuery.fn.jquery;
+      console.log('jQuery version:', jQuery.fn.jquery);
+    } else {
+      document.getElementById('jquery-version').textContent = 'jQuery NOT LOADED';
+      console.error('jQuery is not loaded!');
+    }
+    
+    // Test Bootstrap
+    if (typeof jQuery !== 'undefined') {
+      if (typeof jQuery.fn.modal !== 'undefined') {
+        document.getElementById('bootstrap-version').textContent = 'Bootstrap modal is loaded';
+        console.log('Bootstrap modal functionality is available');
+      } else {
+        document.getElementById('bootstrap-version').textContent = 'Bootstrap modal NOT LOADED';
+        console.error('Bootstrap modal functionality is not available!');
+      }
+    }
+    
+    // Setup test modal button
+    document.getElementById('testModalBtn').addEventListener('click', function() {
+      console.log('Modal button clicked');
+      if (typeof jQuery !== 'undefined' && typeof jQuery.fn.modal !== 'undefined') {
+        jQuery('#testModal').modal('show');
+      } else {
+        alert('Cannot show modal: Bootstrap or jQuery not loaded');
+      }
+    });
+  });
+</script>
+{% endblock %}

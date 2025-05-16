@@ -21,6 +21,7 @@ from .views import (
     get_company_contacts,
     get_companies
 )
+from .views_ajax import delete_standard
 
 app_name = 'company'
 
@@ -37,6 +38,7 @@ urlpatterns = [
     # API endpoints
     path('api/company-contacts/', get_company_contacts, name='get_company_contacts'),
     path('api/companies/', get_companies, name='get_companies'),
+    path('api/delete-standard/', delete_standard, name='delete_standard'),
     
     # Dashboard
     path('dashboard/', dashboard, name='dashboard'),

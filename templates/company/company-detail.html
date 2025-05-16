@@ -195,12 +195,12 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for standard in standards %}
+                          {% for company_standard in standards %}
                             <tr>
-                              <td>{{ standard.get_standard_display }}</td>
+                              <td>{{ company_standard.standard_definition.standard }}</td>
                               <td><span class="status-badge status-active">Aktivan</span></td>
-                              <td>-</td>
-                              <td>-</td>
+                              <td>{% if company_standard.issue_date %}{{ company_standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
+                              <td>{% if company_standard.expiry_date %}{{ company_standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                             </tr>
                           {% endfor %}
                         </tbody>

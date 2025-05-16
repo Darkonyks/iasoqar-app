@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic.base import RedirectView
+from django.views.generic.base import RedirectView, TemplateView
 from company.views import dashboard
 from massadmin import urls as massadmin_urls
 import nested_admin.views
@@ -34,4 +34,6 @@ urlpatterns = [
     path('mass_admin/', include(massadmin_urls)),  # Promenjen URL za massadmin
     path('nested_admin/', include('nested_admin.urls')),
     path('company/', include('company.urls')),
+    # Debug stranica za testiranje JavaScript biblioteka
+    path('debug/', TemplateView.as_view(template_name='debugging.html'), name='debug'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

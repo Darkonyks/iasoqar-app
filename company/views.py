@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.http import HttpResponseRedirect
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -78,8 +79,12 @@ class CompanyCreateView(CreateView):
         return context
     
     def form_valid(self, form):
+        # Sačuvaj formu sa commit=True da bi se obradili hidden podaci
+        # za standarde i IAF/EAC kodove definisani u CompanyForm.save() metodi
+        self.object = form.save(commit=True)
+        
         messages.success(self.request, f"Kompanija {form.instance.name} je uspešno kreirana.")
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class CompanyUpdateView(UpdateView):
@@ -102,8 +107,12 @@ class CompanyUpdateView(UpdateView):
         return reverse_lazy('company:detail', kwargs={'pk': self.object.pk})
     
     def form_valid(self, form):
+        # Sačuvaj formu sa commit=True da bi se obradili hidden podaci
+        # za standarde i IAF/EAC kodove definisani u CompanyForm.save() metodi
+        self.object = form.save(commit=True)
+        
         messages.success(self.request, f"Kompanija {form.instance.name} je uspešno izmenjena.")
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class CompanyDeleteView(DeleteView):

@@ -69,8 +69,12 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
-          <form method="post">
+          <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+            
+            <!-- Hidden polja za IAF/EAC kodove i standarde -->
+            <input type="hidden" id="iaf_eac_codes_data" name="iaf_eac_codes_data" value="[]">
+            <input type="hidden" id="standards_data" name="standards_data" value="[]">
             
             <!-- Tabs navigation -->
             <ul class="nav nav-tabs" id="companyFormTabs" role="tablist">
@@ -118,7 +122,7 @@
                       {{ form.name.errors }}
                       <input type="text" name="{{ form.name.name }}" id="{{ form.name.id_for_label }}" 
                              class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
-                             value="{{ form.name.value|default:'' }}" required>
+                             value="{{ form.name.value|default:'' }}" required>   
                     </div>
                   </div>
                   
@@ -270,24 +274,24 @@
                 <h5 class="mb-3">Standardi</h5>
                 <div class="card">
                   <div class="card-body">
-                    {% if object and object.company_standards.all %}
-                      <div class="table-responsive mb-4">
-                        <table class="table table-sm table-striped table-hover">
-                          <thead class="thead-light">
-                            <tr>
-                              <th width="30%">Standard</th>
-                              <th width="15%">Datum izdavanja</th>
-                              <th width="15%">Datum isteka</th>
-                              <th width="25%">Napomena</th>
-                              <th width="15%">Akcije</th>
-                            </tr>
-                          </thead>
-                          <tbody id="standards-list">
+                    <div class="table-responsive mb-4">
+                      <table class="table table-sm table-striped table-hover">
+                        <thead class="thead-light">
+                          <tr>
+                            <th width="30%">Standard</th>
+                            <th width="15%">Datum izdavanja</th>
+                            <th width="15%">Datum isteka</th>
+                            <th width="25%">Napomena</th>
+                            <th width="15%">Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody id="standards-list">
+                          {% if object and object.company_standards.all %}
                             {% for standard in object.company_standards.all %}
                               <tr id="standard-{{ standard.id }}">
-                                <td><strong>{{ standard.standard_definition.get_standard_display }}</strong></td>
-                                <td>{{ standard.issue_date|date:"d.m.Y."|default:"-" }}</td>
-                                <td>{{ standard.expiry_date|date:"d.m.Y."|default:"-" }}</td>
+                                <td><strong>{{ standard.standard_definition.standard }}</strong></td>
+                                <td>{% if standard.issue_date %}{{ standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
+                                <td>{% if standard.expiry_date %}{{ standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{{ standard.notes|default:"-" }}</td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
@@ -298,14 +302,14 @@
                                 </td>
                               </tr>
                             {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    {% else %}
-                      <div class="alert alert-info" id="no-standards-message">
-                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
-                      </div>
-                    {% endif %}
+                          {% endif %}
+                          <!-- Novi standardi će biti dinamički dodati ovde -->                          
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="alert alert-info" id="no-standards-message" style="display: none;">
+                      <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
+                    </div>
 
                     <div class="row">
                       <div class="col-md-4">
@@ -315,7 +319,7 @@
                             <option value="">-- Izaberite standard --</option>
                             {% for standard in all_standard_definitions %}
                               <option value="{{ standard.id }}">
-                                {{ standard.get_standard_display }}
+                                {{ standard.standard }}
                               </option>
                             {% endfor %}
                           </select>
@@ -447,53 +451,25 @@
                 <h5 class="mb-3">IAF/EAC Kodovi</h5>
                 <div class="card">
                   <div class="card-body">
-                    {% if object and object.iaf_eac_codes.all %}
-                      <div class="table-responsive mb-4">
-                        <table class="table table-sm table-striped table-hover">
-                          <thead class="thead-light">
-                            <tr>
-                              <th width="15%">IAF/EAC Kod</th>
-                              <th>Opis</th>
-                              <th width="15%">Status</th>
-                              <th width="20%">Napomena</th>
-                              <th width="15%">Akcije</th>
-                            </tr>
-                          </thead>
-                          <tbody id="iaf-eac-codes-list">
-                            {% for code_relation in object.iaf_eac_codes.all %}
-                              <tr id="iaf-eac-code-{{ code_relation.id }}">
-                                <td><strong>{{ code_relation.iaf_eac_code.iaf_code }}</strong></td>
-                                <td>{{ code_relation.iaf_eac_code.description }}</td>
-                                <td>
-                                  {% if code_relation.is_primary %}
-                                    <span class="badge badge-primary">Primarni kod</span>
-                                  {% else %}
-                                    <span class="badge badge-secondary">Sekundarni kod</span>
-                                  {% endif %}
-                                </td>
-                                <td>{{ code_relation.notes|default:"-" }}</td>
-                                <td>
-                                  <div class="btn-group btn-group-sm">
-                                    {% if not code_relation.is_primary %}
-                                      <button type="button" class="btn btn-outline-primary btn-make-primary" data-id="{{ code_relation.id }}">
-                                        <i class="fas fa-star"></i>
-                                      </button>
-                                    {% endif %}
-                                    <button type="button" class="btn btn-outline-danger btn-remove-iaf-code" data-id="{{ code_relation.id }}">
-                                      <i class="fas fa-trash"></i>
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    {% else %}
-                      <div class="alert alert-info" id="no-iaf-codes-message">
-                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
-                      </div>
-                    {% endif %}
+                    <div class="table-responsive mb-4">
+                      <table class="table table-sm table-striped table-hover">
+                        <thead class="thead-light">
+                          <tr>
+                            <th width="15%">IAF/EAC kod</th>
+                            <th width="40%">Opis</th>
+                            <th width="15%">Status</th>
+                            <th width="15%">Napomena</th>
+                            <th width="15%">Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody id="iaf-eac-codes-list">
+                          <!-- JavaScript će dinamički popuniti tabelu sa IAF/EAC kodovima -->
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="alert alert-info" id="no-iaf-codes-message" style="display: none;">
+                      <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
+                    </div>
 
                     <div class="row">
                       <div class="col-md-5">
@@ -567,593 +543,138 @@
 {% endblock %}
 
 {% block script %}
+{% load static %}
+<!-- Uključi eksternu JavaScript datoteku -->  
+<script src="{% static 'js/company/company-form.js' %}"></script>
+  <!-- Pripremi podatke za JS -->
+{% load static %}
 <script>
-  $(function() {
-    // Aktiviraj tabove
-    $('#companyFormTabs a').on('click', function (e) {
-      e.preventDefault();
-      $(this).tab('show');
-      $('#companyFormTabs a').on('shown.bs.tab', function(e) {
-        var activeTab = $(e.target).attr('href');
-        localStorage.setItem('companyFormActiveTab', activeTab);
+  // Objekti za inicijalno punjenje podataka
+  window.existingIAFEACCodes = [];
+  window.existingStandards = [];
+  
+  // Pripremi postojeće IAF/EAC kodove (ako postoje)
+  {% if object and object.iaf_eac_codes.all %}
+    {% for code_relation in object.iaf_eac_codes.all %}
+      window.existingIAFEACCodes.push({
+        id: {{ code_relation.iaf_eac_code.id }},
+        code: '{{ code_relation.iaf_eac_code.iaf_code|escapejs }}',
+        description: '{{ code_relation.iaf_eac_code.description|escapejs }}',
+        is_primary: {% if code_relation.is_primary %}true{% else %}false{% endif %},
+        notes: '{{ code_relation.notes|default:""|escapejs }}',
+        relation_id: {{ code_relation.id }}
       });
-      
-      // Postavi hash u URL za bookmarkovanje
-      var hash = window.location.hash;
-      if (hash && $(hash).length) {
-        $('#companyFormTabs a[href="' + hash + '"]').tab('show');
-      }
-      
-      // Ažuriraj hash pri promeni taba
-      $('#companyFormTabs a').on('shown.bs.tab', function(e) {
-        if (history.pushState) {
-          history.pushState(null, null, $(e.target).attr('href'));
-        } else {
-          location.hash = $(e.target).attr('href');
-        }
+    {% endfor %}
+  {% endif %}
+  
+  // Pripremi postojeće standarde (ako postoje)
+  {% if object and object.company_standards.all %}
+    console.log('Ima standarda za prikazati: {{ object.company_standards.all|length }}');
+    
+    {% for standard in object.company_standards.all %}
+      window.existingStandards.push({
+        id: {{ standard.standard_definition.id }},
+        name: '{{ standard.standard_definition.standard }}',
+        issue_date: '{{ standard.issue_date|date:"Y-m-d"|default:"" }}',
+        expiry_date: '{{ standard.expiry_date|date:"Y-m-d"|default:"" }}',
+        notes: '{{ standard.notes|default:""|escapejs }}',
+        standard_id: {{ standard.id }}
       });
-    }
-    
-    // Inicijalizacija tabova
-    initTabs();
-    
-    // Validacija forme
-    $('form').on('submit', function() {
-      var requiredFields = $(this).find('[required]');
-      var valid = true;
-      
-      requiredFields.each(function() {
-        if (!$(this).val()) {
-          $(this).addClass('is-invalid');
-          valid = false;
-        } else {
-          $(this).removeClass('is-invalid');
-        }
-      });
+      console.log('Dodat standard:', '{{ standard.standard_definition.standard }}');
+    {% endfor %}
+  {% else %}
+    console.log('Nema standarda za prikazati');
+  {% endif %}
+</script>
 
-      // Pripremi IAF/EAC kodove podatke pre slanja forme
-      prepareIAFEACData();
-      
-      return valid;
-    });
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardToDeleteName"></strong>?</p>
+        <input type="hidden" id="standardToDeleteId" name="standardToDeleteId" value="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteStandard">Obriši</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Inicijalizacija datepicker-a za datumska polja
-    $('.datepicker').datepicker({
-      format: 'yyyy-mm-dd',
-      autoclose: true,
-      todayHighlight: true,
-      language: 'sr-latin'
-    });
+<!-- Koristićemo lokalne biblioteke koje sada poslužuje Nginx sa ispravnim MIME tipovima -->
 
-    // Funkcionalnosti za IAF/EAC kodove
-    var iafEacCodesData = [];
-
-    // Pripremi postojeće kodove (ako postoje)
-    {% if object and object.iaf_eac_codes.all %}
-      {% for code_relation in object.iaf_eac_codes.all %}
-        iafEacCodesData.push({
-          id: {{ code_relation.iaf_eac_code.id }},
-          code: '{{ code_relation.iaf_eac_code.iaf_code }}',
-          description: '{{ code_relation.iaf_eac_code.description|escapejs }}',
-          is_primary: {% if code_relation.is_primary %}true{% else %}false{% endif %},
-          notes: '{{ code_relation.notes|default:""|escapejs }}',
-          relation_id: {{ code_relation.id }}
-        });
-      {% endfor %}
-    {% endif %}
-
-    // Funkcija koja priprema IAF/EAC podatke za slanje
-    function prepareIAFEACData() {
-      $('#iaf_eac_codes_data').val(JSON.stringify(iafEacCodesData));
-    }
-
-    // Inicijalno ažuriranje prikaza ako već postoje kodovi
-    if (iafEacCodesData.length > 0) {
-      updateIAFEACCodesDisplay();
-    }
-    
-    // Dodavanje novog IAF/EAC koda
-    $('#add-iaf-eac-code').on('click', function() {
-      var codeSelect = $('#iaf_eac_code_select');
-      var codeId = codeSelect.val();
-      
-      if (!codeId) {
-        alert('Molimo izaberite IAF/EAC kod');
-        return;
-      }
-      
-      var codeText = codeSelect.find('option:selected').text();
-      var codeParts = codeText.split(' - ');
-      var codeValue = codeParts[0] || '';
-      var codeDescription = codeSelect.find('option:selected').data('description') || '';
-      var notes = $('#iaf_eac_code_notes').val() || '';
-      var isPrimary = $('#iaf_eac_is_primary').prop('checked');
-      
-      // Proveri da li kod već postoji
-      var codeExists = false;
-      for (var i = 0; i < iafEacCodesData.length; i++) {
-        if (iafEacCodesData[i].id == codeId) {
-          codeExists = true;
-          break;
-        }
-      }
-      
-      if (codeExists) {
-        alert('Ovaj IAF/EAC kod je već dodeljen kompaniji');
-        return;
-      }
-      
-      // Ako je izabran kao primarni ili ako je prvi kod, resetuj ostale primarne kodove
-      if (isPrimary || iafEacCodesData.length === 0) {
-        for (var j = 0; j < iafEacCodesData.length; j++) {
-          iafEacCodesData[j].is_primary = false;
-        }
-        isPrimary = true;
-      }
-      
-      // Dodaj novi kod u niz
-      var newCode = {
-        id: codeId,
-        code: codeValue,
-        description: codeDescription,
-        is_primary: isPrimary,
-        notes: notes,
-        is_new: true
-      };
-      
-      iafEacCodesData.push(newCode);
-      
-      // Ažuriraj prikaz
-      updateIAFEACCodesDisplay();
-      
-      // Resetuj polja za unos
-      codeSelect.val('');
-      $('#iaf_eac_code_notes').val('');
-      $('#iaf_eac_is_primary').prop('checked', false);
+<!-- Inicijalizacija modalnih dijaloga -->
+<script>
+  $(document).ready(function() {
+    // Osiguraj da modalni dijalozi budu pravilno inicijalzovani
+    $('#deleteStandardModal').modal({
+      show: false, // Ne prikazuj automatski
+      backdrop: 'static' // Spreči zatvaranje klikom van modala
     });
     
-    // Postavljanje koda kao primarnog
-    $(document).on('click', '.btn-make-primary', function() {
-      var codeId = $(this).data('id');
-      var codeIndex = -1;
-      
-      // Resetuj sve postojeće primarne kodove
-      for (var i = 0; i < iafEacCodesData.length; i++) {
-        if (iafEacCodesData[i].relation_id == codeId) {
-          codeIndex = i;
-        }
-        iafEacCodesData[i].is_primary = false;
-      }
-      
-      // Postavi izabrani kod kao primarni
-      if (codeIndex >= 0) {
-        iafEacCodesData[codeIndex].is_primary = true;
-      }
-      
-      // Ažuriraj prikaz
-      updateIAFEACCodesDisplay();
-    });
+    console.log('Modal dialog initialized:', $('#deleteStandardModal').length > 0);
     
-    // Uklanjanje koda
-    $(document).on('click', '.btn-remove-iaf-code', function() {
-      var codeId = $(this).data('id');
-      var wasPrimary = false;
-      var newIafEacCodesData = [];
-      
-      // Pronađi i ukloni kod iz niza
-      for (var i = 0; i < iafEacCodesData.length; i++) {
-        if (iafEacCodesData[i].relation_id == codeId) {
-          wasPrimary = iafEacCodesData[i].is_primary;
-        } else {
-          newIafEacCodesData.push(iafEacCodesData[i]);
-        }
-      }
-      
-      // Ažuriraj glavni niz
-      iafEacCodesData = newIafEacCodesData;
-      
-      // Ako je uklonjeni kod bio primarni, postavi prvi preostali kod kao primarni
-      if (wasPrimary && iafEacCodesData.length > 0) {
-        iafEacCodesData[0].is_primary = true;
-      }
-      
-      // Ažuriraj prikaz
-      updateIAFEACCodesDisplay();
-    });
-    
-    // Funkcija za ažuriranje prikaza IAF/EAC kodova
-    function updateIAFEACCodesDisplay() {
-      var tableContainer = $('#iaf-eac-codes-list');
-      var noCodesMessage = $('#no-iaf-codes-message');
-      
-      if (iafEacCodesData.length === 0) {
-        tableContainer.html('');
-        if (noCodesMessage.length) {
-          noCodesMessage.show();
-        }
-        return;
-      }
-      
-      if (noCodesMessage.length) {
-        noCodesMessage.hide();
-      }
-      
-      var html = '';
-      
-      for (var i = 0; i < iafEacCodesData.length; i++) {
-        var item = iafEacCodesData[i];
-        var rowId = item.relation_id ? 'iaf-eac-code-' + item.relation_id : 'new-iaf-eac-code-' + item.id;
-        var primaryBadge = item.is_primary ? 
-          '<span class="badge badge-primary">Primarni kod</span>' : 
-          '<span class="badge badge-secondary">Sekundarni kod</span>';
-        
-        var actionButtons = '<div class="btn-group btn-group-sm">';
-        
-        if (!item.is_primary) {
-          var dataId = item.relation_id || 'new-' + item.id;
-          actionButtons += '<button type="button" class="btn btn-outline-primary btn-make-primary" data-id="' + dataId + '">' +
-                          '<i class="fas fa-star"></i></button>';
-        }
-        
-        actionButtons += '<button type="button" class="btn btn-outline-danger btn-remove-iaf-code" data-id="' + 
-                          (item.relation_id || 'new-' + item.id) + '">' +
-                          '<i class="fas fa-trash"></i></button>';
-        actionButtons += '</div>';
-        
-        html += '<tr id="' + rowId + '">' +
-                '<td><strong>' + (item.code || '') + '</strong></td>' +
-                '<td>' + (item.description || '') + '</td>' +
-                '<td>' + primaryBadge + '</td>' +
-                '<td>' + (item.notes || '-') + '</td>' +
-                '<td>' + actionButtons + '</td>' +
-                '</tr>';
-      }
-      
-      tableContainer.html(html);
-    }
-    
-    // Funkcionalnosti za standarde
-    var standardsData = [];
-    
-    // Pripremi postojeće standarde (ako postoje)
-    {% if object and object.company_standards.all %}
-      {% for standard in object.company_standards.all %}
-        standardsData.push({
-          id: {{ standard.standard_definition.id }},
-          name: '{{ standard.standard_definition.get_standard_display|escapejs }}',
-          issue_date: '{{ standard.issue_date|date:"Y-m-d"|default:"" }}',
-          expiry_date: '{{ standard.expiry_date|date:"Y-m-d"|default:"" }}',
-          notes: '{{ standard.notes|default:""|escapejs }}',
-          standard_id: {{ standard.id }}
-        });
-      {% endfor %}
-    {% endif %}
-    
-    // Funkcija koja priprema podatke o standardima za slanje
-    function prepareStandardsData() {
-      $('#standards_data').val(JSON.stringify(standardsData));
-    }
-    
-    // Funkcija za prikaz standarda u tabeli
-    function renderStandardsTable() {
-      var tableContainer = $('#standards-table-body');
-      var noStandardsMessage = $('#no-standards-message');
-      
-      if (standardsData.length === 0) {
-        tableContainer.html('');
-        if (noStandardsMessage.length) {
-          noStandardsMessage.show();
-        }
-        return;
-      }
-      
-      if (noStandardsMessage.length) {
-        noStandardsMessage.hide();
-      }
-      
-      var html = '';
-      
-      for (var i = 0; i < standardsData.length; i++) {
-        var standard = standardsData[i];
-        var rowId = standard.standard_id ? 'standard-' + standard.standard_id : 'new-standard-' + standard.id;
-        
-        var actionButtons = '<div class="btn-group btn-group-sm">' +
-          '<button type="button" class="btn btn-outline-danger btn-remove-standard" data-index="' + i + '">' +
-          '<i class="fas fa-trash"></i></button>' +
-          '</div>';
-        
-        html += '<tr id="' + rowId + '">' +
-                '<td><strong>' + (standard.name || '') + '</strong></td>' +
-                '<td>' + formatDateDisplay(standard.issue_date) + '</td>' +
-                '<td>' + formatDateDisplay(standard.expiry_date) + '</td>' +
-                '<td>' + (standard.notes || '-') + '</td>' +
-                '<td>' + actionButtons + '</td>' +
-                '</tr>';
-      }
-      
-      tableContainer.html(html);
-      
-      // Postavljanje event handler-a za dugme za brisanje standarda
-      $('.btn-remove-standard').on('click', function() {
-        var index = $(this).data('index');
-        standardsData.splice(index, 1);
-        renderStandardsTable();
-      });
-    }
-    
-    // Funkcija za dodavanje novog standarda
-    function addStandard() {
-      var standardId = $('#standard_definition').val();
-      var standardName = $('#standard_definition option:selected').text();
-      var issueDate = $('#standard_issue_date').val();
-      var expiryDate = $('#standard_expiry_date').val();
-      var notes = $('#standard_notes').val();
-      
-      if (!standardId) {
-        alert('Morate izabrati standard!');
-        return;
-      }
-      
-      // Proveri da li standard već postoji u listi
-      for (var i = 0; i < standardsData.length; i++) {
-        if (standardsData[i].id === parseInt(standardId)) {
-          alert('Ovaj standard je već dodat!');
-          return;
-        }
-      }
-      
-      var standardText = standardSelect.find('option:selected').text();
-      var issueDate = $('#standard_issue_date').val() || '';
-      var expiryDate = $('#standard_expiry_date').val() || '';
-      var notes = $('#standard_notes').val() || '';
-      
-{{ ... }}
-      // Proveri da li standard već postoji
-      var standardExists = false;
-      for (var i = 0; i < standardsData.length; i++) {
-        if (standardsData[i].id == standardId) {
-          standardExists = true;
-          break;
-        }
-      }
-      
-      if (standardExists) {
-        alert('Ovaj standard je već dodeljen kompaniji');
-        return;
-      }
-      
-      // Dodaj novi standard u niz
-      var newStandard = {
-        id: standardId,
-        name: standardText.trim(),
-        issue_date: issueDate,
-        expiry_date: expiryDate,
-        notes: notes,
-        is_new: true
-      };
-      
-      standardsData.push(newStandard);
-      
-      // Ažuriraj prikaz
-      updateStandardsDisplay();
-      
-      // Resetuj polja za unos
-      standardSelect.val('');
-      $('#standard_issue_date').val('');
-      $('#standard_expiry_date').val('');
-      $('#standard_notes').val('');
-    });
-    
-    // Uklanjanje standarda
-    $(document).on('click', '.btn-remove-standard', function() {
+    // Handler za dugme za brisanje standarda
+    $('#standards-list').off('click', '.btn-remove-standard').on('click', '.btn-remove-standard', function() {
       var standardId = $(this).data('id');
-      var newStandardsData = [];
+      var standardName = $(this).closest('tr').find('td:first-child strong').text();
+      console.log('Clicked remove button, standardId:', standardId);
+      console.log('Standard name:', standardName);
       
-      // Pronađi i ukloni standard iz niza
-      for (var i = 0; i < standardsData.length; i++) {
-        if (standardsData[i].standard_id != standardId) {
-          newStandardsData.push(standardsData[i]);
-        }
-      }
+      // Postavi vrednosti u modalni dijalog
+      $('#standardToDeleteName').text(standardName);
+      $('#standardToDeleteId').val(standardId);
       
-      // Ažuriraj glavni niz
-      standardsData = newStandardsData;
-      
-      // Ažuriraj prikaz
-      updateStandardsDisplay();
+      // Prikaži modalni dijalog
+      $('#deleteStandardModal').modal('show');
     });
     
-    // Funkcija za ažuriranje prikaza standarda
-    function updateStandardsDisplay() {
-      var tableContainer = $('#standards-list');
-      var noStandardsMessage = $('#no-standards-message');
+    // Handler za potvrdu brisanja standarda
+    $('#confirmDeleteStandard').off('click').on('click', function() {
+      var standardId = $('#standardToDeleteId').val();
+      console.log('Confirming deletion of standard ID:', standardId);
       
-      if (standardsData.length === 0) {
-        tableContainer.html('');
-        if (noStandardsMessage.length) {
-          noStandardsMessage.show();
-        }
-        return;
-      }
+      // Dobavi CSRF token iz dokumenta
+      var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
       
-      if (noStandardsMessage.length) {
-        noStandardsMessage.hide();
-      }
-      
-      var html = '';
-      
-      for (var i = 0; i < standardsData.length; i++) {
-        var item = standardsData[i];
-        var rowId = item.standard_id ? 'standard-' + item.standard_id : 'new-standard-' + item.id;
-        
-        var formattedIssueDate = item.issue_date ? formatDateDisplay(item.issue_date) : '-';
-        var formattedExpiryDate = item.expiry_date ? formatDateDisplay(item.expiry_date) : '-';
-        
-        var actionButtons = '<div class="btn-group btn-group-sm">';
-        actionButtons += '<button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="' + 
-                         (item.standard_id || 'new-' + item.id) + '">' +
-                         '<i class="fas fa-trash"></i></button>';
-        actionButtons += '</div>';
-        
-        html += '<tr id="' + rowId + '">' +
-                '<td><strong>' + (item.name || '') + '</strong></td>' +
-                '<td>' + formattedIssueDate + '</td>' +
-                '<td>' + formattedExpiryDate + '</td>' +
-                '<td>' + (item.notes || '-') + '</td>' +
-                '<td>' + actionButtons + '</td>' +
-                '</tr>';
-      }
-      
-      tableContainer.html(html);
-    }
-    
-    // Pomoćna funkcija za formatiranje datuma u lepši prikaz
-    function formatDateDisplay(dateString) {
-      if (!dateString) return '-';
-      
-      // Pretpostavi ISO format (YYYY-MM-DD)
-      var parts = dateString.split('-');
-      if (parts.length === 3) {
-        return parts[2] + '.' + parts[1] + '.' + parts[0] + '.';
-      }
-      
-      return dateString;
-    }
-    
-    // Funkcionalnost za prikaz i navigaciju obaveznih polja
-    $('#showRequiredFieldsBtn').on('click', function() {
-      updateRequiredFieldsList();
-      $('#requiredFieldsModal').modal('show');
-    });
-    
-    // Funkcija za proveru i prikaz obaveznih polja koja nisu popunjena
-    function updateRequiredFieldsList() {
-      var requiredFields = [];
-      
-      // Pronađi sva polja koja su obavezna i nisu popunjena
-      $('input[required], select[required], textarea[required]').each(function() {
-        var $field = $(this);
-        
-        if (!$field.val()) {
-          // Dobavi informacije o polju
-          var fieldId = $field.attr('id');
-          var fieldName = $('label[for="' + fieldId + '"]').text().trim();
-          var tabId = $field.closest('.tab-pane').attr('id');
-          var tabName = $('a[href="#' + tabId + '"]').text().trim();
+      // Pošalji AJAX zahtev za brisanje standarda
+      $.ajax({
+        url: '{% url "company:delete_standard" %}',
+        type: 'POST',
+        data: {
+          'standard_id': standardId,
+          'csrfmiddlewaretoken': csrfToken
+        },
+        success: function(response) {
+          console.log('Standard successfully deleted:', response);
           
-          requiredFields.push({
-            id: fieldId,
-            name: fieldName,
-            tabId: tabId,
-            tabName: tabName
-          });
+          // Sakrij modalni dijalog
+          $('#deleteStandardModal').modal('hide');
+          
+          // Ukloni red iz tabele
+          $('#standard-' + standardId).remove();
+          
+          // Prikaži poruku o uspešnom brisanju
+          toastr.success('Standard je uspešno obrisan.');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error deleting standard:', error);
+          
+          // Sakrij modalni dijalog
+          $('#deleteStandardModal').modal('hide');
+          
+          // Prikaži poruku o grešci
+          toastr.error('Došlo je do greške pri brisanju standarda.');
         }
       });
-      
-      // Pripremi HTML za listu obaveznih polja
-      var $requiredFieldsList = $('#requiredFieldsList');
-      $requiredFieldsList.empty();
-      
-      if (requiredFields.length === 0) {
-        $requiredFieldsList.html('<div class="alert alert-success"><i class="fas fa-check-circle"></i> Sva obavezna polja su popunjena.</div>');
-        return;
-      }
-      
-      // Grupiši polja po tabu
-      var fieldsByTab = {};
-      requiredFields.forEach(function(field) {
-        if (!fieldsByTab[field.tabId]) {
-          fieldsByTab[field.tabId] = {
-            tabName: field.tabName,
-            fields: []
-          };
-        }
-        fieldsByTab[field.tabId].fields.push(field);
-      });
-      
-      // Kreiraj HTML za svaku grupu
-      Object.keys(fieldsByTab).forEach(function(tabId) {
-        var tabGroup = fieldsByTab[tabId];
-        
-        var $tabHeader = $('<div class="list-group-item list-group-item-action active">' + 
-                          '<i class="fas fa-folder"></i> ' + tabGroup.tabName + ' (' + tabGroup.fields.length + ' polja)' +
-                          '</div>');
-        
-        $requiredFieldsList.append($tabHeader);
-        
-        tabGroup.fields.forEach(function(field) {
-          var $fieldItem = $('<a href="#' + field.tabId + '" class="list-group-item list-group-item-action required-field-item" ' +
-                           'data-field-id="' + field.id + '" data-tab="' + field.tabId + '">' +
-                           '<i class="fas fa-exclamation-circle text-danger"></i> ' + field.name +
-                           '</a>');
-          $requiredFieldsList.append($fieldItem);
-        });
-      });
-      
-      // Postavi event handler za klik na stavku iz liste
-      $('.required-field-item').on('click', function() {
-        var $this = $(this);
-        var fieldId = $this.data('field-id');
-        var tabId = $this.data('tab');
-        
-        // Zatvori modal
-        $('#requiredFieldsModal').modal('hide');
-        
-        // Aktiviraj odgovarajući tab
-        $('#companyFormTabs a[href="#' + tabId + '"]').tab('show');
-        
-        // Fokusiraj polje nakon kratke pauze (da bi se tab učitao)
-        setTimeout(function() {
-          $('#' + fieldId).focus();
-          // Dodaj blink efekat
-          $('#' + fieldId).addClass('highlight-field');
-          setTimeout(function() {
-            $('#' + fieldId).removeClass('highlight-field');
-          }, 2000);
-        }, 300);
-      });
-    }
-    
-    // Dodavanje CSS-a za blink efekat
-    $('<style>\n' +
-      '@keyframes highlight {\n' +
-      '  0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.8); }\n' +
-      '  70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }\n' +
-      '  100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }\n' +
-      '}\n' +
-      '.highlight-field {\n' +
-      '  animation: highlight 1.5s ease-in-out 2;\n' +
-      '  border-color: #ffc107;\n' +
-      '}\n' +
-      '</style>').appendTo('head');
-    
-    // Pripremi i prepareStandardsData funkcije pri slanju forme
-    $('form').on('submit', function() {
-      // Pripremi IAF/EAC kodove i standarde podatke pre slanja forme
-      prepareIAFEACData();
-      prepareStandardsData();
-      
-      // Proveri obavezna polja
-      var requiredFields = $(this).find('[required]');
-      var valid = true;
-      
-      requiredFields.each(function() {
-        if (!$(this).val()) {
-          $(this).addClass('is-invalid');
-          valid = false;
-        } else {
-          $(this).removeClass('is-invalid');
-        }
-      });
-      
-      // Ako ima nepopunjenih polja, prikaži modal
-      if (!valid) {
-        updateRequiredFieldsList();
-        $('#requiredFieldsModal').modal('show');
-        return false;
-      }
-      
-      return true;
     });
   });
 </script>

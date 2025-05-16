@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Izmena kompanije | ISOQAR</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/css/all.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/css/adminlte.min.css">
+  <!-- jQuery UI -->
+  <link rel="stylesheet" href="/static/css/jquery-ui.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  
+</head>
+<body class="">
+<div class="wrapper">
+  <!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+</nav>
+<!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-link">
+      <span class="brand-text font-weight-light">ISOQAR</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar Menu -->
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <li class="nav-item">
+            <a href="/" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>Dashboard</p>
+            </a>
+        </li>
+          <li class="nav-item">
+            <a href="/company/calendar/" class="nav-link">
+              <i class="nav-icon far fa-calendar-alt"></i>
+              <p>
+                Kalendar Sastanaka
+                <span class="badge badge-info right">New</span>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/company/companies/" class="nav-link">
+              <i class="nav-icon fas fa-list"></i>
+              <p>Company List</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
+
+
+  
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Izmena kompanije</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="/company/companies/" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na listu
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card shadow">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">Unos podataka</h6>
+          <button type="button" class="btn btn-info btn-sm" id="showRequiredFieldsBtn">
+            <i class="fas fa-info-circle"></i> Obavezna polja
+          </button>
+        </div>
+        <div class="card-body">
+          
+          <!-- Modal za prikaz obaveznih polja -->
+          <div class="modal fade" id="requiredFieldsModal" tabindex="-1" role="dialog" aria-labelledby="requiredFieldsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="requiredFieldsModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Obavezna polja
+                  </h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Sledeća polja su obavezna za unos:</p>
+                  <div id="requiredFieldsList" class="list-group mb-3">
+                    <!-- JavaScript će dinamički popuniti ovu listu -->
+                  </div>
+                  
+                  <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Kliknite na neko od polja iz liste da biste prešli na odgovarajući tab i uneli podatak.
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-body">
+          <form method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="IAfnSR35m8wx1P4HgxgLXcFxnpcLrzZbODRAlY18NCZeEp11xI7PglPAmQhJIdSe">
+            
+            <!-- Tabs navigation -->
+            <ul class="nav nav-tabs" id="companyFormTabs" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">
+                  <i class="fas fa-info-circle"></i> Osnovne informacije
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="certificate-tab" data-toggle="tab" href="#certificate" role="tab" aria-controls="certificate" aria-selected="false">
+                  <i class="fas fa-certificate"></i> Sertifikat
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="standards-tab" data-toggle="tab" href="#standards" role="tab" aria-controls="standards" aria-selected="false">
+                  <i class="fas fa-award"></i> Standardi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="address-tab" data-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="false">
+                  <i class="fas fa-map-marker-alt"></i> Adresa i kontakt
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="iaf-tab" data-toggle="tab" href="#iaf" role="tab" aria-controls="iaf" aria-selected="false">
+                  <i class="fas fa-tags"></i> IAF/EAC kodovi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">
+                  <i class="fas fa-sticky-note"></i> Napomene
+                </a>
+              </li>
+            </ul>
+            
+            <!-- Tab content -->
+            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="companyFormTabsContent">
+              
+              <!-- Tab: Osnovne informacije -->
+              <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="id_name">Naziv kompanije *</label>
+                      
+                      <input type="text" name="name" id="id_name" 
+                             class="form-control " 
+                             value="GeoBiz" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_pib">PIB *</label>
+                      
+                      <input type="text" name="pib" id="id_pib" 
+                             class="form-control " 
+                             value="108258963" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_mb">Matični broj *</label>
+                      
+                      <input type="text" name="mb" id="id_mb" 
+                             class="form-control " 
+                             value="20585232" required>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_industry">Industrija *</label>
+                      
+                      <select name="industry" id="id_industry" 
+                              class="form-control " required>
+                        <option value="">Izaberite industriju</option>
+                        
+                          <option value="" >
+                            ---------
+                          </option>
+                        
+                          <option value="agriculture" >
+                            Poljoprivreda, šumarstvo i ribarstvo
+                          </option>
+                        
+                          <option value="mining" >
+                            Rudarstvo
+                          </option>
+                        
+                          <option value="manufacturing" >
+                            Prerađivačka industrija
+                          </option>
+                        
+                          <option value="energy" >
+                            Snabdevanje električnom energijom, gasom i parom
+                          </option>
+                        
+                          <option value="water_supply" >
+                            Snabdevanje vodom i upravljanje otpadnim vodama
+                          </option>
+                        
+                          <option value="construction" >
+                            Građevinarstvo
+                          </option>
+                        
+                          <option value="geodetic" >
+                            Geodetske usluge
+                          </option>
+                        
+                          <option value="trade" >
+                            Trgovina na veliko i malo
+                          </option>
+                        
+                          <option value="transportation" >
+                            Saobraćaj i skladištenje
+                          </option>
+                        
+                          <option value="tourism" >
+                            Turizam i turističke usluge
+                          </option>
+                        
+                          <option value="hospitality" >
+                            Usluge smeštaja i ishrane
+                          </option>
+                        
+                          <option value="information" >
+                            Informisanje i komunikacije
+                          </option>
+                        
+                          <option value="it_services" selected>
+                            IT usluge i razvoj softvera
+                          </option>
+                        
+                          <option value="finance" >
+                            Finansijske delatnosti i osiguranje
+                          </option>
+                        
+                          <option value="real_estate" >
+                            Poslovanje nekretninama
+                          </option>
+                        
+                          <option value="professional" >
+                            Stručne, naučne i tehničke delatnosti
+                          </option>
+                        
+                          <option value="administrative" >
+                            Administrativne i pomoćne uslužne delatnosti
+                          </option>
+                        
+                          <option value="public_admin" >
+                            Državna uprava i odbrana
+                          </option>
+                        
+                          <option value="education" >
+                            Obrazovanje
+                          </option>
+                        
+                          <option value="healthcare" >
+                            Zdravstvena i socijalna zaštita
+                          </option>
+                        
+                          <option value="arts" >
+                            Umetnost, zabava i rekreacija
+                          </option>
+                        
+                          <option value="other_services" >
+                            Ostale uslužne delatnosti
+                          </option>
+                        
+                          <option value="legal_services" >
+                            Pravne usluge
+                          </option>
+                        
+                          <option value="consulting" >
+                            Konsalting usluge
+                          </option>
+                        
+                          <option value="marketing" >
+                            Marketing i oglašavanje
+                          </option>
+                        
+                          <option value="households" >
+                            Delatnost domaćinstva kao poslodavca
+                          </option>
+                        
+                          <option value="extraterritorial" >
+                            Delatnost eksteritorijalnih organizacija i tela
+                          </option>
+                        
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_number_of_employees">Broj zaposlenih</label>
+                      
+                      <input type="number" name="number_of_employees" id="id_number_of_employees" 
+                             class="form-control " 
+                             value="1">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_certificate_status">Status sertifikata *</label>
+                      
+                      <select name="certificate_status" id="id_certificate_status" 
+                              class="form-control " required>
+                        <option value="">Izaberite status</option>
+                        
+                          <option value="active" >
+                            Aktivan
+                          </option>
+                        
+                          <option value="suspended" >
+                            Suspendovan
+                          </option>
+                        
+                          <option value="withdrawn" >
+                            Deregistrovan
+                          </option>
+                        
+                          <option value="expired" >
+                            Istekao
+                          </option>
+                        
+                          <option value="pending" selected>
+                            Na čekanju
+                          </option>
+                        
+                          <option value="cancelled" >
+                            Otkazan
+                          </option>
+                        
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Sertifikat -->
+              <div class="tab-pane fade" id="certificate" role="tabpanel" aria-labelledby="certificate-tab">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_certificate_number">Broj sertifikata</label>
+                      
+                      <input type="text" name="certificate_number" id="id_certificate_number" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_initial_audit_conducted_date">Datum inicijalnog audita</label>
+                      
+                      <input type="date" name="initial_audit_conducted_date" id="id_initial_audit_conducted_date" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_suspension_until_date">Suspenzija do datuma</label>
+                      
+                      <input type="date" name="suspension_until_date" id="id_suspension_until_date" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_audit_days">Broj dana audita</label>
+                      
+                      <input type="number" step="0.1" name="audit_days" id="id_audit_days" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_visits_per_year">Poseta godišnje</label>
+                      
+                      <input type="number" name="visits_per_year" id="id_visits_per_year" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_audit_days_each">Dana po auditu</label>
+                      
+                      <input type="number" step="0.1" name="audit_days_each" id="id_audit_days_each" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="id_oblast_registracije">Oblast registracije</label>
+                      
+                      <textarea name="oblast_registracije" id="id_oblast_registracije" 
+                           class="form-control " 
+                           rows="3"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Standardi -->
+              <div class="tab-pane fade" id="standards" role="tabpanel" aria-labelledby="standards-tab">
+                <h5 class="mb-3">Standardi</h5>
+                <div class="card">
+                  <div class="card-body">
+                    
+                      <div class="table-responsive mb-4">
+                        <table class="table table-sm table-striped table-hover">
+                          <thead class="thead-light">
+                            <tr>
+                              <th width="30%">Standard</th>
+                              <th width="15%">Datum izdavanja</th>
+                              <th width="15%">Datum isteka</th>
+                              <th width="25%">Napomena</th>
+                              <th width="15%">Akcije</th>
+                            </tr>
+                          </thead>
+                          <tbody id="standards-list">
+                            
+                              <tr id="standard-5">
+                                <td><strong>BRC Food v9 - British Retail Consortium Global Standard for Food Safety</strong></td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="5">
+                                      <i class="fas fa-trash"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            
+                              <tr id="standard-6">
+                                <td><strong>ISO 22301:2019 - Sistem menadžmenta kontinuitetom poslovanja</strong></td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="6">
+                                      <i class="fas fa-trash"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    
+
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="standard_definition_select">Izaberite standard</label>
+                          <select id="standard_definition_select" class="form-control">
+                            <option value="">-- Izaberite standard --</option>
+                            
+                              <option value="14">
+                                BRC Food v9 - British Retail Consortium Global Standard for Food Safety
+                              </option>
+                            
+                              <option value="12">
+                                FSSC 22000 v5.1 - Sistem bezbednosti hrane
+                              </option>
+                            
+                              <option value="11">
+                                HACCP - Sistem bezbednosti hrane
+                              </option>
+                            
+                              <option value="13">
+                                IFS Food v7 - International Featured Standard Food
+                              </option>
+                            
+                              <option value="6">
+                                ISO 13485:2016 - Medicinska sredstva - Sistem menadžmenta kvalitetom
+                              </option>
+                            
+                              <option value="2">
+                                ISO 14001:2015 - Sistem upravljanja zaštitom životne sredine
+                              </option>
+                            
+                              <option value="8">
+                                ISO 20000-1:2018 - Sistem menadžmenta IT uslugama
+                              </option>
+                            
+                              <option value="5">
+                                ISO 22000:2018 - Sistem menadžmenta bezbednošću hrane
+                              </option>
+                            
+                              <option value="9">
+                                ISO 22301:2019 - Sistem menadžmenta kontinuitetom poslovanja
+                              </option>
+                            
+                              <option value="4">
+                                ISO 27001:2022 - Sistem menadžmenta bezbednošću informacija
+                              </option>
+                            
+                              <option value="10">
+                                ISO 37001:2016 - Sistem menadžmenta protiv mita
+                              </option>
+                            
+                              <option value="3">
+                                ISO 45001:2018 - Sistem menadžmenta bezbednošću i zdravljem na radu
+                              </option>
+                            
+                              <option value="7">
+                                ISO 50001:2018 - Sistem menadžmenta energijom
+                              </option>
+                            
+                              <option value="1">
+                                ISO 9001:2015 - Sistem menadžmenta kvalitetom
+                              </option>
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="standard_issue_date">Datum izdavanja</label>
+                          <input type="date" id="standard_issue_date" class="form-control" placeholder="Datum izdavanja">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="standard_expiry_date">Datum isteka</label>
+                          <input type="date" id="standard_expiry_date" class="form-control" placeholder="Datum isteka">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="standard_notes">Napomena</label>
+                          <input type="text" id="standard_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="button" id="add-standard" class="btn btn-info">
+                        <i class="fas fa-plus"></i> Dodaj standard
+                      </button>
+                    </div>
+                    
+                    <!-- Skriveno polje za standarde -->
+                    <input type="hidden" name="standards_data" id="standards_data" value="">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Adresa i kontakt -->
+              <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                <h5 class="mb-3">Adresa</h5>
+                
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="id_street">Ulica *</label>
+                      
+                      <input type="text" name="street" id="id_street" 
+                             class="form-control " 
+                             value="Mirna" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="id_street_number">Broj *</label>
+                      
+                      <input type="text" name="street_number" id="id_street_number" 
+                             class="form-control " 
+                             value="1" required>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_city">Grad *</label>
+                      
+                      <select name="city" id="id_city" 
+                              class="form-control " required>
+                        <option value="">Izaberite grad</option>
+                        
+                          <option value="" >
+                            ---------
+                          </option>
+                        
+                          <option value="Aleksinac" >
+                            Aleksinac
+                          </option>
+                        
+                          <option value="Aranđelovac" >
+                            Aranđelovac
+                          </option>
+                        
+                          <option value="Bačka Palanka" >
+                            Bačka Palanka
+                          </option>
+                        
+                          <option value="Bačka Topola" >
+                            Bačka Topola
+                          </option>
+                        
+                          <option value="Bajina Bašta" >
+                            Bajina Bašta
+                          </option>
+                        
+                          <option value="Belgrade" >
+                            Belgrade
+                          </option>
+                        
+                          <option value="Bečej" >
+                            Bečej
+                          </option>
+                        
+                          <option value="Bor" >
+                            Bor
+                          </option>
+                        
+                          <option value="Gornji Milanovac" >
+                            Gornji Milanovac
+                          </option>
+                        
+                          <option value="Inđija" >
+                            Inđija
+                          </option>
+                        
+                          <option value="Jagodina" >
+                            Jagodina
+                          </option>
+                        
+                          <option value="Kikinda" >
+                            Kikinda
+                          </option>
+                        
+                          <option value="Kladovo" >
+                            Kladovo
+                          </option>
+                        
+                          <option value="Knjaževac" >
+                            Knjaževac
+                          </option>
+                        
+                          <option value="Kragujevac" >
+                            Kragujevac
+                          </option>
+                        
+                          <option value="Kraljevo" >
+                            Kraljevo
+                          </option>
+                        
+                          <option value="Kruševac" >
+                            Kruševac
+                          </option>
+                        
+                          <option value="Kučevo" >
+                            Kučevo
+                          </option>
+                        
+                          <option value="Leskovac" >
+                            Leskovac
+                          </option>
+                        
+                          <option value="Loznica" >
+                            Loznica
+                          </option>
+                        
+                          <option value="Negotin" >
+                            Negotin
+                          </option>
+                        
+                          <option value="Niš" >
+                            Niš
+                          </option>
+                        
+                          <option value="Nova Varoš" >
+                            Nova Varoš
+                          </option>
+                        
+                          <option value="Novi Pazar" >
+                            Novi Pazar
+                          </option>
+                        
+                          <option value="Novi Sad" >
+                            Novi Sad
+                          </option>
+                        
+                          <option value="Pančevo" >
+                            Pančevo
+                          </option>
+                        
+                          <option value="Paraćin" >
+                            Paraćin
+                          </option>
+                        
+                          <option value="Pirot" >
+                            Pirot
+                          </option>
+                        
+                          <option value="Požarevac" >
+                            Požarevac
+                          </option>
+                        
+                          <option value="Prijepolje" >
+                            Prijepolje
+                          </option>
+                        
+                          <option value="Prokuplje" >
+                            Prokuplje
+                          </option>
+                        
+                          <option value="Ruma" >
+                            Ruma
+                          </option>
+                        
+                          <option value="Smederevo" >
+                            Smederevo
+                          </option>
+                        
+                          <option value="Sombor" >
+                            Sombor
+                          </option>
+                        
+                          <option value="Sremska Mitrovica" selected>
+                            Sremska Mitrovica
+                          </option>
+                        
+                          <option value="Subotica" >
+                            Subotica
+                          </option>
+                        
+                          <option value="Svilajnac" >
+                            Svilajnac
+                          </option>
+                        
+                          <option value="Šabac" >
+                            Šabac
+                          </option>
+                        
+                          <option value="Užice" >
+                            Užice
+                          </option>
+                        
+                          <option value="Valjevo" >
+                            Valjevo
+                          </option>
+                        
+                          <option value="Velika Plana" >
+                            Velika Plana
+                          </option>
+                        
+                          <option value="Vranje" >
+                            Vranje
+                          </option>
+                        
+                          <option value="Vrnjačka Banja" >
+                            Vrnjačka Banja
+                          </option>
+                        
+                          <option value="Vršac" >
+                            Vršac
+                          </option>
+                        
+                          <option value="Zaječar" >
+                            Zaječar
+                          </option>
+                        
+                          <option value="Zrenjanin" >
+                            Zrenjanin
+                          </option>
+                        
+                          <option value="Čačak" >
+                            Čačak
+                          </option>
+                        
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_postal_code">Poštanski broj</label>
+                      
+                      <input type="text" name="postal_code" id="id_postal_code" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                </div>
+                
+                <h5 class="mt-4 mb-3">Kontakt informacije</h5>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_phone">Telefon</label>
+                      
+                      <input type="tel" name="phone" id="id_phone" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_email">Email</label>
+                      
+                      <input type="email" name="email" id="id_email" 
+                             class="form-control " 
+                             value="">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="id_website">Website</label>
+                      
+                      <input type="url" name="website" id="id_website" 
+                             class="form-control " 
+                             value="" placeholder="https://">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+            <!-- Tab: IAF/EAC Kodovi -->
+              <div class="tab-pane fade" id="iaf" role="tabpanel" aria-labelledby="iaf-tab">
+                <h5 class="mb-3">IAF/EAC Kodovi</h5>
+                <div class="card">
+                  <div class="card-body">
+                    
+                      <div class="alert alert-info" id="no-iaf-codes-message">
+                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
+                      </div>
+                    
+
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label for="iaf_eac_code_select">Izaberite IAF/EAC kod</label>
+                          <select id="iaf_eac_code_select" class="form-control">
+                            <option value="">-- Izaberite kod --</option>
+                            
+                              <option value="1" data-description="Growing of crops">
+                                01a - Growing of crops
+                              </option>
+                            
+                              <option value="2" data-description="Animal production">
+                                01b - Animal production
+                              </option>
+                            
+                              <option value="3" data-description="Mixed farming">
+                                01c - Mixed farming
+                              </option>
+                            
+                              <option value="4" data-description="Plant Propagation">
+                                01d - Plant Propagation
+                              </option>
+                            
+                              <option value="5" data-description="Plant Propagation">
+                                01e - Plant Propagation
+                              </option>
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label for="iaf_eac_code_notes">Napomena</label>
+                          <input type="text" id="iaf_eac_code_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="iaf_eac_is_primary" class="d-block">Primarni</label>
+                          <div class="form-check">
+                            <input type="checkbox" id="iaf_eac_is_primary" class="form-check-input">
+                            <label class="form-check-label" for="iaf_eac_is_primary">Postavi kao primarni</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="button" id="add-iaf-eac-code" class="btn btn-info">
+                        <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                      </button>
+                    </div>
+                    
+                    <!-- Skriveno polje za IAF/EAC kodove -->
+                    <input type="hidden" name="iaf_eac_codes_data" id="iaf_eac_codes_data" value="">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Napomene -->
+              <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+                <div class="form-group">
+                  <label for="id_notes">Napomene</label>
+                  
+                  <textarea name="notes" id="id_notes" 
+                            class="form-control " 
+                            rows="8"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Sačuvaj izmene
+              </button>
+              <a href="/company/companies/" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Otkaži
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+      <b>Version</b> 1.0.0
+    </div>
+    <strong>Copyright &copy; 2025 <a href="https://isoqar.rs">ISOQAR</a>.</strong> All rights reserved.
+  </footer>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="/static/js/jquery.min.js"></script>
+<!-- jQuery UI -->
+<script src="/static/js/jquery-ui.min.js"></script>
+<!-- DataTables -->
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/js/adminlte.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
