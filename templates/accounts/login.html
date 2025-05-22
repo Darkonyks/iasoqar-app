@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prijava | ISOQAR</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
+  <!-- Login CSS -->
+  <link rel="stylesheet" href="{% static 'css/accounts/login.css' %}">
+</head>
+
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="{% url 'home' %}"><b>ISO</b>QAR</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Prijavite se da započnete sesiju</p>
+
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" name="{{ form.username.html_name }}" placeholder="Korisničko ime" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-user"></span>
+              </div>
+            </div>
+          </div>
+          {% if form.username.errors %}
+          <div class="text-danger">
+            {{ form.username.errors }}
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" name="{{ form.password.html_name }}" placeholder="Lozinka" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+          {% if form.password.errors %}
+          <div class="text-danger">
+            {{ form.password.errors }}
+          </div>
+          {% endif %}
+        </div>
+        
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Zapamti me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Prijava</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <p class="mb-1 mt-3">
+        <a href="#">Zaboravili ste lozinku?</a>
+      </p>
+      <p class="mb-0">
+        <a href="/accounts/register/" class="text-center">Registrujte se</a>
+      </p>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'js/adminlte.min.js' %}"></script>
+
+<script>
+(function($) {
+    'use strict';
+    
+    // Inicijalizacija kada je dokument spreman
+    $(document).ready(function() {
+        console.log('Inicijalizacija login stranice...');
+        
+        // Validacija forme pre slanja
+        $('form').on('submit', function(e) {
+            var username = $('input[name="username"]').val();
+            var password = $('input[name="password"]').val();
+            
+            if (!username || !password) {
+                e.preventDefault();
+                showValidationError('Molimo popunite sva polja.');
+                return false;
+            }
+            
+            return true;
+        });
+    });
+    
+    // Funkcija za prikazivanje grešaka validacije
+    function showValidationError(message) {
+        // Proveri da li već postoji poruka o grešci
+        if ($('.alert-danger').length) {
+            $('.alert-danger').html(message);
+        } else {
+            // Kreiraj novi element za poruku
+            var alert = $('<div class="alert alert-danger alert-dismissible">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        message +
+                        '</div>');
+            
+            // Dodaj poruku na početak forme
+            $('form').prepend(alert);
+        }
+    }
+    
+})(jQuery);
+</script>
+
+</body>
+</html>

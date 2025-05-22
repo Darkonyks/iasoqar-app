@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Ažuriranje standarda | {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Ažuriranje standarda kompanije: {{ company.name }}</h5>
+            <a href="{% url 'company:update' pk=company.id %}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Nazad
+            </a>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{% url 'company:standard_update' company_id=company.id pk=standard.id %}">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="standard_definition">Standard</label>
+                            <select id="standard_definition" name="standard_definition" class="form-control" required>
+                                <option value="">-- Izaberite standard --</option>
+                                {% for std_def in all_standard_definitions %}
+                                    <option value="{{ std_def.id }}" {% if std_def.id == standard.standard_definition.id %}selected{% endif %}>
+                                        {{ std_def.standard }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="issue_date">Datum izdavanja</label>
+                            <input type="date" id="issue_date" name="issue_date" class="form-control" 
+                                   value="{{ standard.issue_date|date:'Y-m-d' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="expiry_date">Datum isteka</label>
+                            <input type="date" id="expiry_date" name="expiry_date" class="form-control" 
+                                   value="{{ standard.expiry_date|date:'Y-m-d' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="notes">Napomena</label>
+                            <input type="text" id="notes" name="notes" class="form-control" 
+                                   value="{{ standard.notes }}" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="form-group text-right">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Sačuvaj promene
+                    </button>
+                    <a href="{% url 'company:update' pk=company.id %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Odustani
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

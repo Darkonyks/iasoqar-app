@@ -1,0 +1,224 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Korisnički profil{% endblock %}
+
+{% block extrastyle %}
+<!-- Specific CSS for Profile -->
+<link rel="stylesheet" href="{% static 'css/accounts/profile.css' %}">
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Korisnički profil</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
+            <li class="breadcrumb-item active">Korisnički profil</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+
+          <!-- Profile Image -->
+          <div class="card card-primary card-outline">
+            <div class="card-body box-profile">
+              <div class="text-center">
+                <i class="fas fa-user-circle fa-4x text-primary"></i>
+              </div>
+
+              <h3 class="profile-username text-center">{{ user.get_full_name|default:user.username }}</h3>
+
+              <p class="text-muted text-center">{{ user.email }}</p>
+
+              <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                  <b>Korisničko ime</b> <a class="float-right">{{ user.username }}</a>
+                </li>
+                <li class="list-group-item">
+                  <b>Član od</b> <a class="float-right">{{ user.date_joined|date:"d.m.Y" }}</a>
+                </li>
+              </ul>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-9">
+          <div class="card">
+            <div class="card-header p-2">
+              <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" href="#settings" data-toggle="tab">Podešavanja</a></li>
+                <li class="nav-item"><a class="nav-link" href="#password" data-toggle="tab">Promena lozinke</a></li>
+              </ul>
+            </div><!-- /.card-header -->
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="active tab-pane" id="settings">
+                  <form class="form-horizontal" method="post" action="#">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                      <label for="inputName" class="col-sm-2 col-form-label">Ime</label>
+                      <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputName" name="first_name" value="{{ user.first_name }}">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="inputLastName" class="col-sm-2 col-form-label">Prezime</label>
+                      <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputLastName" name="last_name" value="{{ user.last_name }}">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                      <div class="col-sm-10">
+                        <input type="email" class="form-control" id="inputEmail" name="email" value="{{ user.email }}">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Sačuvaj</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="password">
+                  <form class="form-horizontal" method="post" action="#">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                      <label for="currentPassword" class="col-sm-2 col-form-label">Trenutna lozinka</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="currentPassword" name="old_password">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="newPassword" class="col-sm-2 col-form-label">Nova lozinka</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="newPassword" name="new_password1">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="confirmPassword" class="col-sm-2 col-form-label">Potvrda lozinke</label>
+                      <div class="col-sm-10">
+                        <input type="password" class="form-control" id="confirmPassword" name="new_password2">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="offset-sm-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Promeni lozinku</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <!-- /.tab-pane -->
+              </div>
+              <!-- /.tab-content -->
+            </div><!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Specific JS for Profile -->
+<script>
+(function($) {
+    'use strict';
+    
+    // Inicijalizacija kada je dokument spreman
+    $(document).ready(function() {
+        console.log('Inicijalizacija profile stranice...');
+        
+        // Inicijalizacija tabova
+        initTabs();
+        
+        // Validacija forme za podešavanja
+        $('#settings form').on('submit', function(e) {
+            // Ovde možemo dodati dodatnu validaciju ako je potrebno
+            return true;
+        });
+        
+        // Validacija forme za promenu lozinke
+        $('#password form').on('submit', function(e) {
+            var currentPassword = $('#currentPassword').val();
+            var newPassword = $('#newPassword').val();
+            var confirmPassword = $('#confirmPassword').val();
+            
+            // Validacija polja
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                e.preventDefault();
+                showValidationError('Molimo popunite sva polja.');
+                return false;
+            }
+            
+            // Validacija lozinki
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                showValidationError('Nova lozinka i potvrda lozinke se ne podudaraju.');
+                return false;
+            }
+            
+            return true;
+        });
+    });
+    
+    // Inicijalizacija tabova
+    function initTabs() {
+        // Zapamti aktivni tab između sesija
+        var activeTab = localStorage.getItem('profileActiveTab');
+        if (activeTab) {
+            $('.nav-pills a[href="' + activeTab + '"]').tab('show');
+        }
+        
+        // Postavi event listener za promenu taba
+        $('.nav-pills a').on('shown.bs.tab', function(e) {
+            var target = $(e.target).attr('href');
+            localStorage.setItem('profileActiveTab', target);
+        });
+    }
+    
+    // Funkcija za prikazivanje grešaka validacije
+    function showValidationError(message) {
+        // Proveri da li već postoji poruka o grešci
+        if ($('.alert-danger').length) {
+            $('.alert-danger').html(message);
+        } else {
+            // Kreiraj novi element za poruku
+            var alert = $('<div class="alert alert-danger alert-dismissible">' +
+                          '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                          message +
+                          '</div>');
+            
+            // Dodaj poruku na početak aktivne forme
+            $('.tab-pane.active form').prepend(alert);
+        }
+    }
+    
+})(jQuery);
+</script>
+{% endblock %}

@@ -5,6 +5,55 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'company:dashboard' %}" class="nav-link">Kontrolna tabla</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'company:list' %}" class="nav-link">Kompanije</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="{% url 'company:calendar' %}" class="nav-link">Kalendar</a>
+      </li>
+    </ul>
+
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      {% if user.is_authenticated %}
+      <!-- User Account Menu -->
+      <li class="nav-item dropdown user-menu">
+        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle mr-2"></i>
+          <span class="d-none d-md-inline">{{ user.username }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <!-- User image -->
+          <li class="user-header bg-primary">
+            <i class="fas fa-user-circle fa-3x text-white"></i>
+            <p>
+              {{ user.get_full_name|default:user.username }}
+              <small>Član od {{ user.date_joined|date:"M. Y" }}</small>
+            </p>
+          </li>
+          <!-- Menu Footer-->
+          <li class="user-footer">
+            <a href="#" class="btn btn-default btn-flat">Profil</a>
+            <a href="/accounts/logout/" class="btn btn-default btn-flat float-right">Odjava</a>
+          </li>
+        </ul>
+      </li>
+      {% else %}
+      <!-- Login Link -->
+      <li class="nav-item">
+        <a href="/accounts/login/" class="nav-link">
+          <i class="fas fa-sign-in-alt mr-2"></i>Prijava
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="/accounts/register/" class="nav-link">
+          <i class="fas fa-user-plus mr-2"></i>Registracija
+        </a>
+      </li>
+      {% endif %}
     </ul>
 </nav>
 <!-- /.navbar -->

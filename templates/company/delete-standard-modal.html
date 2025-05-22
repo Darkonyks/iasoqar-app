@@ -1,0 +1,24 @@
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+        <form id="deleteStandardForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

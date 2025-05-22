@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% load static %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -22,16 +23,7 @@
   </div>
 
   <div class="content">
-    <div class="container-fluid">
-      <div class="card shadow">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-          <h6 class="m-0 font-weight-bold text-primary">Unos podataka</h6>
-          <button type="button" class="btn btn-info btn-sm" id="showRequiredFieldsBtn">
-            <i class="fas fa-info-circle"></i> Obavezna polja
-          </button>
-        </div>
-        <div class="card-body">
-          
+    <div class="container-fluid">          
           <!-- Modal za prikaz obaveznih polja -->
           <div class="modal fade" id="requiredFieldsModal" tabindex="-1" role="dialog" aria-labelledby="requiredFieldsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -60,8 +52,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -285,74 +275,92 @@
                             <th width="15%">Akcije</th>
                           </tr>
                         </thead>
-                        <tbody id="standards-list">
+                        <tbody>
                           {% if object and object.company_standards.all %}
                             {% for standard in object.company_standards.all %}
-                              <tr id="standard-{{ standard.id }}">
+                              <tr>
                                 <td><strong>{{ standard.standard_definition.standard }}</strong></td>
                                 <td>{% if standard.issue_date %}{{ standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{% if standard.expiry_date %}{{ standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{{ standard.notes|default:"-" }}</td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-danger btn-remove-standard" data-id="{{ standard.id }}">
+                                    <a href="{% url 'company:standard_update' company_id=object.id pk=standard.id %}" class="btn btn-outline-primary">
+                                      <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-delete-standard" 
+                                      data-standard-id="{{ standard.id }}" 
+                                      data-standard-name="{{ standard.standard_definition.standard|escapejs }}" 
+                                      data-company-id="{{ object.id }}">
                                       <i class="fas fa-trash"></i>
                                     </button>
                                   </div>
                                 </td>
                               </tr>
                             {% endfor %}
+                          {% else %}
+                            <tr>
+                              <td colspan="5" class="text-center">
+                                <div class="alert alert-info mb-0">
+                                  <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
+                                </div>
+                              </td>
+                            </tr>
                           {% endif %}
-                          <!-- Novi standardi će biti dinamički dodati ovde -->                          
                         </tbody>
                       </table>
                     </div>
-                    <div class="alert alert-info" id="no-standards-message" style="display: none;">
-                      <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
-                    </div>
 
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="standard_definition_select">Izaberite standard</label>
-                          <select id="standard_definition_select" class="form-control">
-                            <option value="">-- Izaberite standard --</option>
-                            {% for standard in all_standard_definitions %}
-                              <option value="{{ standard.id }}">
-                                {{ standard.standard }}
-                              </option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="form-group">
-                          <label for="standard_issue_date">Datum izdavanja</label>
-                          <input type="date" id="standard_issue_date" class="form-control" placeholder="Datum izdavanja">
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="form-group">
-                          <label for="standard_expiry_date">Datum isteka</label>
-                          <input type="date" id="standard_expiry_date" class="form-control" placeholder="Datum isteka">
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="standard_notes">Napomena</label>
-                          <input type="text" id="standard_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
-                        </div>
-                      </div>
+                    <!-- Forma za dodavanje novog standarda -->
+                    <div class="alert alert-info mb-3 small">
+                      <strong>Debug info:</strong> Company ID: {{ object.id|default:'None' }} 
                     </div>
+                    <form method="post" action="{% url 'company:standard_create' company_id=object.id|default:0 %}" class="mt-4" id="standardAddForm">
+                      {% csrf_token %}
+                      <h6 class="font-weight-bold mb-3">Dodaj novi standard</h6>
+                      
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="standard_definition">Izaberite standard</label>
+                            <select id="standard_definition" name="standard_definition" class="form-control" required>
+                              <option value="">-- Izaberite standard --</option>
+                              {% for standard in all_standard_definitions %}
+                                <option value="{{ standard.id }}">
+                                  {{ standard.standard }}
+                                </option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                            <label for="issue_date">Datum izdavanja</label>
+                            <input type="date" id="issue_date" name="issue_date" class="form-control" placeholder="Datum izdavanja">
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                            <label for="expiry_date">Datum isteka</label>
+                            <input type="date" id="expiry_date" name="expiry_date" class="form-control" placeholder="Datum isteka">
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="notes">Napomena</label>
+                            <input type="text" id="notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                          </div>
+                        </div>
+                      </div>
 
-                    <div class="form-group">
-                      <button type="button" id="add-standard" class="btn btn-info">
-                        <i class="fas fa-plus"></i> Dodaj standard
-                      </button>
-                    </div>
+                      <div class="form-group">
+                        <button type="button" id="directStandardAdd" class="btn btn-success" data-company-id="{{ object.id|default:0 }}">
+                          <i class="fas fa-plus"></i> Dodaj standard
+                        </button>
+                      </div>
+                    </form>
                     
-                    <!-- Skriveno polje za standarde -->
-                    <input type="hidden" name="standards_data" id="standards_data" value="">
+                    <!-- Skrivena polja više nisu potrebna jer koristimo backend pristup -->
                   </div>
                 </div>
               </div>
@@ -503,7 +511,7 @@
                     </div>
 
                     <div class="form-group">
-                      <button type="button" id="add-iaf-eac-code" class="btn btn-info">
+                      <button type="button" class="btn btn-success" id="addIafEacButton" data-company-id="{{ object.id|default:0 }}">
                         <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
                       </button>
                     </div>
@@ -549,42 +557,124 @@
   <!-- Pripremi podatke za JS -->
 {% load static %}
 <script>
-  // Objekti za inicijalno punjenje podataka
-  window.existingIAFEACCodes = [];
-  window.existingStandards = [];
-  
-  // Pripremi postojeće IAF/EAC kodove (ako postoje)
-  {% if object and object.iaf_eac_codes.all %}
-    {% for code_relation in object.iaf_eac_codes.all %}
-      window.existingIAFEACCodes.push({
-        id: {{ code_relation.iaf_eac_code.id }},
-        code: '{{ code_relation.iaf_eac_code.iaf_code|escapejs }}',
-        description: '{{ code_relation.iaf_eac_code.description|escapejs }}',
-        is_primary: {% if code_relation.is_primary %}true{% else %}false{% endif %},
-        notes: '{{ code_relation.notes|default:""|escapejs }}',
-        relation_id: {{ code_relation.id }}
+
+  // Dodavanje skrivenog polja za čuvanje podataka o obrisanim standardima
+  if (!$('#deleted_standards').length) {
+    $('form').append('<input type="hidden" id="deleted_standards" name="deleted_standards" value="[]">');
+  }
+
+  // Funkcija za pripremu podataka o standardima za slanje forme
+  function prepareStandardsData() {
+    $('#standards_data').val(JSON.stringify(standardsData));
+  }
+
+  // Funkcija za formatiranje datuma za prikaz
+  function formatDateDisplay(dateStr) {
+    if (!dateStr) return '-';
+    var date = new Date(dateStr);
+    return ('0' + date.getDate()).slice(-2) + '.' + ('0' + (date.getMonth() + 1)).slice(-2) + '.' + date.getFullYear() + '.';
+  }
+
+    // Funkcija za osvežavanje prikaza tabele standarda
+    function updateStandardsTable() {
+      var tableBody = $('#standards-list');
+      var noStandardsMessage = $('#no-standards-message');
+      
+      if (standardsData.length === 0) {
+        tableBody.html('');
+        noStandardsMessage.show();
+        return;
+      }
+      
+      noStandardsMessage.hide();
+      
+      var html = '';
+      for (var i = 0; i < standardsData.length; i++) {
+        var item = standardsData[i];
+        var rowId = item.standard_id ? 'standard-' + item.standard_id : 'new-standard-' + i;
+        
+        html += '<tr id="' + rowId + '">' +
+                '<td><strong>' + item.name + '</strong></td>' +
+                '<td>' + formatDisplayDate(item.issue_date) + '</td>' +
+                '<td>' + formatDisplayDate(item.expiry_date) + '</td>' +
+                '<td>' + (item.notes || '-') + '</td>' +
+                '<td>' +
+                  '<div class="btn-group btn-group-sm">' +
+                    '<button type="button" class="btn btn-outline-danger btn-remove-standard" data-index="' + i + '">' +
+                      '<i class="fas fa-trash"></i>' +
+                    '</button>' +
+                  '</div>' +
+                '</td>' +
+              '</tr>';
+      }
+      
+      tableBody.html(html);
+      
+      // Dodajemo event listener za brisanje standarda
+      $('.btn-remove-standard').off('click').on('click', function() {
+        var index = $(this).data('index');
+        standardsData.splice(index, 1);
+        updateStandardsTable();
       });
-    {% endfor %}
-  {% endif %}
-  
-  // Pripremi postojeće standarde (ako postoje)
-  {% if object and object.company_standards.all %}
-    console.log('Ima standarda za prikazati: {{ object.company_standards.all|length }}');
-    
-    {% for standard in object.company_standards.all %}
-      window.existingStandards.push({
-        id: {{ standard.standard_definition.id }},
-        name: '{{ standard.standard_definition.standard }}',
-        issue_date: '{{ standard.issue_date|date:"Y-m-d"|default:"" }}',
-        expiry_date: '{{ standard.expiry_date|date:"Y-m-d"|default:"" }}',
-        notes: '{{ standard.notes|default:""|escapejs }}',
-        standard_id: {{ standard.id }}
+    }
+
+    // Funkcija za dodavanje novog standarda
+    function addStandard() {
+      var standardSelect = $('#standard_definition_select');
+      var standardId = standardSelect.val();
+      
+      if (!standardId) {
+        alert('Molimo izaberite standard');
+        return;
+      }
+
+      // Provera da li standard već postoji
+      for (var i = 0; i < standardsData.length; i++) {
+        if (standardsData[i].id == standardId) {
+          alert('Ovaj standard je već dodat!');
+          return;
+        }
+      }
+      
+      var standardText = standardSelect.find('option:selected').text().trim();
+      var issueDate = $('#standard_issue_date').val() || '';
+      var expiryDate = $('#standard_expiry_date').val() || '';
+      var notes = $('#standard_notes').val() || '';
+      
+      // Dodajemo novi standard u listu
+      standardsData.push({
+        id: parseInt(standardId),
+        name: standardText,
+        issue_date: issueDate,
+        expiry_date: expiryDate,
+        notes: notes
       });
-      console.log('Dodat standard:', '{{ standard.standard_definition.standard }}');
-    {% endfor %}
-  {% else %}
-    console.log('Nema standarda za prikazati');
-  {% endif %}
+      
+      // Osvežavamo prikaz tabele
+      updateStandardsTable();
+      
+      // Resetujemo polja forme
+      standardSelect.val('');
+      $('#standard_issue_date').val('');
+      $('#standard_expiry_date').val('');
+      $('#standard_notes').val('');
+    }
+
+    // Event handler za dodavanje standarda na klik dugmeta
+    $('#add-standard').off('click').on('click', function(e) {
+      e.preventDefault();
+      addStandard();
+    });
+
+    // Postavljamo event handler za submit forme da pripremi podatke o standardima
+    $('form').on('submit', function() {
+      prepareStandardsData();
+    });
+
+    // Inicijalno osvežavanje tabele standarda
+    updateStandardsTable();
+    // Inicijalno ažuriranje prikaza IAF/EAC kodova
+    updateIAFEACTable();
 </script>
 
 <!-- Modal za potvrdu brisanja standarda -->
@@ -678,4 +768,73 @@
     });
   });
 </script>
+
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+        <form id="deleteStandardForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+        <form id="deleteStandardForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modali za uspeh i greške pri radu sa standardima -->
+{% include 'company/standard-success-modal.html' %}
+{% include 'company/standard-validation-modal.html' %}
+
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- JS za upravljanje standardima i IAF/EAC kodovima (modularno, u skladu sa reorganizacijom frontend koda) -->
+<script src="/static/js/company/direct-modal.js"></script>
+
+<!-- Komponente za standarde -->
+<script src="/static/js/company/standards-delete-modal.js"></script>
+<script src="/static/js/company/standards-form.js"></script>
+<script src="/static/js/company/standard-direct-add.js"></script>
+
+<!-- Komponenta za IAF/EAC kodove - objedinjena -->
+<script src="/static/js/company/iaf-eac-handler.js"></script>
+<script src="/static/js/company/iaf-eac-table-clean.js"></script>
 {% endblock %}

@@ -61,6 +61,7 @@ class CompanyForm(forms.ModelForm):
     
     iaf_eac_codes_data = forms.CharField(widget=forms.HiddenInput(), required=False)
     standards_data = forms.CharField(widget=forms.HiddenInput(), required=False)
+    deleted_standards = forms.CharField(widget=forms.HiddenInput(), required=False)
     
     class Meta:
         model = Company
@@ -131,35 +132,9 @@ class CompanyForm(forms.ModelForm):
                     # Logiraj grešku, ali nemoj prekinuti čuvanje
                     print(f"Error processing IAF/EAC codes: {e}")
             
-            # Procesiranje standarda ako su prosleđeni
-            standards_data = self.cleaned_data.get('standards_data')
-            if standards_data:
-                try:
-                    standards = json.loads(standards_data)
-                    
-                    # Ukloni sve postojeće standarde ako postoje novi
-                    if standards:
-                        from .standard_models import CompanyStandard
-                        CompanyStandard.objects.filter(company=instance).delete()
-                    
-                    # Dodaj nove standarde
-                    for standard_data in standards:
-                        standard_id = standard_data.get('id')
-                        issue_date = standard_data.get('issue_date', '')
-                        expiry_date = standard_data.get('expiry_date', '')
-                        notes = standard_data.get('notes', '')
-                        
-                        if standard_id:
-                            from .standard_models import CompanyStandard, StandardDefinition
-                            CompanyStandard.objects.create(
-                                company=instance,
-                                standard_definition_id=standard_id,
-                                issue_date=issue_date or None,
-                                expiry_date=expiry_date or None,
-                                notes=notes
-                            )
-                except (json.JSONDecodeError, Exception) as e:
-                    # Logiraj grešku, ali nemoj prekinuti čuvanje
-                    print(f"Error processing standards: {e}")
+            # Upravljanje standardima je prebačeno na posebne backend view funkcije
+            # company_standard_create, company_standard_update i company_standard_delete
+            # tako da ne treba da procesiramo standarde ovde
+            pass
         
         return instance

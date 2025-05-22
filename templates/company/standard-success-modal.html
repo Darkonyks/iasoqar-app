@@ -1,0 +1,48 @@
+<!-- Modal za potvrdu uspešnog dodavanja standarda -->
+<div class="modal fade" id="standardSuccessModal" tabindex="-1" role="dialog" aria-labelledby="standardSuccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="standardSuccessModalLabel">Uspešno dodavanje standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+        </div>
+        <p class="text-center">Standard <strong id="successStandardName"></strong> je uspešno dodat.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">U redu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal za obaveštenje o grešci pri dodavanju standarda -->
+<div class="modal fade" id="standardErrorModal" tabindex="-1" role="dialog" aria-labelledby="standardErrorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="standardErrorModalLabel">Greška pri dodavanju standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+        </div>
+        <p class="text-center">Došlo je do greške prilikom dodavanja standarda.</p>
+        <div class="alert alert-danger">
+          <small id="errorDetails">Detalji greške će biti prikazani ovde.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+      </div>
+    </div>
+  </div>
+</div>

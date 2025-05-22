@@ -1,0 +1,64 @@
+/**
+ * Login CSS - Stilovi za stranicu za prijavu
+ * Deo reorganizacije frontend koda ISOQAR aplikacije
+ */
+
+.login-page {
+  background: #f4f6f9;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  width: 360px;
+  margin: 0 auto;
+}
+
+.login-logo {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 2.1rem;
+}
+
+.login-logo a {
+  color: #495057;
+}
+
+.login-card-body {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.13), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.login-box-msg {
+  margin: 0;
+  padding: 0 20px 20px;
+  text-align: center;
+}
+
+.input-group-text {
+  background-color: transparent;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+.text-danger {
+  font-size: 0.8rem;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+.alert {
+  margin-bottom: 15px;
+}

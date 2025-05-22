@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nested_admin',
     'company.apps.CompanyConfig',  # Koristimo punu putanju do CompanyConfig
+    'accounts',  # Aplikacija za autentifikaciju korisnika
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Konfiguracija za pravilne MIME tipove statičkih fajlova
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+# Definisanje MIME tipova za JavaScript fajlove
+import mimetypes
+mimetypes.add_type("application/javascript", ".js", True)
+mimetypes.add_type("text/css", ".css", True)
 
 # Media files
 MEDIA_URL = 'media/'

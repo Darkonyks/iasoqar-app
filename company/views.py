@@ -700,3 +700,97 @@ def get_companies(request):
     companies = Company.objects.filter(name__icontains=term).values('id', 'name')[:10]
     results = [{'id': company['id'], 'value': company['name'], 'label': company['name']} for company in companies]
     return JsonResponse(results, safe=False)
+
+
+# ---- CRUD operacije za standarde kompanije ----
+
+def company_standard_create(request, company_id):
+    """
+    View za kreiranje novog standarda za kompaniju
+    """
+    company = get_object_or_404(Company, pk=company_id)
+    
+    if request.method == 'POST':
+        standard_id = request.POST.get('standard_definition')
+        issue_date = request.POST.get('issue_date') or None
+        expiry_date = request.POST.get('expiry_date') or None
+        notes = request.POST.get('notes', '')
+        
+        # Validacija
+        if not standard_id:
+            messages.error(request, "Morate izabrati standard.")
+            return redirect('company:update', pk=company_id)
+        
+        # Provera da li standard već postoji za kompaniju
+        if CompanyStandard.objects.filter(company=company, standard_definition_id=standard_id).exists():
+            messages.error(request, "Kompanija već ima dodeljen ovaj standard.")
+            return redirect('company:update', pk=company_id)
+            
+        # Kreiranje standarda
+        CompanyStandard.objects.create(
+            company=company,
+            standard_definition_id=standard_id,
+            issue_date=issue_date,
+            expiry_date=expiry_date,
+            notes=notes
+        )
+        
+        messages.success(request, "Standard je uspešno dodat.")
+        return redirect('company:update', pk=company_id)
+    
+    # GET zahtev (opciono, ako želite zasebnu stranicu za dodavanje standarda)
+    return redirect('company:update', pk=company_id)
+
+
+def company_standard_update(request, company_id, pk):
+    """
+    View za ažuriranje postojećeg standarda kompanije
+    """
+    company = get_object_or_404(Company, pk=company_id)
+    standard = get_object_or_404(CompanyStandard, pk=pk, company=company)
+    
+    if request.method == 'POST':
+        standard_id = request.POST.get('standard_definition')
+        issue_date = request.POST.get('issue_date') or None
+        expiry_date = request.POST.get('expiry_date') or None
+        notes = request.POST.get('notes', '')
+        
+        # Validacija
+        if not standard_id:
+            messages.error(request, "Morate izabrati standard.")
+            return redirect('company:update', pk=company_id)
+            
+        # Ažuriranje standarda
+        standard.standard_definition_id = standard_id
+        standard.issue_date = issue_date
+        standard.expiry_date = expiry_date
+        standard.notes = notes
+        standard.save()
+        
+        messages.success(request, "Standard je uspešno ažuriran.")
+        return redirect('company:update', pk=company_id)
+    
+    # GET zahtev
+    context = {
+        'company': company,
+        'standard': standard,
+        'all_standard_definitions': StandardDefinition.objects.filter(active=True).order_by('code'),
+    }
+    return render(request, 'company/standard-update-form.html', context)
+
+
+def company_standard_delete(request, company_id, pk):
+    """
+    View za brisanje standarda kompanije
+    """
+    company = get_object_or_404(Company, pk=company_id)
+    standard = get_object_or_404(CompanyStandard, pk=pk, company=company)
+    
+    if request.method == 'POST':
+        standard_name = standard.standard_definition.standard
+        standard.delete()
+        messages.success(request, f"Standard '{standard_name}' je uspešno obrisan.")
+    else:
+        messages.error(request, "Nije moguće obrisati standard. Potreban je POST zahtev.")
+        
+    return redirect('company:update', pk=company_id)
