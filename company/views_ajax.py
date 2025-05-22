@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .standard_models import CompanyStandard
@@ -106,13 +106,15 @@ def add_iaf_eac_code(request, company_id):
 
 @require_POST
 @login_required
-def delete_iaf_eac_code(request):
+def delete_iaf_eac_code(request, company_id=None, code_id=None):
     """
     AJAX view funkcija za brisanje IAF/EAC koda kompanije.
-    Prima ID veze kao POST parametar i briše je iz baze.
+    Prima ID kompanije i ID koda kao URL parametre ili kao POST parametre.
     Vraća JSON odgovor o statusu operacije.
     """
-    code_id = request.POST.get('code_id')
+    # Ako nije prosleđen code_id kroz URL, probaj da ga dobiješ iz POST parametara
+    if code_id is None:
+        code_id = request.POST.get('code_id')
     
     if not code_id:
         return JsonResponse({
@@ -121,7 +123,11 @@ def delete_iaf_eac_code(request):
         }, status=400)
     
     try:
-        company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id)
+        # Ako je prosleđen company_id, koristi ga za dodatnu validaciju
+        if company_id:
+            company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id, company_id=company_id)
+        else:
+            company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id)
         
         # Sačuvaj informacije za povratnu poruku
         code_name = str(company_iaf_eac.iaf_eac_code)
@@ -145,13 +151,15 @@ def delete_iaf_eac_code(request):
 
 @require_POST
 @login_required
-def update_iaf_eac_primary(request):
+def update_iaf_eac_primary(request, company_id=None, code_id=None):
     """
     AJAX view funkcija za ažuriranje primarnog IAF/EAC koda kompanije.
-    Prima ID veze kao POST parametar i postavlja je kao primarnu.
+    Prima ID kompanije i ID koda kao URL parametre ili kao POST parametre.
     Vraća JSON odgovor o statusu operacije.
     """
-    code_id = request.POST.get('code_id')
+    # Ako nije prosleđen code_id kroz URL, probaj da ga dobiješ iz POST parametara
+    if code_id is None:
+        code_id = request.POST.get('code_id')
     
     if not code_id:
         return JsonResponse({
@@ -160,9 +168,16 @@ def update_iaf_eac_primary(request):
         }, status=400)
     
     try:
-        company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id)
+        # Ako je prosleđen company_id, koristi ga za dodatnu validaciju
+        if company_id:
+            company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id, company_id=company_id)
+        else:
+            company_iaf_eac = get_object_or_404(CompanyIAFEACCode, id=code_id)
         
-        # Postavi ovaj kod kao primarni (save metoda će automatski ukloniti druge primarne)
+        # Prvo resetuj sve primarne kodove za ovu kompaniju
+        CompanyIAFEACCode.objects.filter(company=company_iaf_eac.company, is_primary=True).update(is_primary=False)
+        
+        # Sada postavi ovaj kod kao primarni
         company_iaf_eac.is_primary = True
         company_iaf_eac.save()
         
@@ -175,4 +190,41 @@ def update_iaf_eac_primary(request):
         return JsonResponse({
             'success': False,
             'message': f'Greška pri ažuriranju primarnog IAF/EAC koda: {str(e)}'
+        }, status=500)
+
+
+@require_GET
+@login_required
+def list_iaf_eac_codes(request, company_id):
+    """
+    AJAX view funkcija za dobijanje liste IAF/EAC kodova kompanije.
+    Prima ID kompanije kao URL parametar.
+    Vraća JSON odgovor sa listom kodova.
+    """
+    try:
+        # Dohvati kompaniju
+        company = get_object_or_404(Company, id=company_id)
+        
+        # Dohvati sve IAF/EAC kodove za kompaniju
+        company_iaf_eac_codes = CompanyIAFEACCode.objects.filter(company=company)
+        
+        codes_data = []
+        for code in company_iaf_eac_codes:
+            codes_data.append({
+                'id': code.id,
+                'iaf_code': code.iaf_eac_code.iaf_code,
+                'description': code.iaf_eac_code.description,
+                'is_primary': code.is_primary,
+                'notes': code.notes or ''
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'codes': codes_data
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'Greška pri dohvatanju IAF/EAC kodova: {str(e)}'
         }, status=500)

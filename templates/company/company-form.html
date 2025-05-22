@@ -470,7 +470,7 @@
                             <th width="15%">Akcije</th>
                           </tr>
                         </thead>
-                        <tbody id="iaf-eac-codes-list">
+                        <tbody id="iaf-eac-codes-list" data-company-id="{{ object.id|default:0 }}">
                           <!-- JavaScript će dinamički popuniti tabelu sa IAF/EAC kodovima -->
                         </tbody>
                       </table>
@@ -511,6 +511,11 @@
                     </div>
 
                     <div class="form-group">
+                      {% if object and object.id %}
+                        <!-- Debug informacije o ID-u kompanije -->
+                        <div class="small text-muted mb-2">ID kompanije: {{ object.id }}</div>
+                      {% endif %}
+                      
                       <button type="button" class="btn btn-success" id="addIafEacButton" data-company-id="{{ object.id|default:0 }}">
                         <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
                       </button>
@@ -826,15 +831,551 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- JS za upravljanje standardima i IAF/EAC kodovima (modularno, u skladu sa reorganizacijom frontend koda) -->
-<script src="/static/js/company/direct-modal.js"></script>
+{% load static %}
+<!-- Privremeno ugrađene JavaScript funkcije umesto eksternih fajlova dok ne rešimo problem sa statičkim fajlovima -->
+<script>
+/**
+ * Direct Modal - Direktna implementacija modala bez zavisnosti
+ */
+(function() {
+    'use strict';
+    
+    // Kreiranje modala direktno u DOM-u, bez zavisnosti od Bootstrap-a
+    function showDirectModal(title, message, type) {
+        console.log('Prikazujem direktni modal:', title, message, type);
+        
+        // Ukloni postojeći modal ako postoji
+        removeExistingModal();
+        
+        // Određivanje klase za tip modala
+        var headerClass;
+        var iconClass;
+        
+        switch(type) {
+            case 'success':
+                headerClass = 'bg-success';
+                iconClass = 'fa-check-circle text-success';
+                break;
+            case 'error':
+                headerClass = 'bg-danger';
+                iconClass = 'fa-exclamation-circle text-danger';
+                break;
+            case 'warning':
+                headerClass = 'bg-warning';
+                iconClass = 'fa-exclamation-triangle text-warning';
+                break;
+            default:
+                headerClass = 'bg-info';
+                iconClass = 'fa-info-circle text-info';
+        }
+        
+        // Kreiranje HTML-a za modal
+        var modalHTML = `
+            <div id="directModal" class="modal" style="display: block; background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; height: 100%; overflow: auto; padding-top: 100px;">
+                <div class="modal-dialog" style="max-width: 500px; margin: 30px auto; position: relative;">
+                    <div class="modal-content" style="border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,.5);">
+                        <div class="modal-header ${headerClass}" style="padding: 15px; border-bottom: 1px solid #e5e5e5; border-radius: 5px 5px 0 0; color: white;">
+                            <h5 class="modal-title" style="margin: 0; line-height: 1.42857143;">${title}</h5>
+                            <button type="button" class="close" onclick="window.closeDirectModal()" style="background: transparent; border: 0; font-size: 21px; font-weight: 700; opacity: .5; padding: 0; cursor: pointer; float: right;">
+                                <span>×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="padding: 15px;">
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <i class="fas ${iconClass}" style="font-size: 3rem;"></i>
+                            </div>
+                            <p style="text-align: center;">${message}</p>
+                        </div>
+                        <div class="modal-footer" style="padding: 15px; text-align: right; border-top: 1px solid #e5e5e5; border-radius: 0 0 5px 5px;">
+                            <button type="button" class="btn btn-primary" onclick="window.closeDirectModal()" style="display: inline-block; margin-bottom: 0; font-weight: 400; text-align: center; white-space: nowrap; vertical-align: middle; -ms-touch-action: manipulation; touch-action: manipulation; cursor: pointer; background-image: none; border: 1px solid transparent; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; border-radius: 4px; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; color: #fff; background-color: #007bff; border-color: #007bff;">U redu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Dodavanje modala u DOM
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Fokusiranje na "U redu" dugme
+        setTimeout(function() {
+            var okButton = document.querySelector('#directModal .btn-primary');
+            if (okButton) {
+                okButton.focus();
+            }
+        }, 100);
+        
+        console.log('Direktni modal kreiran i prikazan.');
+    }
+    
+    // Funkcija za zatvaranje modala
+    function closeDirectModal() {
+        console.log('Zatvaranje direktnog modala.');
+        removeExistingModal();
+    }
+    
+    // Pomoćna funkcija za uklanjanje postojećeg modala
+    function removeExistingModal() {
+        var existingModal = document.getElementById('directModal');
+        if (existingModal) {
+            existingModal.parentNode.removeChild(existingModal);
+        }
+    }
+    
+    // Postavljanje funkcija u globalni opseg da budu dostupne
+    window.showDirectModal = showDirectModal;
+    window.closeDirectModal = closeDirectModal;
+})();
 
-<!-- Komponente za standarde -->
-<script src="/static/js/company/standards-delete-modal.js"></script>
-<script src="/static/js/company/standards-form.js"></script>
-<script src="/static/js/company/standard-direct-add.js"></script>
+/**
+ * IAF-EAC Handler - Objedinjeni modul za rukovanje IAF/EAC kodovima
+ */
+(function($) {
+    'use strict';
+    
+    // Inicijalizacija
+    $(document).ready(function() {
+        console.log('Inicijalizacija IAF/EAC handlera...');
+        console.log('Provera da li postoji dugme za dodavanje:', $('#addIafEacButton').length);
+        console.log('Provera da li je showDirectModal funkcija dostupna:', typeof window.showDirectModal === 'function');
+        
+        // Provera da li je csrfToken dostupan
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+        console.log('CSRF token dostupan:', csrfToken ? 'Da' : 'Ne');
+        
+        initAddButton();
+        initDeleteButtons();
+        initPrimaryButtons();
+    });
+    
+    // Inicijalizacija dugmeta za dodavanje
+    function initAddButton() {
+        console.log('Inicijalizacija dugmeta za dodavanje IAF/EAC koda...');
+        
+        // Direktno dodavanje event listenera umesto jQuery metode
+        var addButton = document.getElementById('addIafEacButton');
+        if (addButton) {
+            console.log('Dodavanje click event listenera na dugme...');
+            addButton.addEventListener('click', handleAddButtonClick);
+        } else {
+            console.error('Dugme za dodavanje IAF/EAC koda nije pronađeno u DOM-u!');
+        }
+        
+        // Dodavanje i putem jQuery za svaki slučaj
+        $('#addIafEacButton').on('click', function(e) {
+            console.log('jQuery onClick handler za addIafEacButton aktiviran!');
+            e.preventDefault();
+            handleAddButtonClick(e);
+        });
+    }
+    
+    // Handler funkcija za klik na dugme za dodavanje
+    function handleAddButtonClick(e) {
+        console.log('Kliknuto je dugme za dodavanje IAF/EAC koda!', e);
+        if (e && e.preventDefault) e.preventDefault();
+        
+        var $btn = $('#addIafEacButton');
+        var companyId = $btn.data('company-id');
+        console.log('ID kompanije:', companyId);
+        
+        // Validacija
+        var iafEacCodeId = $('#iaf_eac_code_select').val();
+        if (!iafEacCodeId) {
+            showMessage('Potrebna validacija', 'Morate izabrati IAF/EAC kod pre nego što nastavite.', 'warning');
+            $('#iaf_eac_code_select').focus();
+            return;
+        }
+        
+        // Proverimo da li je ID kompanije validan
+        if (!companyId || companyId === '0' || companyId === 0) {
+            console.error('ID kompanije nije validan:', companyId);
+            showMessage('Greška', 'ID kompanije nije validan. Ne možemo dodati IAF/EAC kod.', 'error');
+            return;
+        }
+        
+        console.log('ID kompanije je validan:', companyId);
+        
+        // Prikupljanje podataka
+        var notes = $('#iaf_eac_code_notes').val();
+        var isPrimary = $('#iaf_eac_is_primary').is(':checked');
+        var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+        
+        // UI ažuriranje
+        var originalBtnText = $btn.html();
+        $btn.html('<i class="fas fa-spinner fa-spin"></i> Dodajem...');
+        $btn.prop('disabled', true);
+        
+        // Dodatna provera za ispravnost CSRF tokena
+        if (!csrfToken) {
+            console.error('CSRF token nije dostupan!');
+            showMessage('Greška', 'CSRF token nije dostupan. Osvežite stranicu i pokušajte ponovo.', 'error');
+            $btn.html(originalBtnText);
+            $btn.prop('disabled', false);
+            return;
+        }
+        
+        console.log('Pripremam AJAX poziv...');
+        
+        // Isprobajmo više URL-ova dok ne pronađemo ispravan
+        var urls = [
+            '/companies/' + companyId + '/iaf-eac/add/',
+            '/company/companies/' + companyId + '/iaf-eac/add/',
+            '/company/api/iaf-eac/add/' // Dodatni URL za testiranje
+        ];
+        
+        // Podaci koji se šalju
+        var data = {
+            'iaf_eac_code': iafEacCodeId,
+            'notes': notes,
+            'is_primary': isPrimary,
+            'csrfmiddlewaretoken': csrfToken
+        };
+        console.log('Podaci koji se šalju:', data);
+        
+        // Funkcija za izvršavanje AJAX poziva sa sledećim URL-om ako trenutni ne uspe
+        function tryAjaxWithUrl(urlIndex) {
+            if (urlIndex >= urls.length) {
+                console.error('Svi URL-ovi su isprobani i nijedan nije uspeo');
+                $btn.html(originalBtnText);
+                $btn.prop('disabled', false);
+                showMessage('Greška pri dodavanju IAF/EAC koda', 'Nijedan URL nije pronađen. Kontaktirajte administratora.', 'error');
+                return;
+            }
+            
+            var currentUrl = urls[urlIndex];
+            console.log('Pokušavam sa URL-om:', currentUrl);
+            
+            // AJAX poziv
+            $.ajax({
+                url: currentUrl,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    console.log('AJAX poziv uspešan!', response);
+                    
+                    // Čišćenje forme
+                    $('#iaf_eac_code_select').val('');
+                    $('#iaf_eac_code_notes').val('');
+                    $('#iaf_eac_is_primary').prop('checked', false);
+                    
+                    // Poruka o uspehu
+                    var codeName = $('#iaf_eac_code_select option:selected').text() || 'Odabrani kod';
+                    showMessage('IAF/EAC kod uspešno dodat', 
+                                'IAF/EAC kod "' + codeName + '" je uspešno dodat kompaniji!', 
+                                'success');
+                    
+                    // Osvežavanje stranice
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX greška za URL ' + currentUrl + ':', status, error);
+                    console.log('Status kod:', xhr.status);
+                    
+                    // Ako je 404, probaj sledeći URL
+                    if (xhr.status === 404) {
+                        console.log('Probavam sledeći URL...');
+                        tryAjaxWithUrl(urlIndex + 1);
+                    } else {
+                        // Resetovanje dugmeta
+                        $btn.html(originalBtnText);
+                        $btn.prop('disabled', false);
+                        
+                        // Poruka o grešci
+                        var errorMsg = 'Došlo je do greške pri dodavanju IAF/EAC koda.';
+                        if (xhr.status) {
+                            errorMsg += ' (Status kod: ' + xhr.status + ')';
+                        }
+                        
+                        showMessage('Greška pri dodavanju IAF/EAC koda', errorMsg, 'error');
+                    }
+                }
+            });
+        }
+        
+        // Početak AJAX pokušaja
+        tryAjaxWithUrl(0);
+    }
+    
+    // Inicijalizacija dugmeta za brisanje
+    function initDeleteButtons() {
+        // Koristimo delegirani event handling za dinamički generisane elemente
+        // Ovo osigurava da će event listener raditi i na novo dodatim elementima
+        $(document).off('click', '.delete-iaf-eac-btn').on('click', '.delete-iaf-eac-btn', function(e) {
+            e.preventDefault();
+            console.log('Kliknuto dugme za brisanje IAF/EAC koda');
+            
+            var $btn = $(this);
+            var codeId = $btn.data('code-id');
+            var codeName = $btn.data('code-name');
+            var companyId = $btn.data('company-id');
+            
+            console.log('Podaci za brisanje:', {
+                codeId: codeId,
+                codeName: codeName,
+                companyId: companyId
+            });
+            
+            // Kreirajmo sopstveni modal za potvrdu brisanja umesto standardnog confirm dijaloga
+            console.log('Kreiram sopstveni modal za potvrdu brisanja');
+            
+            // Kreira modal za potvrdu direktno u DOM-u
+            var confirmModalHTML = `
+                <div id="confirmDeleteModal" class="modal" style="display: block; background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; z-index: 9999; width: 100%; height: 100%; overflow: auto; padding-top: 100px;">
+                    <div class="modal-dialog" style="max-width: 500px; margin: 30px auto; position: relative;">
+                        <div class="modal-content" style="border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,.5);">
+                            <div class="modal-header bg-danger" style="padding: 15px; border-bottom: 1px solid #e5e5e5; border-radius: 5px 5px 0 0; color: white;">
+                                <h5 class="modal-title" style="margin: 0; line-height: 1.42857143;">Potvrda brisanja</h5>
+                                <button type="button" class="close cancel-delete" style="background: transparent; border: 0; font-size: 21px; font-weight: 700; opacity: .5; padding: 0; cursor: pointer; float: right;">
+                                    <span>×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="padding: 15px;">
+                                <div style="text-align: center; margin-bottom: 15px;">
+                                    <i class="fas fa-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                                </div>
+                                <p style="text-align: center;">Da li ste sigurni da želite da obrišete IAF/EAC kod "${codeName}"?</p>
+                                <p class="text-danger" style="text-align: center;"><strong>Ova akcija je nepovratna!</strong></p>
+                            </div>
+                            <div class="modal-footer" style="padding: 15px; text-align: right; border-top: 1px solid #e5e5e5; border-radius: 0 0 5px 5px;">
+                                <button type="button" class="btn btn-secondary cancel-delete mr-2" style="display: inline-block; margin-bottom: 0; font-weight: 400; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; border-radius: 4px; color: #fff; background-color: #6c757d; border-color: #6c757d; margin-right: 10px;">Odustani</button>
+                                <button type="button" class="btn btn-danger confirm-delete" style="display: inline-block; margin-bottom: 0; font-weight: 400; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; background-image: none; border: 1px solid transparent; padding: 6px 12px; font-size: 14px; line-height: 1.42857143; border-radius: 4px; color: #fff; background-color: #dc3545; border-color: #dc3545;">Obriši</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Dodavanje modala u DOM
+            document.body.insertAdjacentHTML('beforeend', confirmModalHTML);
+            
+            // Dodavanje event listener-a za dugmad
+            $('.cancel-delete').on('click', function() {
+                $('#confirmDeleteModal').remove();
+            });
+            
+            $('.confirm-delete').on('click', function() {
+                // Uklanjanje modala
+                $('#confirmDeleteModal').remove();
+                
+                // Nastavak sa brisanjem
+                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+                var originalBtnHtml = $btn.html();
+                
+                // Prikaži indikator učitavanja
+                $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+                $btn.prop('disabled', true);
+                
+                // Pokušaj sa više URL-ova
+                var urls = [
+                    '/company/companies/' + companyId + '/iaf-eac/' + codeId + '/delete/',
+                    '/companies/' + companyId + '/iaf-eac/' + codeId + '/delete/',
+                    '/company/api/iaf-eac/delete/'
+                ];
+                
+                function tryDeleteWithUrl(urlIndex) {
+                    if (urlIndex >= urls.length) {
+                        console.error('Svi URL-ovi su isprobani i nijedan nije uspeo');
+                        $btn.html(originalBtnHtml);
+                        $btn.prop('disabled', false);
+                        alert('Došlo je do greške pri brisanju IAF/EAC koda. Nijedan URL nije pronađen.');
+                        return;
+                    }
+                    
+                    var currentUrl = urls[urlIndex];
+                    var data = {
+                        'csrfmiddlewaretoken': csrfToken
+                    };
+                    
+                    // Dodaj code_id ako koristimo API putanju
+                    if (currentUrl.includes('/api/')) {
+                        data.code_id = codeId;
+                    }
+                    
+                    console.log('Pokušavam brisanje sa URL-om:', currentUrl);
+                    
+                    $.ajax({
+                        url: currentUrl,
+                        type: 'POST',
+                        data: data,
+                        success: function(response) {
+                            console.log('IAF/EAC kod uspešno obrisan!', response);
+                            showMessage('Uspešno brisanje', 'IAF/EAC kod je uspešno obrisan!', 'success');
+                            
+                            // Osvežavanje stranice ili samo uklanjanje reda iz tabele
+                            setTimeout(function() {
+                                // Umesto osvežavanja stranice, ukloni red iz tabele
+                                $btn.closest('tr').fadeOut(300, function() {
+                                    $(this).remove();
+                                    
+                                    // Proveri da li ima još kodova
+                                    if ($('#iaf-eac-codes-list tr').length === 0) {
+                                        $('#no-iaf-codes-message').show();
+                                    }
+                                });
+                            }, 500);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Greška pri brisanju IAF/EAC koda:', status, error);
+                            console.log('Status kod:', xhr.status);
+                            
+                            // Ako je 404, probaj sledeći URL
+                            if (xhr.status === 404) {
+                                console.log('Probavam sledeći URL...');
+                                tryDeleteWithUrl(urlIndex + 1);
+                            } else {
+                                // Resetovanje dugmeta
+                                $btn.html(originalBtnHtml);
+                                $btn.prop('disabled', false);
+                                showMessage('Greška', 'Došlo je do greške pri brisanju IAF/EAC koda.', 'error');
+                            }
+                        }
+                    });
+                }
+                
+                // Počni sa prvim URL-om
+                tryDeleteWithUrl(0);
+            });
+            
+        });
+    }
+    
+    // Inicijalizacija dugmeta za postavjanje primarnog koda
+    function initPrimaryButtons() {
+        $(document).on('click', '.set-primary-iaf-eac-btn', function(e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var codeId = $btn.data('code-id');
+            var companyId = $btn.data('company-id');
+            var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+            
+            // UI ažuriranje
+            $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+            $btn.prop('disabled', true);
+            
+            $.ajax({
+                url: '/company/companies/' + companyId + '/iaf-eac/' + codeId + '/set-primary/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': csrfToken
+                },
+                success: function() {
+                    showMessage('Primarni kod ažuriran', 
+                               'IAF/EAC kod je uspešno postavljen kao primarni.', 
+                               'success');
+                    
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: function(xhr, status, error) {
+                    // Resetovanje dugmeta
+                    $btn.html('<i class="fas fa-star"></i>');
+                    $btn.prop('disabled', false);
+                    
+                    showMessage('Greška pri ažuriranju primarnog IAF/EAC koda', 
+                              'Došlo je do greške pri ažuriranju primarnog IAF/EAC koda.', 
+                              'error');
+                }
+            });
+        });
+    }
+    
+    // Pomoćna funkcija za prikazivanje poruka
+    function showMessage(title, message, type) {
+        console.log('Pozivanje showMessage funkcije:', title, message, type);
+        console.log('showDirectModal funkcija dostupna:', typeof window.showDirectModal === 'function');
+        
+        if (typeof window.showDirectModal === 'function') {
+            console.log('Pokušaj prikazivanja direktnog modala...');
+            try {
+                window.showDirectModal(title, message, type);
+                console.log('Direktni modal uspešno prikazan');
+            } catch (error) {
+                console.error('Greška pri prikazivanju direktnog modala:', error);
+                alert(title + '\n\n' + message);
+            }
+        } else {
+            console.log('Prikazivanje alert poruke umesto modala');
+            alert(message);
+        }
+    }
+    
+})(jQuery);
 
-<!-- Komponenta za IAF/EAC kodove - objedinjena -->
-<script src="/static/js/company/iaf-eac-handler.js"></script>
-<script src="/static/js/company/iaf-eac-table-clean.js"></script>
+/**
+ * Funkcionalnost za prikazivanje IAF/EAC kodova u tabeli
+ */
+(function($) {
+    'use strict';
+    
+    $(document).ready(function() {
+        var companyId = $('#iaf-eac-codes-list').data('company-id');
+        if (companyId) {
+            loadIafEacCodes(companyId);
+        }
+    });
+    
+    function loadIafEacCodes(companyId) {
+        var $tableBody = $('#iaf-eac-codes-list');
+        var $noCodesMsg = $('#no-iaf-codes-message');
+        
+        $.ajax({
+            url: '/company/companies/' + companyId + '/iaf-eac/list/',
+            type: 'GET',
+            success: function(response) {
+                $tableBody.empty();
+                
+                if (response.codes && response.codes.length > 0) {
+                    $noCodesMsg.hide();
+                    
+                    $.each(response.codes, function(index, code) {
+                        var statusBadge = code.is_primary ? 
+                            '<span class="badge badge-success">Primarni</span>' : 
+                            '<span class="badge badge-secondary">Sekundarni</span>';
+                        
+                        var actionButtons = `
+                            <button class="btn btn-sm btn-outline-danger delete-iaf-eac-btn" 
+                                    data-code-id="${code.id}" 
+                                    data-company-id="${companyId}"
+                                    data-code-name="${code.iaf_code}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                        
+                        if (!code.is_primary) {
+                            actionButtons += `
+                                <button class="btn btn-sm btn-outline-primary ml-1 set-primary-iaf-eac-btn" 
+                                        data-code-id="${code.id}" 
+                                        data-company-id="${companyId}">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                            `;
+                        }
+                        
+                        var row = `
+                            <tr>
+                                <td>${code.iaf_code || 'N/A'}</td>
+                                <td>${code.description || 'N/A'}</td>
+                                <td>${statusBadge}</td>
+                                <td>${code.notes || '-'}</td>
+                                <td>${actionButtons}</td>
+                            </tr>
+                        `;
+                        
+                        $tableBody.append(row);
+                    });
+                } else {
+                    $noCodesMsg.show();
+                }
+            },
+            error: function() {
+                $tableBody.html('<tr><td colspan="5" class="text-center text-danger">Greška pri učitavanju IAF/EAC kodova</td></tr>');
+            }
+        });
+    }
+    
+})(jQuery);
+</script>
 {% endblock %}

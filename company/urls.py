@@ -31,7 +31,8 @@ from .views_ajax import (
     delete_standard,
     add_iaf_eac_code,
     delete_iaf_eac_code,
-    update_iaf_eac_primary
+    update_iaf_eac_primary,
+    list_iaf_eac_codes
 )
 
 app_name = 'company'
@@ -61,6 +62,18 @@ urlpatterns = [
     # IAF/EAC Kodovi CRUD URLs
     path('companies/<int:company_id>/iaf-eac/add/', add_iaf_eac_code, name='iaf_eac_add'),
     path('company/companies/<int:company_id>/iaf-eac/add/', add_iaf_eac_code, name='iaf_eac_add_with_prefix'),
+    
+    # Dodatne putanje za IAF/EAC kodove koje koristi JavaScript
+    path('companies/<int:company_id>/iaf-eac/<int:code_id>/delete/', delete_iaf_eac_code, name='iaf_eac_delete'),
+    path('company/companies/<int:company_id>/iaf-eac/<int:code_id>/delete/', delete_iaf_eac_code, name='iaf_eac_delete_with_prefix'),
+    path('companies/<int:company_id>/iaf-eac/<int:code_id>/set-primary/', update_iaf_eac_primary, name='iaf_eac_set_primary'),
+    path('company/companies/<int:company_id>/iaf-eac/<int:code_id>/set-primary/', update_iaf_eac_primary, name='iaf_eac_set_primary_with_prefix'),
+    
+    # Putanja za listanje IAF/EAC kodova
+    path('companies/<int:company_id>/iaf-eac/list/', list_iaf_eac_codes, name='iaf_eac_list'),
+    path('company/companies/<int:company_id>/iaf-eac/list/', list_iaf_eac_codes, name='iaf_eac_list_with_prefix'),
+    
+    # Postojeće API putanje (zadržavamo ih zbog kompatibilnosti)
     path('api/iaf-eac/delete/', delete_iaf_eac_code, name='api_iaf_eac_delete'),
     path('api/iaf-eac/update-primary/', update_iaf_eac_primary, name='api_iaf_eac_update_primary'),
     
