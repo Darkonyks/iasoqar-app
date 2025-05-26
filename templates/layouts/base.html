@@ -29,6 +29,22 @@
 </div>
 <!-- ./wrapper -->
 
+<!-- SES Warning Suppression -->
+<script>
+// Intercept SES warnings about deprecated options
+if (typeof globalThis.console !== 'undefined') {
+  const originalWarn = console.warn;
+  console.warn = function(...args) {
+    // Filter out SES deprecation warnings
+    if (args.length > 0 && typeof args[0] === 'string' && 
+        (args[0].includes('dateTaming') || args[0].includes('mathTaming'))) {
+      return; // Suppress these specific warnings
+    }
+    return originalWarn.apply(console, args);
+  };
+}
+</script>
+
 <!-- jQuery -->
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <!-- jQuery UI -->

@@ -38,31 +38,71 @@ $(function() {
   initTabs();
   
   // Validacija forme
-  $('form').on('submit', function() {
-    var requiredFields = $(this).find('[required]');
+  $('form').on('submit', function(e) {
+    console.log('========== FORM SUBMISSION STARTED ==========');
+    var $form = $(this);
+    var requiredFields = $form.find('[required]');
     var valid = true;
+    var invalidFields = [];
     
+    // Validacija obaveznih polja
     requiredFields.each(function() {
-      if (!$(this).val()) {
-        $(this).addClass('is-invalid');
+      var $field = $(this);
+      var fieldId = $field.attr('id') || 'unknown';
+      var fieldName = $('label[for="' + fieldId + '"]').text().trim() || fieldId;
+      
+      if (!$field.val()) {
+        $field.addClass('is-invalid');
+        invalidFields.push(fieldName);
         valid = false;
+        console.warn('Obavezno polje nije popunjeno:', fieldName, fieldId);
       } else {
-        $(this).removeClass('is-invalid');
+        $field.removeClass('is-invalid');
       }
     });
+    
+    if (invalidFields.length > 0) {
+      console.error('Neuspešna validacija forme - sledeća polja nisu popunjena:', invalidFields);
+    } else {
+      console.log('Validacija forme uspešna - sva obavezna polja su popunjena');
+    }
 
     // Pripremi IAF/EAC kodove i standarde podatke pre slanja forme
-    prepareIAFEACData();
-    prepareStandardsData();
+    try {
+      prepareIAFEACData();
+      console.log('IAF/EAC podaci su uspešno pripremljeni');
+    } catch (error) {
+      console.error('Greška pri pripremi IAF/EAC podataka:', error);
+      valid = false;
+    }
     
-    // Dodaj debagovanje - prikaži podatke u konzoli
-    console.log('Standards data before submit:', standardsData);
+    try {
+      prepareStandardsData();
+      console.log('Podaci o standardima su uspešno pripremljeni');
+    } catch (error) {
+      console.error('Greška pri pripremi podataka o standardima:', error);
+      valid = false;
+    }
+    
+    // Detaljno debagovanje
+    console.log('Form action:', $form.attr('action'));
+    console.log('Form method:', $form.attr('method'));
+    console.log('CSRF token present:', $form.find('input[name="csrfmiddlewaretoken"]').length > 0);
+    console.log('Standards data:', standardsData);
     console.log('Standards data JSON:', JSON.stringify(standardsData));
-    console.log('Hidden field value:', $('#standards_data').val());
-    console.log('IAF/EAC data before submit:', iafEacCodesData);
+    console.log('Standards hidden field value:', $('#standards_data').val());
+    console.log('IAF/EAC data:', iafEacCodesData);
     console.log('IAF/EAC data JSON:', JSON.stringify(iafEacCodesData));
     console.log('IAF/EAC hidden field value:', $('#iaf_eac_codes_data').val());
     
+    if (valid) {
+      console.log('Forma je validna, nastavlja se sa slanjem...');
+    } else {
+      console.error('Forma nije validna, slanje je prekinuto');
+      e.preventDefault(); // Eksplicitno zaustavi slanje forme ako nije validna
+    }
+    
+    console.log('========== FORM SUBMISSION ENDED ==========');
     return valid;
   });
 

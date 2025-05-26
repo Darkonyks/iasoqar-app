@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-f-+68g!a$rrp$v&7a6jwt7^*gcfdi03igr@b6j!k-+bo23!h=f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web', '172.18.0.2', '192.168.5.45', '192.168.5.0/24', 'isoqar.geo-biz.com']
 
 # CSRF podešavanja za rad sa Nginx proxy-jem
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8090']

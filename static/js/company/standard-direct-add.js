@@ -73,20 +73,32 @@
             success: function(response) {
                 console.log('Standard uspešno dodat!', response);
                 
+                // Dohvati naziv dodatog standarda - sigurna verzija
+                var standardName = '';
+                try {
+                    // Dohvati selektovanu opciju i njen tekst pre čišćenja forme
+                    var selectedOption = $('#standard_definition option:selected');
+                    standardName = selectedOption.text();
+                    
+                    // Dodatna provera da nije podrazumevana opcija
+                    if (standardName === '-- Izaberite standard --') {
+                        // Ako iz nekog razloga nije moguće dohvatiti pravi naziv, pokušaj sa response
+                        if (response && response.standard_name) {
+                            standardName = response.standard_name;
+                        } else {
+                            standardName = 'Odabrani standard';
+                        }
+                    }
+                } catch (e) {
+                    standardName = 'Standard';
+                    console.error('Greška pri dohvatanju naziva standarda:', e);
+                }
+                
                 // Čišćenje polja - ručno, bez resetovanja forme
                 $('#standard_definition').val('');
                 $('#issue_date').val('');
                 $('#expiry_date').val('');
                 $('#notes').val('');
-                
-                // Dohvati naziv dodatog standarda - sigurna verzija
-                var standardName = '';
-                try {
-                    standardName = $('#standard_definition option:selected').text() || 'Odabrani standard';
-                } catch (e) {
-                    standardName = 'Standard';
-                    console.error('Greška pri dohvatanju naziva standarda:', e);
-                }
                 
                 // Prikaži modal za uspeh
                 if (typeof window.showDirectModal === 'function') {

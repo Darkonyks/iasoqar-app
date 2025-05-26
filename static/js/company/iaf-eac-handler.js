@@ -106,13 +106,54 @@
                 $btn.html(originalBtnText);
                 $btn.prop('disabled', false);
                 
-                // Poruka o grešci
-                var errorMsg = 'Došlo je do greške pri dodavanju IAF/EAC koda.';
-                if (xhr.status) {
-                    errorMsg += ' (Status kod: ' + xhr.status + ')';
+                console.log('AJAX greška za URL ' + url + ':', error);
+                console.log('Status kod:', xhr.status);
+                
+                // Provera da li je operacija zapravo uspela uprkos status kodu 400
+                // Ovo je specifična provera za slučaj kada server vrati 400 ali je kod ipak uspešno dodat
+                if (xhr.status === 400) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        
+                        // Ako odgovor sadrži grešku o već postojećem kodu, to znači da je kod zapravo sačuvan
+                        if (response && response.error && response.error.includes('već ima dodeljen ovaj IAF/EAC kod')) {
+                            // Obradi kao uspeh - kod je zapravo dodat u bazu
+                            var codeName = $('#iaf_eac_code_select option:selected').text() || 'Odabrani kod';
+                            showMessage('IAF/EAC kod je već dodat', 
+                                       'Ovaj IAF/EAC kod je već dodeljen kompaniji.',
+                                       'info');
+                            
+                            // Čišćenje forme
+                            $('#iaf_eac_code_select').val('');
+                            $('#iaf_eac_code_notes').val('');
+                            $('#iaf_eac_is_primary').prop('checked', false);
+                            
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Greška pri parsiranju JSON odgovora:', e);
+                    }
                 }
                 
-                showMessage('Greška pri dodavanju IAF/EAC koda', errorMsg, 'error');
+                // Standardna obrada greške ako nije prepoznat uspeh
+                var errorMessage = 'Došlo je do greške pri dodavanju IAF/EAC koda.';
+                if (xhr.status) {
+                    errorMessage += ' (Status kod: ' + xhr.status + ')';
+                }
+                
+                // Pokušaj izvlačenja detaljnije poruke o grešci
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response && response.error) {
+                        errorMessage += '\n\nDetalji: ' + response.error;
+                    }
+                } catch (e) {
+                    console.error('Greška pri parsiranju JSON odgovora:', e);
+                }
+                
+                showMessage('Greška pri dodavanju IAF/EAC koda', 
+                           errorMessage, 
+                           'error');
             }
         });
     }
