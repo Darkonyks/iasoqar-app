@@ -1,0 +1,81 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Brisanje auditora{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Brisanje auditora</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'company:auditor_list' %}">Auditori</a></li>
+                        <li class="breadcrumb-item active">Brisanje auditora</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Potvrda brisanja</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-danger">
+                                <h5><i class="icon fas fa-exclamation-triangle"></i> Upozorenje!</h5>
+                                <p>Da li ste sigurni da želite da obrišete auditora <strong>{{ auditor.ime_prezime }}</strong>?</p>
+                                <p>Ova akcija je <strong>nepovratna</strong> i obrisaće sve podatke vezane za ovog auditora.</p>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Podaci o auditoru</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <dl class="row">
+                                                <dt class="col-sm-4">Ime i prezime:</dt>
+                                                <dd class="col-sm-8">{{ auditor.ime_prezime }}</dd>
+                                                
+                                                <dt class="col-sm-4">Email:</dt>
+                                                <dd class="col-sm-8">{{ auditor.email }}</dd>
+                                                
+                                                <dt class="col-sm-4">Telefon:</dt>
+                                                <dd class="col-sm-8">{{ auditor.telefon }}</dd>
+                                                
+                                                <dt class="col-sm-4">Kategorija:</dt>
+                                                <dd class="col-sm-8">{{ auditor.get_kategorija_display }}</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <a href="{% url 'company:auditor_list' %}" class="btn btn-secondary">Odustani</a>
+                                <button type="submit" class="btn btn-danger">Potvrdi brisanje</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+{% endblock %}

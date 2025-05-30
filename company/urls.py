@@ -1,4 +1,5 @@
 from django.urls import path
+from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, get_auditor_details
 from .views import (
     CalendarView, 
     CalendarEventsView, 
@@ -93,4 +94,11 @@ urlpatterns = [
     path('audits/<int:pk>/', CompanyAuditDetailView.as_view(), name='audit_detail'),
     path('audits/<int:pk>/update/', AuditUpdateView.as_view(), name='audit_update'),
     path('audits/<int:pk>/delete/', AuditDeleteView.as_view(), name='audit_delete'),
+    
+    # Auditor CRUD URLs
+    path('auditors/', AuditorListView.as_view(), name='auditor_list'),
+    path('auditors/create/', AuditorCreateView.as_view(), name='auditor_create'),
+    path('auditors/<int:pk>/', AuditorDetailView.as_view(), name='auditor_detail'),
+    path('auditors/<int:pk>/delete/', AuditorDeleteView.as_view(), name='auditor_delete'),
+    path('api/auditors/<int:pk>/details/', get_auditor_details, name='auditor_details_api'),
 ]

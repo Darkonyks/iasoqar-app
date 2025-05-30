@@ -54,6 +54,11 @@
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" id="iaf-eac-tab" data-toggle="tab" href="#iaf-eac" role="tab">
+                <i class="fas fa-tags mr-1"></i> IAF/EAC Kodovi
+              </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab">
                 <i class="fas fa-address-book mr-1"></i> Kontakti
               </a>
@@ -255,6 +260,51 @@
           </div>
         </div>
       
+        <!-- IAF/EAC Kodovi Tab -->
+        <div class="tab-pane fade" id="iaf-eac" role="tabpanel" aria-labelledby="iaf-eac-tab">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">IAF/EAC Kodovi</h3>
+                </div>
+                <div class="card-body">
+                  {% if iaf_eac_codes %}
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>IAF/EAC kod</th>
+                            <th>Opis</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for code in iaf_eac_codes %}
+                            <tr class="iaf-eac-code-item" data-code-id="{{ code.id }}" data-code="{{ code.iaf_eac_code.iaf_code }}" data-description="{{ code.iaf_eac_code.description }}" data-primary="{{ code.is_primary }}" data-notes="{{ code.notes }}">
+                              <td>{{ code.iaf_eac_code.iaf_code }}</td>
+                              <td>{{ code.iaf_eac_code.description }}</td>
+                              <td>
+                                {% if code.is_primary %}
+                                  <span class="badge badge-primary">Primarni</span>
+                                {% else %}
+                                  <span class="badge badge-secondary">Sekundarni</span>
+                                {% endif %}
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <p class="text-muted">Nema dodeljenih IAF/EAC kodova</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <!-- Kontakti Tab -->
         <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
           <div class="row">

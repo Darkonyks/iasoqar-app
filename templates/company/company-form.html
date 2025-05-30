@@ -520,16 +520,79 @@
                 </div>
               </div>
               
-              <!-- Tab: Napomene -->
-              <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
-                <div class="form-group">
-                  <label for="{{ form.notes.id_for_label }}">Napomene</label>
-                  {{ form.notes.errors }}
-                  <textarea name="{{ form.notes.name }}" id="{{ form.notes.id_for_label }}" 
-                            class="form-control {% if form.notes.errors %}is-invalid{% endif %}" 
-                            rows="8">{{ form.notes.value|default:'' }}</textarea>
+              <!-- Tab: IAF/EAC kodovi -->
+              <div class="tab-pane fade" id="iaf" role="tabpanel" aria-labelledby="iaf-tab">
+                <div class="row">
+                  <div class="col-md-12">
+                    <!-- Tabela za prikaz IAF/EAC kodova -->
+                    <div class="table-responsive mb-4">
+                      <table class="table table-bordered table-striped">
+                        <thead class="thead-light">
+                          <tr>
+                            <th>IAF/EAC kod</th>
+                            <th>Opis</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody id="iaf-eac-codes-list" data-company-id="{{ object.id|default:0 }}">
+                          <!-- JavaScript će dinamički popuniti ovu tabelu -->
+                        </tbody>
+                      </table>
+                      
+                      <!-- Poruka kada nema kodova -->
+                      <div id="no-iaf-codes-message" class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
+                      </div>
+                    </div>
+                    
+                    <!-- Forma za dodavanje IAF/EAC koda -->
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="iaf_eac_code">Izaberite IAF/EAC kod</label>
+                          <select id="iaf_eac_code" class="form-control">
+                            <option value="">-- Izaberite kod --</option>
+                            {% for code in iaf_codes %}
+                              <option value="{{ code.id }}">{{ code.code }} - {{ code.description }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="iaf_eac_code_notes">Napomena</label>
+                          <input type="text" id="iaf_eac_code_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                      <div class="col-md-12">
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" id="iaf_eac_is_primary">
+                          <label class="form-check-label" for="iaf_eac_is_primary">Primarni kod</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <p class="text-muted small">ID kompanije: {{ object.id|default:0 }}</p>
+                          <button type="button" class="btn btn-success" id="addIafEacButton" data-company-id="{{ object.id|default:0 }}">
+                            <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
+              
+              <!-- Tab za napomene je uklonjen -->
             </div>
             
             <div class="form-group mt-4">
@@ -605,19 +668,31 @@
                   
                   // Proveri da li je forma upravo poslata i prikaži poruku o uspehu ako jeste
                   if (localStorage.getItem('company_form_submitted') === 'true') {
+                    console.log('Forma je uspešno poslata, prikazujem poruku o uspehu');
                     // Izbriši marker
                     localStorage.removeItem('company_form_submitted');
                     
-                    // Prikaži poruku o uspehu
-                    if (typeof window.showDirectModal === 'function') {
-                      setTimeout(function() {
+                    // Funkcija za prikazivanje poruke o uspehu
+                    var showSuccessMessage = function() {
+                      if (typeof window.showDirectModal === 'function') {
                         window.showDirectModal(
                           'Uspešno sačuvano',
                           'Podaci o kompaniji su uspešno sačuvani.',
                           'success'
                         );
-                      }, 500);
-                    }
+                      } else {
+                        console.warn('showDirectModal funkcija nije dostupna');
+                      }
+                    };
+                    
+                    // Pokušaj odmah prikazati poruku
+                    showSuccessMessage();
+                    
+                    // Ako nije uspelo, pokušaj ponovo nakon kratkog odlaganja
+                    setTimeout(showSuccessMessage, 500);
+                    
+                    // I još jednom nakon dužeg odlaganja za svaki slučaj
+                    setTimeout(showSuccessMessage, 1000);
                   }
                 });
               </script>

@@ -1,0 +1,268 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-card {
+        margin-bottom: 20px;
+    }
+    .table-responsive {
+        margin-top: 20px;
+    }
+    .badge-category {
+        font-size: 85%;
+    }
+    .badge-lead-auditor {
+        background-color: #28a745;
+    }
+    .badge-auditor {
+        background-color: #007bff;
+    }
+    .badge-technical-expert {
+        background-color: #6c757d;
+    }
+    .badge-trainer {
+        background-color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- CSRF Token za JavaScript -->
+{% csrf_token %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">{{ title }}</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'company:auditor_create' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Novi auditor
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filteri -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card filter-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Filteri</h3>
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form method="get" action="{% url 'company:auditor_list' %}">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Kategorija</label>
+                                                    <select name="category" class="form-control">
+                                                        <option value="">-- Sve kategorije --</option>
+                                                        {% for value, label in category_choices %}
+                                                        <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Standard</label>
+                                                    <select name="standard" class="form-control">
+                                                        <option value="">-- Svi standardi --</option>
+                                                        {% for standard in standards %}
+                                                        <option value="{{ standard.id }}" {% if selected_standard == standard.id|stringformat:"i" %}selected{% endif %}>{{ standard.code }} - {{ standard.standard }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>IAF/EAC kod</label>
+                                                    <select name="iaf_code" class="form-control">
+                                                        <option value="">-- Svi IAF/EAC kodovi --</option>
+                                                        {% for code in iaf_codes %}
+                                                        <option value="{{ code.iaf_code }}" {% if selected_iaf_code == code.iaf_code %}selected{% endif %}>{{ code.iaf_code }} - {{ code.title }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 text-right">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-filter"></i> Filtriraj
+                                                </button>
+                                                <a href="{% url 'company:auditor_list' %}" class="btn btn-default">
+                                                    <i class="fas fa-times"></i> Poništi filtere
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista auditora -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Ime i prezime</th>
+                                    <th>Kategorija</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Standardi</th>
+                                    <th>Akcije</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for auditor in auditors %}
+                                <tr>
+                                    <td>{{ auditor.ime_prezime }}</td>
+                                    <td>
+                                        {% if auditor.kategorija == 'lead_auditor' %}
+                                        <span class="badge badge-success badge-category badge-lead-auditor">Lead auditor</span>
+                                        {% elif auditor.kategorija == 'auditor' %}
+                                        <span class="badge badge-primary badge-category badge-auditor">Auditor</span>
+                                        {% elif auditor.kategorija == 'technical_expert' %}
+                                        <span class="badge badge-secondary badge-category badge-technical-expert">Tehnički ekspert</span>
+                                        {% elif auditor.kategorija == 'trainer' %}
+                                        <span class="badge badge-info badge-category badge-trainer">Trainer</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ auditor.email }}</td>
+                                    <td>{{ auditor.telefon }}</td>
+                                    <td>
+                                        {% for standard in auditor.auditor_standardi.all %}
+                                        <span class="badge badge-light">{{ standard.standard.code }}</span>
+                                        {% empty %}
+                                        <span class="text-muted">Nema standarda</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'company:auditor_delete' auditor.id %}" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">Nema pronađenih auditora</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Paginacija -->
+                    {% if is_paginated %}
+                    <div class="pagination justify-content-center mt-4">
+                        <ul class="pagination">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ovde je bio modal za brisanje auditora, ali sada koristimo redirekciju na stranicu za brisanje -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        'use strict';
+        
+        // Globalne varijable
+        var auditorIdToDelete = null;
+        
+        // Inicijalizacija collapse funkcionalnosti za filtere
+        $('.card-header [data-card-widget="collapse"]').click(function() {
+            var $cardBody = $(this).closest('.card').find('.card-body');
+            if ($cardBody.is(':visible')) {
+                $cardBody.slideUp();
+                $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
+            } else {
+                $cardBody.slideDown();
+                $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
+            }
+        });
+        
+        // Ovde možete dodati dodatni JavaScript kod po potrebi
+    });
+</script>
+{% endblock %}

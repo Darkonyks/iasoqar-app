@@ -8,6 +8,7 @@ from django.contrib import messages
 import json
 from .models import Company, NaredneProvere, Appointment, KontaktOsoba, OstalaLokacija, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
+from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from datetime import datetime, timedelta
 from django.db.models import Count
 import random
@@ -51,6 +52,9 @@ class CompanyDetailView(DetailView):
         context['standards'] = company.company_standards.all()  # Ispravka: standards -> company_standards
         context['locations'] = company.ostale_lokacije.all()
         context['appointments'] = company.appointments.all().order_by('-start_datetime')[:5]
+        
+        # Get IAF/EAC codes for the company
+        context['iaf_eac_codes'] = CompanyIAFEACCode.objects.filter(company=company).select_related('iaf_eac_code')
         
         # Get audit information if available
         try:

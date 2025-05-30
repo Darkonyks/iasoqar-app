@@ -1,0 +1,172 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .required-field label::after {
+        content: " *";
+        color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ title }}</h3>
+                            <div class="card-tools">
+                                <a href="{% url 'company:auditor_list' %}" class="btn btn-default btn-sm">
+                                    <i class="fas fa-arrow-left"></i> Nazad na listu
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="auditorForm">
+                                {% csrf_token %}
+                                
+                                <div class="row">
+                                    <div class="col-md-6 required-field">
+                                        <div class="form-group">
+                                            <label for="{{ form.ime_prezime.id_for_label }}">Ime i prezime</label>
+                                            {{ form.ime_prezime }}
+                                            {% if form.ime_prezime.errors %}
+                                            <div class="text-danger">
+                                                {% for error in form.ime_prezime.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 required-field">
+                                        <div class="form-group">
+                                            <label for="{{ form.email.id_for_label }}">Email</label>
+                                            {{ form.email }}
+                                            {% if form.email.errors %}
+                                            <div class="text-danger">
+                                                {% for error in form.email.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ form.telefon.id_for_label }}">Telefon</label>
+                                            {{ form.telefon }}
+                                            {% if form.telefon.errors %}
+                                            <div class="text-danger">
+                                                {% for error in form.telefon.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 required-field">
+                                        <div class="form-group">
+                                            <label for="{{ form.kategorija.id_for_label }}">Kategorija</label>
+                                            {{ form.kategorija }}
+                                            {% if form.kategorija.errors %}
+                                            <div class="text-danger">
+                                                {% for error in form.kategorija.errors %}
+                                                {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> Nakon kreiranja auditora, moći ćete da dodate standarde i IAF/EAC kodove.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-12 text-right">
+                                        <a href="{% url 'company:auditor_list' %}" class="btn btn-default">
+                                            <i class="fas fa-times"></i> Odustani
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> {{ submit_text|default:"Sačuvaj" }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Validacija forme na klijentskoj strani
+        $('#auditorForm').submit(function(e) {
+            let valid = true;
+            
+            // Provera da li su obavezna polja popunjena
+            if (!$('#{{ form.ime_prezime.id_for_label }}').val()) {
+                $('#{{ form.ime_prezime.id_for_label }}').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#{{ form.ime_prezime.id_for_label }}').removeClass('is-invalid');
+            }
+            
+            if (!$('#{{ form.email.id_for_label }}').val()) {
+                $('#{{ form.email.id_for_label }}').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#{{ form.email.id_for_label }}').removeClass('is-invalid');
+            }
+            
+            if (!$('#{{ form.kategorija.id_for_label }}').val()) {
+                $('#{{ form.kategorija.id_for_label }}').addClass('is-invalid');
+                valid = false;
+            } else {
+                $('#{{ form.kategorija.id_for_label }}').removeClass('is-invalid');
+            }
+            
+            if (!valid) {
+                e.preventDefault();
+                toastr.error('Molimo popunite sva obavezna polja označena sa *');
+            }
+        });
+    });
+</script>
+{% endblock %}

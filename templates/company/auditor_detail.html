@@ -1,0 +1,195 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .standard-card {
+        margin-bottom: 20px;
+    }
+    .iaf-eac-badge {
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+    .primary-badge {
+        border: 2px solid #28a745;
+    }
+    .badge-category {
+        font-size: 100%;
+        padding: 5px 10px;
+        margin-left: 10px;
+    }
+    .badge-lead-auditor {
+        background-color: #28a745;
+    }
+    .badge-auditor {
+        background-color: #007bff;
+    }
+    .badge-technical-expert {
+        background-color: #6c757d;
+    }
+    .badge-trainer {
+        background-color: #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {{ auditor.ime_prezime }}
+                        {% if auditor.kategorija == 'lead_auditor' %}
+                        <span class="badge badge-success badge-category badge-lead-auditor">Lead auditor</span>
+                        {% elif auditor.kategorija == 'auditor' %}
+                        <span class="badge badge-primary badge-category badge-auditor">Auditor</span>
+                        {% elif auditor.kategorija == 'technical_expert' %}
+                        <span class="badge badge-secondary badge-category badge-technical-expert">Tehnički ekspert</span>
+                        {% elif auditor.kategorija == 'trainer' %}
+                        <span class="badge badge-info badge-category badge-trainer">Trainer</span>
+                        {% endif %}
+                    </h3>
+                    <div class="card-tools">
+                        <a href="{% url 'company:auditor_list' %}" class="btn btn-default btn-sm">
+                            <i class="fas fa-arrow-left"></i> Nazad na listu
+                        </a>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i> Izmeni
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Osnovni podaci -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Osnovni podaci</h3>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="width: 30%">Ime i prezime</th>
+                                            <td>{{ auditor.ime_prezime }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Email</th>
+                                            <td>{{ auditor.email }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Telefon</th>
+                                            <td>{{ auditor.telefon }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Kategorija</th>
+                                            <td>{{ auditor.get_kategorija_display }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Kreirano</th>
+                                            <td>{{ auditor.created_at|date:"d.m.Y H:i" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ažurirano</th>
+                                            <td>{{ auditor.updated_at|date:"d.m.Y H:i" }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Standardi i IAF/EAC kodovi -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h4>Standardi i IAF/EAC kodovi</h4>
+                            
+                            {% for standard in auditor_standards %}
+                            <div class="card standard-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">{{ standard.standard.code }} - {{ standard.standard.standard }}</h3>
+                                    <div class="card-tools">
+                                        <a href="#" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Datum potpisivanja:</strong> 
+                                                {% if standard.datum_potpisivanja %}
+                                                {{ standard.datum_potpisivanja|date:"d.m.Y" }}
+                                                {% else %}
+                                                <span class="text-muted">Nije unet</span>
+                                                {% endif %}
+                                            </p>
+                                            {% if standard.napomena %}
+                                            <p><strong>Napomena:</strong> {{ standard.napomena }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>IAF/EAC kodovi:</strong></p>
+                                            <div>
+                                                {% for link in standard.iaf_eac_links.all %}
+                                                <span class="badge badge-light iaf-eac-badge {% if link.is_primary %}primary-badge{% endif %}" 
+                                                      title="{{ link.iaf_eac_code.title }}{% if link.is_primary %} (Primarni){% endif %}{% if link.notes %} - {{ link.notes }}{% endif %}">
+                                                    {{ link.iaf_eac_code.iaf_code }}
+                                                    {% if link.is_primary %}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                    {% endif %}
+                                                </span>
+                                                {% empty %}
+                                                <span class="text-muted">Nema dodeljenih IAF/EAC kodova</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="alert alert-info">
+                                Ovaj auditor nema dodeljenih standarda.
+                                <a href="#" class="btn btn-primary btn-sm ml-3">
+                                    <i class="fas fa-plus"></i> Dodaj standard
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Inicijalizacija tooltips-a za IAF/EAC kodove
+        $('[title]').tooltip();
+    });
+</script>
+{% endblock %}
