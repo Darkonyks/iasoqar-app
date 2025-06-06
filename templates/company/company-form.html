@@ -93,6 +93,11 @@
                   <i class="fas fa-tags"></i> IAF/EAC kodovi
                 </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab" aria-controls="contacts" aria-selected="false">
+                  <i class="fas fa-users"></i> Kontakt osobe
+                </a>
+              </li>
               <!-- Tab Napomene je uklonjen -->
             </ul>
             
@@ -588,6 +593,117 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Kontakt osobe -->
+              <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
+                <h5 class="mb-3">Kontakt osobe</h5>
+                <div class="card">
+                  <div class="card-body">
+                    <div class="table-responsive mb-4">
+                      <table class="table table-sm table-striped table-hover">
+                        <thead class="thead-light">
+                          <tr>
+                            <th width="25%">Ime i prezime</th>
+                            <th width="20%">Pozicija</th>
+                            <th width="20%">Email</th>
+                            <th width="15%">Telefon</th>
+                            <th width="10%">Primarni</th>
+                            <th width="10%">Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% if kontakt_osobe %}
+                            {% for kontakt in kontakt_osobe %}
+                              <tr>
+                                <td><strong>{{ kontakt.ime_prezime }}</strong></td>
+                                <td>{{ kontakt.pozicija|default:"-" }}</td>
+                                <td>{{ kontakt.email|default:"-" }}</td>
+                                <td>{{ kontakt.telefon|default:"-" }}</td>
+                                <td>
+                                  {% if kontakt.is_primary %}
+                                    <span class="badge badge-success">Da</span>
+                                  {% else %}
+                                    <span class="badge badge-secondary">Ne</span>
+                                  {% endif %}
+                                </td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'company:kontakt_update' company_id=object.id pk=kontakt.id %}" class="btn btn-outline-primary">
+                                      <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'company:kontakt_delete' company_id=object.id pk=kontakt.id %}" class="btn btn-outline-danger">
+                                      <i class="fas fa-trash"></i>
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          {% else %}
+                            <tr>
+                              <td colspan="6" class="text-center">
+                                <div class="alert alert-info mb-0">
+                                  <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljene kontakt osobe. Dodajte kontakt osobe ispod.
+                                </div>
+                              </td>
+                            </tr>
+                          {% endif %}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Forma za dodavanje nove kontakt osobe -->
+                    <form method="post" action="{% url 'company:kontakt_create' company_id=object.id|default:0 %}" class="mt-4" id="kontaktAddForm">
+                      {% csrf_token %}
+                      <h6 class="font-weight-bold mb-3">Dodaj novu kontakt osobu</h6>
+                      
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="ime_prezime">Ime i prezime</label>
+                            <input type="text" id="ime_prezime" name="ime_prezime" class="form-control" required>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="pozicija">Pozicija</label>
+                            <input type="text" id="pozicija" name="pozicija" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="telefon">Telefon</label>
+                            <input type="text" id="telefon" name="telefon" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <div class="form-check mt-4">
+                              <input type="checkbox" class="form-check-input" id="is_primary" name="is_primary">
+                              <label class="form-check-label" for="is_primary">Primarna kontakt osoba</label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-success">
+                              <i class="fas fa-plus"></i> Dodaj kontakt osobu
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>

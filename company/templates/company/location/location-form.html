@@ -1,0 +1,229 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right">
+                        {% if location.id %}
+                            <a href="{% url 'company:location_detail' location.id %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Otkaži
+                            </a>
+                        {% elif company %}
+                            <a href="{% url 'company:detail' company.id %}#locations" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Nazad na kompaniju
+                            </a>
+                        {% else %}
+                            <a href="{% url 'company:location_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Nazad na lokacije
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Podaci o lokaciji</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Osnovni podaci</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
+                                            {{ form.company }}
+                                            {% if form.company.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in form.company.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if form.company.help_text %}
+                                                <small class="form-text text-muted">{{ form.company.help_text }}</small>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                                            {{ form.name }}
+                                            {% if form.name.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in form.name.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if form.name.help_text %}
+                                                <small class="form-text text-muted">{{ form.name.help_text }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Adresa</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="{{ form.street.id_for_label }}">{{ form.street.label }}</label>
+                                                    {{ form.street }}
+                                                    {% if form.street.errors %}
+                                                        <div class="invalid-feedback d-block">
+                                                            {% for error in form.street.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="{{ form.street_number.id_for_label }}">{{ form.street_number.label }}</label>
+                                                    {{ form.street_number }}
+                                                    {% if form.street_number.errors %}
+                                                        <div class="invalid-feedback d-block">
+                                                            {% for error in form.street_number.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="{{ form.city.id_for_label }}">{{ form.city.label }}</label>
+                                                    {{ form.city }}
+                                                    {% if form.city.errors %}
+                                                        <div class="invalid-feedback d-block">
+                                                            {% for error in form.city.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="{{ form.postal_code.id_for_label }}">{{ form.postal_code.label }}</label>
+                                                    {{ form.postal_code }}
+                                                    {% if form.postal_code.errors %}
+                                                        <div class="invalid-feedback d-block">
+                                                            {% for error in form.postal_code.errors %}
+                                                                {{ error }}
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
+                                            {{ form.country }}
+                                            {% if form.country.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in form.country.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Dodatne informacije</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+                                            {{ form.notes }}
+                                            {% if form.notes.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {% for error in form.notes.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            {% if form.notes.help_text %}
+                                                <small class="form-text text-muted">{{ form.notes.help_text }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> {{ submit_text|default:"Sačuvaj" }}
+                                </button>
+                                {% if object %}
+                                    <a href="{% url 'company:location_detail' object.id %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Odustani
+                                    </a>
+                                {% elif company %}
+                                    <a href="{% url 'company:detail' company.id %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Odustani
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'company:location_list' %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Odustani
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+{% endblock %}

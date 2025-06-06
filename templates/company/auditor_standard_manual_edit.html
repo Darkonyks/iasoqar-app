@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ title }}</h3>
+                            <div class="card-tools">
+                                <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-default btn-sm">
+                                    <i class="fas fa-arrow-left"></i> Nazad na detalje auditora
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'company:auditor_standard_update' auditor_id=auditor.id pk=standard_id %}">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label for="standard">Standard:</label>
+                                    <div class="form-control">
+                                        <strong>{{ current_standard.code }}</strong> - {{ current_standard.name }}
+                                        <input type="hidden" name="standard" value="{{ current_standard.id }}">
+                                    </div>
+                                    <small class="text-muted">Standard nije moguće promeniti. Ako želite dodeliti drugi standard, obrišite ovaj i kreirajte novi.</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="datum_potpisivanja">Datum potpisivanja:</label>
+                                    <input type="date" name="datum_potpisivanja" id="datum_potpisivanja" class="form-control" value="{% if datum %}{{ datum|date:'Y-m-d' }}{% endif %}">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="napomena">Napomena:</label>
+                                    <textarea name="napomena" id="napomena" class="form-control" rows="3">{{ napomena }}</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+                                    <a href="{% url 'company:auditor_detail' pk=auditor.id %}" class="btn btn-default">Odustani</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock content %}

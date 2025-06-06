@@ -24,6 +24,17 @@
   {% include 'layouts/sidebar.html' %}
 
   {% block content %}{% endblock %}
+  
+  <!-- Django Messages -->
+  {% if messages %}
+  <div id="django-messages" style="display: none;">
+    {% for message in messages %}
+    <div class="message" 
+         data-tags="{{ message.tags }}" 
+         data-message="{{ message }}"></div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
   {% include 'layouts/footer.html' %}
 </div>
@@ -59,4 +70,42 @@ if (typeof globalThis.console !== 'undefined') {
 <script src="{% static 'js/adminlte.min.js' %}"></script>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Messages handling with SweetAlert -->
+<script>
+  $(document).ready(function() {
+    // Process Django messages with SweetAlert
+    $('#django-messages .message').each(function() {
+      var tags = $(this).data('tags');
+      var message = $(this).data('message');
+      var icon = 'info';
+      
+      // Map Django message tags to SweetAlert icons
+      if (tags.includes('success')) {
+        icon = 'success';
+      } else if (tags.includes('error')) {
+        icon = 'error';
+      } else if (tags.includes('warning')) {
+        icon = 'warning';
+      } else if (tags.includes('info')) {
+        icon = 'info';
+      }
+      
+      // Show SweetAlert notification
+      Swal.fire({
+        icon: icon,
+        title: tags.charAt(0).toUpperCase() + tags.slice(1),
+        text: message,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true
+      });
+    });
+  });
+</script>
+
 {% block extra_scripts %}{% endblock %}

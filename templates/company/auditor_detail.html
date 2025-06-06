@@ -11,9 +11,29 @@
     .iaf-eac-badge {
         margin-right: 5px;
         margin-bottom: 5px;
+        font-size: 0.85rem;
+        padding: 6px 8px;
+        display: inline-flex;
+        align-items: center;
     }
     .primary-badge {
-        border: 2px solid #28a745;
+        background-color: #f8f9fa;
+        border: 1px solid #ffc107;
+    }
+    .badge-container {
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .badge-actions {
+        display: inline-flex;
+        margin-left: 4px;
+    }
+    .btn-xs {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        border-radius: 0.2rem;
+        margin-left: 2px;
     }
     .badge-category {
         font-size: 100%;
@@ -73,7 +93,7 @@
                         <a href="{% url 'company:auditor_list' %}" class="btn btn-default btn-sm">
                             <i class="fas fa-arrow-left"></i> Nazad na listu
                         </a>
-                        <a href="#" class="btn btn-primary btn-sm">
+                        <a href="{% url 'company:auditor_update' auditor.id %}" class="btn btn-primary btn-sm">
                             <i class="fas fa-edit"></i> Izmeni
                         </a>
                     </div>
@@ -122,13 +142,24 @@
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <h4>Standardi i IAF/EAC kodovi</h4>
+                            <div class="mb-3">
+                                <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Dodaj standard
+                                </a>
+                            </div>
                             
                             {% for standard in auditor_standards %}
                             <div class="card standard-card">
                                 <div class="card-header">
                                     <h3 class="card-title">{{ standard.standard.code }} - {{ standard.standard.standard }}</h3>
                                     <div class="card-tools">
-                                        <a href="#" class="btn btn-primary btn-sm">
+                                        <a href="{% url 'company:auditor_standard_update' auditor.id standard.id %}" class="btn btn-info btn-sm mr-1">
+                                            <i class="fas fa-edit"></i> Izmeni
+                                        </a>
+                                        <a href="{% url 'company:auditor_standard_delete' auditor.id standard.id %}" class="btn btn-danger btn-sm mr-2">
+                                            <i class="fas fa-trash"></i> Obriši
+                                        </a>
+                                        <a href="{% url 'company:auditor_standard_iaf_eac_create' standard.id %}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
                                         </a>
                                     </div>
@@ -151,13 +182,23 @@
                                             <p><strong>IAF/EAC kodovi:</strong></p>
                                             <div>
                                                 {% for link in standard.iaf_eac_links.all %}
-                                                <span class="badge badge-light iaf-eac-badge {% if link.is_primary %}primary-badge{% endif %}" 
-                                                      title="{{ link.iaf_eac_code.title }}{% if link.is_primary %} (Primarni){% endif %}{% if link.notes %} - {{ link.notes }}{% endif %}">
-                                                    {{ link.iaf_eac_code.iaf_code }}
-                                                    {% if link.is_primary %}
-                                                    <i class="fas fa-star text-warning"></i>
-                                                    {% endif %}
-                                                </span>
+                                                <div class="badge-container mb-1 d-inline-block">
+                                                    <span class="badge badge-light iaf-eac-badge {% if link.is_primary %}primary-badge{% endif %}" 
+                                                          title="{{ link.iaf_eac_code.title }}{% if link.is_primary %} (Primarni){% endif %}{% if link.notes %} - {{ link.notes }}{% endif %}">
+                                                        {{ link.iaf_eac_code.iaf_code }}
+                                                        {% if link.is_primary %}
+                                                        <i class="fas fa-star text-warning"></i>
+                                                        {% endif %}
+                                                        <div class="badge-actions ml-1">
+                                                            <a href="{% url 'company:auditor_standard_iaf_eac_update' standard_id=standard.id pk=link.id %}" class="btn btn-xs btn-info" title="Izmeni">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a href="{% url 'company:auditor_standard_iaf_eac_delete' standard_id=standard.id pk=link.id %}" class="btn btn-xs btn-danger" title="Obriši">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </span>
+                                                </div>
                                                 {% empty %}
                                                 <span class="text-muted">Nema dodeljenih IAF/EAC kodova</span>
                                                 {% endfor %}
@@ -169,7 +210,7 @@
                             {% empty %}
                             <div class="alert alert-info">
                                 Ovaj auditor nema dodeljenih standarda.
-                                <a href="#" class="btn btn-primary btn-sm ml-3">
+                                <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm ml-3">
                                     <i class="fas fa-plus"></i> Dodaj standard
                                 </a>
                             </div>

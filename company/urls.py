@@ -1,5 +1,7 @@
 from django.urls import path
-from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, get_auditor_details
+from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, AuditorUpdateView, auditor_standard_create, auditor_standard_update, auditor_standard_delete, auditor_standard_iaf_eac_create, auditor_standard_iaf_eac_update, auditor_standard_iaf_eac_delete, get_auditor_details, get_qualified_auditors
+from .contact_views import kontakt_osoba_create, kontakt_osoba_update, kontakt_osoba_delete
+from .location_views import LocationListView, LocationDetailView, LocationCreateView, LocationUpdateView, LocationDeleteView
 from .views import (
     CalendarView, 
     CalendarEventsView, 
@@ -99,6 +101,26 @@ urlpatterns = [
     path('auditors/', AuditorListView.as_view(), name='auditor_list'),
     path('auditors/create/', AuditorCreateView.as_view(), name='auditor_create'),
     path('auditors/<int:pk>/', AuditorDetailView.as_view(), name='auditor_detail'),
+    path('auditors/<int:pk>/update/', AuditorUpdateView.as_view(), name='auditor_update'),
     path('auditors/<int:pk>/delete/', AuditorDeleteView.as_view(), name='auditor_delete'),
+    path('auditors/<int:auditor_id>/standards/add/', auditor_standard_create, name='auditor_standard_create'),
+    path('auditors/<int:auditor_id>/standards/<int:pk>/update/', auditor_standard_update, name='auditor_standard_update'),
+    path('auditors/<int:auditor_id>/standards/<int:pk>/delete/', auditor_standard_delete, name='auditor_standard_delete'),
+    path('auditor-standards/<int:standard_id>/iaf-eac/add/', auditor_standard_iaf_eac_create, name='auditor_standard_iaf_eac_create'),
+    path('auditor-standards/<int:standard_id>/iaf-eac/<int:pk>/update/', auditor_standard_iaf_eac_update, name='auditor_standard_iaf_eac_update'),
+    path('auditor-standards/<int:standard_id>/iaf-eac/<int:pk>/delete/', auditor_standard_iaf_eac_delete, name='auditor_standard_iaf_eac_delete'),
     path('api/auditors/<int:pk>/details/', get_auditor_details, name='auditor_details_api'),
+    path('api/qualified-auditors/', get_qualified_auditors, name='qualified_auditors_api'),
+    
+    # Kontakt osobe CRUD URLs
+    path('companies/<int:company_id>/kontakt/create/', kontakt_osoba_create, name='kontakt_create'),
+    path('companies/<int:company_id>/kontakt/<int:pk>/update/', kontakt_osoba_update, name='kontakt_update'),
+    path('companies/<int:company_id>/kontakt/<int:pk>/delete/', kontakt_osoba_delete, name='kontakt_delete'),
+    
+    # Lokacije CRUD URLs
+    path('locations/', LocationListView.as_view(), name='location_list'),
+    path('locations/create/', LocationCreateView.as_view(), name='location_create'),
+    path('locations/<int:pk>/', LocationDetailView.as_view(), name='location_detail'),
+    path('locations/<int:pk>/update/', LocationUpdateView.as_view(), name='location_update'),
+    path('locations/<int:pk>/delete/', LocationDeleteView.as_view(), name='location_delete'),
 ]

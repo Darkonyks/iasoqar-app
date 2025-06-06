@@ -1,13 +1,24 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from .models import NaredneProvere, Company, IAFEACCode, CompanyIAFEACCode
+from .auditor_models import Auditor
+from .audit_utils import is_auditor_qualified_for_company
 from datetime import datetime, timedelta
 import json
 
 class AuditForm(forms.ModelForm):
+    auditor = forms.ModelChoiceField(
+        queryset=Auditor.objects.all(),
+        required=False,
+        label=_('Auditor'),
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
     class Meta:
         model = NaredneProvere
         fields = [
-            'company', 'status',
+            'company', 'auditor', 'status',
             'first_surv_due', 'first_surv_cond',
             'second_surv_due', 'second_surv_cond',
             'trinial_audit_due', 'trinial_audit_cond',
@@ -52,6 +63,23 @@ class AuditForm(forms.ModelForm):
         if first_surv_due and not cleaned_data.get('trinial_audit_due'):
             # Set recertification date to two years after first audit
             cleaned_data['trinial_audit_due'] = first_surv_due.replace(year=first_surv_due.year + 2)
+        
+        # Provera kvalifikacije auditora za kompaniju
+        auditor = cleaned_data.get('auditor')
+        company = cleaned_data.get('company')
+        
+        if auditor and company:
+            is_qualified, missing_standards = is_auditor_qualified_for_company(auditor.id, company.id)
+            if not is_qualified:
+                missing_codes = ', '.join([std.code for std in missing_standards])
+                raise ValidationError(
+                    _('Auditor %(auditor)s nije kvalifikovan za standarde: %(standards)s'), 
+                    code='invalid',
+                    params={
+                        'auditor': auditor.name,
+                        'standards': missing_codes
+                    }
+                )
             
         return cleaned_data
 

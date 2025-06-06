@@ -136,21 +136,19 @@
       <!-- Search form -->
       <div class="card mb-4">
         <div class="card-body">
-          <form method="get" action="{% url 'company:list' %}" class="form-inline">
-            <div class="input-group w-100">
-              <input type="text" name="search" class="form-control" placeholder="Pretraži po nazivu, PIB-u ili MB-u" value="{{ search_query }}">
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-search"></i> Pretraži
-                </button>
-                {% if search_query %}
-                <a href="{% url 'company:list' %}" class="btn btn-secondary">
-                  <i class="fas fa-times"></i> Poništi
-                </a>
-                {% endif %}
-              </div>
+          <div class="input-group w-100">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
             </div>
-          </form>
+            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po nazivu, PIB-u ili MB-u">
+            {% if search_query %}
+            <div class="input-group-append">
+              <a href="{% url 'company:list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Poništi filter
+              </a>
+            </div>
+            {% endif %}
+          </div>
         </div>
       </div>
 
@@ -164,6 +162,7 @@
                 <th>Grad</th>
                 <th>Industrija</th>
                 <th>Standardi</th>
+                <th>Ostale lokacije</th>
                 <th>Status sertifikata</th>
                 <th>Akcije</th>
               </tr>
@@ -176,9 +175,60 @@
                 <td>{{ company.city }}</td>
                 <td>{{ company.get_industry_display }}</td>
                 <td>
-                  {% for standard in company.standards.all %}
-                    {{ standard.standard }}{% if not forloop.last %}, {% endif %}
-                  {% endfor %}
+                  {% if company.company_standards.all %}
+                    <ul class="list-unstyled mb-0">
+                      {% for company_standard in company.company_standards.all %}
+                        <li class="mb-1">
+                          {% with standard_code=company_standard.standard_definition.standard|default:company_standard.standard_definition.code %}
+                          {% if 'ISO 9001' in standard_code %}
+                            <span class="badge badge-primary p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 14001' in standard_code %}
+                            <span class="badge badge-success p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 45001' in standard_code %}
+                            <span class="badge badge-danger p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 27001' in standard_code %}
+                            <span class="badge badge-info p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 22000' in standard_code %}
+                            <span class="badge badge-warning p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 13485' in standard_code %}
+                            <span class="badge badge-secondary p-2">{{ standard_code }}</span>
+                          {% elif 'ISO 50001' in standard_code %}
+                            <span class="badge p-2" style="background-color: #9c27b0; color: white;">{{ standard_code }}</span>
+                          {% elif 'ISO 20000' in standard_code %}
+                            <span class="badge p-2" style="background-color: #ff9800; color: white;">{{ standard_code }}</span>
+                          {% elif 'ISO 22301' in standard_code %}
+                            <span class="badge p-2" style="background-color: #795548; color: white;">{{ standard_code }}</span>
+                          {% elif 'ISO 37001' in standard_code %}
+                            <span class="badge p-2" style="background-color: #607d8b; color: white;">{{ standard_code }}</span>
+                          {% elif 'HACCP' in standard_code %}
+                            <span class="badge p-2" style="background-color: #e91e63; color: white;">{{ standard_code }}</span>
+                          {% elif 'FSSC' in standard_code %}
+                            <span class="badge p-2" style="background-color: #00bcd4; color: white;">{{ standard_code }}</span>
+                          {% elif 'IFS' in standard_code %}
+                            <span class="badge p-2" style="background-color: #3f51b5; color: white;">{{ standard_code }}</span>
+                          {% elif 'BRC' in standard_code %}
+                            <span class="badge p-2" style="background-color: #ff5722; color: white;">{{ standard_code }}</span>
+                          {% else %}
+                            <span class="badge badge-dark p-2">{{ standard_code }}</span>
+                          {% endif %}
+                          {% endwith %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <span class="text-muted">Nema standarda</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% with locations_count=company.ostale_lokacije.count %}
+                    {% if locations_count > 0 %}
+                      <a href="{% url 'company:detail' company.id %}#locations" class="badge badge-info p-2">
+                        <i class="fas fa-map-marker-alt"></i> {{ locations_count }} lokacija
+                      </a>
+                    {% else %}
+                      <span class="text-muted">Nema dodatnih lokacija</span>
+                    {% endif %}
+                  {% endwith %}
                 </td>
                 <td>
                   <span class="status-{{ company.certificate_status }}">{{ company.get_certificate_status_display }}</span>
@@ -223,7 +273,8 @@
 <script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
 <script>
 $(function () {
-    $("#companiesTable").DataTable({
+    // Inicijalizacija DataTable
+    var table = $("#companiesTable").DataTable({
       "responsive": true, 
       "lengthChange": true, 
       "autoWidth": false,
@@ -238,10 +289,25 @@ $(function () {
           "last": "Poslednja",
           "next": "Sledeća",
           "previous": "Prethodna"
-        }
+        },
+        "zeroRecords": "Nema pronađenih rezultata"
       },
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#companiesTable_wrapper .col-md-6:eq(0)');
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      // Sakrivanje podrazumevanog polja za pretragu
+      "searching": true,
+      "dom": '<"row"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"l><"col-md-6"p>>'
+    });
+    
+    // Povezivanje našeg polja za pretragu sa DataTable pretragom
+    $('#tableSearch').keyup(function() {
+        table.search($(this).val()).draw();
+    });
+    
+    // Dodavanje dugmadi za export
+    table.buttons().container().appendTo('#companiesTable_wrapper .col-md-6:eq(0)');
+    
+    // Sakrivanje podrazumevanog polja za pretragu
+    $('#companiesTable_filter').hide();
 });
 </script>
 {% endblock %}

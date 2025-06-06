@@ -1,0 +1,94 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right">
+                        <a href="{% url 'company:location_detail' location.id %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Nazad na lokaciju
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h5><i class="icon fas fa-exclamation-triangle"></i> Upozorenje!</h5>
+                        <p>Da li ste sigurni da želite da obrišete lokaciju <strong>{{ location.name }}</strong> kompanije <strong>{{ location.company.name }}</strong>?</p>
+                        <p>Ova akcija je nepovratna i svi podaci vezani za ovu lokaciju će biti trajno obrisani.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Podaci o lokaciji</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="width: 30%">Naziv lokacije</th>
+                                            <td>{{ location.name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Kompanija</th>
+                                            <td>{{ location.company.name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Adresa</th>
+                                            <td>
+                                                {% if location.full_address %}
+                                                    {{ location.full_address }}
+                                                {% else %}
+                                                    <span class="text-muted">Nije uneto</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Grad</th>
+                                            <td>{{ location.city|default:"Nije uneto" }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Potvrdi brisanje
+                            </button>
+                            <a href="{% url 'company:location_detail' location.id %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Odustani
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+{% endblock %}

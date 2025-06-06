@@ -158,18 +158,56 @@
                                     <td>{{ auditor.email }}</td>
                                     <td>{{ auditor.telefon }}</td>
                                     <td>
-                                        {% for standard in auditor.auditor_standardi.all %}
-                                        <span class="badge badge-light">{{ standard.standard.code }}</span>
-                                        {% empty %}
+                                        {% if auditor.auditor_standardi.all %}
+                                        <ul class="list-unstyled mb-0">
+                                            {% for standard in auditor.auditor_standardi.all %}
+                                            <li class="mb-1">
+                                                {% with standard_code=standard.standard.code %}
+                                                {% if 'ISO9001' in standard_code %}
+                                                    <span class="badge badge-primary p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO14001' in standard_code %}
+                                                    <span class="badge badge-success p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO45001' in standard_code %}
+                                                    <span class="badge badge-danger p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO27001' in standard_code %}
+                                                    <span class="badge badge-info p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO22000' in standard_code %}
+                                                    <span class="badge badge-warning p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO13485' in standard_code %}
+                                                    <span class="badge badge-secondary p-2">{{ standard_code }}</span>
+                                                {% elif 'ISO50001' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #9c27b0; color: white;">{{ standard_code }}</span>
+                                                {% elif 'ISO20000' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #ff9800; color: white;">{{ standard_code }}</span>
+                                                {% elif 'ISO22301' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #795548; color: white;">{{ standard_code }}</span>
+                                                {% elif 'ISO37001' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #607d8b; color: white;">{{ standard_code }}</span>
+                                                {% elif 'HACCP' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #e91e63; color: white;">{{ standard_code }}</span>
+                                                {% elif 'FSSC' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #00bcd4; color: white;">{{ standard_code }}</span>
+                                                {% elif 'IFS' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #3f51b5; color: white;">{{ standard_code }}</span>
+                                                {% elif 'BRC' in standard_code or 'BRCFood' in standard_code %}
+                                                    <span class="badge p-2" style="background-color: #ff5722; color: white;">{{ standard_code }}</span>
+                                                {% else %}
+                                                    <span class="badge badge-dark p-2">{{ standard_code }}</span>
+                                                {% endif %}
+                                                {% endwith %}
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
                                         <span class="text-muted">Nema standarda</span>
-                                        {% endfor %}
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <div class="btn-group">
                                             <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="#" class="btn btn-sm btn-primary">
+                                            <a href="{% url 'company:auditor_update' auditor.id %}" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="{% url 'company:auditor_delete' auditor.id %}" class="btn btn-sm btn-danger">

@@ -1,0 +1,95 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">{{ title }}</h3>
+                            <div class="card-tools">
+                                <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-default btn-sm">
+                                    <i class="fas fa-arrow-left"></i> Nazad na detalje auditora
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="{% url 'company:auditor_standard_create' auditor.id %}">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label for="{{ form.standard.id_for_label }}">Standard:</label>
+                                    {{ form.standard }}
+                                    {% if form.standard.errors %}
+                                    <div class="text-danger">
+                                        {{ form.standard.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="{{ form.datum_potpisivanja.id_for_label }}">Datum potpisivanja:</label>
+                                    {{ form.datum_potpisivanja }}
+                                    {% if form.datum_potpisivanja.errors %}
+                                    <div class="text-danger">
+                                        {{ form.datum_potpisivanja.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="{{ form.napomena.id_for_label }}">Napomena:</label>
+                                    {{ form.napomena }}
+                                    {% if form.napomena.errors %}
+                                    <div class="text-danger">
+                                        {{ form.napomena.errors }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+                                    <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-default">Odustani</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Inicijalizacija select2 za standard
+        $('#{{ form.standard.id_for_label }}').select2({
+            placeholder: 'Izaberite standard',
+            width: '100%'
+        });
+    });
+</script>
+{% endblock %}

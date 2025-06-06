@@ -102,9 +102,14 @@ class CompanyUpdateView(UpdateView):
         context['submit_text'] = 'Sačuvaj izmene'
         # Dodaj sve IAF/EAC kodove za izbor
         context['all_iaf_eac_codes'] = IAFEACCode.objects.all().order_by('iaf_code')
+        context['iaf_codes'] = IAFEACCode.objects.all().order_by('iaf_code')  # Potrebno za IAF tab
         # Dodaj sve definicije standarda za izbor
         from .standard_models import StandardDefinition
         context['all_standard_definitions'] = StandardDefinition.objects.filter(active=True).order_by('code')
+        
+        # Dodaj kontakt osobe za prikaz u kontakt tab-u
+        if self.object:
+            context['kontakt_osobe'] = self.object.kontakt_osobe.all().order_by('-is_primary', 'ime_prezime')
         return context
     
     def get_success_url(self):
@@ -224,6 +229,53 @@ class AuditCreateView(CreateView):
     template_name = 'company/audit-form.html'
     success_url = reverse_lazy('company:audit_list')
     
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        
+        # Ako je kompanija već izabrana, filtriramo auditore koji su kvalifikovani za tu kompaniju
+        company_id = self.request.GET.get('company', None)
+        if company_id:
+            try:
+                from .audit_utils import get_qualified_auditors_for_company
+                
+                # Dobijamo rečnik kvalifikovanih auditora po standardima
+                qualified_auditors_dict = get_qualified_auditors_for_company(company_id)
+                
+                # Pronalazimo auditore koji su kvalifikovani za sve standarde kompanije
+                if qualified_auditors_dict:
+                    # Prvo dobijamo sve standarde koje kompanija ima
+                    all_standards = set(qualified_auditors_dict.keys())
+                    
+                    # Zatim pronalazimo auditore koji su kvalifikovani za sve standarde
+                    qualified_auditors = []
+                    all_auditors_by_id = {}
+                    
+                    # Prikupljamo sve auditore iz svih standarda
+                    for standard_id, auditors in qualified_auditors_dict.items():
+                        for auditor in auditors:
+                            if auditor.id not in all_auditors_by_id:
+                                all_auditors_by_id[auditor.id] = {
+                                    'auditor': auditor,
+                                    'standards': set([standard_id])
+                                }
+                            else:
+                                all_auditors_by_id[auditor.id]['standards'].add(standard_id)
+                    
+                    # Filtriramo samo one koji su kvalifikovani za sve standarde
+                    for auditor_id, data in all_auditors_by_id.items():
+                        if data['standards'] == all_standards:
+                            qualified_auditors.append(data['auditor'])
+                    
+                    # Ažuriramo queryset za polje auditor
+                    if qualified_auditors:
+                        form.fields['auditor'].queryset = Auditor.objects.filter(id__in=[a.id for a in qualified_auditors])
+                        form.fields['auditor'].help_text = _('Prikazani su samo auditori kvalifikovani za sve standarde kompanije')
+            except Exception as e:
+                # U slučaju greške, ne filtriramo auditore
+                pass
+        
+        return form
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Nova nadzorna provera'
@@ -249,6 +301,59 @@ class AuditUpdateView(UpdateView):
     model = NaredneProvere
     form_class = AuditForm
     template_name = 'company/audit-form.html'
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        
+        # Dobavljamo trenutnu kompaniju iz instance
+        company = self.object.company if self.object else None
+        
+        if company:
+            try:
+                from .audit_utils import get_qualified_auditors_for_company
+                
+                # Dobijamo rečnik kvalifikovanih auditora po standardima
+                qualified_auditors_dict = get_qualified_auditors_for_company(company.id)
+                
+                # Pronalazimo auditore koji su kvalifikovani za sve standarde kompanije
+                if qualified_auditors_dict:
+                    # Prvo dobijamo sve standarde koje kompanija ima
+                    all_standards = set(qualified_auditors_dict.keys())
+                    
+                    # Zatim pronalazimo auditore koji su kvalifikovani za sve standarde
+                    qualified_auditors = []
+                    all_auditors_by_id = {}
+                    
+                    # Prikupljamo sve auditore iz svih standarda
+                    for standard_id, auditors in qualified_auditors_dict.items():
+                        for auditor in auditors:
+                            if auditor.id not in all_auditors_by_id:
+                                all_auditors_by_id[auditor.id] = {
+                                    'auditor': auditor,
+                                    'standards': set([standard_id])
+                                }
+                            else:
+                                all_auditors_by_id[auditor.id]['standards'].add(standard_id)
+                    
+                    # Filtriramo samo one koji su kvalifikovani za sve standarde
+                    for auditor_id, data in all_auditors_by_id.items():
+                        if data['standards'] == all_standards:
+                            qualified_auditors.append(data['auditor'])
+                    
+                    # Dodajemo trenutnog auditora u listu ako postoji
+                    current_auditor = self.object.auditor
+                    if current_auditor and current_auditor.id not in [a.id for a in qualified_auditors]:
+                        qualified_auditors.append(current_auditor)
+                    
+                    # Ažuriramo queryset za polje auditor
+                    if qualified_auditors:
+                        form.fields['auditor'].queryset = Auditor.objects.filter(id__in=[a.id for a in qualified_auditors])
+                        form.fields['auditor'].help_text = _('Prikazani su samo auditori kvalifikovani za sve standarde kompanije')
+            except Exception as e:
+                # U slučaju greške, ne filtriramo auditore
+                pass
+        
+        return form
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

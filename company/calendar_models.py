@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from datetime import date, timedelta, datetime
+from .auditor_models import Auditor
 
 class NaredneProvere(models.Model):
     AUDIT_STATUS_CHOICES = [
@@ -59,6 +60,16 @@ class NaredneProvere(models.Model):
         max_length=50, 
         choices=AUDIT_STATUS_CHOICES,
         default='pending'
+    )
+    
+    # Auditor zadužen za proveru
+    auditor = models.ForeignKey(
+        Auditor,
+        on_delete=models.SET_NULL,
+        related_name='audits',
+        verbose_name=_("Auditor"),
+        blank=True,
+        null=True
     )
     
     # Napomene

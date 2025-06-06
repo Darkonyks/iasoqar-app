@@ -1,0 +1,76 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Brisanje kontakt osobe{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'company:list' %}">Kompanije</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'company:detail' pk=company.id %}">{{ company.name }}</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'company:update' pk=company.id %}">Izmena kompanije</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Brisanje kontakt osobe</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">Brisanje kontakt osobe</h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Da li ste sigurni da želite da obrišete kontakt osobu <strong>{{ kontakt.ime_prezime }}</strong>?
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <dl class="row">
+                <dt class="col-sm-4">Ime i prezime:</dt>
+                <dd class="col-sm-8">{{ kontakt.ime_prezime }}</dd>
+                
+                <dt class="col-sm-4">Pozicija:</dt>
+                <dd class="col-sm-8">{{ kontakt.pozicija|default:"-" }}</dd>
+                
+                <dt class="col-sm-4">Email:</dt>
+                <dd class="col-sm-8">{{ kontakt.email|default:"-" }}</dd>
+                
+                <dt class="col-sm-4">Telefon:</dt>
+                <dd class="col-sm-8">{{ kontakt.telefon|default:"-" }}</dd>
+                
+                <dt class="col-sm-4">Primarna:</dt>
+                <dd class="col-sm-8">
+                  {% if kontakt.is_primary %}
+                    <span class="badge badge-success">Da</span>
+                  {% else %}
+                    <span class="badge badge-secondary">Ne</span>
+                  {% endif %}
+                </dd>
+              </dl>
+            </div>
+          </div>
+          
+          <form method="post">
+            {% csrf_token %}
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-trash"></i> Potvrdi brisanje
+                </button>
+                <a href="{% url 'company:update' pk=company.id %}" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Odustani
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
