@@ -1,11 +1,23 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.http import HttpResponseRedirect
-from django.db.models import Count, Q
-from django.http import JsonResponse
-from django.urls import reverse_lazy
-from django.contrib import messages
 import json
+import logging
+from datetime import datetime
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.db.models import Q, Count
+from django.utils.translation import gettext as _
+from django.core.paginator import Paginator
+from django.utils.text import slugify
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.conf import settings
+
 from .models import Company, NaredneProvere, Appointment, KontaktOsoba, OstalaLokacija, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
@@ -49,7 +61,22 @@ class CompanyDetailView(DetailView):
         
         # Get related data
         context['contact_persons'] = company.kontakt_osobe.all().order_by('-is_primary', 'ime_prezime')
-        context['standards'] = company.company_standards.all()  # Ispravka: standards -> company_standards
+        
+        # Get standards with their auditors
+        standards = company.company_standards.all()
+        standards_with_auditors = []
+        
+        for standard in standards:
+            standard_def_id = standard.standard_definition_id
+            # Get auditors assigned to this standard
+            auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
+            auditors = [as_obj.auditor for as_obj in auditor_standards]
+            standards_with_auditors.append({
+                'standard': standard,
+                'auditors': auditors
+            })
+        
+        context['standards'] = standards_with_auditors
         context['locations'] = company.ostale_lokacije.all()
         context['appointments'] = company.appointments.all().order_by('-start_datetime')[:5]
         
@@ -106,6 +133,9 @@ class CompanyUpdateView(UpdateView):
         # Dodaj sve definicije standarda za izbor
         from .standard_models import StandardDefinition
         context['all_standard_definitions'] = StandardDefinition.objects.filter(active=True).order_by('code')
+        
+        # Dodaj sve auditore za izbor prilikom dodavanja standarda
+        context['all_auditors'] = Auditor.objects.all().order_by('ime_prezime')
         
         # Dodaj kontakt osobe za prikaz u kontakt tab-u
         if self.object:
@@ -824,6 +854,7 @@ def company_standard_create(request, company_id):
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
+        auditor_ids = request.POST.getlist('auditors[]')
         
         # Validacija
         if not standard_id:
@@ -836,7 +867,7 @@ def company_standard_create(request, company_id):
             return redirect('company:update', pk=company_id)
             
         # Kreiranje standarda
-        CompanyStandard.objects.create(
+        company_standard = CompanyStandard.objects.create(
             company=company,
             standard_definition_id=standard_id,
             issue_date=issue_date,
@@ -844,7 +875,28 @@ def company_standard_create(request, company_id):
             notes=notes
         )
         
-        messages.success(request, "Standard je uspešno dodat.")
+        # Dodavanje auditora za standard
+        # Konvertujemo auditor_ids u listu integera za lakše poređenje
+        auditor_ids_int = [int(aid) for aid in auditor_ids if aid]
+        
+        # Dodajemo veze za izabrane auditore
+        for auditor_id in auditor_ids_int:
+            try:
+                auditor = Auditor.objects.get(id=auditor_id)
+                # Kreiramo novu vezu između auditora i standarda
+                auditor_standard = AuditorStandard.objects.create(
+                    auditor=auditor,
+                    standard_id=standard_id,
+                    datum_potpisivanja=datetime.now().date(),
+                    napomena=f"Dodeljen za kompaniju {company.name}"
+                )
+            except Exception as e:
+                messages.warning(request, f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
+        
+        if auditor_ids:
+            messages.success(request, f"Standard je uspešno dodat sa {len(auditor_ids)} auditora.")
+        else:
+            messages.success(request, "Standard je uspešno dodat.")
         return redirect('company:update', pk=company_id)
     
     # GET zahtev (opciono, ako želite zasebnu stranicu za dodavanje standarda)
@@ -863,6 +915,7 @@ def company_standard_update(request, company_id, pk):
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
+        auditor_ids = request.POST.getlist('auditors[]')
         
         # Validacija
         if not standard_id:
@@ -876,14 +929,66 @@ def company_standard_update(request, company_id, pk):
         standard.notes = notes
         standard.save()
         
-        messages.success(request, "Standard je uspešno ažuriran.")
+        # Ažuriranje auditora za standard
+        standard_def_id = standard.standard_definition_id
+        
+        # Dobavljamo sve postojeće veze između auditora i ovog standarda
+        existing_auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
+        existing_auditor_ids = [as_obj.auditor.id for as_obj in existing_auditor_standards]
+        
+        # Konvertujemo auditor_ids u listu integera za lakše poređenje
+        auditor_ids_int = [int(aid) for aid in auditor_ids]
+        
+        # Auditori koje treba dodati (oni koji su u novom spisku ali nisu u postojećim vezama)
+        auditors_to_add = [aid for aid in auditor_ids_int if aid not in existing_auditor_ids]
+        
+        # Auditori koje treba ukloniti (oni koji su u postojećim vezama ali nisu u novom spisku)
+        auditors_to_remove = [aid for aid in existing_auditor_ids if aid not in auditor_ids_int]
+        
+        # Dodajemo nove veze za izabrane auditore
+        for auditor_id in auditors_to_add:
+            try:
+                auditor = Auditor.objects.get(id=auditor_id)
+                # Kreiramo novu vezu između auditora i standarda
+                auditor_standard = AuditorStandard.objects.create(
+                    auditor=auditor,
+                    standard_id=standard_def_id,
+                    datum_potpisivanja=datetime.now().date(),
+                    napomena=f"Dodeljen za kompaniju {company.name}"
+                )
+                messages.info(request, f"Auditor {auditor.ime_prezime} je uspešno dodeljen standardu.")
+            except Exception as e:
+                messages.warning(request, f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
+                
+        # Uklanjamo veze za auditore koji više nisu izabrani
+        if auditors_to_remove:
+            removed_count = AuditorStandard.objects.filter(
+                standard_id=standard_def_id, 
+                auditor_id__in=auditors_to_remove
+            ).delete()[0]
+            if removed_count > 0:
+                messages.info(request, f"Uklonjeno {removed_count} auditora sa standarda.")
+        
+        
+        messages.success(request, "Standard i auditori su uspešno ažurirani.")
         return redirect('company:update', pk=company_id)
     
     # GET zahtev
+    # Dobavljamo sve auditore koji su kvalifikovani za ovaj standard
+    all_auditors = Auditor.objects.all().order_by('ime_prezime')
+    
+    # Dobavljamo ID-jeve auditora koji su već dodeljeni ovom standardu
+    selected_auditors = []
+    standard_def_id = standard.standard_definition_id
+    auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
+    selected_auditors = [as_obj.auditor.id for as_obj in auditor_standards]
+    
     context = {
         'company': company,
         'standard': standard,
         'all_standard_definitions': StandardDefinition.objects.filter(active=True).order_by('code'),
+        'all_auditors': all_auditors,
+        'selected_auditors': selected_auditors,
     }
     return render(request, 'company/standard-update-form.html', context)
 

@@ -3,6 +3,11 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
 <div class="content-wrapper">
   <div class="content-header">
@@ -347,6 +352,23 @@
                           <div class="form-group">
                             <label for="notes">Napomena</label>
                             <input type="text" id="notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Dodavanje auditora za standard -->
+                      <div class="row mb-3">
+                        <div class="col-12">
+                          <div class="form-group">
+                            <label for="auditors">Auditori za standard</label>
+                            <select id="auditors" name="auditors[]" class="form-control select2" multiple>
+                              {% for auditor in all_auditors %}
+                                <option value="{{ auditor.id }}">
+                                  {{ auditor.ime_prezime }} {% if auditor.kategorija %}({{ auditor.get_kategorija_display }}){% endif %}
+                                </option>
+                              {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">Izaberite jednog ili više auditora koji su odgovorni za sertifikaciju ovog standarda.</small>
                           </div>
                         </div>
                       </div>
@@ -977,9 +999,17 @@
 
 <!-- Koristićemo lokalne biblioteke koje sada poslužuje Nginx sa ispravnim MIME tipovima -->
 
-<!-- Inicijalizacija modalnih dijaloga -->
+<!-- Inicijalizacija modalnih dijaloga i Select2 komponente -->
 <script>
   $(document).ready(function() {
+    // Inicijalizacija Select2 komponente za izbor auditora
+    $('#auditors').select2({
+      theme: 'bootstrap4',
+      placeholder: 'Izaberite auditore...',
+      allowClear: true,
+      width: '100%'
+    });
+    
     // Osiguraj da modalni dijalozi budu pravilno inicijalzovani
     $('#deleteStandardModal').modal({
       show: false, // Ne prikazuj automatski
@@ -987,6 +1017,20 @@
     });
     
     console.log('Modal dialog initialized:', $('#deleteStandardModal').length > 0);
+    console.log('Select2 initialized for auditors');
+    
+    // Handler za direktno dodavanje standarda
+    $('#directStandardAdd').off('click').on('click', function() {
+      // Validacija forme pre slanja
+      var standardId = $('#standard_definition').val();
+      if (!standardId) {
+        alert('Morate izabrati standard!');
+        return false;
+      }
+      
+      // Pošalji formu
+      $('#standardAddForm').submit();
+    });
     
     // Handler za dugme za brisanje standarda
     $('#standards-list').off('click', '.btn-remove-standard').on('click', '.btn-remove-standard', function() {
@@ -1103,6 +1147,8 @@
 
 {% block extra_scripts %}
 {% load static %}
+<!-- Učitavanje Select2 biblioteke -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <!-- Privremeno ugrađene JavaScript funkcije umesto eksternih fajlova dok ne rešimo problem sa statičkim fajlovima -->
 <script>
 /**

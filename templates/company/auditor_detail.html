@@ -10,11 +10,14 @@
     }
     .iaf-eac-badge {
         margin-right: 5px;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         font-size: 0.85rem;
         padding: 6px 8px;
         display: inline-flex;
         align-items: center;
+        max-width: 100%;
+        white-space: normal;
+        text-align: left;
     }
     .primary-badge {
         background-color: #f8f9fa;
@@ -138,85 +141,131 @@
                         </div>
                     </div>
 
-                    <!-- Standardi i IAF/EAC kodovi -->
+                    <!-- Tabela sa svim standardima auditora -->
                     <div class="row mt-4">
                         <div class="col-md-12">
-                            <h4>Standardi i IAF/EAC kodovi</h4>
-                            <div class="mb-3">
-                                <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus"></i> Dodaj standard
-                                </a>
-                            </div>
-                            
-                            {% for standard in auditor_standards %}
-                            <div class="card standard-card">
+                            <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">{{ standard.standard.code }} - {{ standard.standard.standard }}</h3>
+                                    <h3 class="card-title">Standardi auditora</h3>
                                     <div class="card-tools">
-                                        <a href="{% url 'company:auditor_standard_update' auditor.id standard.id %}" class="btn btn-info btn-sm mr-1">
-                                            <i class="fas fa-edit"></i> Izmeni
-                                        </a>
-                                        <a href="{% url 'company:auditor_standard_delete' auditor.id standard.id %}" class="btn btn-danger btn-sm mr-2">
-                                            <i class="fas fa-trash"></i> Obriši
-                                        </a>
-                                        <a href="{% url 'company:auditor_standard_iaf_eac_create' standard.id %}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                                        <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus"></i> Dodaj standard
                                         </a>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p><strong>Datum potpisivanja:</strong> 
-                                                {% if standard.datum_potpisivanja %}
-                                                {{ standard.datum_potpisivanja|date:"d.m.Y" }}
-                                                {% else %}
-                                                <span class="text-muted">Nije unet</span>
-                                                {% endif %}
-                                            </p>
-                                            {% if standard.napomena %}
-                                            <p><strong>Napomena:</strong> {{ standard.napomena }}</p>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p><strong>IAF/EAC kodovi:</strong></p>
-                                            <div>
-                                                {% for link in standard.iaf_eac_links.all %}
-                                                <div class="badge-container mb-1 d-inline-block">
-                                                    <span class="badge badge-light iaf-eac-badge {% if link.is_primary %}primary-badge{% endif %}" 
-                                                          title="{{ link.iaf_eac_code.title }}{% if link.is_primary %} (Primarni){% endif %}{% if link.notes %} - {{ link.notes }}{% endif %}">
-                                                        {{ link.iaf_eac_code.iaf_code }}
-                                                        {% if link.is_primary %}
-                                                        <i class="fas fa-star text-warning"></i>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="all-standards-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="15%">Kod</th>
+                                                    <th width="40%">Naziv standarda</th>
+                                                    <th width="15%">Datum potpisivanja</th>
+                                                    <th width="15%">Broj IAF/EAC kodova</th>
+                                                    <th width="15%">Akcije</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for standard in auditor_standards %}
+                                                <tr>
+                                                    <td><strong>{{ standard.standard.code }}</strong></td>
+                                                    <td>{{ standard.standard.standard }}</td>
+                                                    <td>
+                                                        {% if standard.datum_potpisivanja %}
+                                                        {{ standard.datum_potpisivanja|date:"d.m.Y" }}
+                                                        {% else %}
+                                                        <span class="text-muted">Nije unet</span>
                                                         {% endif %}
-                                                        <div class="badge-actions ml-1">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="badge badge-info">{{ standard.iaf_eac_links.count }}</span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="{% url 'company:auditor_standard_update' auditor.id standard.id %}" class="btn btn-xs btn-info" title="Izmeni">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a href="{% url 'company:auditor_standard_delete' auditor.id standard.id %}" class="btn btn-xs btn-danger" title="Obriši">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                        <a href="{% url 'company:auditor_standard_iaf_eac_create' standard.id %}" class="btn btn-xs btn-success" title="Dodaj IAF/EAC kod">
+                                                            <i class="fas fa-plus"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="5" class="text-center">
+                                                        <div class="alert alert-info mb-0">
+                                                            Ovaj auditor nema dodeljenih standarda.
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Globalna pretraga IAF/EAC kodova -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Svi IAF/EAC kodovi auditora</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="all-iaf-eac-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="10%">Kod</th>
+                                                    <th width="40%">Naziv/Opis</th>
+                                                    <th width="20%">Standard</th>
+                                                    <th width="10%">Primarni</th>
+                                                    <th width="20%">Akcije</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for standard in auditor_standards %}
+                                                    {% for link in standard.iaf_eac_links.all %}
+                                                    <tr {% if link.is_primary %}class="table-warning"{% endif %}>
+                                                        <td><strong>{{ link.iaf_eac_code.iaf_code }}</strong></td>
+                                                        <td>{{ link.iaf_eac_code.description }}</td>
+                                                        <td>{{ standard.standard.code }}</td>
+                                                        <td class="text-center">
+                                                            {% if link.is_primary %}
+                                                            <i class="fas fa-star text-warning" title="Primarni kod"></i>
+                                                            {% else %}
+                                                            <i class="fas fa-minus text-muted"></i>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            {% if link.notes %}
+                                                            <button type="button" class="btn btn-xs btn-secondary" data-toggle="tooltip" title="{{ link.notes }}">
+                                                                <i class="fas fa-info-circle"></i>
+                                                            </button>
+                                                            {% endif %}
                                                             <a href="{% url 'company:auditor_standard_iaf_eac_update' standard_id=standard.id pk=link.id %}" class="btn btn-xs btn-info" title="Izmeni">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
                                                             <a href="{% url 'company:auditor_standard_iaf_eac_delete' standard_id=standard.id pk=link.id %}" class="btn btn-xs btn-danger" title="Obriši">
                                                                 <i class="fas fa-trash"></i>
                                                             </a>
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                                {% empty %}
-                                                <span class="text-muted">Nema dodeljenih IAF/EAC kodova</span>
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
                                                 {% endfor %}
-                                            </div>
-                                        </div>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            {% empty %}
-                            <div class="alert alert-info">
-                                Ovaj auditor nema dodeljenih standarda.
-                                <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm ml-3">
-                                    <i class="fas fa-plus"></i> Dodaj standard
-                                </a>
-                            </div>
-                            {% endfor %}
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -229,8 +278,89 @@
 {% block extra_js %}
 <script>
     $(document).ready(function() {
-        // Inicijalizacija tooltips-a za IAF/EAC kodove
+        // Inicijalizacija tooltips-a
         $('[title]').tooltip();
+        
+        // Definisanje srpskog jezika za DataTables
+        const srLatnLanguage = {
+            "search": "Pretraži:",
+            "lengthMenu": "Prikaži _MENU_ zapisa po stranici",
+            "zeroRecords": "Nema pronađenih zapisa",
+            "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ zapisa",
+            "infoEmpty": "Nema zapisa",
+            "infoFiltered": "(filtrirano od ukupno _MAX_ zapisa)",
+            "paginate": {
+                "first": "Prvi",
+                "last": "Poslednji",
+                "next": "Sledeći",
+                "previous": "Prethodni"
+            }
+        };
+        
+        // Inicijalizacija tabele sa svim standardima auditora
+        $('#all-standards-table').DataTable({
+            "language": srLatnLanguage,
+            "pageLength": 10,
+            "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Sve"]],
+            "ordering": true,
+            "responsive": true,
+            "columnDefs": [
+                { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
+            ]
+        });
+        
+        // Inicijalizacija globalne tabele sa svim IAF/EAC kodovima
+        $('#all-iaf-eac-table').DataTable({
+            "language": srLatnLanguage,
+            "pageLength": 10,
+            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Sve"]],
+            "ordering": true,
+            "responsive": true,
+            "columnDefs": [
+                { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
+            ],
+            "dom": '<"top"<"row"<"col-md-6"l><"col-md-6"f>>>rt<"bottom"ip><"clear">', // Prilagođeni layout za pretragu i paginaciju
+            "initComplete": function() {
+                // Dodajemo naslov iznad search polja
+                $('.dataTables_filter').prepend('<h5 class="mb-2">Pretraga po kodu ili nazivu:</h5>');
+                
+                // Kreiramo naprednu pretragu koja radi po svim kolonama
+                var api = this.api();
+                
+                // Uklanjamo standardno search polje
+                $('.dataTables_filter input')
+                    .off()
+                    .on('input', function() {
+                        // Primenjujemo pretragu na sve kolone
+                        api
+                            .search(this.value)
+                            .draw();
+                    });
+                
+                // Poboljšavamo stil search polja
+                $('.dataTables_filter input')
+                    .attr('placeholder', 'Unesite kod ili naziv...')
+                    .addClass('form-control')
+                    .css({
+                        'width': '100%',
+                        'margin-left': '0px'
+                    });
+                
+                // Dodajemo ikonu za pretragu
+                $('.dataTables_filter label').html(
+                    $('.dataTables_filter input')
+                        .before('<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div>')
+                        .after('</div>')
+                );
+            },
+            // Prilagođavamo pretragu da radi po svim kolonama
+            "search": {
+                "smart": true,
+                "caseInsensitive": true
+            }
+        });
+        
+
     });
 </script>
 {% endblock %}

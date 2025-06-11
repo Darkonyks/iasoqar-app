@@ -197,15 +197,34 @@
                             <th>Status</th>
                             <th>Datum izdavanja</th>
                             <th>Datum isteka</th>
+                            <th>Auditori</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {% for company_standard in standards %}
+                          {% for standard_item in standards %}
                             <tr>
-                              <td>{{ company_standard.standard_definition.standard }}</td>
+                              <td>{{ standard_item.standard.standard_definition.standard }}</td>
                               <td><span class="status-badge status-active">Aktivan</span></td>
-                              <td>{% if company_standard.issue_date %}{{ company_standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
-                              <td>{% if company_standard.expiry_date %}{{ company_standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
+                              <td>{% if standard_item.standard.issue_date %}{{ standard_item.standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
+                              <td>{% if standard_item.standard.expiry_date %}{{ standard_item.standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
+                              <td>
+                                {% if standard_item.auditors %}
+                                  <ul class="list-unstyled mb-0">
+                                    {% for auditor in standard_item.auditors %}
+                                      <li>
+                                        <a href="{% url 'company:auditor_detail' pk=auditor.id %}" class="text-primary">
+                                          <i class="fas fa-user-tie mr-1"></i> {{ auditor.ime_prezime }}
+                                          {% if auditor.kategorija %}
+                                            <span class="badge badge-info">{{ auditor.get_kategorija_display }}</span>
+                                          {% endif %}
+                                        </a>
+                                      </li>
+                                    {% endfor %}
+                                  </ul>
+                                {% else %}
+                                  <span class="text-muted">Nema dodeljenih auditora</span>
+                                {% endif %}
+                              </td>
                             </tr>
                           {% endfor %}
                         </tbody>
