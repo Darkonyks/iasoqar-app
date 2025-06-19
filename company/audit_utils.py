@@ -1,7 +1,8 @@
 from django.db.models import Q
-from .auditor_models import Auditor, AuditorStandard
+from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
 from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
+from .iaf_models import IAFEACCode, CompanyIAFEACCode
 
 def get_qualified_auditors_for_company(company_id):
     """
@@ -151,3 +152,56 @@ def get_qualified_auditors_for_audit(audit_id):
             qualified_auditors.append(auditor)
     
     return qualified_auditors
+
+
+def verify_auditor_iaf_eac_codes(auditor_id, company_id, standard_id=None):
+    """
+    Proverava da li auditor ima sve IAF/EAC kodove koje kompanija ima za određeni standard.
+    
+    Args:
+        auditor_id: ID auditora
+        company_id: ID kompanije
+        standard_id: ID standarda (opciono, ako je None proveravaju se svi standardi)
+        
+    Returns:
+        tuple: (bool, list) - Da li auditor ima sve potrebne kodove i lista kodova koji nedostaju
+    """
+    # Dobijamo sve IAF/EAC kodove koje kompanija ima
+    company_iaf_eac_codes = CompanyIAFEACCode.objects.filter(
+        company_id=company_id
+    ).select_related('iaf_eac_code')
+    
+    if not company_iaf_eac_codes:
+        return True, []  # Ako kompanija nema IAF/EAC kodove, auditor je kvalifikovan
+    
+    # Dobijamo sve standarde auditora
+    auditor_standards_query = AuditorStandard.objects.filter(auditor_id=auditor_id)
+    
+    # Ako je naveden specifičan standard, filtriramo samo za taj standard
+    if standard_id:
+        auditor_standards_query = auditor_standards_query.filter(standard_id=standard_id)
+    
+    auditor_standards = list(auditor_standards_query.select_related('standard'))
+    
+    if not auditor_standards:
+        # Ako auditor nema standarde, nije kvalifikovan za nijedan IAF/EAC kod
+        return False, [code.iaf_eac_code for code in company_iaf_eac_codes]
+    
+    # Dobijamo sve IAF/EAC kodove koje auditor ima za svoje standarde
+    auditor_iaf_eac_codes = set()
+    for auditor_standard in auditor_standards:
+        codes = AuditorStandardIAFEACCode.objects.filter(
+            auditor_standard=auditor_standard
+        ).values_list('iaf_eac_code_id', flat=True)
+        auditor_iaf_eac_codes.update(codes)
+    
+    # Proveravamo da li auditor ima sve IAF/EAC kodove koje kompanija ima
+    missing_codes = []
+    for company_code in company_iaf_eac_codes:
+        if company_code.iaf_eac_code_id not in auditor_iaf_eac_codes:
+            missing_codes.append(company_code.iaf_eac_code)
+    
+    # Auditor je kvalifikovan ako nema kodova koji nedostaju
+    is_qualified = len(missing_codes) == 0
+    
+    return is_qualified, missing_codes

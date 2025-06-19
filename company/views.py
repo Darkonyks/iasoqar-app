@@ -25,6 +25,8 @@ from datetime import datetime, timedelta
 from django.db.models import Count
 import random
 from .forms import AuditForm, CompanyForm
+from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
+from .forms import CertificationCycleForm, CycleAuditForm
 
 class CompanyListView(ListView):
     model = Company
@@ -50,14 +52,14 @@ class CompanyListView(ListView):
         return context
 
 
-class CompanyDetailView(DetailView):
+class CompanyDetailView(LoginRequiredMixin, DetailView):
     model = Company
     template_name = 'company/company-detail.html'
     context_object_name = 'company'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        company = self.get_object()
+        company = self.object
         
         # Get related data
         context['contact_persons'] = company.kontakt_osobe.all().order_by('-is_primary', 'ime_prezime')
@@ -83,13 +85,87 @@ class CompanyDetailView(DetailView):
         # Get IAF/EAC codes for the company
         context['iaf_eac_codes'] = CompanyIAFEACCode.objects.filter(company=company).select_related('iaf_eac_code')
         
+        # Get certification cycles for the company
+        context['certification_cycles'] = company.certification_cycles.all().order_by('-start_date')
+        
         # Get audit information if available
         try:
             context['audit_info'] = company.naredne_provere.first()
         except:
             context['audit_info'] = None
+        
+        # Check if we need to show cycle or audit form
+        add_cycle = self.request.GET.get('add_cycle')
+        edit_cycle = self.request.GET.get('edit_cycle')
+        edit_audit = self.request.GET.get('edit_audit')
+        
+        if add_cycle:
+            context['cycle_form'] = CertificationCycleForm(initial={'company': company})
+            context['show_cycle_form'] = True
+        elif edit_cycle:
+            cycle = get_object_or_404(CertificationCycle, id=edit_cycle, company=company)
+            context['cycle_form'] = CertificationCycleForm(instance=cycle)
+            context['show_cycle_form'] = True
+            context['editing_cycle'] = cycle
+        elif edit_audit:
+            audit = get_object_or_404(CycleAudit, id=edit_audit, certification_cycle__company=company)
+            context['audit_form'] = CycleAuditForm(instance=audit)
+            context['show_audit_form'] = True
+            context['editing_audit'] = audit
             
         return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        company = self.object
+        
+        # Handle certification cycle form submission
+        if 'submit_cycle_form' in request.POST:
+            cycle_id = request.POST.get('cycle_id')
+            if cycle_id:
+                # Editing existing cycle
+                cycle = get_object_or_404(CertificationCycle, id=cycle_id, company=company)
+                form = CertificationCycleForm(request.POST, instance=cycle)
+            else:
+                # Creating new cycle
+                form = CertificationCycleForm(request.POST)
+            
+            if form.is_valid():
+                cycle = form.save()
+                messages.success(request, 'Ciklus sertifikacije je uspešno sačuvan.')
+                return redirect('company:detail', pk=company.id)
+            else:
+                context = self.get_context_data(**kwargs)
+                context['cycle_form'] = form
+                context['show_cycle_form'] = True
+                if cycle_id:
+                    context['editing_cycle'] = get_object_or_404(CertificationCycle, id=cycle_id)
+                return render(request, self.template_name, context)
+        
+        # Handle cycle audit form submission
+        elif 'submit_audit_form' in request.POST:
+            audit_id = request.POST.get('audit_id')
+            if audit_id:
+                # Editing existing audit
+                audit = get_object_or_404(CycleAudit, id=audit_id, certification_cycle__company=company)
+                form = CycleAuditForm(request.POST, instance=audit)
+            else:
+                # Creating new audit
+                form = CycleAuditForm(request.POST)
+            
+            if form.is_valid():
+                audit = form.save()
+                messages.success(request, 'Audit je uspešno sačuvan.')
+                return redirect('company:detail', pk=company.id)
+            else:
+                context = self.get_context_data(**kwargs)
+                context['audit_form'] = form
+                context['show_audit_form'] = True
+                if audit_id:
+                    context['editing_audit'] = get_object_or_404(CycleAudit, id=audit_id)
+                return render(request, self.template_name, context)
+        
+        return super().get(request, *args, **kwargs)
 
 
 class CompanyCreateView(CreateView):
@@ -172,17 +248,20 @@ class AuditListView(ListView):
     context_object_name = 'audits'
     
     def get_queryset(self):
-        queryset = super().get_queryset().select_related('company')
+        from .cycle_models import CycleAudit, CertificationCycle
+        
+        # Dohvatamo stare audite iz NaredneProvere
+        old_audits = NaredneProvere.objects.all().select_related('company')
         
         # Filter by company if specified
         company_id = self.request.GET.get('company', None)
         if company_id:
-            queryset = queryset.filter(company_id=company_id)
+            old_audits = old_audits.filter(company_id=company_id)
         
         # Filter by status if specified
         status = self.request.GET.get('status', None)
         if status:
-            queryset = queryset.filter(status=status)
+            old_audits = old_audits.filter(status=status)
             
         # Filter by date range if specified
         date_from = self.request.GET.get('date_from', None)
@@ -191,7 +270,7 @@ class AuditListView(ListView):
         if date_from:
             date_from = datetime.strptime(date_from, '%Y-%m-%d')
             # Filter audits with any date after date_from
-            queryset = queryset.filter(
+            old_audits = old_audits.filter(
                 Q(first_surv_due__gte=date_from) | 
                 Q(second_surv_due__gte=date_from) | 
                 Q(trinial_audit_due__gte=date_from)
@@ -200,13 +279,116 @@ class AuditListView(ListView):
         if date_to:
             date_to = datetime.strptime(date_to, '%Y-%m-%d')
             # Filter audits with any date before date_to
-            queryset = queryset.filter(
+            old_audits = old_audits.filter(
                 Q(first_surv_due__lte=date_to) | 
                 Q(second_surv_due__lte=date_to) | 
                 Q(trinial_audit_due__lte=date_to)
             )
             
-        return queryset
+        # Pripremamo listu za audite
+        combined_audits = []
+        
+        # Dodajemo stare audite u kombinovani format (oni su već grupisani)
+        for audit in old_audits:
+            combined_audits.append({
+                'type': 'old',
+                'id': audit.id,
+                'company': audit.company,
+                'first_surv_due': audit.first_surv_due,
+                'first_surv_cond': audit.first_surv_cond,
+                'second_surv_due': audit.second_surv_due,
+                'second_surv_cond': audit.second_surv_cond,
+                'trinial_audit_due': audit.trinial_audit_due,
+                'trinial_audit_cond': audit.trinial_audit_cond,
+                'status': audit.status,
+                'get_status_display': audit.get_status_display(),
+                # Dodajemo ključeve za audite
+                'first_audit_id': None,
+                'second_audit_id': None,
+                'recert_audit_id': None,
+                'cycle_id': None
+            })
+        
+        # Za nove audite, prvo dohvatimo sve cikluse sertifikacije
+        cycles = CertificationCycle.objects.all().select_related('company')
+        
+        # Primenimo filtere na cikluse
+        if company_id:
+            cycles = cycles.filter(company_id=company_id)
+        
+        # Za svaki ciklus, dohvatimo pripadajuće audite i grupišimo ih
+        for cycle in cycles:
+            # Dohvatimo sve audite za ovaj ciklus
+            cycle_audits = CycleAudit.objects.filter(certification_cycle=cycle).select_related('certification_cycle')
+            
+            # Primenjujemo status filter ako postoji
+            if status:
+                # Mapiranje starih statusa na nove
+                status_mapping = {
+                    'active': 'planned',
+                    'pending': 'in_progress',
+                    'completed': 'completed',
+                    'cancelled': 'cancelled'
+                }
+                mapped_status = status_mapping.get(status, status)
+                cycle_audits = cycle_audits.filter(audit_status=mapped_status)
+            
+            # Primenjujemo datumske filtere
+            if date_from:
+                cycle_audits = cycle_audits.filter(planned_date__gte=date_from)
+                
+            if date_to:
+                cycle_audits = cycle_audits.filter(planned_date__lte=date_to)
+            
+            # Ako nema audita nakon filtriranja, preskačemo ovaj ciklus
+            if not cycle_audits.exists():
+                continue
+            
+            # Inicijalizujemo podatke za ciklus
+            cycle_data = {
+                'type': 'new',
+                'cycle_id': cycle.id,
+                'company': cycle.company,
+                'first_surv_due': None,
+                'first_surv_cond': None,
+                'second_surv_due': None,
+                'second_surv_cond': None,
+                'trinial_audit_due': None,
+                'trinial_audit_cond': None,
+                'status': 'active',  # Pretpostavljeni status
+                'get_status_display': 'Aktivan',
+                'first_audit_id': None,
+                'second_audit_id': None,
+                'recert_audit_id': None
+            }
+            
+            # Popunjavamo podatke o auditima u okviru ciklusa
+            for audit in cycle_audits:
+                # Status ciklusa je status najskorijeg audita
+                cycle_data['status'] = audit.audit_status
+                cycle_data['get_status_display'] = dict(audit.AUDIT_STATUS_CHOICES)[audit.audit_status]
+                
+                # Dodajemo podatke o specifičnom auditu
+                if audit.audit_type == 'surveillance_1':
+                    cycle_data['first_surv_due'] = audit.planned_date
+                    cycle_data['first_surv_cond'] = audit.actual_date
+                    cycle_data['first_audit_id'] = audit.id
+                elif audit.audit_type == 'surveillance_2':
+                    cycle_data['second_surv_due'] = audit.planned_date
+                    cycle_data['second_surv_cond'] = audit.actual_date
+                    cycle_data['second_audit_id'] = audit.id
+                elif audit.audit_type == 'recertification':
+                    cycle_data['trinial_audit_due'] = audit.planned_date
+                    cycle_data['trinial_audit_cond'] = audit.actual_date
+                    cycle_data['recert_audit_id'] = audit.id
+            
+            # Dodajemo ciklus u listu
+            combined_audits.append(cycle_data)
+        
+        # Sortiramo kombinovanu listu po datumu
+        combined_audits.sort(key=lambda x: x['company'].name)
+        
+        return combined_audits
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -226,6 +408,32 @@ class AuditListView(ListView):
         # Add today's date for template comparison
         context['today'] = datetime.now()
         
+        # Add cycle_audits flag to indicate we're using combined audits
+        context['show_cycle_audits'] = True
+        
+        return context
+
+
+class CompanyAuditsView(AuditListView):
+    template_name = 'company/company-audits.html'
+    
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        # Postavljamo company_id iz URL parametra
+        self.company_id = kwargs.get('company_id')
+        
+    def get_queryset(self):
+        # Forsiramo filtriranje po kompaniji iz URL-a
+        self.request.GET = self.request.GET.copy()
+        self.request.GET['company'] = self.company_id
+        return super().get_queryset()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Dodajemo kompaniju u kontekst
+        from .models import Company
+        context['company'] = Company.objects.get(pk=self.company_id)
+        context['is_company_specific'] = True
         return context
 
 
@@ -598,7 +806,7 @@ def appointment_calendar_json(request):
             }
         })
     
-    # Get all audit dates
+    # Get all audit dates from the old model (NaredneProvere)
     audits = NaredneProvere.objects.all()
     
     # Add audit dates to events
@@ -617,7 +825,8 @@ def appointment_calendar_json(request):
                     'type': 'Prva nadzorna provera',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'planned'
+                    'auditStatus': 'planned',
+                    'modelType': 'old'
                 }
             })
         
@@ -635,7 +844,8 @@ def appointment_calendar_json(request):
                     'type': 'Prva nadzorna provera',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'completed'
+                    'auditStatus': 'completed',
+                    'modelType': 'old'
                 }
             })
         
@@ -653,7 +863,8 @@ def appointment_calendar_json(request):
                     'type': 'Druga nadzorna provera',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'planned'
+                    'auditStatus': 'planned',
+                    'modelType': 'old'
                 }
             })
         
@@ -671,7 +882,8 @@ def appointment_calendar_json(request):
                     'type': 'Druga nadzorna provera',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'completed'
+                    'auditStatus': 'completed',
+                    'modelType': 'old'
                 }
             })
         
@@ -689,7 +901,8 @@ def appointment_calendar_json(request):
                     'type': 'Resertifikacija',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'planned'
+                    'auditStatus': 'planned',
+                    'modelType': 'old'
                 }
             })
         
@@ -700,14 +913,93 @@ def appointment_calendar_json(request):
                 'title': f'Resertifikacija (održana) - {audit.company.name}',
                 'start': audit.trinial_audit_cond.isoformat(),
                 'allDay': True,
-                'color': '#2196F3',  # Blue for completed recertification events
+                'color': '#4CAF50',  # Green for completed audit events
                 'url': f'/company/audits/{audit.id}/',
                 'extendedProps': {
                     'company': audit.company.name,
                     'type': 'Resertifikacija',
                     'status': audit.get_status_display(),
                     'eventType': 'audit',
-                    'auditStatus': 'completed'
+                    'auditStatus': 'completed',
+                    'modelType': 'old'
+                }
+            })
+    
+    # Get all audit dates from the new model (CycleAudit)
+    from .cycle_models import CycleAudit
+    cycle_audits = CycleAudit.objects.all().select_related('certification_cycle__company')
+    
+    audit_type_mapping = {
+        'surveillance_1': {
+            'name': 'Prva nadzorna provera',
+            'color_planned': '#FF9800',
+            'color_completed': '#4CAF50'
+        },
+        'surveillance_2': {
+            'name': 'Druga nadzorna provera',
+            'color_planned': '#FF9800',
+            'color_completed': '#4CAF50'
+        },
+        'recertification': {
+            'name': 'Resertifikacija',
+            'color_planned': '#E91E63',
+            'color_completed': '#4CAF50'
+        }
+    }
+    
+    # Add cycle audit dates to events
+    for audit in cycle_audits:
+        # Get company name from certification cycle
+        company_name = audit.certification_cycle.company.name
+        audit_type_info = audit_type_mapping.get(audit.audit_type, {})
+        audit_name = audit_type_info.get('name', 'Audit')
+        
+        # Determine audit status and color
+        is_completed = audit.audit_status in ['completed']
+        status_text = '(održana)' if is_completed else '(planirana)'
+        color = audit_type_info.get('color_completed' if is_completed else 'color_planned', '#3788d8')
+        
+        # Add planned audit
+        if audit.planned_date:
+            events.append({
+                'id': f'cycle_audit_planned_{audit.id}',
+                'title': f'{audit_name} {status_text} - {company_name}',
+                'start': audit.planned_date.isoformat(),
+                'allDay': True,
+                'color': color,
+                'url': f'/company/audits/{audit.id}/update/',
+                'extendedProps': {
+                    'company': company_name,
+                    'type': audit_name,
+                    'audit_type': audit.audit_type,
+                    'status': dict(audit.AUDIT_STATUS_CHOICES)[audit.audit_status],
+                    'cycle_id': audit.certification_cycle.id,
+                    'eventType': 'cycle_audit',
+                    'auditStatus': 'planned' if not is_completed else 'completed',
+                    'modelType': 'new',
+                    'notes': audit.notes or 'N/A'
+                }
+            })
+        
+        # Add completed audit
+        if audit.actual_date:
+            events.append({
+                'id': f'cycle_audit_actual_{audit.id}',
+                'title': f'{audit_name} (održana) - {company_name}',
+                'start': audit.actual_date.isoformat(),
+                'allDay': True,
+                'color': '#4CAF50',  # Green for completed audit events
+                'url': f'/company/audits/{audit.id}/update/',
+                'extendedProps': {
+                    'company': company_name,
+                    'type': audit_name,
+                    'audit_type': audit.audit_type,
+                    'status': dict(audit.AUDIT_STATUS_CHOICES)[audit.audit_status],
+                    'cycle_id': audit.certification_cycle.id,
+                    'eventType': 'cycle_audit',
+                    'auditStatus': 'completed',
+                    'modelType': 'new',
+                    'notes': audit.notes or 'N/A'
                 }
             })
     

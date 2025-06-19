@@ -2,6 +2,9 @@ from django.urls import path
 from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, AuditorUpdateView, auditor_standard_create, auditor_standard_update, auditor_standard_delete, auditor_standard_iaf_eac_create, auditor_standard_iaf_eac_update, auditor_standard_iaf_eac_delete, get_auditor_details, get_qualified_auditors
 from .contact_views import kontakt_osoba_create, kontakt_osoba_update, kontakt_osoba_delete
 from .location_views import LocationListView, LocationDetailView, LocationCreateView, LocationUpdateView, LocationDeleteView
+from .views_cycles import (CertificationCycleListView, CertificationCycleDetailView, CertificationCycleCreateView, 
+                         CertificationCycleUpdateView, CertificationCycleDeleteView, CycleAuditCreateView, 
+                         CycleAuditUpdateView, CycleAuditDeleteView)
 from .views import (
     CalendarView, 
     CalendarEventsView, 
@@ -12,6 +15,7 @@ from .views import (
     CompanyUpdateView,
     CompanyDeleteView,
     AuditListView,
+    CompanyAuditsView,
     CompanyAuditDetailView,
     AuditCreateView,
     AuditUpdateView,
@@ -92,9 +96,10 @@ urlpatterns = [
     
     # Audit CRUD URLs
     path('audits/', AuditListView.as_view(), name='audit_list'),
+    path('companies/<int:company_id>/audits/', CompanyAuditsView.as_view(), name='company_audits'),
     path('audits/create/', AuditCreateView.as_view(), name='audit_create'),
     path('audits/<int:pk>/', CompanyAuditDetailView.as_view(), name='audit_detail'),
-    path('audits/<int:pk>/update/', AuditUpdateView.as_view(), name='audit_update'),
+    path('old-audits/<int:pk>/update/', AuditUpdateView.as_view(), name='audit_update'),  # Promenjen URL za stare audite
     path('audits/<int:pk>/delete/', AuditDeleteView.as_view(), name='audit_delete'),
     
     # Auditor CRUD URLs
@@ -123,4 +128,17 @@ urlpatterns = [
     path('locations/<int:pk>/', LocationDetailView.as_view(), name='location_detail'),
     path('locations/<int:pk>/update/', LocationUpdateView.as_view(), name='location_update'),
     path('locations/<int:pk>/delete/', LocationDeleteView.as_view(), name='location_delete'),
+    
+    # Certification Cycles CRUD URLs
+    path('cycles/', CertificationCycleListView.as_view(), name='cycle_list'),
+    path('cycles/create/', CertificationCycleCreateView.as_view(), name='cycle_create'),
+    path('companies/<int:company_id>/cycles/create/', CertificationCycleCreateView.as_view(), name='company_cycle_create'),
+    path('cycles/<int:pk>/', CertificationCycleDetailView.as_view(), name='cycle_detail'),
+    path('cycles/<int:pk>/update/', CertificationCycleUpdateView.as_view(), name='cycle_update'),
+    path('cycles/<int:pk>/delete/', CertificationCycleDeleteView.as_view(), name='cycle_delete'),
+    
+    # Cycle Audit CRUD URLs
+    path('cycles/<int:cycle_id>/audits/create/', CycleAuditCreateView.as_view(), name='cycle_audit_create'),
+    path('audits/<int:pk>/update/', CycleAuditUpdateView.as_view(), name='cycle_audit_update'),
+    path('audits/<int:pk>/delete/', CycleAuditDeleteView.as_view(), name='cycle_audit_delete'),
 ]

@@ -1,0 +1,220 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrajs %}
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 Elements
+    $('.select2').select2({
+      theme: 'bootstrap4'
+    });
+    
+    // Date picker initialization
+    $('.datepicker').datetimepicker({
+      format: 'DD.MM.YYYY',
+      icons: {
+        time: 'far fa-clock',
+        date: 'far fa-calendar-alt',
+        up: 'fas fa-arrow-up',
+        down: 'fas fa-arrow-down',
+        previous: 'fas fa-chevron-left',
+        next: 'fas fa-chevron-right',
+        today: 'far fa-calendar-check',
+        clear: 'far fa-trash-alt',
+        close: 'fas fa-times'
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>{{ title }}</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
+          {% if company %}
+          <li class="breadcrumb-item"><a href="{% url 'company:detail' company.id %}">{{ company.name }}</a></li>
+          {% endif %}
+          {% if cycle %}
+          <li class="breadcrumb-item"><a href="{% url 'company:cycle_detail' cycle.id %}">Ciklus sertifikacije</a></li>
+          {% endif %}
+          <li class="breadcrumb-item active">{{ title }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">{{ title }}</h3>
+          </div>
+          
+          <form method="post">
+            {% csrf_token %}
+            <div class="card-body">
+              {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+              </div>
+              {% endif %}
+              
+              {% if not cycle %}
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="{{ form.certification_cycle.id_for_label }}">Ciklus sertifikacije</label>
+                    {{ form.certification_cycle }}
+                    {% if form.certification_cycle.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.certification_cycle.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <input type="hidden" name="certification_cycle" value="{{ cycle.id }}">
+              {% endif %}
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.audit_type.id_for_label }}">Tip audita</label>
+                    {{ form.audit_type }}
+                    {% if form.audit_type.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.audit_type.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.status.id_for_label }}">Status</label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.status.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.planned_date.id_for_label }}">Planirani datum</label>
+                    <div class="input-group date" id="planned_date_picker" data-target-input="nearest">
+                      {{ form.planned_date }}
+                      <div class="input-group-append" data-target="#planned_date_picker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                    {% if form.planned_date.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.planned_date.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.actual_date.id_for_label }}">Stvarni datum</label>
+                    <div class="input-group date" id="actual_date_picker" data-target-input="nearest">
+                      {{ form.actual_date }}
+                      <div class="input-group-append" data-target="#actual_date_picker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                    {% if form.actual_date.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.actual_date.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Ostavite prazno ako audit još nije izvršen.</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="{{ form.lead_auditor.id_for_label }}">Vodeći auditor</label>
+                    {{ form.lead_auditor }}
+                    {% if form.lead_auditor.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.lead_auditor.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="{{ form.audit_team.id_for_label }}">Tim auditora</label>
+                    {{ form.audit_team }}
+                    {% if form.audit_team.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.audit_team.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Izaberite članove tima koji će učestvovati u auditu.</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="{{ form.notes.id_for_label }}">Napomene</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.notes.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary">Sačuvaj</button>
+              {% if cycle %}
+              <a href="{% url 'company:cycle_detail' cycle.id %}" class="btn btn-secondary">Odustani</a>
+              {% else %}
+              <a href="javascript:history.back()" class="btn btn-secondary">Odustani</a>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}

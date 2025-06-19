@@ -239,7 +239,7 @@
                   <a href="{% url 'company:delete' company.id %}" class="btn btn-sm btn-danger" title="Obriši">
                     <i class="fas fa-trash"></i>
                   </a>
-                  <a href="{% url 'company:audit_list' %}?company={{ company.id }}" class="btn btn-sm btn-warning" title="Nadzorne provere">
+                  <a href="{% url 'company:company_audits' company.id %}" class="btn btn-sm btn-warning" title="Nadzorne provere">
                     <i class="fas fa-clipboard-check"></i>
                   </a>
                 </td>

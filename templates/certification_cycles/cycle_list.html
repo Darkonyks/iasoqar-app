@@ -1,0 +1,206 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}Ciklusi Sertifikacije{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Ciklusi Sertifikacije</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
+          {% if company %}
+          <li class="breadcrumb-item"><a href="{% url 'company:detail' company.id %}">{{ company.name }}</a></li>
+          {% endif %}
+          <li class="breadcrumb-item active">Ciklusi Sertifikacije</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              {% if company %}
+              Ciklusi Sertifikacije za kompaniju: {{ company.name }}
+              {% else %}
+              Svi Ciklusi Sertifikacije
+              {% endif %}
+            </h3>
+            <div class="card-tools">
+              {% if company %}
+              <a href="{% url 'company:company_cycle_create' company.id %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Novi Ciklus
+              </a>
+              {% else %}
+              <a href="{% url 'company:cycle_create' %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Novi Ciklus
+              </a>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <form method="get" class="form-inline">
+                  <div class="input-group mr-2">
+                    <input type="text" name="search" class="form-control" placeholder="Pretraži..." value="{{ search_query }}">
+                  </div>
+                  <div class="input-group mr-2">
+                    <select name="status" class="form-control">
+                      <option value="">-- Status --</option>
+                      {% for status_code, status_name in status_choices %}
+                      <option value="{{ status_code }}" {% if status == status_code %}selected{% endif %}>{{ status_name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="input-group mr-2">
+                    <select name="sort_by" class="form-control">
+                      <option value="-start_date" {% if sort_by == '-start_date' %}selected{% endif %}>Najnoviji prvo</option>
+                      <option value="start_date" {% if sort_by == 'start_date' %}selected{% endif %}>Najstariji prvo</option>
+                      <option value="status" {% if sort_by == 'status' %}selected{% endif %}>Po statusu</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Filtriraj</button>
+                  <a href="{% if company %}{% url 'company:cycle_list' company_id=company.id %}{% else %}{% url 'company:cycle_list' %}{% endif %}" class="btn btn-secondary ml-2">Resetuj</a>
+                </form>
+              </div>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Kompanija</th>
+                    <th>Status</th>
+                    <th>Početak</th>
+                    <th>Kraj</th>
+                    <th>Standardi</th>
+                    <th>Integrisani sistem</th>
+                    <th>Auditi</th>
+                    <th>Akcije</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for cycle in cycles %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'company:detail' cycle.company.id %}">{{ cycle.company.name }}</a>
+                    </td>
+                    <td>
+                      {% if cycle.status == 'active' %}
+                      <span class="badge badge-success">Aktivan</span>
+                      {% elif cycle.status == 'planned' %}
+                      <span class="badge badge-info">Planiran</span>
+                      {% elif cycle.status == 'completed' %}
+                      <span class="badge badge-secondary">Završen</span>
+                      {% elif cycle.status == 'cancelled' %}
+                      <span class="badge badge-danger">Otkazan</span>
+                      {% else %}
+                      <span class="badge badge-warning">{{ cycle.get_status_display }}</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ cycle.start_date|date:"d.m.Y" }}</td>
+                    <td>{{ cycle.end_date|date:"d.m.Y" }}</td>
+                    <td>
+                      {% for standard in cycle.cycle_standards.all %}
+                      <span class="badge badge-primary">{{ standard.standard_definition.code }} {{ standard.standard_definition.version }}</span>
+                      {% empty %}
+                      <span class="text-muted">Nema standarda</span>
+                      {% endfor %}
+                    </td>
+                    <td>
+                      {% if cycle.is_integrated_system %}
+                      <span class="badge badge-success"><i class="fas fa-check"></i> Da</span>
+                      {% else %}
+                      <span class="badge badge-secondary"><i class="fas fa-times"></i> Ne</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ cycle.audits.count }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="{% url 'company:cycle_detail' cycle.id %}" class="btn btn-info btn-sm" title="Detalji">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'company:cycle_update' cycle.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'company:cycle_delete' cycle.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="8" class="text-center">Nema pronađenih ciklusa sertifikacije</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          {% if is_paginated %}
+          <div class="card-footer">
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" aria-label="First">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                  </a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                  <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                  </li>
+                  {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">{{ num }}</a>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" aria-label="Last">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+{% endblock %}

@@ -1,0 +1,407 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}Ciklus Sertifikacije: {{ cycle.company.name }}{% endblock %}
+
+{% block extrajs %}
+<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<script>
+  $(document).ready(function() {
+    // Initialize Select2 Elements
+    $('.select2').select2({
+      theme: 'bootstrap4'
+    });
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Ciklus Sertifikacije</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'company:detail' cycle.company.id %}">{{ cycle.company.name }}</a></li>
+          <li class="breadcrumb-item active">Ciklus Sertifikacije</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Informacije o ciklusu</h3>
+            <div class="card-tools">
+              <a href="{% url 'company:cycle_update' cycle.id %}" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i> Izmeni
+              </a>
+              <a href="{% url 'company:cycle_delete' cycle.id %}" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i> Obriši
+              </a>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"><i class="fas fa-building"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Kompanija</span>
+                    <span class="info-box-number">
+                      <a href="{% url 'company:detail' cycle.company.id %}">{{ cycle.company.name }}</a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-success">
+                    {% if cycle.status == 'active' %}
+                    <i class="fas fa-check-circle"></i>
+                    {% elif cycle.status == 'planned' %}
+                    <i class="fas fa-calendar-alt"></i>
+                    {% elif cycle.status == 'completed' %}
+                    <i class="fas fa-flag-checkered"></i>
+                    {% elif cycle.status == 'cancelled' %}
+                    <i class="fas fa-ban"></i>
+                    {% else %}
+                    <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                  </span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Status</span>
+                    <span class="info-box-number">
+                      {% if cycle.status == 'active' %}
+                      <span class="badge badge-success">Aktivan</span>
+                      {% elif cycle.status == 'planned' %}
+                      <span class="badge badge-info">Planiran</span>
+                      {% elif cycle.status == 'completed' %}
+                      <span class="badge badge-secondary">Završen</span>
+                      {% elif cycle.status == 'cancelled' %}
+                      <span class="badge badge-danger">Otkazan</span>
+                      {% else %}
+                      <span class="badge badge-warning">{{ cycle.get_status_display }}</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-warning"><i class="fas fa-calendar-plus"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Datum početka</span>
+                    <span class="info-box-number">{{ cycle.start_date|date:"d.m.Y" }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-danger"><i class="fas fa-calendar-times"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Datum završetka</span>
+                    <span class="info-box-number">{{ cycle.end_date|date:"d.m.Y" }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-primary"><i class="fas fa-object-group"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Integrisani sistem</span>
+                    <span class="info-box-number">
+                      {% if cycle.is_integrated_system %}
+                      <span class="badge badge-success"><i class="fas fa-check"></i> Da</span>
+                      {% else %}
+                      <span class="badge badge-secondary"><i class="fas fa-times"></i> Ne</span>
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"><i class="fas fa-clipboard-list"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text">Broj audita</span>
+                    <span class="info-box-number">{{ cycle.audits.count }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {% if cycle.notes %}
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <div class="card card-outline card-info">
+                  <div class="card-header">
+                    <h3 class="card-title">Napomene</h3>
+                  </div>
+                  <div class="card-body">
+                    {{ cycle.notes|linebreaks }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Standardi -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Standardi</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Standard</th>
+                    <th>Verzija</th>
+                    <th>Napomene</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for standard in standards %}
+                  <tr>
+                    <td>{{ standard.standard_definition.code }}</td>
+                    <td>{{ standard.standard_definition.version }}</td>
+                    <td>{{ standard.notes|default:"-" }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="3" class="text-center">Nema standarda za ovaj ciklus</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Auditi -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Auditi</h3>
+            <div class="card-tools">
+              <a href="{% url 'company:cycle_audit_create' cycle.id %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Novi audit
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Tip audita</th>
+                    <th>Status</th>
+                    <th>Planirani datum</th>
+                    <th>Stvarni datum</th>
+                    <th>Vodeći auditor</th>
+                    <th>Tim auditora</th>
+                    <th>Akcije</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for audit in audits %}
+                  <tr>
+                    <td>{{ audit.get_audit_type_display }}</td>
+                    <td>
+                      {% if audit.status == 'planned' %}
+                      <span class="badge badge-info">Planiran</span>
+                      {% elif audit.status == 'in_progress' %}
+                      <span class="badge badge-warning">U toku</span>
+                      {% elif audit.status == 'completed' %}
+                      <span class="badge badge-success">Završen</span>
+                      {% elif audit.status == 'cancelled' %}
+                      <span class="badge badge-danger">Otkazan</span>
+                      {% elif audit.status == 'postponed' %}
+                      <span class="badge badge-secondary">Odložen</span>
+                      {% else %}
+                      <span class="badge badge-light">{{ audit.get_status_display }}</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ audit.planned_date|date:"d.m.Y" }}</td>
+                    <td>{{ audit.actual_date|date:"d.m.Y"|default:"-" }}</td>
+                    <td>
+                      {% if audit.lead_auditor %}
+                      <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
+                        {{ audit.lead_auditor.get_full_name }}
+                      </a>
+                      {% else %}
+                      -
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% for auditor in audit.audit_team.all %}
+                      <span class="badge badge-info">{{ auditor.get_full_name }}</span>
+                      {% empty %}
+                      -
+                      {% endfor %}
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                          <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                          <i class="fas fa-trash"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center">Nema audita za ovaj ciklus</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if show_audit_form %}
+<!-- Modal for audit form -->
+<div class="modal fade" id="auditFormModal" tabindex="-1" role="dialog" aria-labelledby="auditFormModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="auditFormModalLabel">
+          {% if editing_audit %}Izmena audita{% else %}Novi audit{% endif %}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="hidden" name="submit_audit_form" value="1">
+          {% if editing_audit %}
+          <input type="hidden" name="audit_id" value="{{ editing_audit.id }}">
+          {% endif %}
+          
+          <div class="form-group">
+            <label for="{{ audit_form.audit_type.id_for_label }}">Tip audita</label>
+            {{ audit_form.audit_type }}
+            {% if audit_form.audit_type.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.audit_type.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.status.id_for_label }}">Status</label>
+            {{ audit_form.status }}
+            {% if audit_form.status.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.status.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.planned_date.id_for_label }}">Planirani datum</label>
+            {{ audit_form.planned_date }}
+            {% if audit_form.planned_date.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.planned_date.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.actual_date.id_for_label }}">Stvarni datum</label>
+            {{ audit_form.actual_date }}
+            {% if audit_form.actual_date.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.actual_date.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.lead_auditor.id_for_label }}">Vodeći auditor</label>
+            {{ audit_form.lead_auditor }}
+            {% if audit_form.lead_auditor.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.lead_auditor.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.audit_team.id_for_label }}">Tim auditora</label>
+            {{ audit_form.audit_team }}
+            {% if audit_form.audit_team.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.audit_team.errors }}
+            </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ audit_form.notes.id_for_label }}">Napomene</label>
+            {{ audit_form.notes }}
+            {% if audit_form.notes.errors %}
+            <div class="invalid-feedback d-block">
+              {{ audit_form.notes.errors }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+          <button type="submit" class="btn btn-primary">Sačuvaj</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#auditFormModal').modal('show');
+  });
+</script>
+{% endif %}
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}

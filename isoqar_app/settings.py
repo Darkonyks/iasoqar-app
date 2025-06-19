@@ -29,7 +29,14 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web', '172.18.0.2', '192.168.5.45', '192.168.5.0/24', 'isoqar.geo-biz.com', '77.46.137.142']
 
 # CSRF podešavanja za rad sa Nginx proxy-jem
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8090']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8090', 
+    'https://localhost:8090',
+    'http://127.0.0.1:8001',
+    'https://127.0.0.1:8001',
+    'http://127.0.0.1:36934',
+    'https://127.0.0.1:36934',
+]
 
 
 # Application definition

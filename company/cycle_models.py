@@ -37,7 +37,7 @@ class CertificationCycle(models.Model):
     start_date = models.DateField(_('Datum početka ciklusa'), help_text=_('Datum inicijalne sertifikacije'))
     
     # Datum završetka ciklusa (3 godine nakon inicijalne sertifikacije)
-    end_date = models.DateField(_('Datum završetka ciklusa'), help_text=_('Datum isteka ciklusa (3 godine nakon inicijalne sertifikacije)'))
+    end_date = models.DateField(_('Datum završetka ciklusa'), null=True, blank=True, help_text=_('Datum isteka ciklusa (3 godine nakon inicijalne sertifikacije)'))
     
     status = models.CharField(_('Status ciklusa'), max_length=20, choices=CYCLE_STATUS_CHOICES, default='active')
     
