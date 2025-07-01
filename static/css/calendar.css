@@ -18,8 +18,9 @@
 
 /* Fix calendar display */
 #calendar-container {
-  height: 75vh;
+  min-height: 75vh;
   width: 100%;
+  overflow: visible;
 }
 
 #calendar {
@@ -27,13 +28,28 @@
   width: 100%;
 }
 
+/* Responsive height adjustments for different views */
 .fc-view-harness {
-  height: auto !important;
   min-height: 500px;
 }
 
+/* Fix for weekly view */
+.fc-timeGridWeek-view .fc-scrollgrid {
+  overflow: visible !important;
+}
+
+/* Override fixed heights */
+.fc-scrollgrid {
+  width: 100% !important;
+}
+
 .fc-scrollgrid-sync-table {
-  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Ensure content adapts to container */
+.fc .fc-scrollgrid-liquid {
+  height: auto !important;
 }
 
 /* Contact person tags */

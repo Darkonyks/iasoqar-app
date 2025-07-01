@@ -10,7 +10,7 @@ from company.company_models import Company, KontaktOsoba, OstalaLokacija
 from company.iaf_models import IAFScopeReference, IAFEACCode, CompanyIAFEACCode
 from company.standard_models import StandardDefinition, StandardIAFScopeReference, CompanyStandard
 from company.auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
-from company.calendar_models import NaredneProvere, CalendarEvent, Appointment
+from company.calendar_models import CalendarEvent, Appointment
 from company.cycle_models import CertificationCycle, CycleStandard, CycleAudit
 
 # Basic admin classes
@@ -59,7 +59,7 @@ admin.site.register(CompanyStandard)
 admin.site.register(Auditor, AuditorAdmin)
 admin.site.register(AuditorStandard)
 admin.site.register(AuditorStandardIAFEACCode)
-admin.site.register(NaredneProvere)
+# Registracija NaredneProvere je uklonjena jer je model izbačen
 admin.site.register(CalendarEvent)
 admin.site.register(Appointment)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)

@@ -450,34 +450,72 @@
           </div>
         </div>
       
-        <!-- Provere i Auditi Tab -->
+        <!-- Ciklusi Sertifikacije Tab -->
         <div class="tab-pane fade" id="audits" role="tabpanel" aria-labelledby="audits-tab">
           <div class="row">
             <div class="col-12">
               <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">Ciklus sertifikacije</h3>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h3 class="card-title">Ciklusi Sertifikacije</h3>
+                  <div class="card-tools">
+                    <a href="{% url 'company:company_cycle_create' company.id %}" class="btn btn-primary btn-sm">
+                      <i class="fas fa-plus"></i> Novi Ciklus Sertifikacije
+                    </a>
+                  </div>
                 </div>
-                <div class="card-body">
-                  {% if audit_info %}
-                    <table class="info-table">
-                      <tbody>
-                        <tr>
-                          <td>Inicijalna provera:</td>
-                          <td>{% if audit_info.initial_audit_date %}{{ audit_info.initial_audit_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                        </tr>
-                        <tr>
-                          <td>Datum sertifikata:</td>
-                          <td>{% if audit_info.certificate_issue_date %}{{ audit_info.certificate_issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                        </tr>
-                        <tr>
-                          <td>Važenje sertifikata:</td>
-                          <td>{% if audit_info.certificate_expiry_date %}{{ audit_info.certificate_expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                <div class="card-body p-0">
+                  {% if certification_cycles %}
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Period</th>
+                            <th>Status</th>
+                            <th>Standardi</th>
+                            <th>Auditi</th>
+                            <th>Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for cycle in certification_cycles %}
+                            <tr {% if cycle.status == 'active' %}class="table-success"{% endif %}>
+                              <td>
+                                <strong>{{ cycle.start_date|date:"d.m.Y" }} - {{ cycle.end_date|date:"d.m.Y" }}</strong>
+                              </td>
+                              <td>
+                                {% if cycle.status == 'active' %}
+                                  <span class="badge badge-success">Aktivan</span>
+                                {% elif cycle.status == 'planned' %}
+                                  <span class="badge badge-info">Planiran</span>
+                                {% elif cycle.status == 'completed' %}
+                                  <span class="badge badge-secondary">Završen</span>
+                                {% elif cycle.status == 'cancelled' %}
+                                  <span class="badge badge-danger">Otkazan</span>
+                                {% endif %}
+                              </td>
+                              <td>{{ cycle.cycle_standards.count }}</td>
+                              <td>{{ cycle.audits.count }}</td>
+                              <td>
+                                <a href="{% url 'company:cycle_detail' cycle.id %}" class="btn btn-info btn-sm" title="Detalji">
+                                  <i class="fas fa-eye"></i> Detalji
+                                </a>
+                              </td>
+                            </tr>
+                          {% empty %}
+                            <tr>
+                              <td colspan="5" class="text-center">Nema ciklusa sertifikacije za ovu kompaniju</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
                   {% else %}
-                    <p class="text-muted">Nema informacija o sertifikaciji</p>
+                    <div class="p-3">
+                      <p class="text-muted">Nema ciklusa sertifikacije. Kreirajte prvi ciklus.</p>
+                      <a href="{% url 'company:company_cycle_create' company.id %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Novi Ciklus Sertifikacije
+                      </a>
+                    </div>
                   {% endif %}
                 </div>
               </div>
@@ -664,6 +702,36 @@
                               <span class="badge badge-success">Da</span>
                             {% else %}
                               <span class="badge badge-secondary">Ne</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Inicijalni broj dana:</th>
+                          <td>
+                            {% if cycle.inicijalni_broj_dana %}
+                              {{ cycle.inicijalni_broj_dana }}
+                            {% else %}
+                              <span class="text-muted">Nije definisano</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Broj dana nadzora:</th>
+                          <td>
+                            {% if cycle.broj_dana_nadzora %}
+                              {{ cycle.broj_dana_nadzora }}
+                            {% else %}
+                              <span class="text-muted">Nije definisano</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>Broj dana resertifikacije:</th>
+                          <td>
+                            {% if cycle.broj_dana_resertifikacije %}
+                              {{ cycle.broj_dana_resertifikacije }}
+                            {% else %}
+                              <span class="text-muted">Nije definisano</span>
                             {% endif %}
                           </td>
                         </tr>
@@ -936,15 +1004,7 @@
                 {% endif %}
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label for="{{ audit_form.completion_date.id_for_label }}">Datum završetka</label>
-                {{ audit_form.completion_date }}
-                {% if audit_form.completion_date.errors %}
-                  <div class="text-danger">{{ audit_form.completion_date.errors }}</div>
-                {% endif %}
-              </div>
-            </div>
+            <!-- Polje za datum završetka je uklonjeno -->
           </div>
           
           <div class="row">

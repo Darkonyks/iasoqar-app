@@ -152,6 +152,7 @@
             <thead>
               <tr>
                 <th>Kompanija</th>
+                <th>Standardi</th>
                 <th>Prvi nadzor - planiran</th>
                 <th>Prvi nadzor - održan</th>
                 <th>Drugi nadzor - planiran</th>
@@ -167,6 +168,21 @@
               <tr>
                 <td>
                   <a href="{% url 'company:detail' audit.company.id %}">{{ audit.company.name }}</a>
+                </td>
+                <td>
+                  {% if audit.type == 'new' %}
+                    {% for standard in audit.standards %}
+                      <span class="badge badge-pill badge-info mr-1">{{ standard.code }}</span>
+                    {% empty %}
+                      <span class="text-muted">-</span>
+                    {% endfor %}
+                  {% else %}
+                    {% for standard in audit.standards %}
+                      <span class="badge badge-pill badge-info mr-1">{{ standard.code }}</span>
+                    {% empty %}
+                      <span class="text-muted">-</span>
+                    {% endfor %}
+                  {% endif %}
                 </td>
                 <td class="{% if audit.first_surv_due and audit.first_surv_due.date < today.date and not audit.first_surv_cond %}date-highlight{% elif audit.first_surv_due and audit.first_surv_due.date > today.date %}date-upcoming{% elif audit.first_surv_cond %}date-passed{% endif %}">
                   {% if audit.first_surv_due %}{{ audit.first_surv_due|date:"d.m.Y" }}{% else %}-{% endif %}
@@ -216,8 +232,8 @@
                     </a>
                     {% endif %}
                   {% else %}
-                    <a href="{% url 'company:audit_detail' audit.id %}" class="btn btn-sm btn-info" title="Detalji">
-                      <i class="fas fa-eye"></i>
+                    <a href="{% url 'company:cycle_detail' audit.certification_cycle.id %}" class="btn btn-sm btn-info" title="Detalji ciklusa">
+                      <i class="fas fa-eye"></i> Ciklus
                     </a>
                     <a href="{% url 'company:audit_update' audit.id %}" class="btn btn-sm btn-primary" title="Izmeni stari audit">
                       <i class="fas fa-edit"></i>

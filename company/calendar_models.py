@@ -4,122 +4,14 @@ from django.utils import timezone
 from datetime import date, timedelta, datetime
 from .auditor_models import Auditor
 
-class NaredneProvere(models.Model):
-    AUDIT_STATUS_CHOICES = [
-        ('pending', _('Na čekanju')),
-        ('completed', _('Završeno')),
-        ('delayed', _('Odlagano')),
-        ('overdue', _('Isteklo')),
-    ]
-    
-    company = models.ForeignKey(
-        'Company',
-        on_delete=models.CASCADE,
-        related_name='naredne_provere',
-        verbose_name=_("Kompanija")
-    )
-    
-    # Datumi provera
-    initial_audit_date = models.DateField(_("Datum inicijalne provere"), blank=True, null=True)
-    
-    # Prvi nadzor
-    first_surv_due = models.DateField(_("Prvi nadzor - planirano"), blank=True, null=True)
-    first_surv_cond = models.DateField(_("Prvi nadzor - održano"), blank=True, null=True)
-    
-    # Drugi nadzor
-    second_surv_due = models.DateField(_("Drugi nadzor - planirano"), blank=True, null=True)
-    second_surv_cond = models.DateField(_("Drugi nadzor - održano"), blank=True, null=True)
-    
-    # Resertifikacija
-    trinial_audit_due = models.DateField(_("Resertifikacija - planirano"), blank=True, null=True)
-    trinial_audit_cond = models.DateField(_("Resertifikacija - održano"), blank=True, null=True)
-    
-    # Opšti status
-    status = models.CharField(
-        _("Status"), 
-        max_length=50, 
-        choices=AUDIT_STATUS_CHOICES,
-        default='pending'
-    )
-    
-    # Statusi provera
-    first_surveillance_status = models.CharField(
-        _("Status prvog nadzora"), 
-        max_length=50, 
-        choices=AUDIT_STATUS_CHOICES,
-        default='pending'
-    )
-    second_surveillance_status = models.CharField(
-        _("Status drugog nadzora"), 
-        max_length=50, 
-        choices=AUDIT_STATUS_CHOICES,
-        default='pending'
-    )
-    recertification_status = models.CharField(
-        _("Status resertifikacije"), 
-        max_length=50, 
-        choices=AUDIT_STATUS_CHOICES,
-        default='pending'
-    )
-    
-    # Auditor zadužen za proveru
-    auditor = models.ForeignKey(
-        Auditor,
-        on_delete=models.SET_NULL,
-        related_name='audits',
-        verbose_name=_("Auditor"),
-        blank=True,
-        null=True
-    )
-    
-    # Napomene
-    notes = models.TextField(_("Napomene"), blank=True, null=True)
-    
-    # System fields
-    created_at = models.DateTimeField(_("Kreirano"), default=timezone.now)
-    updated_at = models.DateTimeField(_("Ažurirano"), auto_now=True)
-    
-    def __str__(self):
-        return f"Naredne provere za {self.company.name}"
-    
-    def get_next_audit_date(self):
-        """Returns the next upcoming audit date"""
-        today = date.today()
-        
-        # Check first surveillance
-        if self.first_surv_due and self.first_surv_due >= today and self.first_surveillance_status == 'pending':
-            return self.first_surv_due
-        
-        # Check second surveillance
-        if self.second_surv_due and self.second_surv_due >= today and self.second_surveillance_status == 'pending':
-            return self.second_surv_due
-        
-        # Check recertification
-        if self.trinial_audit_due and self.trinial_audit_due >= today and self.recertification_status == 'pending':
-            return self.trinial_audit_due
-        
-        return None
-    
-    def get_status_color(self):
-        """Returns Bootstrap color class based on audit status"""
-        next_audit_date = self.get_next_audit_date()
-        if not next_audit_date:
-            return 'secondary'
-        
-        days_until = (next_audit_date - date.today()).days
-        
-        if days_until < 0:
-            return 'danger'  # Overdue
-        elif days_until < 30:
-            return 'warning'  # Soon
-        elif days_until < 90:
-            return 'info'  # Upcoming
-        else:
-            return 'success'  # Far in the future
-    
-    class Meta:
-        verbose_name = _("Naredna provera")
-        verbose_name_plural = _("Naredne provere")
+# Model NaredneProvere je uklonjen jer je zamenjen sa CycleAudit modelom
+# AUDIT_STATUS_CHOICES se zadržava jer se koristi na drugim mestima
+AUDIT_STATUS_CHOICES = [
+    ('pending', _('Na čekanju')),
+    ('completed', _('Završeno')),
+    ('delayed', _('Odlagano')),
+    ('overdue', _('Isteklo')),
+]
 
 
 class CalendarEvent(models.Model):
@@ -128,14 +20,7 @@ class CalendarEvent(models.Model):
     end = models.DateTimeField(_("Kraj"), null=True, blank=True)
     all_day = models.BooleanField(_("Celodnevni događaj"), default=False)
     color = models.CharField(_("Boja"), max_length=20, default='#3c8dbc')
-    naredne_provere = models.ForeignKey(
-        NaredneProvere,
-        on_delete=models.CASCADE,
-        verbose_name=_("Naredne provere"),
-        related_name='calendar_events',
-        null=True,
-        blank=True
-    )
+    # Polje naredne_provere je uklonjeno jer je model NaredneProvere izbačen
     audit_type = models.CharField(
         _("Tip provere"),
         max_length=50,

@@ -1,0 +1,154 @@
+// ISOQAR App DB Diagram - Model Structure
+// Format kompatibilan sa dbdiagram.io
+
+// ===== COMPANY MODELS =====
+
+Table Company {
+  id integer [pk]
+  name varchar
+  pib varchar
+  mb varchar
+  street varchar
+  street_number varchar
+  city varchar
+  postal_code varchar
+  country varchar
+  phone varchar
+  email varchar
+  website varchar
+  industry varchar
+  number_of_employees integer
+  certificate_status varchar
+  certificate_number varchar
+  suspension_until_date date
+  audit_days decimal
+  initial_audit_conducted_date date
+  visits_per_year decimal
+  audit_days_each decimal
+  oblast_registracije text
+  notes text
+  is_active boolean
+  created_at datetime
+  updated_at datetime
+}
+
+// ==== CERTIFICATION CYCLE MODELS =====
+
+Table CertificationCycle {
+  id integer [pk]
+  company_id integer [ref: > Company.id]
+  is_integrated_system boolean
+  start_date date
+  end_date date
+  datum_sprovodjenja_inicijalne date
+  status varchar
+  inicijalni_broj_dana decimal
+  broj_dana_nadzora decimal
+  broj_dana_resertifikacije decimal
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+Table CycleAudit {
+  id integer [pk]
+  certification_cycle_id integer [ref: > CertificationCycle.id]
+  audit_type varchar
+  audit_status varchar
+  planned_date date
+  actual_date date
+  lead_auditor_id integer [ref: > Auditor.id]
+  report_number varchar
+  findings text
+  recommendations text
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+Table Auditor {
+  id integer [pk]
+  ime_prezime varchar
+  email varchar
+  telefon varchar
+  created_at datetime
+  updated_at datetime
+}
+
+// Veza M2M između CycleAudit i Auditor (audit_team)
+Table CycleAudit_audit_team {
+  id integer [pk]
+  cycleaudit_id integer [ref: > CycleAudit.id]
+  auditor_id integer [ref: > Auditor.id]
+}
+
+// ==== STANDARD I IAF/EAC MODELI =====
+
+Table IAFScopeReference {
+  id integer [pk]
+  reference varchar
+  description text
+  created_at datetime
+  updated_at datetime
+}
+
+Table IAFEACCode {
+  id integer [pk]
+  iaf_scope_reference_id integer [ref: > IAFScopeReference.id]
+  iaf_code varchar
+  description text
+  created_at datetime
+  updated_at datetime
+}
+
+Table StandardDefinition {
+  id integer [pk]
+  code varchar
+  name varchar
+  standard varchar
+  description text
+  active boolean
+  created_at datetime
+  updated_at datetime
+}
+
+// M2M veza između StandardDefinition i IAFScopeReference
+Table StandardIAFScopeReference {
+  id integer [pk]
+  standard_definition_id integer [ref: > StandardDefinition.id]
+  iaf_scope_reference_id integer [ref: > IAFScopeReference.id]
+}
+
+// Veza kompanije i standarda
+Table CompanyStandard {
+  id integer [pk]
+  company_id integer [ref: > Company.id]
+  standard varchar
+  standard_definition_id integer [ref: > StandardDefinition.id]
+  issue_date date
+  expiry_date date
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+// Veza ciklusa sertifikacije i standarda
+Table CycleStandard {
+  id integer [pk]
+  certification_cycle_id integer [ref: > CertificationCycle.id]
+  standard_definition_id integer [ref: > StandardDefinition.id]
+  company_standard_id integer [ref: > CompanyStandard.id]
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+// Veza kompanije i IAF/EAC kodova
+Table CompanyIAFEACCode {
+  id integer [pk]
+  company_id integer [ref: > Company.id]
+  iaf_eac_code_id integer [ref: > IAFEACCode.id]
+  is_primary boolean
+  created_at datetime
+  updated_at datetime
+}

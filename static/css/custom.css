@@ -1,0 +1,137 @@
+/* Custom fixes for layout issues */
+
+/* AGRESIVNIJI PRISTUP ZA SIDEBAR DO DNA */
+html, body {
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* KRITIČNI FIX ZA PREKLAPANJE SIDEBAR I SADRŽAJA */
+.main-sidebar {
+  position: fixed !important;
+  height: 100% !important;
+  z-index: 1100 !important; /* Osiguravanje da sidebar uvek bude iznad ostalih elemenata */
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.content-wrapper {
+  margin-left: 250px !important; /* Uskladiti sa širinom sidebara */
+  width: calc(100% - 250px) !important;
+  overflow-x: hidden !important;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Fix za collapsed sidebar */
+body.sidebar-collapse .content-wrapper {
+  margin-left: 4.6rem !important;
+  width: calc(100% - 4.6rem) !important;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.table-container table {
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .content-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Tabele sa horizontalnim scrollom */
+.card-body .table-responsive,
+.card-body .table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  border: none;
+}
+
+
+body.sidebar-mini {
+  height: auto;
+  min-height: 100%;
+}
+
+/* Fiksiramo wrapper da zauzima celu visinu */
+.wrapper {
+  min-height: 100vh !important;
+}
+
+/* Agresivno fiksiranje sidebar-a */
+.main-sidebar {
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+}
+
+/* Rešavanje problema sa prekoračenjem sadržaja */
+.content-wrapper {
+  min-height: 100vh !important;
+}
+
+/* Korekcija za kalendar - sprečava probijanje sadržaja */
+.fc-view-harness {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.fc-view-harness-active {
+  height: auto !important;
+  min-height: 600px;
+}
+
+/* Calendar container responsiveness */
+#calendar-container {
+  min-height: 75vh;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Fix za nedeljni prikaz */
+.fc-timeGridWeek-view .fc-scrollgrid,
+.fc-timeGridDay-view .fc-scrollgrid {
+  overflow: visible !important;
+}
+
+/* Uklanjamo fiksne visine koje mogu praviti problem */
+.fc-scrollgrid,
+.fc-scrollgrid-sync-table,
+.fc-scroller,
+.fc-day {
+  height: auto !important;
+}
+
+/* Hack za IE i starije browsere */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .main-sidebar {
+    position: fixed !important;
+    height: 100% !important;
+  }
+}
+
+/* Hack za Chrome */
+@supports (-webkit-appearance:none) {
+  body, html {
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .main-sidebar {
+    height: 100% !important;
+    position: fixed !important;
+  }
+}

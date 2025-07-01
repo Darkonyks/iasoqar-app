@@ -1,6 +1,51 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{% static 'css/cycle_detail_fix.css' %}">
+<style>
+  /* Reset za AdminLTE layout na ovoj stranici */
+  body.layout-fixed .main-sidebar {
+    position: fixed !important;
+  }
+  
+  /* Ovo je ključni fix - eksplicitno smeštamo content-wrapper i ograničavamo širinu */
+  .content-wrapper {
+    position: relative !important;
+    margin-left: 250px !important;
+    width: calc(100% - 250px) !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Fix za collapsed sidebar */
+  body.sidebar-collapse .content-wrapper {
+    margin-left: 4.6rem !important;
+    width: calc(100% - 4.6rem) !important;
+  }
+  
+  /* Tabele koje se horizontalno skroluju */
+  .table-force-container {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  
+  /* Responsive fix */
+  @media (max-width: 992px) {
+    .content-wrapper {
+      margin-left: 0 !important;
+      width: 100% !important;
+    }
+  }
+  
+  /* Agresivni reset za celu stranicu */
+  .cycle-container * {
+    max-width: 100%;
+  }
+</style>
+{% endblock %}
+
 {% block title %}Ciklus Sertifikacije: {{ cycle.company.name }}{% endblock %}
 
 {% block extrajs %}
@@ -11,6 +56,39 @@
     $('.select2').select2({
       theme: 'bootstrap4'
     });
+    
+    // Dodatni fix za tabele nakon učitavanja stranice
+    $('.table-force-container').css({
+      'width': '100%',
+      'overflow-x': 'auto',
+      'display': 'block'
+    });
+    
+    // Aktivacija Bootstrap tabova
+    $('#auditStatusTab a').on('click', function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    });
+    
+    // Pokazivanje prvog aktivnog taba na učitavanju
+    var activeTab = $('#auditStatusTab a.active');
+    if (activeTab.length) {
+      activeTab.tab('show');
+    } else {
+      $('#auditStatusTab a:first').tab('show');
+    }
+    
+    // Toggle ikone za kolapsibilne panele
+    $('#collapsedAudits').on('show.bs.collapse', function () {
+      $(this).parent().find('.card-header .fas.fa-plus').removeClass('fa-plus').addClass('fa-minus');
+    });
+    
+    $('#collapsedAudits').on('hide.bs.collapse', function () {
+      $(this).parent().find('.card-header .fas.fa-minus').removeClass('fa-minus').addClass('fa-plus');
+    });
+    
+    // Toggle ikone za kolapsibilne panele - ovo menjamo ikonu plus/minus
+
   });
 </script>
 {% endblock %}
@@ -18,6 +96,9 @@
 {% block content %}
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+
+<!-- Wrapper za sadržaj koji garantovano neće ići iza sidebara -->
+<div class="cycle-container" style="width: 100%; overflow-x: hidden;">
 <section class="content-header">
   <div class="container-fluid">
     <div class="row mb-2">
@@ -151,6 +232,72 @@
               </div>
             </div>
             
+            <!-- Audit dani - novi red sa info-box elementima -->
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card card-outline card-primary">
+                  <div class="card-header">
+                    <h3 class="card-title">Dani audita</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="info-box">
+                          <span class="info-box-icon bg-info"><i class="fas fa-calendar-check"></i></span>
+                          <div class="info-box-content">
+                            <span class="info-box-text">Inicijalni broj dana</span>
+                            <span class="info-box-number">
+                              {% if cycle.inicijalni_broj_dana %}
+                                {{ cycle.inicijalni_broj_dana }}
+                              {% else %}
+                                <span class="text-muted">Nije definisano</span>
+                              {% endif %}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <div class="info-box">
+                          <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
+                          <div class="info-box-content">
+                            <span class="info-box-text">Broj dana nadzora</span>
+                            <span class="info-box-number">
+                              {% if cycle.broj_dana_nadzora %}
+                                {{ cycle.broj_dana_nadzora }}
+                              {% else %}
+                                <span class="text-muted">Nije definisano</span>
+                              {% endif %}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <div class="info-box">
+                          <span class="info-box-icon bg-warning"><i class="fas fa-sync"></i></span>
+                          <div class="info-box-content">
+                            <span class="info-box-text">Broj dana resertifikacije</span>
+                            <span class="info-box-number">
+                              {% if cycle.broj_dana_resertifikacije %}
+                                {{ cycle.broj_dana_resertifikacije }}
+                              {% else %}
+                                <span class="text-muted">Nije definisano</span>
+                              {% endif %}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             {% if cycle.notes %}
             <div class="row mt-3">
               <div class="col-md-12">
@@ -177,8 +324,8 @@
           <div class="card-header">
             <h3 class="card-title">Standardi</h3>
           </div>
-          <div class="card-body">
-            <div class="table-responsive">
+          <div class="card-body p-0">
+            <div class="table-fix-container">
               <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -207,94 +354,185 @@
       </div>
     </div>
     
-    <!-- Auditi -->
-    <div class="row">
+    <!-- Auditi u ciklusu sertifikacije -->
+    <div class="row mb-4">
       <div class="col-md-12">
         <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Auditi</h3>
+          <div class="card-header bg-primary">
+            <h3 class="card-title"><strong>Auditi u ciklusu</strong></h3>
             <div class="card-tools">
-              <a href="{% url 'company:cycle_audit_create' cycle.id %}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Novi audit
+              <a href="{% url 'company:cycle_audit_create' cycle.id %}" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-plus"></i> Dodaj audit
               </a>
             </div>
           </div>
           <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>Tip audita</th>
-                    <th>Status</th>
-                    <th>Planirani datum</th>
-                    <th>Stvarni datum</th>
-                    <th>Vodeći auditor</th>
-                    <th>Tim auditora</th>
-                    <th>Akcije</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for audit in audits %}
-                  <tr>
-                    <td>{{ audit.get_audit_type_display }}</td>
-                    <td>
-                      {% if audit.status == 'planned' %}
-                      <span class="badge badge-info">Planiran</span>
-                      {% elif audit.status == 'in_progress' %}
-                      <span class="badge badge-warning">U toku</span>
-                      {% elif audit.status == 'completed' %}
-                      <span class="badge badge-success">Završen</span>
-                      {% elif audit.status == 'cancelled' %}
-                      <span class="badge badge-danger">Otkazan</span>
-                      {% elif audit.status == 'postponed' %}
-                      <span class="badge badge-secondary">Odložen</span>
-                      {% else %}
-                      <span class="badge badge-light">{{ audit.get_status_display }}</span>
+            <!-- Toggle dugmad za prebacivanje prikaza -->
+            <div class="btn-group mb-3" role="group">
+              <button type="button" class="btn btn-primary" id="btn-planirani" onclick="showPlanned()">Planirani auditi</button>
+              <button type="button" class="btn btn-outline-primary" id="btn-zavrseni" onclick="showCompleted()">Završeni auditi</button>
+            </div>
+            
+            <!-- Prikaz planiranih audita -->
+            <div id="planirani-container">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Tip audita</th>
+                      <th>Status</th>
+                      <th>Planirani datum</th>
+                      <th>Stvarni datum</th>
+                      <th>Vodeći auditor</th>
+                      <th>Tim auditora</th>
+                      <th>Akcije</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for audit in audits %}
+                      {% if audit.status != 'completed' and audit.status != 'cancelled' %}
+                        <tr>
+                          <td>{{ audit.get_audit_type_display }}</td>
+                          <td>
+                            {% if audit.status == 'planned' %}
+                            <span class="badge badge-info">Planiran</span>
+                            {% elif audit.status == 'in_progress' %}
+                            <span class="badge badge-warning">U toku</span>
+                            {% elif audit.status == 'postponed' %}
+                            <span class="badge badge-secondary">Odložen</span>
+                            {% else %}
+                            <span class="badge badge-light">{{ audit.get_status_display }}</span>
+                            {% endif %}
+                          </td>
+                          <td>{{ audit.planned_date|date:"d.m.Y"|default:"N/A" }}</td>
+                          <td>{{ audit.actual_date|date:"d.m.Y"|default:"N/A" }}</td>
+                          <td>
+                            {% if audit.lead_auditor %}
+                            <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
+                              {{ audit.lead_auditor.get_full_name }}
+                            </a>
+                            {% else %}
+                            -
+                            {% endif %}
+                          </td>
+                          <td>
+                            {% for auditor in audit.audit_team.all %}
+                            <span class="badge badge-info">{{ auditor.get_full_name }}</span>
+                            {% empty %}
+                            -
+                            {% endfor %}
+                          </td>
+                          <td>
+                            <div class="btn-group">
+                              <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                                <i class="fas fa-edit"></i>
+                              </a>
+                              <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                                <i class="fas fa-trash"></i>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
                       {% endif %}
-                    </td>
-                    <td>{{ audit.planned_date|date:"d.m.Y" }}</td>
-                    <td>{{ audit.actual_date|date:"d.m.Y"|default:"-" }}</td>
-                    <td>
-                      {% if audit.lead_auditor %}
-                      <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
-                        {{ audit.lead_auditor.get_full_name }}
-                      </a>
-                      {% else %}
-                      -
+                    {% empty %}
+                      <tr>
+                        <td colspan="7" class="text-center">Nema planiranih audita u ovom ciklusu</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Prikaz završenih audita, inicijalno sakriven -->
+            <div id="zavrseni-container" style="display: none;">
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Tip audita</th>
+                      <th>Status</th>
+                      <th>Planirani datum</th>
+                      <th>Stvarni datum</th>
+                      <th>Vodeći auditor</th>
+                      <th>Tim auditora</th>
+                      <th>Akcije</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for audit in audits %}
+                      {% if audit.status == 'completed' or audit.status == 'cancelled' %}
+                        <tr {% if audit.status == 'completed' %}class="table-success"{% elif audit.status == 'cancelled' %}class="table-danger"{% endif %}>
+                          <td>{{ audit.get_audit_type_display }}</td>
+                          <td>
+                            {% if audit.status == 'completed' %}
+                            <span class="badge badge-success">Završen</span>
+                            {% elif audit.status == 'cancelled' %}
+                            <span class="badge badge-danger">Otkazan</span>
+                            {% endif %}
+                          </td>
+                          <td>{{ audit.planned_date|date:"d.m.Y"|default:"N/A" }}</td>
+                          <td>{{ audit.actual_date|date:"d.m.Y"|default:"N/A" }}</td>
+                          <td>
+                            {% if audit.lead_auditor %}
+                            <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
+                              {{ audit.lead_auditor.get_full_name }}
+                            </a>
+                            {% else %}
+                            -
+                            {% endif %}
+                          </td>
+                          <td>
+                            {% for auditor in audit.audit_team.all %}
+                            <span class="badge badge-info">{{ auditor.get_full_name }}</span>
+                            {% empty %}
+                            -
+                            {% endfor %}
+                          </td>
+                          <td>
+                            <div class="btn-group">
+                              <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                                <i class="fas fa-edit"></i>
+                              </a>
+                              <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                                <i class="fas fa-trash"></i>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
                       {% endif %}
-                    </td>
-                    <td>
-                      {% for auditor in audit.audit_team.all %}
-                      <span class="badge badge-info">{{ auditor.get_full_name }}</span>
-                      {% empty %}
-                      -
-                      {% endfor %}
-                    </td>
-                    <td>
-                      <div class="btn-group">
-                        <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
-                          <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
-                          <i class="fas fa-trash"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                  {% empty %}
-                  <tr>
-                    <td colspan="7" class="text-center">Nema audita za ovaj ciklus</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+                    {% empty %}
+                      <tr>
+                        <td colspan="7" class="text-center">Nema završenih audita u ovom ciklusu</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </section>
+
+<!-- JavaScript funkcije za prebacivanje između prikaza audita -->
+<script>
+function showPlanned() {
+  document.getElementById('planirani-container').style.display = 'block';
+  document.getElementById('zavrseni-container').style.display = 'none';
+  document.getElementById('btn-planirani').className = 'btn btn-primary';
+  document.getElementById('btn-zavrseni').className = 'btn btn-outline-primary';
+}
+
+function showCompleted() {
+  document.getElementById('planirani-container').style.display = 'none';
+  document.getElementById('zavrseni-container').style.display = 'block';
+  document.getElementById('btn-planirani').className = 'btn btn-outline-primary';
+  document.getElementById('btn-zavrseni').className = 'btn btn-primary';
+}
+</script>
+
+
 
 {% if show_audit_form %}
 <!-- Modal for audit form -->

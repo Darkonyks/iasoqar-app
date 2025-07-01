@@ -14,7 +14,7 @@ class CycleStandardInline(nested_admin.NestedTabularInline):
 class CycleAuditInline(nested_admin.NestedTabularInline):
     model = CycleAudit
     extra = 0
-    fields = ['audit_type', 'audit_status', 'planned_date', 'actual_date', 'completion_date', 'lead_auditor']
+    fields = ['audit_type', 'audit_status', 'planned_date', 'actual_date', 'lead_auditor']
     readonly_fields = ['audit_type']  # Ne dozvoljavamo menjanje tipa audita jednom kad je kreiran
 
 
@@ -54,7 +54,7 @@ class CycleAuditAdmin(admin.ModelAdmin):
             'fields': ['certification_cycle', 'audit_type', 'audit_status']
         }),
         ('Datumi', {
-            'fields': ['planned_date', 'actual_date', 'completion_date']
+            'fields': ['planned_date', 'actual_date']
         }),
         ('Auditori', {
             'fields': ['lead_auditor', 'audit_team']

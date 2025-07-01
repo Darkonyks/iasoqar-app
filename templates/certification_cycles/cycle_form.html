@@ -27,6 +27,16 @@
         close: 'fas fa-times'
       }
     });
+
+    // Stara logika za prikazivanje/sakrivanje polja za recertifikaciju je uklonjena
+    // kako bi polja za audit dane bila uvek vidljiva
+    const cycleTypeSelect = $('#id_cycle_type');
+    
+    // Bind change event to handle other functionality if needed
+    cycleTypeSelect.on('change', function() {
+      // Ovde možemo dodati drugu funkcionalnost po potrebi
+    });
+
   });
 </script>
 {% endblock %}
@@ -105,6 +115,62 @@
                   </div>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.cycle_type.id_for_label }}">{{ form.cycle_type.label }}</label>
+                    {{ form.cycle_type }}
+                    {% if form.cycle_type.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.cycle_type.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Polja za broj dana audita su sada uvek vidljiva, nezavisno od tipa ciklusa -->
+              <div class="row">
+                <div class="col-12">
+                  <h5 class="mt-4 mb-3">Dani audita</h5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="{{ form.inicijalni_broj_dana.id_for_label }}">{{ form.inicijalni_broj_dana.label }}</label>
+                    {{ form.inicijalni_broj_dana }}
+                    {% if form.inicijalni_broj_dana.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.inicijalni_broj_dana.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="{{ form.broj_dana_nadzora.id_for_label }}">{{ form.broj_dana_nadzora.label }}</label>
+                    {{ form.broj_dana_nadzora }}
+                    {% if form.broj_dana_nadzora.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.broj_dana_nadzora.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="{{ form.broj_dana_resertifikacije.id_for_label }}">{{ form.broj_dana_resertifikacije.label }}</label>
+                    {{ form.broj_dana_resertifikacije }}
+                    {% if form.broj_dana_resertifikacije.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.broj_dana_resertifikacije.errors }}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
               
               <div class="row">
                 <div class="col-md-6">
@@ -140,6 +206,26 @@
                     </div>
                     {% endif %}
                     <small class="form-text text-muted">Ako nije unet, biće automatski postavljen na 3 godine od datuma inicijalnog audita.</small>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="{{ form.datum_sprovodjenja_inicijalne.id_for_label }}">Datum sprovođenja inicijalne</label>
+                    <div class="input-group date" id="datum_sprovodjenja_inicijalne_picker" data-target-input="nearest">
+                      {{ form.datum_sprovodjenja_inicijalne }}
+                      <div class="input-group-append" data-target="#datum_sprovodjenja_inicijalne_picker" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                    </div>
+                    {% if form.datum_sprovodjenja_inicijalne.errors %}
+                    <div class="invalid-feedback d-block">
+                      {{ form.datum_sprovodjenja_inicijalne.errors }}
+                    </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Datum kada je sprovedena inicijalna provera za ciklus.</small>
                   </div>
                 </div>
               </div>
@@ -184,6 +270,8 @@
                   </div>
                 </div>
               </div>
+              
+
               
               <div class="row">
                 <div class="col-md-12">

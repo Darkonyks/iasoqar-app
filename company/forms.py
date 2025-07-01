@@ -1,7 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from .models import NaredneProvere, Company, IAFEACCode, CompanyIAFEACCode
+from .models import Company, IAFEACCode, CompanyIAFEACCode
+from .cycle_models import CycleAudit, CertificationCycle
 from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
 from .standard_models import StandardDefinition, CompanyStandard
 from .auditor_models import Auditor
@@ -10,39 +11,37 @@ from datetime import datetime, timedelta, date
 import json
 
 class AuditForm(forms.ModelForm):
-    auditor = forms.ModelChoiceField(
-        queryset=Auditor.objects.all(),
-        required=False,
-        label=_('Auditor'),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    
+    """Nova verzija forme za audite koja koristi CycleAudit model umesto NaredneProvere"""
     class Meta:
-        model = NaredneProvere
+        model = CycleAudit
         fields = [
-            'company', 'auditor', 'status',
-            'first_surv_due', 'first_surv_cond',
-            'second_surv_due', 'second_surv_cond',
-            'trinial_audit_due', 'trinial_audit_cond',
+            'certification_cycle',
+            'audit_type',
+            'planned_date',
+            'actual_date',
+            'audit_status',
+            'lead_auditor',
+            'report_number',
+            'findings',
+            'recommendations',
+            'notes'
         ]
         widgets = {
-            'company': forms.Select(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
-            'first_surv_due': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'first_surv_cond': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'second_surv_due': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'second_surv_cond': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'trinial_audit_due': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'trinial_audit_cond': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+            'certification_cycle': forms.Select(attrs={'class': 'form-control'}),
+            'audit_type': forms.Select(attrs={'class': 'form-control'}),
+            'audit_status': forms.Select(attrs={'class': 'form-control'}),
+            'planned_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'actual_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'lead_auditor': forms.Select(attrs={'class': 'form-control'}),
+            'report_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'findings': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'recommendations': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Make all date fields optional
-        for field_name in ['first_surv_due', 'first_surv_cond', 'second_surv_due', 
-                          'second_surv_cond', 'trinial_audit_due', 'trinial_audit_cond']:
-            self.fields[field_name].required = False
-            
+
         # Format existing datetime values for the datetime-local input
         instance = kwargs.get('instance')
         if instance:
@@ -173,9 +172,19 @@ class CompanyForm(forms.ModelForm):
 class CertificationCycleForm(forms.ModelForm):
     """Forma za kreiranje i ažuriranje ciklusa sertifikacije"""
     
+    cycle_type = forms.ChoiceField(
+        choices=[
+            ('initial', _('Inicijalni ciklus')),
+            ('recertification', _('Resertifikacioni ciklus')),
+        ],
+        label=_('Tip ciklusa'),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True
+    )
+
     standards = forms.ModelMultipleChoiceField(
         queryset=StandardDefinition.objects.none(),  # Empty queryset initially, will be set in __init__
-        required=False,
+        required=True,
         label=_('Standardi'),
         widget=forms.SelectMultiple(attrs={'class': 'form-control select2'})
     )
@@ -204,14 +213,22 @@ class CertificationCycleForm(forms.ModelForm):
     class Meta:
         model = CertificationCycle
         fields = [
-            'company', 'end_date',
-            'status', 'is_integrated_system', 'notes'
+            'company', 'end_date', 'datum_sprovodjenja_inicijalne',
+            'status', 'is_integrated_system',
+            'inicijalni_broj_dana',
+            'broj_dana_nadzora',
+            'broj_dana_resertifikacije',
+            'notes'
         ]
         widgets = {
             'company': forms.Select(attrs={'class': 'form-control'}),
             'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'datum_sprovodjenja_inicijalne': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'is_integrated_system': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'inicijalni_broj_dana': forms.NumberInput(attrs={'class': 'form-control'}),
+            'broj_dana_nadzora': forms.NumberInput(attrs={'class': 'form-control'}),
+            'broj_dana_resertifikacije': forms.NumberInput(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
     
@@ -360,7 +377,6 @@ class CertificationCycleForm(forms.ModelForm):
                     # Postavi podatke iz forme
                     initial_audit.planned_date = initial_audit_date
                     initial_audit.actual_date = initial_audit_date
-                    initial_audit.completion_date = initial_audit_date
                     initial_audit.audit_status = 'completed'
                     
                     if lead_auditor:
@@ -390,7 +406,7 @@ class CycleAuditForm(forms.ModelForm):
         model = CycleAudit
         fields = [
             'certification_cycle', 'audit_type', 'audit_status',
-            'planned_date', 'actual_date', 'completion_date',
+            'planned_date', 'actual_date', 'audit_team',
             'lead_auditor', 'report_number', 'findings',
             'recommendations', 'notes'
         ]
@@ -400,7 +416,6 @@ class CycleAuditForm(forms.ModelForm):
             'audit_status': forms.Select(attrs={'class': 'form-control'}),
             'planned_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'actual_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'completion_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'lead_auditor': forms.Select(attrs={'class': 'form-control'}),
             'report_number': forms.TextInput(attrs={'class': 'form-control'}),
             'findings': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -415,6 +430,12 @@ class CycleAuditForm(forms.ModelForm):
         instance = kwargs.get('instance')
         if instance:
             self.initial['audit_team'] = instance.audit_team.all()
+            
+            # Onemogući promenu tipa audita za postojeći audit, ali sačuvaj originalnu vrednost
+            # Koristimo readonly umesto disabled jer disabled polja ne šalju vrednost u zahtevu
+            self.fields['audit_type'].widget.attrs['readonly'] = True
+            # Dodatno sakrij polje audit_type da bi bilo nemoguće promeniti ga
+            self.fields['audit_type'].widget.attrs['style'] = 'pointer-events: none;'
             
             # Ograniči lead_auditor samo na kvalifikovane auditore
             if instance.certification_cycle_id:

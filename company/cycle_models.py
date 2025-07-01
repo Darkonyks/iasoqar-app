@@ -39,7 +39,35 @@ class CertificationCycle(models.Model):
     # Datum završetka ciklusa (3 godine nakon inicijalne sertifikacije)
     end_date = models.DateField(_('Datum završetka ciklusa'), null=True, blank=True, help_text=_('Datum isteka ciklusa (3 godine nakon inicijalne sertifikacije)'))
     
+    datum_sprovodjenja_inicijalne = models.DateField(_('Datum sprovođenja inicijalne'), null=True, blank=True, help_text=_('Datum kada je sprovedena inicijalna provera'))
+    
     status = models.CharField(_('Status ciklusa'), max_length=20, choices=CYCLE_STATUS_CHOICES, default='active')
+
+    # Polja za planirani broj dana audita
+    inicijalni_broj_dana = models.DecimalField(
+        _('Planirani inicijalni dani'), 
+        max_digits=5, 
+        decimal_places=1, 
+        blank=True, 
+        null=True,
+        help_text=_('Planirani broj dana za inicijalni audit')
+    )
+    broj_dana_nadzora = models.DecimalField(
+        _('Planirani dani nadzora'), 
+        max_digits=5, 
+        decimal_places=1, 
+        blank=True, 
+        null=True,
+        help_text=_('Planirani broj dana za nadzorni audit')
+    )
+    broj_dana_resertifikacije = models.DecimalField(
+        _('Planirani dani resertifikacije'), 
+        max_digits=5, 
+        decimal_places=1, 
+        blank=True, 
+        null=True,
+        help_text=_('Planirani broj dana za resertifikacioni audit')
+    )
     
     notes = models.TextField(_('Napomene'), blank=True, null=True)
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)
@@ -89,21 +117,23 @@ class CertificationCycle(models.Model):
             return True
         return False
     
-    def create_default_audits(self):
+    def create_default_audits(self, is_first_cycle=False):
         """
-        Automatski kreira inicijalni audit, prvi nadzorni, drugi nadzorni i resertifikaciju.
+        Automatski kreira potrebne audite za ciklus sertifikacije.
+        Za prvi ciklus kreira inicijalni audit, a za sve cikluse kreira nadzorne i resertifikacioni audit.
         """
         from datetime import timedelta
         
-        # Inicijalni audit (već je obavljen na datum početka ciklusa)
-        CycleAudit.objects.get_or_create(
-            certification_cycle=self,
-            audit_type='initial',
-            defaults={
-                'planned_date': self.start_date,
-                'actual_date': self.start_date,
-                'completion_date': self.start_date,
-                'audit_status': 'completed'
+        # Samo za prvi ciklus kreiramo inicijalni audit
+        if is_first_cycle:
+            # Inicijalni audit (već je obavljen na datum početka ciklusa)
+            CycleAudit.objects.get_or_create(
+                certification_cycle=self,
+                audit_type='initial',
+                defaults={
+                    'planned_date': self.start_date,
+                    'actual_date': self.start_date,
+                    'audit_status': 'completed'
             }
         )
         
@@ -137,6 +167,121 @@ class CertificationCycle(models.Model):
             }
         )
     
+    def extend_with_new_audits(self, recertification_audit=None):
+        """
+        Produžava postojeći ciklus sertifikacije nakon što je završen resertifikacioni audit.
+        Umesto kreiranja novog ciklusa, ažurira datume postojećeg ciklusa i dodaje nove audite.
+        """
+        from datetime import timedelta
+        
+        # Ako je završen resertifikacioni audit, produžavamo trajanje postojećeg ciklusa
+        if recertification_audit and recertification_audit.actual_date:
+            new_start_date = recertification_audit.actual_date
+        else:
+            # Ako nema stvarnog datuma, koristimo planirani datum ili trenutni datum
+            if recertification_audit and recertification_audit.planned_date:
+                new_start_date = recertification_audit.planned_date
+            else:
+                new_start_date = self.end_date
+        
+        # Produžavamo kraj ciklusa za još 3 godine od datuma resertifikacije
+        self.end_date = new_start_date + timedelta(days=3*365)  # 3 godine od nove resertifikacije
+        
+        # Ažuriramo napomenu o produžetku ciklusa
+        self.notes = f"{self.notes}\nCiklus produžen nakon resertifikacije {new_start_date.strftime('%Y-%m-%d')}. Novi kraj ciklusa: {self.end_date.strftime('%Y-%m-%d')}"
+        
+        # Sačuvamo promene u ciklusu
+        self.save(update_fields=['end_date', 'notes'])
+        
+        # Kreiramo nove audite za produženi ciklus
+        # Prvi nadzorni (godinu dana nakon resertifikacije)
+        first_surveillance_date = new_start_date + timedelta(days=365)
+        CycleAudit.objects.create(
+            certification_cycle=self,
+            audit_type='surveillance_1',
+            planned_date=first_surveillance_date,
+            audit_status='planned'
+        )
+        
+        # Drugi nadzorni (dve godine nakon resertifikacije)
+        second_surveillance_date = new_start_date + timedelta(days=2*365)
+        CycleAudit.objects.create(
+            certification_cycle=self,
+            audit_type='surveillance_2',
+            planned_date=second_surveillance_date,
+            audit_status='planned'
+        )
+        
+        # Nova resertifikacija (tri godine nakon prethodne)
+        new_recertification_date = new_start_date + timedelta(days=3*365 - 30)  # 30 dana pre isteka
+        CycleAudit.objects.create(
+            certification_cycle=self,
+            audit_type='recertification',
+            planned_date=new_recertification_date,
+            audit_status='planned'
+        )
+        
+        return self
+        
+    def create_next_certification_cycle(self, recertification_audit=None):
+        """
+        Kreira novi ciklus sertifikacije nakon što je završen resertifikacioni audit.
+        Kopira relevantne podatke iz tekućeg ciklusa i postavlja nove datume.
+        
+        U novom ciklusu se ne kreira inicijalni audit, samo nadzorni i resertifikacioni.
+        
+        Napomena: Ova metoda je zadržana zbog kompatibilnosti, ali se više ne koristi.
+        Umesto nje se sada koristi extend_with_new_audits.
+        """
+        from datetime import timedelta
+        
+        # Prvo proverimo da li je ciklus već završen
+        if self.status == 'completed':
+            # Već je završen i verovatno je već kreiran novi ciklus
+            return None
+            
+        # Uzmemo datum završetka resertifikacije kao datum početka novog ciklusa
+        if recertification_audit and recertification_audit.actual_date:
+            start_date = recertification_audit.actual_date
+        else:
+            # Ako nema stvarnog datuma, koristimo planirani datum ili trenutni datum
+            if recertification_audit and recertification_audit.planned_date:
+                start_date = recertification_audit.planned_date
+            else:
+                start_date = self.end_date
+        
+        # Kreiranje novog ciklusa
+        new_cycle = CertificationCycle.objects.create(
+            company=self.company,
+            start_date=start_date,
+            end_date=start_date + timedelta(days=3*365),  # 3 godine od novog početka
+            is_integrated_system=self.is_integrated_system,
+            inicijalni_broj_dana=self.inicijalni_broj_dana,
+            broj_dana_nadzora=self.broj_dana_nadzora,
+            broj_dana_resertifikacije=self.broj_dana_resertifikacije,
+            # Prenosimo datum sprovođenja inicijalne samo kao referencu
+            datum_sprovodjenja_inicijalne=self.datum_sprovodjenja_inicijalne,
+            notes=f"Automatski kreiran nastavak ciklusa {self.start_date.strftime('%Y-%m-%d')} - {self.end_date.strftime('%Y-%m-%d')}"
+        )
+        
+        # Kopiranje standarda iz trenutnog ciklusa u novi
+        for cycle_standard in self.cycle_standards.all():
+            CycleStandard.objects.create(
+                certification_cycle=new_cycle,
+                standard_definition=cycle_standard.standard_definition,
+                company_standard=cycle_standard.company_standard
+            )
+        
+        # Označimo trenutni ciklus kao završen
+        self.status = 'completed'
+        self.save(update_fields=['status'])
+        
+        # Kreiramo osnovne audite za novi ciklus
+        # Napomena: is_first_cycle=False jer ovo nije prvi ciklus
+        new_cycle.create_default_audits(is_first_cycle=False)
+        
+        return new_cycle
+
     def get_cycle_summary(self):
         """
         Generiše rezime ciklusa sa svim auditima i statusima.
@@ -158,7 +303,6 @@ class CertificationCycle(models.Model):
                 'status': dict(audit.AUDIT_STATUS_CHOICES)[audit.audit_status],
                 'planned_date': audit.planned_date.strftime('%Y-%m-%d') if audit.planned_date else 'N/A',
                 'actual_date': audit.actual_date.strftime('%Y-%m-%d') if audit.actual_date else 'N/A',
-                'completion_date': audit.completion_date.strftime('%Y-%m-%d') if audit.completion_date else 'N/A',
                 'lead_auditor': audit.lead_auditor.ime_prezime if audit.lead_auditor else 'Nije dodeljen'
             }
             summary['audits'].append(audit_info)
@@ -240,9 +384,10 @@ class CycleAudit(models.Model):
     audit_type = models.CharField(_('Tip audita'), max_length=20, choices=AUDIT_TYPE_CHOICES)
     audit_status = models.CharField(_('Status audita'), max_length=20, choices=AUDIT_STATUS_CHOICES, default='planned')
     
+    # Polja za datume
     planned_date = models.DateField(_('Planirani datum'))
     actual_date = models.DateField(_('Stvarni datum'), null=True, blank=True)
-    completion_date = models.DateField(_('Datum završetka'), null=True, blank=True)
+    # Uklonjena polja: completion_date, datum_sprovodjenja_inicijalne, inicijalni_broj_dana, broj_dana_nadzora, broj_dana_resertifikacije
     
     lead_auditor = models.ForeignKey(
         Auditor,
@@ -267,10 +412,33 @@ class CycleAudit(models.Model):
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)
     updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
     
+    # Pratimo prethodnu vrednost statusa audita za detekciju promene
+    _prev_audit_status = None
+    
     class Meta:
         verbose_name = _('Audit u ciklusu')
         verbose_name_plural = _('Auditi u ciklusu')
         ordering = ['planned_date']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Zapamtimo trenutni status za kasnije poređenje
+        self._prev_audit_status = self.audit_status
+    
+    def save(self, *args, **kwargs):
+        is_status_completed = self.audit_status == 'completed' and self._prev_audit_status != 'completed'
+        is_recertification = self.audit_type == 'recertification'
+        
+        # Izvršavamo uobičajeno čuvanje
+        super().save(*args, **kwargs)
+        
+        # Ako je resertifikacioni audit označen kao završen
+        if is_status_completed and is_recertification:
+            # Umesto kreiranja novog ciklusa sertifikacije, dodajemo nove audite u postojeći ciklus
+            self.certification_cycle.extend_with_new_audits(recertification_audit=self)
+        
+        # Ažuriramo prethodnu vrednost statusa
+        self._prev_audit_status = self.audit_status
         
     def __str__(self):
         audit_type_display = dict(self.AUDIT_TYPE_CHOICES)[self.audit_type]

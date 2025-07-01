@@ -31,7 +31,6 @@ from .auditor_models import (
 
 # Import calendar and appointment models
 from .calendar_models import (
-    NaredneProvere,
     CalendarEvent,
     Appointment,
 )

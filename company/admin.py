@@ -6,7 +6,7 @@ from .company_models import Company, KontaktOsoba, OstalaLokacija
 from .iaf_models import IAFScopeReference, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, StandardIAFScopeReference, CompanyStandard
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
-from .calendar_models import NaredneProvere, CalendarEvent, Appointment
+from .calendar_models import CalendarEvent, Appointment
 from .cycle_models import CertificationCycle, CycleAudit, CycleStandard
 
 # Inline klase za model Company
@@ -63,7 +63,7 @@ class CycleStandardInline(admin.TabularInline):
 class CycleAuditInline(admin.TabularInline):
     model = CycleAudit
     extra = 1
-    fields = ['audit_type', 'audit_status', 'planned_date', 'actual_date', 'completion_date', 'lead_auditor']
+    fields = ['audit_type', 'audit_status', 'planned_date', 'actual_date', 'lead_auditor']
 
 class CertificationCycleAdmin(admin.ModelAdmin):
     list_display = ['company', 'start_date', 'end_date', 'is_integrated_system', 'status']
@@ -100,7 +100,7 @@ class CycleAuditAdmin(admin.ModelAdmin):
             'fields': ['certification_cycle', 'audit_type', 'audit_status']
         }),
         ('Datumi', {
-            'fields': ['planned_date', 'actual_date', 'completion_date']
+            'fields': ['planned_date', 'actual_date']
         }),
         ('Auditori', {
             'fields': ['lead_auditor', 'audit_team']
@@ -147,7 +147,7 @@ admin.site.register(CompanyStandard)
 admin.site.register(Auditor)
 admin.site.register(AuditorStandard)
 admin.site.register(AuditorStandardIAFEACCode)
-admin.site.register(NaredneProvere)
+# Registracija NaredneProvere je uklonjena jer je model izbačen
 admin.site.register(CalendarEvent)
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)

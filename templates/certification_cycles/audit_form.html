@@ -109,11 +109,11 @@
                 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="{{ form.status.id_for_label }}">Status</label>
-                    {{ form.status }}
-                    {% if form.status.errors %}
+                    <label for="{{ form.audit_status.id_for_label }}">Status</label>
+                    {{ form.audit_status }}
+                    {% if form.audit_status.errors %}
                     <div class="invalid-feedback d-block">
-                      {{ form.status.errors }}
+                      {{ form.audit_status.errors }}
                     </div>
                     {% endif %}
                   </div>
@@ -156,6 +156,10 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Polje za datum završetka i datum sprovođenja inicijalne su uklonjena -->
+
+              <!-- Polja za dane audita su uklonjena jer pripadaju ciklusu sertifikacije, a ne pojedinačnom auditu -->
               
               <div class="row">
                 <div class="col-md-12">
@@ -181,7 +185,7 @@
                       {{ form.audit_team.errors }}
                     </div>
                     {% endif %}
-                    <small class="form-text text-muted">Izaberite članove tima koji će učestvovati u auditu.</small>
+                    <small class="form-text text-muted">Držite CTRL (ili CMD na Mac) za izbor više auditora koji će učestvovati u auditu.</small>
                   </div>
                 </div>
               </div>
