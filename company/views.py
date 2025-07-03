@@ -768,6 +768,150 @@ def dashboard(request):
     
     return render(request, 'dashboard.html', context)
 
+def audit_detail_json(request, pk):
+    """API endpoint za dobijanje detalja audita u JSON formatu"""
+    import logging
+    from .cycle_models import CycleAudit, AuditDay
+    
+    logger = logging.getLogger(__name__)
+    logger.info(f"Pristup audit_detail_json za audit ID: {pk}")
+    
+    try:
+        # Dohvatanje audita sa svim povezanim podacima
+        logger.debug(f"Dohvatanje audita sa ID: {pk}")
+        audit = CycleAudit.objects.select_related('certification_cycle__company').get(pk=pk)
+        logger.debug(f"Audit pronađen: {audit}")
+        
+        # Kreiranje osnovnog JSON odgovora
+        data = {
+            'id': audit.id,
+            'audit_type': audit.audit_type,
+            'audit_status': audit.audit_status,
+            'notes': audit.notes or ''
+        }
+        
+        # Sigurno dodavanje podataka o kompaniji
+        try:
+            if audit.certification_cycle and audit.certification_cycle.company:
+                data['company'] = {
+                    'id': audit.certification_cycle.company.id,
+                    'name': audit.certification_cycle.company.name
+                }
+            else:
+                data['company'] = {'id': None, 'name': 'Nepoznata kompanija'}
+        except Exception as e:
+            logger.error(f"Greška prilikom dohvatanja podataka o kompaniji: {str(e)}")
+            data['company'] = {'id': None, 'name': 'Greška pri dohvatanju'}
+        
+        # Sigurno dodavanje podataka o certifikacionom ciklusu
+        try:
+            if audit.certification_cycle:
+                cycle_data = {
+                    'id': audit.certification_cycle.id,
+                    'status': audit.certification_cycle.status
+                }
+                
+                # Sigurno formatiranje datuma
+                try:
+                    if audit.certification_cycle.start_date:
+                        cycle_data['start_date'] = audit.certification_cycle.start_date.isoformat()
+                    else:
+                        cycle_data['start_date'] = None
+                except Exception as e:
+                    logger.error(f"Greška sa start_date: {str(e)}")
+                    cycle_data['start_date'] = None
+                    
+                try:
+                    if audit.certification_cycle.end_date:
+                        cycle_data['end_date'] = audit.certification_cycle.end_date.isoformat()
+                    else:
+                        cycle_data['end_date'] = None
+                except Exception as e:
+                    logger.error(f"Greška sa end_date: {str(e)}")
+                    cycle_data['end_date'] = None
+                    
+                data['certification_cycle'] = cycle_data
+            else:
+                data['certification_cycle'] = {'id': None, 'status': 'Nepoznat'}
+        except Exception as e:
+            logger.error(f"Greška prilikom dohvatanja podataka o ciklusu: {str(e)}")
+            data['certification_cycle'] = {'id': None, 'status': 'Greška pri dohvatanju'}
+        
+        # Sigurno dodavanje display vrednosti
+        try:
+            data['audit_type_display'] = dict(audit.AUDIT_TYPE_CHOICES).get(audit.audit_type, 'Nepoznat')
+            data['audit_status_display'] = dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Nepoznat')
+        except Exception as e:
+            logger.error(f"Greška prilikom dohvatanja display vrednosti: {str(e)}")
+            data['audit_type_display'] = 'Greška pri dohvatanju'
+            data['audit_status_display'] = 'Greška pri dohvatanju'
+        
+        # Sigurno formatiranje datuma audita
+        try:
+            data['planned_date'] = audit.planned_date.isoformat() if audit.planned_date else None
+        except Exception as e:
+            logger.error(f"Greška sa planned_date: {str(e)}")
+            data['planned_date'] = None
+            
+        try:
+            data['actual_date'] = audit.actual_date.isoformat() if audit.actual_date else None
+        except Exception as e:
+            logger.error(f"Greška sa actual_date: {str(e)}")
+            data['actual_date'] = None
+        
+        # Sigurno dohvatanje broja dana audita
+        try:
+            data['audit_days_count'] = audit.get_audit_days_count()
+        except Exception as e:
+            logger.error(f"Greška prilikom dohvatanja broja dana audita: {str(e)}")
+            data['audit_days_count'] = 0
+        
+        # Sigurno dohvatanje dana audita
+        try:
+            audit_days = AuditDay.objects.filter(audit=audit).order_by('date')
+            logger.debug(f"Broj dana audita: {audit_days.count()}")
+            
+            days_data = []
+            for day in audit_days:
+                try:
+                    day_data = {
+                        'id': day.id,
+                        'is_planned': day.is_planned,
+                        'is_actual': day.is_actual,
+                        'notes': day.notes or ''
+                    }
+                    
+                    # Sigurno formatiranje datuma dana audita
+                    try:
+                        if day.date:
+                            day_data['date'] = day.date.isoformat()
+                        else:
+                            day_data['date'] = None
+                    except Exception as e:
+                        logger.error(f"Greška sa formatiranjem datuma dana audita: {str(e)}")
+                        day_data['date'] = None
+                        
+                    days_data.append(day_data)
+                except Exception as e:
+                    logger.error(f"Greška prilikom obrade dana audita {day.id}: {str(e)}")
+            
+            data['audit_days'] = days_data
+        except Exception as e:
+            logger.error(f"Greška prilikom dohvatanja dana audita: {str(e)}")
+            data['audit_days'] = []
+        
+        logger.debug("JSON odgovor kreiran uspešno")
+        return JsonResponse(data)
+    except CycleAudit.DoesNotExist:
+        logger.warning(f"Audit sa ID {pk} nije pronađen")
+        return JsonResponse({'error': 'Audit nije pronađen'}, status=404)
+    except Exception as e:
+        import traceback
+        logger.error(f"Greška prilikom dohvatanja audita {pk}: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 def appointment_calendar_json(request):
     """API endpoint for getting appointment data in FullCalendar format"""
     # Get all appointments
@@ -796,7 +940,7 @@ def appointment_calendar_json(request):
     # Stari model NaredneProvere je uklonjen - sada se koristi samo novi model CycleAudit
     
     # Get all audit dates from the new model (CycleAudit)
-    from .cycle_models import CycleAudit
+    from .cycle_models import CycleAudit, AuditDay
     cycle_audits = CycleAudit.objects.all().select_related('certification_cycle__company')
     
     audit_type_mapping = {
@@ -814,10 +958,77 @@ def appointment_calendar_json(request):
             'name': 'Resertifikacija',
             'color_planned': '#E91E63',
             'color_completed': '#4CAF50'
+        },
+        'initial': {
+            'name': 'Inicijalni audit',
+            'color_planned': '#3788d8',
+            'color_completed': '#4CAF50'
         }
     }
     
-    # Add cycle audit dates to events
+    # Get all audit days
+    audit_days = AuditDay.objects.all().select_related('audit__certification_cycle__company')
+    
+    # Add audit days to events
+    for audit_day in audit_days:
+        audit = audit_day.audit
+        company_name = audit.certification_cycle.company.name
+        audit_type_info = audit_type_mapping.get(audit.audit_type, {})
+        audit_name = audit_type_info.get('name', 'Audit')
+        
+        # Determine if this is a planned or actual day
+        is_planned = audit_day.is_planned
+        is_actual = audit_day.is_actual
+        
+        if is_planned:
+            # Add planned audit day
+            events.append({
+                'id': f'audit_day_planned_{audit_day.id}',
+                'title': f'{audit_name} (planirani dan) - {company_name}',
+                'start': audit_day.date.isoformat(),
+                'allDay': True,
+                'color': audit_type_info.get('color_planned', '#3788d8'),
+                # Uklonjen URL da bi se omogućilo otvaranje modala
+                # 'url': f'/company/audits/{audit.id}/update/',
+                'extendedProps': {
+                    'company': company_name,
+                    'type': f'{audit_name} - Dan audita',
+                    'audit_type': audit.audit_type,
+                    'status': 'Planirano',
+                    'cycle_id': audit.certification_cycle.id,
+                    'eventType': 'audit_day',
+                    'auditStatus': 'planned',
+                    'modelType': 'audit_day',
+                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
+                    'notes': audit_day.notes or audit.notes or 'N/A'
+                }
+            })
+        
+        if is_actual:
+            # Add actual audit day
+            events.append({
+                'id': f'audit_day_actual_{audit_day.id}',
+                'title': f'{audit_name} (održani dan) - {company_name}',
+                'start': audit_day.date.isoformat(),
+                'allDay': True,
+                'color': audit_type_info.get('color_completed', '#4CAF50'),
+                # Uklonjen URL da bi se omogućilo otvaranje modala
+                # 'url': f'/company/audits/{audit.id}/update/',
+                'extendedProps': {
+                    'company': company_name,
+                    'type': f'{audit_name} - Dan audita',
+                    'audit_type': audit.audit_type,
+                    'status': 'Održano',
+                    'cycle_id': audit.certification_cycle.id,
+                    'eventType': 'audit_day',
+                    'auditStatus': 'completed',
+                    'modelType': 'audit_day',
+                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
+                    'notes': audit_day.notes or audit.notes or 'N/A'
+                }
+            })
+    
+    # Add cycle audit dates to events (glavni audit datumi)
     for audit in cycle_audits:
         # Get company name from certification cycle
         company_name = audit.certification_cycle.company.name
@@ -837,7 +1048,8 @@ def appointment_calendar_json(request):
                 'start': audit.planned_date.isoformat(),
                 'allDay': True,
                 'color': color,
-                'url': f'/company/audits/{audit.id}/update/',
+                # Uklonjen URL da bi se omogućilo otvaranje modala
+                # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
                     'company': company_name,
                     'type': audit_name,
@@ -859,7 +1071,8 @@ def appointment_calendar_json(request):
                 'start': audit.actual_date.isoformat(),
                 'allDay': True,
                 'color': '#4CAF50',  # Green for completed audit events
-                'url': f'/company/audits/{audit.id}/update/',
+                # Uklonjen URL da bi se omogućilo otvaranje modala
+                # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
                     'company': company_name,
                     'type': audit_name,

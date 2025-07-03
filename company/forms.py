@@ -318,9 +318,11 @@ class CertificationCycleForm(forms.ModelForm):
         lead_auditor = self.cleaned_data.get('lead_auditor')
         report_number = self.cleaned_data.get('report_number')
         
-        # Ako je postavljen datum inicijalnog audita, koristimo ga kao start_date
+        # Ako je postavljen datum inicijalnog audita, koristimo ga kao start_date i datum_sprovodjenja_inicijalne
         if initial_audit_date:
             instance.start_date = initial_audit_date
+            # Eksplicitno postavljamo datum_sprovodjenja_inicijalne na isti datum
+            instance.datum_sprovodjenja_inicijalne = initial_audit_date
         else:
             # Ako nema datuma inicijalnog audita, ne možemo nastaviti
             raise forms.ValidationError(_('Datum inicijalnog audita je obavezan.'))
@@ -365,7 +367,7 @@ class CertificationCycleForm(forms.ModelForm):
             
             # Ako je novi ciklus, kreiraj default audite
             if not CycleAudit.objects.filter(certification_cycle=instance).exists():
-                instance.create_default_audits()
+                instance.create_default_audits(is_first_cycle=True)
                 
                 # Ažuriraj inicijalni audit sa podacima iz forme
                 try:
@@ -424,6 +426,9 @@ class CycleAuditForm(forms.ModelForm):
         }
     
     def __init__(self, *args, **kwargs):
+        # Sačuvaj request objekat ako je prosleđen
+        self.request = kwargs.pop('request', None)
+        
         super().__init__(*args, **kwargs)
         
         # Ako je instanca već kreirana, popunjavamo polje audit_team sa postojećim auditorima
@@ -449,6 +454,15 @@ class CycleAuditForm(forms.ModelForm):
         cleaned_data = super().clean()
         lead_auditor = cleaned_data.get('lead_auditor')
         certification_cycle = cleaned_data.get('certification_cycle')
+        actual_date = cleaned_data.get('actual_date')
+        audit_status = cleaned_data.get('audit_status')
+        
+        # Automatski postavi status na 'completed' ako je unet stvarni datum
+        if actual_date and audit_status == 'planned':
+            cleaned_data['audit_status'] = 'completed'
+            # Dodaj informativnu poruku koja će biti prikazana korisniku
+            from django.contrib import messages
+            messages.info(self.request, 'Status audita je automatski postavljen na "Završeno" jer je unet stvarni datum.')
         
         # Proveri da li je lead_auditor kvalifikovan za audit
         if lead_auditor and certification_cycle and self.instance.pk:
@@ -460,10 +474,76 @@ class CycleAuditForm(forms.ModelForm):
         return cleaned_data
     
     def save(self, commit=True):
+        # Debug ispisi
+        import logging
+        logger = logging.getLogger('django')
+        logger.info(f"CycleAuditForm.save pozvana za audit ID={self.instance.pk if self.instance.pk else 'novi'}")
+        
+        # Zapamtimo prethodni status audita pre nego što ga promenimo
+        if self.instance.pk:
+            # Učitamo sveži objekat iz baze da bismo imali tačan prethodni status
+            from .cycle_models import CycleAudit
+            original_audit = CycleAudit.objects.get(pk=self.instance.pk)
+            prev_status = original_audit.audit_status
+            logger.info(f"Učitan original iz baze: ID={original_audit.pk}, status={original_audit.audit_status}")
+        else:
+            prev_status = None
+            logger.info("Novi audit, nema prethodnog statusa")
+        
+        # Novi status koji će biti postavljen
+        new_status = self.cleaned_data.get('audit_status')
+        logger.info(f"Novi status koji će biti postavljen: {new_status}")
+        
         instance = super().save(commit=False)
         
+        # Postavimo prethodni status da bi metoda save u modelu mogla da detektuje promenu
+        instance._prev_audit_status = prev_status
+        logger.info(f"Postavljam _prev_audit_status={prev_status} na instanci")
+        
+        # Provera da li je ovo prvi nadzorni audit koji se završava
+        is_surveillance_1 = instance.audit_type == 'surveillance_1'
+        is_status_completed = new_status == 'completed' and prev_status != 'completed'
+        logger.info(f"Provera za kreiranje drugog nadzora: is_surveillance_1={is_surveillance_1}, is_status_completed={is_status_completed}")
+        
+        # Provera da li je postavljen stvarni datum
+        actual_date = self.cleaned_data.get('actual_date')
+        logger.info(f"Stvarni datum: {actual_date}")
+        
         if commit:
+            # Pozivamo originalnu save metodu modela koja će kreirati sledeće audite ako je potrebno
+            logger.info("Pozivam instance.save() iz forme")
             instance.save()
+            logger.info("instance.save() završen")
+            
+            # Direktno kreiraj drugi nadzorni audit ako je potrebno (dodatna provera)
+            if is_surveillance_1 and is_status_completed and actual_date:
+                logger.info("Dodatna provera: Pokušavam direktno kreirati drugi nadzorni audit")
+                from datetime import timedelta
+                from .cycle_models import CycleAudit, zaokruzi_na_veci_broj
+                
+                cycle = instance.certification_cycle
+                if cycle.broj_dana_nadzora:
+                    broj_dana = zaokruzi_na_veci_broj(cycle.broj_dana_nadzora)
+                    second_surveillance_date = actual_date + timedelta(days=365) - timedelta(days=broj_dana)
+                else:
+                    second_surveillance_date = actual_date + timedelta(days=365)
+                
+                # Proveri da li već postoji drugi nadzorni audit
+                existing = CycleAudit.objects.filter(
+                    certification_cycle=cycle,
+                    audit_type='surveillance_2'
+                ).exists()
+                
+                if not existing:
+                    logger.info(f"Kreiram drugi nadzorni audit sa planiranim datumom {second_surveillance_date}")
+                    CycleAudit.objects.create(
+                        certification_cycle=cycle,
+                        audit_type='surveillance_2',
+                        planned_date=second_surveillance_date,
+                        audit_status='planned'
+                    )
+                else:
+                    logger.info("Drugi nadzorni audit već postoji")
             
             # Sačuvaj tim auditora
             audit_team = self.cleaned_data.get('audit_team')
@@ -471,4 +551,5 @@ class CycleAuditForm(forms.ModelForm):
                 instance.audit_team.clear()
                 instance.audit_team.add(*audit_team)
         
+        logger.info("CycleAuditForm.save završena")
         return instance

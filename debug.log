@@ -547,3 +547,11 @@ INFO 2025-02-26 09:27:34,166 views 32480 17324 Found 2 nadzorne provere
 ERROR 2025-02-26 09:27:34,167 views 32480 17324 Error processing nadzorna provera 1: 'dict' object is not callable
 ERROR 2025-02-26 09:27:34,167 views 32480 17324 Error processing nadzorna provera 2: 'dict' object is not callable
 INFO 2025-02-26 09:27:34,167 views 32480 17324 Returning total 0 events
+INFO 2025-07-03 07:45:22,104 views 36512 1868 Pristup audit_detail_json za audit ID: 62
+ERROR 2025-07-03 07:45:22,115 views 36512 1868 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-03 07:45:42,044 views 36512 1868 Pristup audit_detail_json za audit ID: 62
+ERROR 2025-07-03 07:45:42,047 views 36512 1868 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-03 07:49:24,407 views 36512 27928 Pristup audit_detail_json za audit ID: 62
+ERROR 2025-07-03 07:49:24,409 views 36512 27928 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-03 08:03:15,215 views 36512 29484 Pristup audit_detail_json za audit ID: 62
+ERROR 2025-07-03 08:03:15,220 views 36512 29484 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'

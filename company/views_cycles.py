@@ -98,10 +98,10 @@ class CertificationCycleDetailView(LoginRequiredMixin, DetailView):
             if audit_id:
                 # Editing existing audit
                 audit = get_object_or_404(CycleAudit, id=audit_id, certification_cycle=cycle)
-                form = CycleAuditForm(request.POST, instance=audit)
+                form = CycleAuditForm(request.POST, instance=audit, request=request)
             else:
                 # Creating new audit
-                form = CycleAuditForm(request.POST)
+                form = CycleAuditForm(request.POST, request=request)
             
             if form.is_valid():
                 audit = form.save()
@@ -195,6 +195,11 @@ class CycleAuditCreateView(LoginRequiredMixin, CreateView):
     form_class = CycleAuditForm
     template_name = 'certification_cycles/audit_form.html'
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+    
     def get_initial(self):
         initial = super().get_initial()
         cycle_id = self.kwargs.get('cycle_id')
@@ -229,6 +234,11 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
     model = CycleAudit
     form_class = CycleAuditForm
     template_name = 'certification_cycles/audit_form.html'
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

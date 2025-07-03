@@ -87,11 +87,7 @@
                 <i class="fas fa-calendar-alt mr-1"></i> Sastanci
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" id="cycles-tab" data-toggle="tab" href="#cycles" role="tab">
-                <i class="fas fa-sync-alt mr-1"></i> Ciklusi Sertifikacije
-              </a>
-            </li>
+
           </ul>
         </div>
       </div>
@@ -493,7 +489,13 @@
                                   <span class="badge badge-danger">Otkazan</span>
                                 {% endif %}
                               </td>
-                              <td>{{ cycle.cycle_standards.count }}</td>
+                              <td>
+                                {% for standard in cycle.cycle_standards.all %}
+                                  <span class="badge badge-info">{{ standard.standard_definition.code }} {{ standard.standard_definition.name }}</span>
+                                {% empty %}
+                                  <span class="text-muted">Nema standarda</span>
+                                {% endfor %}
+                              </td>
                               <td>{{ cycle.audits.count }}</td>
                               <td>
                                 <a href="{% url 'company:cycle_detail' cycle.id %}" class="btn btn-info btn-sm" title="Detalji">
@@ -649,185 +651,7 @@
             </div>
           </div>
         </div>
-        <!-- Ciklusi Sertifikacije Tab -->
-        <div class="tab-pane fade" id="cycles" role="tabpanel" aria-labelledby="cycles-tab">
-          <div class="row mb-3">
-            <div class="col-12">
-              <div class="d-flex justify-content-between align-items-center">
-                <h3>Ciklusi Sertifikacije</h3>
-                <a href="{% url 'company:company_cycle_create' company.id %}" class="btn btn-primary">
-                  <i class="fas fa-plus"></i> Novi Ciklus Sertifikacije
-                </a>
-              </div>
-            </div>
-          </div>
 
-          {% if certification_cycles %}
-            {% for cycle in certification_cycles %}
-              <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h4 class="mb-0">
-                    <span class="badge badge-{{ cycle.get_status_color }} mr-2">{{ cycle.get_status_display }}</span>
-                    Ciklus: {{ cycle.start_date|date:"d.m.Y" }} - {{ cycle.end_date|date:"d.m.Y" }}
-                  </h4>
-                  <div>
-                    <a href="{% url 'company:cycle_update' cycle.id %}" class="btn btn-sm btn-primary">
-                      <i class="fas fa-edit"></i> Izmeni
-                    </a>
-                  </div>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h5>Osnovne informacije</h5>
-                      <table class="table table-sm">
-                        <tr>
-                          <th width="40%">Status ciklusa:</th>
-                          <td>
-                            <span class="badge badge-{{ cycle.get_status_color }}">{{ cycle.get_status_display }}</span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Datum početka:</th>
-                          <td>{{ cycle.start_date|date:"d.m.Y" }}</td>
-                        </tr>
-                        <tr>
-                          <th>Datum završetka:</th>
-                          <td>{{ cycle.end_date|date:"d.m.Y" }}</td>
-                        </tr>
-                        <tr>
-                          <th>Integrisani sistem:</th>
-                          <td>
-                            {% if cycle.is_integrated_system %}
-                              <span class="badge badge-success">Da</span>
-                            {% else %}
-                              <span class="badge badge-secondary">Ne</span>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Inicijalni broj dana:</th>
-                          <td>
-                            {% if cycle.inicijalni_broj_dana %}
-                              {{ cycle.inicijalni_broj_dana }}
-                            {% else %}
-                              <span class="text-muted">Nije definisano</span>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Broj dana nadzora:</th>
-                          <td>
-                            {% if cycle.broj_dana_nadzora %}
-                              {{ cycle.broj_dana_nadzora }}
-                            {% else %}
-                              <span class="text-muted">Nije definisano</span>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>Broj dana resertifikacije:</th>
-                          <td>
-                            {% if cycle.broj_dana_resertifikacije %}
-                              {{ cycle.broj_dana_resertifikacije }}
-                            {% else %}
-                              <span class="text-muted">Nije definisano</span>
-                            {% endif %}
-                          </td>
-                        </tr>
-                        {% if cycle.notes %}
-                        <tr>
-                          <th>Napomene:</th>
-                          <td>{{ cycle.notes }}</td>
-                        </tr>
-                        {% endif %}
-                      </table>
-                    </div>
-                    
-                    <div class="col-md-6">
-                      <h5>Standardi u ciklusu</h5>
-                      {% if cycle.cycle_standards.all %}
-                        <table class="table table-sm">
-                          <thead>
-                            <tr>
-                              <th>Standard</th>
-                              <th>Verzija</th>
-                              <th>Napomene</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for cycle_standard in cycle.cycle_standards.all %}
-                              <tr>
-                                <td>{{ cycle_standard.standard_definition.code }}</td>
-                                <td>{{ cycle_standard.standard_definition.version }}</td>
-                                <td>{{ cycle_standard.notes|default:"-" }}</td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      {% else %}
-                        <p class="text-muted">Nema standarda u ovom ciklusu</p>
-                      {% endif %}
-                    </div>
-                  </div>
-
-                  <div class="row mt-4">
-                    <div class="col-12">
-                      <h5>Auditi u ciklusu</h5>
-                      {% if cycle.audits.all %}
-                        <table class="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Tip audita</th>
-                              <th>Status</th>
-                              <th>Planirani datum</th>
-                              <th>Stvarni datum</th>
-                              <th>Vodeći auditor</th>
-                              <th>Akcije</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for audit in cycle.audits.all %}
-                              <tr>
-                                <td>{{ audit.get_audit_type_display }}</td>
-                                <td>
-                                  {% if audit.audit_status == 'planned' %}
-                                    <span class="badge badge-info">{{ audit.get_audit_status_display }}</span>
-                                  {% elif audit.audit_status == 'in_progress' %}
-                                    <span class="badge badge-warning">{{ audit.get_audit_status_display }}</span>
-                                  {% elif audit.audit_status == 'completed' %}
-                                    <span class="badge badge-success">{{ audit.get_audit_status_display }}</span>
-                                  {% elif audit.audit_status == 'cancelled' %}
-                                    <span class="badge badge-danger">{{ audit.get_audit_status_display }}</span>
-                                  {% endif %}
-                                </td>
-                                <td>{{ audit.planned_date|date:"d.m.Y" }}</td>
-                                <td>{{ audit.actual_date|date:"d.m.Y"|default:"-" }}</td>
-                                <td>{{ audit.lead_auditor|default:"-" }}</td>
-                                <td>
-                                  <a href="{% url 'company:detail' company.id %}?edit_audit={{ audit.id }}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit"></i>
-                                  </a>
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      {% else %}
-                        <p class="text-muted">Nema audita u ovom ciklusu</p>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle mr-2"></i>
-              Kompanija trenutno nema definisanih ciklusa sertifikacije. Kliknite na "Novi Ciklus Sertifikacije" da dodate prvi ciklus.
-            </div>
-          {% endif %}
-        </div>
         
       </div> <!-- kraj tab-content -->
     </div> <!-- kraj container-fluid -->

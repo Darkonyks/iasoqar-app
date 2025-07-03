@@ -43,6 +43,56 @@
   .cycle-container * {
     max-width: 100%;
   }
+  
+  /* Dodatni fix za row elemente */
+  .row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Fix za container-fluid */
+  .container-fluid {
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Fix za card elemente */
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Dodatni fix za poravnanje svih elemenata */
+  .table-fix-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Poravnanje info-box elemenata */
+  .info-box {
+    min-height: 80px;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  /* Poravnanje accordion elemenata */
+  .accordion {
+    width: 100%;
+  }
+  
+  /* Poravnanje tabela */
+  table {
+    width: 100% !important;
+  }
+  
+  /* Poravnanje svih sekcija */
+  section {
+    width: 100%;
+    padding: 0;
+  }
 </style>
 {% endblock %}
 
@@ -96,30 +146,29 @@
 {% block content %}
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-
-<!-- Wrapper za sadržaj koji garantovano neće ići iza sidebara -->
-<div class="cycle-container" style="width: 100%; overflow-x: hidden;">
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>Ciklus Sertifikacije</h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="{% url 'company:dashboard' %}">Početna</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'company:detail' cycle.company.id %}">{{ cycle.company.name }}</a></li>
-          <li class="breadcrumb-item active">Ciklus Sertifikacije</li>
-        </ol>
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Ciklus Sertifikacije: {{ cycle.company.name }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:detail' cycle.company.id %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na kompaniju
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</section>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12">
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Informacije o ciklusu</h3>
@@ -293,10 +342,6 @@
                 </div>
               </div>
             </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             
             {% if cycle.notes %}
             <div class="row mt-3">
@@ -349,17 +394,11 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Auditi u ciklusu sertifikacije -->
     <div class="row mb-4">
       <div class="col-md-12">
         <div class="card">
           <div class="card-header bg-primary">
-            <h3 class="card-title"><strong>Auditi u ciklusu</strong></h3>
+            <h3 class="card-title"><strong>Istorija audit ciklusa</strong></h3>
             <div class="card-tools">
               <a href="{% url 'company:cycle_audit_create' cycle.id %}" class="btn btn-outline-light btn-sm">
                 <i class="fas fa-plus"></i> Dodaj audit
@@ -367,14 +406,15 @@
             </div>
           </div>
           <div class="card-body">
-            <!-- Toggle dugmad za prebacivanje prikaza -->
-            <div class="btn-group mb-3" role="group">
-              <button type="button" class="btn btn-primary" id="btn-planirani" onclick="showPlanned()">Planirani auditi</button>
-              <button type="button" class="btn btn-outline-primary" id="btn-zavrseni" onclick="showCompleted()">Završeni auditi</button>
-            </div>
-            
-            <!-- Prikaz planiranih audita -->
-            <div id="planirani-container">
+            <!-- Auditi u ciklusu -->
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">Auditi u ciklusu</h3>
+                <a href="{% url 'company:cycle_audit_create' cycle.id %}" class="btn btn-primary btn-sm">
+                  <i class="fas fa-plus"></i> Dodaj audit
+                </a>
+              </div>
+              <div class="card-body">
                 <table class="table table-bordered table-striped">
                   <thead>
                     <tr>
@@ -389,123 +429,63 @@
                   </thead>
                   <tbody>
                     {% for audit in audits %}
-                      {% if audit.status != 'completed' and audit.status != 'cancelled' %}
-                        <tr>
-                          <td>{{ audit.get_audit_type_display }}</td>
-                          <td>
-                            {% if audit.status == 'planned' %}
-                            <span class="badge badge-info">Planiran</span>
-                            {% elif audit.status == 'in_progress' %}
-                            <span class="badge badge-warning">U toku</span>
-                            {% elif audit.status == 'postponed' %}
-                            <span class="badge badge-secondary">Odložen</span>
-                            {% else %}
-                            <span class="badge badge-light">{{ audit.get_status_display }}</span>
-                            {% endif %}
-                          </td>
-                          <td>{{ audit.planned_date|date:"d.m.Y"|default:"N/A" }}</td>
-                          <td>{{ audit.actual_date|date:"d.m.Y"|default:"N/A" }}</td>
-                          <td>
-                            {% if audit.lead_auditor %}
-                            <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
-                              {{ audit.lead_auditor.get_full_name }}
+                      <tr {% if audit.audit_status == 'completed' %}class="table-success"{% elif audit.audit_status == 'cancelled' %}class="table-danger"{% endif %}>
+                        <td>{{ audit.get_audit_type_display }}</td>
+                        <td>
+                          {% if audit.audit_status == 'planned' %}
+                          <span class="badge badge-info">Planirano</span>
+                          {% elif audit.audit_status == 'in_progress' %}
+                          <span class="badge badge-warning">U toku</span>
+                          {% elif audit.audit_status == 'postponed' %}
+                          <span class="badge badge-secondary">Odloženo</span>
+                          {% elif audit.audit_status == 'completed' %}
+                          <span class="badge badge-success">Završeno</span>
+                          {% elif audit.audit_status == 'cancelled' %}
+                          <span class="badge badge-danger">Otkazano</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ audit.planned_date|date:"d.m.Y" }}</td>
+                        <td>{{ audit.actual_date|date:"d.m.Y"|default:"-" }}</td>
+                        <td>
+                          {% if audit.lead_auditor %}
+                          <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
+                            {{ audit.lead_auditor.get_full_name }} (Lead auditor)
+                          </a>
+                          {% else %}
+                          -
+                          {% endif %}
+                        </td>
+                        <td>
+                          {% for auditor in audit.audit_team.all %}
+                          <span class="badge badge-info">{{ auditor.get_full_name }}</span>
+                          {% empty %}
+                          -
+                          {% endfor %}
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                              <i class="fas fa-edit"></i>
                             </a>
-                            {% else %}
-                            -
-                            {% endif %}
-                          </td>
-                          <td>
-                            {% for auditor in audit.audit_team.all %}
-                            <span class="badge badge-info">{{ auditor.get_full_name }}</span>
-                            {% empty %}
-                            -
-                            {% endfor %}
-                          </td>
-                          <td>
-                            <div class="btn-group">
-                              <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
-                                <i class="fas fa-edit"></i>
-                              </a>
-                              <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
-                                <i class="fas fa-trash"></i>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                      {% endif %}
+                            <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                              <i class="fas fa-trash"></i>
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
                     {% empty %}
                       <tr>
-                        <td colspan="7" class="text-center">Nema planiranih audita u ovom ciklusu</td>
+                        <td colspan="7" class="text-center">
+                          <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Nema audita u ovom ciklusu. Kliknite na "Dodaj audit" da dodate prvi audit.
+                          </div>
+                        </td>
                       </tr>
                     {% endfor %}
                   </tbody>
                 </table>
               </div>
-            </div>
-            
-            <!-- Prikaz završenih audita, inicijalno sakriven -->
-            <div id="zavrseni-container" style="display: none;">
-                <table class="table table-bordered table-striped">
-                  <thead>
-                    <tr>
-                      <th>Tip audita</th>
-                      <th>Status</th>
-                      <th>Planirani datum</th>
-                      <th>Stvarni datum</th>
-                      <th>Vodeći auditor</th>
-                      <th>Tim auditora</th>
-                      <th>Akcije</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for audit in audits %}
-                      {% if audit.status == 'completed' or audit.status == 'cancelled' %}
-                        <tr {% if audit.status == 'completed' %}class="table-success"{% elif audit.status == 'cancelled' %}class="table-danger"{% endif %}>
-                          <td>{{ audit.get_audit_type_display }}</td>
-                          <td>
-                            {% if audit.status == 'completed' %}
-                            <span class="badge badge-success">Završen</span>
-                            {% elif audit.status == 'cancelled' %}
-                            <span class="badge badge-danger">Otkazan</span>
-                            {% endif %}
-                          </td>
-                          <td>{{ audit.planned_date|date:"d.m.Y"|default:"N/A" }}</td>
-                          <td>{{ audit.actual_date|date:"d.m.Y"|default:"N/A" }}</td>
-                          <td>
-                            {% if audit.lead_auditor %}
-                            <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
-                              {{ audit.lead_auditor.get_full_name }}
-                            </a>
-                            {% else %}
-                            -
-                            {% endif %}
-                          </td>
-                          <td>
-                            {% for auditor in audit.audit_team.all %}
-                            <span class="badge badge-info">{{ auditor.get_full_name }}</span>
-                            {% empty %}
-                            -
-                            {% endfor %}
-                          </td>
-                          <td>
-                            <div class="btn-group">
-                              <a href="{% url 'company:cycle_audit_update' audit.id %}" class="btn btn-warning btn-sm" title="Izmeni">
-                                <i class="fas fa-edit"></i>
-                              </a>
-                              <a href="{% url 'company:cycle_audit_delete' audit.id %}" class="btn btn-danger btn-sm" title="Obriši">
-                                <i class="fas fa-trash"></i>
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                      {% endif %}
-                    {% empty %}
-                      <tr>
-                        <td colspan="7" class="text-center">Nema završenih audita u ovom ciklusu</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
             </div>
           </div>
         </div>
@@ -640,6 +620,9 @@ function showCompleted() {
   });
 </script>
 {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
 <!-- /.content-wrapper -->
 {% endblock %}

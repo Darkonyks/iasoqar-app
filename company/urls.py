@@ -27,6 +27,7 @@ from .views import (
     appointment_delete,
     get_company_contacts,
     get_companies,
+    audit_detail_json,
     # Standard CRUD funkcije
     company_standard_create,
     company_standard_update,
@@ -49,6 +50,7 @@ urlpatterns = [
     path('calendar/', CalendarView.as_view(), name='calendar'),
     path('calendar/events/', CalendarEventsView.as_view(), name='calendar_events'),
     path('calendar/api/events/', appointment_calendar_json, name='appointment_calendar_json'),
+    path('audits/<int:pk>/detail/', audit_detail_json, name='audit_detail_json'),
     path('appointments/create/', appointment_create, name='appointment_create'),
     path('appointments/<int:pk>/', appointment_detail, name='appointment_detail'),
     path('appointments/<int:pk>/update/', appointment_update, name='appointment_update'),
