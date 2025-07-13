@@ -555,3 +555,5 @@ INFO 2025-07-03 07:49:24,407 views 36512 27928 Pristup audit_detail_json za audi
 ERROR 2025-07-03 07:49:24,409 views 36512 27928 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
 INFO 2025-07-03 08:03:15,215 views 36512 29484 Pristup audit_detail_json za audit ID: 62
 ERROR 2025-07-03 08:03:15,220 views 36512 29484 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-03 08:35:18,383 views 51028 27616 Pristup audit_detail_json za audit ID: 62
+ERROR 2025-07-03 08:35:18,385 views 51028 27616 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'

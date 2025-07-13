@@ -386,6 +386,7 @@ class CycleAudit(models.Model):
     report_number = models.CharField(_('Broj izveštaja'), max_length=100, blank=True, null=True)
     findings = models.TextField(_('Nalazi'), blank=True, null=True)
     recommendations = models.TextField(_('Preporuke'), blank=True, null=True)
+    poslat_izvestaj = models.BooleanField(_('Poslat izveštaj'), default=False, help_text=_('Označite ako je izveštaj poslat klijentu'))
     
     notes = models.TextField(_('Napomene'), blank=True, null=True)
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)

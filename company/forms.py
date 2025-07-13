@@ -410,7 +410,7 @@ class CycleAuditForm(forms.ModelForm):
             'certification_cycle', 'audit_type', 'audit_status',
             'planned_date', 'actual_date', 'audit_team',
             'lead_auditor', 'report_number', 'findings',
-            'recommendations', 'notes'
+            'recommendations', 'notes', 'poslat_izvestaj'
         ]
         widgets = {
             'certification_cycle': forms.Select(attrs={'class': 'form-control'}),

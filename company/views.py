@@ -605,7 +605,7 @@ class AuditDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class CalendarView(TemplateView):
+class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za testiranje
     template_name = 'calendar/calendar.html'
     
     def get_context_data(self, **kwargs):
@@ -614,7 +614,7 @@ class CalendarView(TemplateView):
         context['companies'] = Company.objects.all().order_by('name')
         return context
 
-class CalendarEventsView(TemplateView):
+class CalendarEventsView(LoginRequiredMixin, TemplateView):
     template_name = 'calendar/calendar_events.html'
 
 def dashboard(request):
@@ -912,6 +912,7 @@ def audit_detail_json(request, pk):
         return JsonResponse({'error': str(e)}, status=500)
 
 
+@login_required
 def appointment_calendar_json(request):
     """API endpoint for getting appointment data in FullCalendar format"""
     # Get all appointments
@@ -984,7 +985,7 @@ def appointment_calendar_json(request):
             # Add planned audit day
             events.append({
                 'id': f'audit_day_planned_{audit_day.id}',
-                'title': f'{audit_name} (planirani dan) - {company_name}',
+                'title': f'{company_name} - {audit_name} (planirani dan)',
                 'start': audit_day.date.isoformat(),
                 'allDay': True,
                 'color': audit_type_info.get('color_planned', '#3788d8'),
@@ -1008,7 +1009,7 @@ def appointment_calendar_json(request):
             # Add actual audit day
             events.append({
                 'id': f'audit_day_actual_{audit_day.id}',
-                'title': f'{audit_name} (održani dan) - {company_name}',
+                'title': f'{company_name} - {audit_name} (održani dan)',
                 'start': audit_day.date.isoformat(),
                 'allDay': True,
                 'color': audit_type_info.get('color_completed', '#4CAF50'),
@@ -1044,7 +1045,7 @@ def appointment_calendar_json(request):
         if audit.planned_date:
             events.append({
                 'id': f'cycle_audit_planned_{audit.id}',
-                'title': f'{audit_name} {status_text} - {company_name}',
+                'title': f'{audit_name} - {company_name} (planiran)',
                 'start': audit.planned_date.isoformat(),
                 'allDay': True,
                 'color': color,
@@ -1067,7 +1068,7 @@ def appointment_calendar_json(request):
         if audit.actual_date:
             events.append({
                 'id': f'cycle_audit_actual_{audit.id}',
-                'title': f'{audit_name} (održana) - {company_name}',
+                'title': f'{company_name} - {audit_name} (održana)',
                 'start': audit.actual_date.isoformat(),
                 'allDay': True,
                 'color': '#4CAF50',  # Green for completed audit events
@@ -1197,7 +1198,6 @@ def appointment_delete(request, pk):
         appointment = Appointment.objects.get(pk=pk)
         appointment.delete()
         return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 def get_company_contacts(request):
     """API endpoint for getting company contacts"""

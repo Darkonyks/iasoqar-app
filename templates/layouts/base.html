@@ -6,14 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock %} | ISOQAR</title>
 
+  {% block extra_head %}{% endblock %}
+
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css">
   <!-- jQuery UI -->
-  <link rel="stylesheet" href="{% static 'css/jquery-ui.min.css' %}">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.min.css">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
   <!-- Critical layout fixes - must be before other CSS -->
   <style>
     /* Kritični fix za sidebar i layout */
@@ -88,17 +92,17 @@ if (typeof globalThis.console !== 'undefined') {
 </script>
 
 <!-- jQuery -->
-<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Session Handler -->
 <script src="{% static 'js/auth/session-handler.js' %}"></script>
 <!-- jQuery UI -->
-<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <!-- Bootstrap 4 -->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="{% static 'js/adminlte.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/js/adminlte.min.js"></script>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- SweetAlert2 -->

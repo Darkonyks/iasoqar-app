@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
 from .models import Company
 from .forms import CertificationCycleForm, CycleAuditForm
@@ -175,17 +176,36 @@ class CertificationCycleUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CertificationCycleDeleteView(LoginRequiredMixin, DeleteView):
-    """Brisanje ciklusa sertifikacije"""
+    """Brisanje ciklusa sertifikacije sa kaskadnim brisanjem povezanih zapisa"""
     model = CertificationCycle
     template_name = 'certification_cycles/cycle_confirm_delete.html'
     context_object_name = 'cycle'
     
-    def get_success_url(self):
-        company = self.object.company
-        messages.success(self.request, 'Ciklus sertifikacije je uspešno obrisan.')
-        if company:
-            return reverse('company:detail', kwargs={'pk': company.pk})
-        return reverse('company:cycle_list')
+    def post(self, request, *args, **kwargs):
+        """Kaskadno brisanje ciklusa sertifikacije i povezanih zapisa"""
+        self.object = self.get_object()
+        company_id = self.object.company.id  # Čuvamo ID kompanije pre brisanja
+        
+        try:
+            # Prvo brišemo sve audit_days za svaki audit
+            for audit in self.object.audits.all():
+                audit.audit_days.all().delete()
+            
+            # Zatim brišemo sve audite
+            self.object.audits.all().delete()
+            
+            # Brišemo sve cycle_standards
+            self.object.cycle_standards.all().delete()
+            
+            # Na kraju brišemo sam ciklus kroz parent klasu
+            response = super().delete(request, *args, **kwargs)
+            
+            messages.success(request, 'Ciklus sertifikacije je uspešno obrisan zajedno sa svim povezanim zapisima.')
+            return redirect('company:detail', pk=company_id)
+            
+        except Exception as e:
+            messages.error(request, f'Greška prilikom brisanja ciklusa sertifikacije: {str(e)}')
+            return redirect('company:cycle_detail', pk=self.object.pk)
 
 
 # Views for managing audits
@@ -248,7 +268,26 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
         return context
     
     def form_valid(self, form):
+        # Sačuvaj prethodni status i stvarni datum pre čuvanja forme
+        previous_status = self.object.audit_status
+        previous_actual_date = self.object.actual_date
+        
+        # Sačuvaj formu
         response = super().form_valid(form)
+        
+        # Ako je status promenjen na 'completed' i postavljen je stvarni datum
+        if (form.cleaned_data['audit_status'] == 'completed' and 
+            form.cleaned_data['actual_date'] and 
+            (previous_status != 'completed' or not previous_actual_date)):
+            
+            try:
+                # Obriši sve planirane dane audita
+                deleted_count = self.object.audit_days.filter(is_planned=True, is_actual=False).delete()[0]
+                if deleted_count > 0:
+                    messages.info(self.request, f'Obrisano je {deleted_count} planiranih dana audita.')
+            except Exception as e:
+                messages.warning(self.request, f'Greška prilikom brisanja planiranih dana audita: {str(e)}')
+        
         messages.success(self.request, 'Audit je uspešno ažuriran.')
         return response
     

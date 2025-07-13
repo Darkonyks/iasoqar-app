@@ -203,6 +203,23 @@
                   </div>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div class="form-check">
+                      {{ form.poslat_izvestaj }}
+                      <label class="form-check-label" for="{{ form.poslat_izvestaj.id_for_label }}">Poslat izveštaj</label>
+                      {% if form.poslat_izvestaj.errors %}
+                      <div class="invalid-feedback d-block">
+                        {{ form.poslat_izvestaj.errors }}
+                      </div>
+                      {% endif %}
+                      <small class="form-text text-muted">Označite ako je izveštaj poslat klijentu</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div class="card-footer">

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 import nested_admin
 
-from ..cycle_models import CertificationCycle, CycleStandard, CycleAudit
+from ..cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditDay
 
 
 class CycleStandardInline(nested_admin.NestedTabularInline):
@@ -63,3 +63,23 @@ class CycleAuditAdmin(admin.ModelAdmin):
             'fields': ['report_number', 'findings', 'recommendations', 'notes']
         })
     ]
+
+
+class AuditDayAdmin(admin.ModelAdmin):
+    list_display = ['audit', 'date', 'is_planned', 'is_actual']
+    list_filter = ['is_planned', 'is_actual', 'date']
+    search_fields = ['audit__certification_cycle__company__name']
+    date_hierarchy = 'date'
+    
+    fieldsets = [
+        ('Osnovne informacije', {
+            'fields': ['audit', 'date']
+        }),
+        ('Status', {
+            'fields': ['is_planned', 'is_actual', 'notes']
+        })
+    ]
+
+
+# Registracija modela u admin panelu
+admin.site.register(AuditDay, AuditDayAdmin)
