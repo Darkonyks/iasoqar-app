@@ -14,7 +14,7 @@ services:
     environment:
       - DEBUG=${DEBUG:-False}
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-default_secret_key_change_in_production}
-      - DATABASE_URL=postgres
+      - DATABASE_URL=sqlite
       - POSTGRES_DB=${POSTGRES_DB:-isoqar}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
