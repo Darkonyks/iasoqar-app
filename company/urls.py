@@ -43,7 +43,8 @@ from .views_ajax import (
     list_iaf_eac_codes,
     certification_cycle_json,
     audit_days_by_audit_id,
-    update_event_date
+    update_event_date,
+    supervision_audit_json
 )
 
 app_name = 'company'
@@ -95,7 +96,12 @@ urlpatterns = [
     # API endpoint za audit dane prema ID-u audita
     path('api/audit-days/by-audit/<int:audit_id>/', audit_days_by_audit_id, name='audit_days_by_audit_id'),
     
+    # API endpoint za nadzornu proveru
+    path('api/supervision-audit/<int:audit_id>/', supervision_audit_json, name='supervision_audit_json'),
+    path('api/supervision-audit/', supervision_audit_json, name='supervision_audit_json_no_id'),
+    
     # API endpoint za ažuriranje datuma događaja nakon drag-and-drop
+    path('update-event-date/', update_event_date, name='update_event_date'),
     path('api/events/update-date/', update_event_date, name='update_event_date'),
     
     # Dashboard

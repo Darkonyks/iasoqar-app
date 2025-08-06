@@ -10,6 +10,7 @@ from .standard_models import CompanyStandard
 from .models import Company
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
 from .cycle_models import CertificationCycle, CycleAudit, AuditDay
+from .auditor_models import Auditor
 
 @require_POST
 @login_required
@@ -396,11 +397,10 @@ def update_event_date(request):
     logger.info(f"Ažuriranje datuma događaja nakon drag-and-drop")
     
     try:
-        # Parsiranje JSON podataka iz POST zahteva
-        data = json.loads(request.body)
-        event_id = data.get('eventId')
-        event_type = data.get('eventType')
-        new_date = data.get('newDate')
+        # Dobavljanje podataka iz POST zahteva
+        event_id = request.POST.get('id')
+        event_type = request.POST.get('type')
+        new_date = request.POST.get('date')
         
         logger.info(f"Primljeni podaci: event_id={event_id}, event_type={event_type}, new_date={new_date}")
         
@@ -458,6 +458,54 @@ def update_event_date(request):
                 }
             })
             
+        elif event_type == 'appointment':
+            # Ažuriranje datuma sastanka/termina
+            from company.appointment_models import Appointment
+            
+            appointment = get_object_or_404(Appointment, pk=event_id)
+            old_start = appointment.start_datetime
+            
+            # Ako je all_day, postavimo samo datum bez promene vremena
+            if appointment.all_day:
+                # Kreiraj novi datetime sa novim datumom ali istim vremenom
+                new_datetime = datetime.combine(
+                    new_date_obj.date(),
+                    datetime.min.time()
+                )
+                appointment.start_datetime = new_datetime
+                
+                # Ako postoji end_datetime, ažuriraj i njega
+                if appointment.end_datetime:
+                    days_diff = (new_date_obj.date() - old_start.date()).days
+                    appointment.end_datetime = appointment.end_datetime + timedelta(days=days_diff)
+            else:
+                # Kreiraj novi datetime sa novim datumom ali istim vremenom
+                new_datetime = datetime.combine(
+                    new_date_obj.date(),
+                    old_start.time()
+                )
+                appointment.start_datetime = new_datetime
+                
+                # Ako postoji end_datetime, ažuriraj i njega
+                if appointment.end_datetime:
+                    time_diff = appointment.end_datetime - old_start
+                    appointment.end_datetime = new_datetime + time_diff
+            
+            appointment.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Datum sastanka je uspešno ažuriran sa {old_start.date()} na {appointment.start_datetime.date()}.',
+                'appointment': {
+                    'id': appointment.id,
+                    'title': appointment.title,
+                    'start_datetime': appointment.start_datetime.isoformat(),
+                    'end_datetime': appointment.end_datetime.isoformat() if appointment.end_datetime else None,
+                    'all_day': appointment.all_day,
+                    'status': appointment.status
+                }
+            })
+            
         else:
             return JsonResponse({
                 'success': False,
@@ -470,5 +518,128 @@ def update_event_date(request):
         logger.error(traceback.format_exc())
         return JsonResponse({
             'success': False,
-            'error': str(e)
+            'message': f'Greška prilikom ažuriranja datuma: {str(e)}'
+        }, status=500)
+
+
+@require_GET
+@login_required
+def supervision_audit_json(request, audit_id=None):
+    """
+    API endpoint za dohvatanje podataka o nadzornoj proveri u JSON formatu.
+    Vraća sve potrebne podatke za prikaz u modalnom prozoru.
+    
+    Može primiti audit_id kao URL parametar ili kao GET parametar.
+    """
+    logger = logging.getLogger('django')
+    logger.info(f"Dohvatanje podataka o nadzornoj proveri ID={audit_id}")
+    
+    # Ako ID nije prosleđen kao deo URL-a, pokušaj ga dobiti iz GET parametara
+    if not audit_id:
+        audit_id = request.GET.get('audit_id')
+    
+    # Ako ni tada nemamo ID, vrati grešku
+    if not audit_id:
+        return JsonResponse({
+            'success': False,
+            'message': 'ID audita nije prosleđen'
+        }, status=400)
+    
+    try:
+        # Dohvati audit
+        audit = get_object_or_404(CycleAudit, pk=audit_id)
+        cycle = audit.certification_cycle
+        company = cycle.company
+        
+        # Osnovni podaci o auditu
+        audit_data = {
+            'id': audit.id,
+            'audit_type': audit.audit_type,
+            'audit_type_display': dict(audit.AUDIT_TYPE_CHOICES)[audit.audit_type],
+            'audit_status': audit.audit_status,
+            'audit_status_display': dict(audit.AUDIT_STATUS_CHOICES)[audit.audit_status],
+            'planned_date': audit.planned_date.isoformat() if audit.planned_date else None,
+            'actual_date': audit.actual_date.isoformat() if audit.actual_date else None,
+            'notes': audit.notes or '',
+            'lead_auditor': None,
+            'team_members': []
+        }
+        
+        # Informacije o vodećem auditoru i timu
+        if audit.lead_auditor:
+            audit_data['lead_auditor'] = {
+                'id': audit.lead_auditor.id,
+                'name': f"{audit.lead_auditor.first_name} {audit.lead_auditor.last_name}"
+            }
+        
+        # Članovi tima
+        for member in audit.team_members.all():
+            audit_data['team_members'].append({
+                'id': member.id,
+                'name': f"{member.first_name} {member.last_name}"
+            })
+        
+        # Podaci o ciklusu
+        cycle_data = {
+            'id': cycle.id,
+            'company_id': company.id,
+            'company_name': company.name,
+            'start_date': cycle.start_date.isoformat() if cycle.start_date else None,
+            'end_date': cycle.end_date.isoformat() if cycle.end_date else None,
+            'status': cycle.status,
+            'status_display': dict(cycle.CYCLE_STATUS_CHOICES)[cycle.status],
+            'is_integrated_system': cycle.is_integrated_system,
+            'notes': cycle.notes or ''
+        }
+        
+        # Dohvati standarde za ovaj ciklus
+        standards = []
+        for cycle_standard in cycle.cycle_standards.all():
+            standards.append({
+                'id': cycle_standard.id,
+                'code': cycle_standard.standard_definition.code,
+                'name': cycle_standard.standard_definition.name,
+                'is_primary': cycle_standard.is_primary
+            })
+        cycle_data['standards'] = standards
+        
+        # Dohvati dane audita
+        audit_days = []
+        for day in audit.audit_days.all().order_by('date'):
+            audit_days.append({
+                'id': day.id,
+                'date': day.date.isoformat() if day.date else None,
+                'is_planned': day.is_planned,
+                'is_actual': day.is_actual,
+                'notes': day.notes or ''
+            })
+        audit_data['audit_days'] = audit_days
+        
+        # Dohvati adresu kompanije
+        company_data = {
+            'id': company.id,
+            'name': company.name,
+            'address': company.address or '',
+            'city': company.city or '',
+            'zip_code': company.zip_code or '',
+            'country': company.country or '',
+            'registration_number': company.registration_number or '',
+            'tax_number': company.tax_number or ''
+        }
+        
+        # Vrati sve podatke zajedno
+        return JsonResponse({
+            'success': True,
+            'audit': audit_data,
+            'cycle': cycle_data,
+            'company': company_data
+        })
+        
+    except Exception as e:
+        import traceback
+        logger.error(f"Greška prilikom dohvatanja podataka o nadzornoj proveri ID={audit_id}: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'message': f'Greška prilikom dohvatanja podataka o nadzornoj proveri: {str(e)}'
         }, status=500)

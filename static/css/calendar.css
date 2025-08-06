@@ -48,6 +48,73 @@
 }
 
 /* Ensure content adapts to container */
+
+/* Modal z-index fix - kompletno rešenje */
+.modal-backdrop {
+  z-index: 1040 !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.modal {
+  z-index: 2050 !important; /* znatno veći od backdrop-a */
+  display: block;
+  padding-right: 17px; /* sprečava skakanje sadržaja */
+}
+
+.modal-dialog {
+  z-index: auto; /* ne treba eksplicitno postavljati, nasleđuje od roditelja */
+  position: relative;
+  margin: 1.75rem auto;
+  pointer-events: auto; /* omogućava interakciju */
+}
+
+.modal-content {
+  position: relative;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important; /* jači shadow da naglasi modal */
+}
+
+/* Specifična pravila za naše modalne prozore */
+#appointmentDetailModal, 
+#auditDetailModal, 
+#cycleAuditModal,
+#appointmentModal {
+  z-index: 2050 !important;
+}
+
+/* Potpuna resetka stila za sve custom backdrops */
+#custom-modal-backdrop,
+.custom-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  z-index: 1040 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Overrides za Bootstrap modals */
+.modal {
+  overflow-y: auto !important;
+}
+
+.modal-open {
+  overflow: hidden;
+  padding-right: 17px; /* kompenzacija za scrollbar */
+}
+
+/* Osiguravanje vidljivosti modala */
+.modal.show .modal-dialog {
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 .fc .fc-scrollgrid-liquid {
   height: auto !important;
 }

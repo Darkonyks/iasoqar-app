@@ -557,3 +557,54 @@ INFO 2025-07-03 08:03:15,215 views 36512 29484 Pristup audit_detail_json za audi
 ERROR 2025-07-03 08:03:15,220 views 36512 29484 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
 INFO 2025-07-03 08:35:18,383 views 51028 27616 Pristup audit_detail_json za audit ID: 62
 ERROR 2025-07-03 08:35:18,385 views 51028 27616 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:29:53,236 views 48116 51252 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 11:29:55,646 views 48116 51252 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 11:29:55,649 views 48116 51252 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:29:57,742 views 48116 51252 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 11:29:57,744 views 48116 51252 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:30:00,126 views 48116 51252 Pristup audit_detail_json za audit ID: 165
+INFO 2025-07-16 11:31:25,064 views 48116 25732 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 11:31:25,066 views 48116 25732 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:31:32,925 views 48116 44160 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 11:31:34,777 views 48116 44160 Pristup audit_detail_json za audit ID: 165
+INFO 2025-07-16 11:31:36,306 views 48116 44160 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 11:31:36,309 views 48116 44160 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:31:41,963 views 48116 44160 Pristup audit_detail_json za audit ID: 168
+INFO 2025-07-16 11:31:43,609 views 48116 44160 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 11:31:43,613 views 48116 44160 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 11:31:45,338 views 48116 44160 Pristup audit_detail_json za audit ID: 167
+INFO 2025-07-16 11:31:46,989 views 48116 44160 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 11:31:52,171 views 48116 44160 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 11:31:54,928 views 48116 44160 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 12:00:50,205 views 48116 27592 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 12:00:54,492 views 48116 54544 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 12:00:59,900 views 48116 54544 Pristup audit_detail_json za audit ID: 165
+INFO 2025-07-16 12:01:04,072 views 48116 54544 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 12:01:04,074 views 48116 54544 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 12:02:48,652 views 48116 28960 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 12:02:50,871 views 48116 28960 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 12:02:54,385 views 48116 28960 Pristup audit_detail_json za audit ID: 165
+INFO 2025-07-16 12:02:59,723 views 48116 28960 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 12:02:59,725 views 48116 28960 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 12:03:05,268 views 48116 28960 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 12:04:54,045 views 48116 28960 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:01:35,425 views 48116 51120 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:01:39,046 views 48116 51120 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 13:01:39,049 views 48116 51120 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 13:03:42,108 views 48116 48092 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:03:50,652 views 48116 25636 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:03:52,824 views 48116 25636 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 13:03:52,827 views 48116 25636 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 13:03:54,696 views 48116 25636 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 13:04:00,140 views 48116 25636 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:26:00,634 views 48116 2960 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:26:09,681 views 48116 39476 Pristup audit_detail_json za audit ID: 2
+INFO 2025-07-16 13:26:11,475 views 48116 39476 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 13:26:12,816 views 48116 39476 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 13:26:12,819 views 48116 39476 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 13:28:29,345 views 48116 51776 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 13:28:29,347 views 48116 51776 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-07-16 14:10:49,588 views 48116 9616 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 14:11:26,785 views 48116 9616 Pristup audit_detail_json za audit ID: 166
+INFO 2025-07-16 14:11:30,340 views 48116 9616 Pristup audit_detail_json za audit ID: 65
+ERROR 2025-07-16 14:11:30,343 views 48116 9616 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
