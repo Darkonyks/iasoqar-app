@@ -1198,6 +1198,27 @@
     document.getElementById('appointment-status').textContent = event.extendedProps?.status || 'Zakazano';
     document.getElementById('appointment-contacts').textContent = event.extendedProps?.contacts || 'Nema kontakata';
     document.getElementById('appointment-description').textContent = event.extendedProps?.description || 'Nema opisa';
+    
+    // Set up the edit button directly with a href attribute
+    const editButton = document.getElementById('editAppointmentBtn');
+    
+    // Set up data and href attributes for the edit button
+    const editUrl = `/company/appointments/${appointmentId}/edit/`;
+    
+    // Convert the button to a proper link that looks like a button
+    const editLink = document.createElement('a');
+    editLink.setAttribute('id', 'editAppointmentBtn');
+    editLink.setAttribute('href', editUrl);
+    editLink.setAttribute('class', editButton.getAttribute('class'));
+    editLink.setAttribute('data-bs-dismiss', 'modal'); // Add this to close the modal
+    editLink.textContent = 'Izmeni';
+    editLink.style.textDecoration = 'none';
+    
+    // Replace the button with the link
+    editButton.parentNode.replaceChild(editLink, editButton);
+    
+    // Log the change
+    console.log('Set up edit link to URL:', editUrl);
   } catch (e) {
     console.error('Greška pri otvaranju Appointment modala:', e);
   }
