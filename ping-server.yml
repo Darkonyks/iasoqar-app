@@ -1,7 +1,0 @@
-- name: Test Ansible konekcije
-  hosts: 192.168.5.45
-  gather_facts: no
-
-  tasks:
-    - name: Pinguje sve hostove
-      ansible.builtin.ping:
