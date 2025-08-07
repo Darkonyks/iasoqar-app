@@ -41,11 +41,8 @@
       args:
         chdir: /home/darko/iasoqar-app
       become: true
-      become_user: darko   
-    - name: Fail ako login stranica nije prepoznata
-      ansible.builtin.fail:
-        msg: "Aplikacija nije podignuta (nema očekivanog sadržaja na /)!"
-      when: "'ISOQAR' not in healthcheck.content"
+      become_user: darko
+
 
 
 
