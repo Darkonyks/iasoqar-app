@@ -41,15 +41,7 @@
       args:
         chdir: /home/darko/iasoqar-app
       become: true
-      become_user: darko  
-    - name: Health-check login strane (prepoznaj po tekstu)
-      ansible.builtin.uri:
-        url: "http://192.168.5.45:8000/"
-        status_code: 200
-        return_content: yes
-        timeout: 10
-      register: healthcheck
-    
+      become_user: darko   
     - name: Fail ako login stranica nije prepoznata
       ansible.builtin.fail:
         msg: "Aplikacija nije podignuta (nema očekivanog sadržaja na /)!"
@@ -60,6 +52,7 @@
         status_code: 200
         timeout: 10
       register: healthcheck
+
 
 
 
