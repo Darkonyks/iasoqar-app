@@ -19,7 +19,7 @@
   .modal-backdrop.show {
     opacity: 0.5;
   }
-  
+
   /* Poboljšanja za bootstrap modalne prozore */
   .modal-content {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
@@ -29,17 +29,17 @@
 <!-- Bootstrap helper scripts -->
 <script>
   // Wait for DOM to be fully loaded before defining any functions or accessing DOM elements
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     console.log('DOM fully loaded, initializing modal functions');
     console.log('Bootstrap version check:', typeof bootstrap !== 'undefined' ? 'Available' : 'Not available');
     if (typeof bootstrap !== 'undefined') {
       console.log('Bootstrap Modal available:', typeof bootstrap.Modal !== 'undefined');
     }
-    
+
     // Simple modal show function for Bootstrap 5
-    window.showModal = function(modalSelector) {
+    window.showModal = function (modalSelector) {
       console.log('Showing modal using showModal function:', modalSelector);
-      
+
       try {
         // Get the modal element
         const modalElement = document.querySelector(modalSelector);
@@ -47,7 +47,7 @@
           console.error('Modal element not found:', modalSelector);
           return false;
         }
-        
+
         // Bootstrap 5 - direct instantiation
         if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
           console.log('Using Bootstrap 5 Modal API');
@@ -55,14 +55,14 @@
           modal.show();
           return true;
         }
-        
+
         // jQuery fallback (for Bootstrap 4 or jQuery UI modals)
         if (typeof $ !== 'undefined' && typeof $.fn.modal !== 'undefined') {
           console.log('Using jQuery modal API');
           $(modalSelector).modal('show');
           return true;
         }
-        
+
         // Manual fallback - last resort
         console.log('Using manual DOM manipulation');
         modalElement.classList.add('show');
@@ -82,7 +82,7 @@
         }
       }
     };
-    
+
     // Ensure all modal functions use the same implementation
     window.forceShowModal = window.showModal;
     window.safeShowModal = window.showModal;
@@ -111,1477 +111,1485 @@
         </div>
       </div>
 
-  <div class="content">
-    <div class="container-fluid">
-      <div class="card">
-        <div class="card-body">
-          <div id="calendar-container">
-            <div id="calendar"></div>
+      <div class="content">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body">
+              <div id="calendar-container">
+                <div id="calendar"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Appointment Detail Modal -->
-<div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji termina</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <h4 id="appointment-title">Učitavanje...</h4>
+    <!-- Appointment Detail Modal -->
+    <div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji termina</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <h4 id="appointment-title">Učitavanje...</h4>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p><strong>Kompanija:</strong> <span id="appointment-company">Učitavanje...</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Tip termina:</strong> <span id="appointment-type">Učitavanje...</span></p>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p><strong>Vreme početka:</strong> <span id="appointment-start">Učitavanje...</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Vreme završetka:</strong> <span id="appointment-end">Učitavanje...</span></p>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p><strong>Lokacija:</strong> <span id="appointment-location">Učitavanje...</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Status:</strong> <span id="appointment-status">Učitavanje...</span></p>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <p><strong>Kontakti:</strong> <span id="appointment-contacts">Učitavanje...</span></p>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <p><strong>Opis:</strong></p>
+                <div id="appointment-description" class="p-2 bg-light">Učitavanje...</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
           </div>
         </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <p><strong>Kompanija:</strong> <span id="appointment-company">Učitavanje...</span></p>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Tip termina:</strong> <span id="appointment-type">Učitavanje...</span></p>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <p><strong>Vreme početka:</strong> <span id="appointment-start">Učitavanje...</span></p>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Vreme završetka:</strong> <span id="appointment-end">Učitavanje...</span></p>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <p><strong>Lokacija:</strong> <span id="appointment-location">Učitavanje...</span></p>
-          </div>
-          <div class="col-md-6">
-            <p><strong>Status:</strong> <span id="appointment-status">Učitavanje...</span></p>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <p><strong>Kontakti:</strong> <span id="appointment-contacts">Učitavanje...</span></p>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <p><strong>Opis:</strong></p>
-            <div id="appointment-description" class="p-2 bg-light">Učitavanje...</div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-        <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
       </div>
     </div>
-  </div>
-</div>
-{% endblock %}
+    {% endblock %}
 
-{% block extra_scripts %}
-<!-- jQuery (ako već nije učitan u base.html) -->
-<script>
-  if (typeof jQuery === 'undefined') {
-    document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>');
-  }
-</script>
-
-<!-- Eksplicitno učitavanje Bootstrap JS-a za modalne dijaloge -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-  // Pomoćna funkcija za sigurno otvaranje modala
-  function safeShowModal(modalSelector) {
-    console.log('Showing modal:', modalSelector);
-    
-    // Get backdrop and ensure it exists
-    const customBackdrop = document.getElementById('custom-modal-backdrop');
-    if (customBackdrop) {
-      customBackdrop.style.display = 'block';
-    }
-    
-    // Remove any existing backdrops from Bootstrap
-    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
-    
-    // Get modal element
-    const modalElement = document.querySelector(modalSelector);
-    if (!modalElement) {
-      console.error('Modal element not found:', modalSelector);
-      return;
-    }
-    
-    try {
-      // Try jQuery first (most compatible)
-      if (typeof $ !== 'undefined' && typeof $.fn.modal !== 'undefined') {
-        $(modalSelector).modal('show');
-        return;
+    {% block extra_scripts %}
+    <!-- jQuery (ako već nije učitan u base.html) -->
+    <script>
+      if (typeof jQuery === 'undefined') {
+        document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>');
       }
-      
-      // Try Bootstrap 5
-      if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-        return;
+    </script>
+
+    <!-- Eksplicitno učitavanje Bootstrap JS-a za modalne dijaloge -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Pomoćna funkcija za sigurno otvaranje modala
+      function safeShowModal(modalSelector) {
+        console.log('Showing modal:', modalSelector);
+
+        // Get backdrop and ensure it exists
+        const customBackdrop = document.getElementById('custom-modal-backdrop');
+        if (customBackdrop) {
+          customBackdrop.style.display = 'block';
+        }
+
+        // Remove any existing backdrops from Bootstrap
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+
+        // Get modal element
+        const modalElement = document.querySelector(modalSelector);
+        if (!modalElement) {
+          console.error('Modal element not found:', modalSelector);
+          return;
+        }
+
+        try {
+          // Try jQuery first (most compatible)
+          if (typeof $ !== 'undefined' && typeof $.fn.modal !== 'undefined') {
+            $(modalSelector).modal('show');
+            return;
+          }
+
+          // Try Bootstrap 5
+          if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+            return;
+          }
+
+          // Last resort manual approach
+          modalElement.classList.add('show');
+          modalElement.style.display = 'block';
+          document.body.classList.add('modal-open');
+        } catch (error) {
+          console.error('Error showing modal:', error);
+          // Ultra fallback
+          modalElement.classList.add('show');
+          modalElement.style.display = 'block';
+          if (customBackdrop) customBackdrop.style.display = 'block';
+        }
       }
-      
-      // Last resort manual approach
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-      document.body.classList.add('modal-open');
-    } catch (error) {
-      console.error('Error showing modal:', error);
-      // Ultra fallback
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-      if (customBackdrop) customBackdrop.style.display = 'block';
-    }
-  }
-</script>
+    </script>
 
-<!-- Moment.js za formatiranje datuma -->
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/sr.js"></script>
+    <!-- Moment.js za formatiranje datuma -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/sr.js"></script>
 
-<!-- FullCalendar biblioteke - verzija 6.1.17 - učitavamo sve zajedno za garantovano pravilno funkcionisanje -->
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.js'></script>
+    <!-- FullCalendar biblioteke - verzija 6.1.17 - učitavamo sve zajedno za garantovano pravilno funkcionisanje -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.js'></script>
 
-<!-- Osiguranje da je FullCalendar dostupan pre inicijalizacije -->
-<script>
-  // Provera da li su sve komponente uspešno učitane
-  document.addEventListener('DOMContentLoaded', function() {
-    if (typeof FullCalendar !== 'undefined') {
-      console.log('FullCalendar uspešno učitan:', FullCalendar.version);
-    } else {
-      console.error('FullCalendar nije uspešno učitan!');
-    }
-  });
-</script>
+    <!-- Osiguranje da je FullCalendar dostupan pre inicijalizacije -->
+    <script>
+      // Provera da li su sve komponente uspešno učitane
+      document.addEventListener('DOMContentLoaded', function () {
+        if (typeof FullCalendar !== 'undefined') {
+          console.log('FullCalendar uspešno učitan:', FullCalendar.version);
+        } else {
+          console.error('FullCalendar nije uspešno učitan!');
+        }
+      });
+    </script>
 
-<!-- Calendar Configuration -->
-<style>
-  /* Z-index popravka za modalne dijaloge - ekstremne vrednosti */
-  .modal {
-    z-index: 2060 !important;
-    position: relative;
-  }
-  .modal-dialog {
-    z-index: 2070 !important;
-    position: relative;
-  }
-  .modal-content {
-    z-index: 2080 !important;
-    position: relative;
-  }
-  .modal-backdrop {
-    z-index: 1050 !important;
-  }
-  
-  /* Modal visible override */
-  .modal.show {
-    display: block;
-    opacity: 1;
-  }
-  
-  /* Backdrop fix */
-  #backdropFix {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1040;
-    display: none;
-  }
-</style>
+    <!-- Calendar Configuration -->
+    <style>
+      /* Z-index popravka za modalne dijaloge - ekstremne vrednosti */
+      .modal {
+        z-index: 2060 !important;
+        position: relative;
+      }
 
-<script>
-  // Configure calendar URLs
-  window.eventsApiUrl = '{% url "company:appointment_calendar_json" %}';
-  // Za certification_cycle_json je potreban ID parametar koji ćemo prosleđivati dinamički
-  // Bazni URL bez ID-a, koji će se formirati dinamički u JS kodu kada dobijemo cycle_id
-  window.certificationCycleJsonBaseUrl = '/company/api/cycles/';
-  
-  // Legacy varijabla za kompatibilnost sa starijim kodom
-  window.certificationCycleJsonUrl = '/company/api/cycles/0/json/';
-</script>
+      .modal-dialog {
+        z-index: 2070 !important;
+        position: relative;
+      }
 
-<!-- Calendar initialization and event handlers -->
-<script src="{% static 'js/calendar.js' %}?v=2.0"></script>
+      .modal-content {
+        z-index: 2080 !important;
+        position: relative;
+      }
 
-<!-- Inicijalizacija kalendara kada se dokument učita -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Inicijalizacija kalendara
-    initializeCalendar();
-  });
-</script>
+      .modal-backdrop {
+        z-index: 1050 !important;
+      }
 
-<!-- Removed calendar_drag_drop.js reference - functionality already exists in calendar.js -->
+      /* Modal visible override */
+      .modal.show {
+        display: block;
+        opacity: 1;
+      }
 
-<script>
-  // Inicijalizacija funkcionalnosti nakon učitavanja stranice
-  setTimeout(function() {
-    // Provera učitanosti kalendara i njegovih komponenti se ovde odvija u pozadini
-  }, 1000);
-  
+      /* Backdrop fix */
+      #backdropFix {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
+      }
+    </style>
 
-</script>
+    <script>
+      // Configure calendar URLs
+      window.eventsApiUrl = '{% url "company:appointment_calendar_json" %}';
+      // Za certification_cycle_json je potreban ID parametar koji ćemo prosleđivati dinamički
+      // Bazni URL bez ID-a, koji će se formirati dinamički u JS kodu kada dobijemo cycle_id
+      window.certificationCycleJsonBaseUrl = '/company/api/cycles/';
 
-<!-- Appointment Modal -->
-<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="appointmentModalLabel">Novi sastanak</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      // Legacy varijabla za kompatibilnost sa starijim kodom
+      window.certificationCycleJsonUrl = '/company/api/cycles/0/json/';
+    </script>
+
+    <!-- Calendar initialization and event handlers -->
+    <script src="{% static 'js/calendar.js' %}?v=2.0"></script>
+
+    <!-- Inicijalizacija kalendara kada se dokument učita -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Inicijalizacija kalendara
+        initializeCalendar();
+      });
+    </script>
+
+    <!-- Removed calendar_drag_drop.js reference - functionality already exists in calendar.js -->
+
+    <script>
+      // Inicijalizacija funkcionalnosti nakon učitavanja stranice
+      setTimeout(function () {
+        // Provera učitanosti kalendara i njegovih komponenti se ovde odvija u pozadini
+      }, 1000);
+
+
+    </script>
+
+    <!-- Appointment Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="appointmentModalLabel">Novi sastanak</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="appointmentForm">
+            <div class="modal-body">
+              <input type="hidden" id="appointmentId" name="appointmentId">
+
+              <div class="form-group">
+                <label for="title">Naslov sastanka</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="company">Kompanija</label>
+                    <select class="form-control" id="company" name="company" required>
+                      <option value="">Izaberite kompaniju</option>
+                      {% for company in companies %}
+                      <option value="{{ company.id }}">{{ company.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="appointment_type">Tip sastanka</label>
+                    <select class="form-control" id="appointment_type" name="appointment_type" required>
+                      <option value="">Izaberite tip</option>
+                      <option value="audit">Audit</option>
+                      <option value="meeting">Sastanak</option>
+                      <option value="consultation">Konsultacija</option>
+                      <option value="training">Trening</option>
+                      <option value="other">Ostalo</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="start_datetime">Vreme početka</label>
+                    <input type="datetime-local" class="form-control" id="start_datetime" name="start_datetime"
+                      required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="end_datetime">Vreme završetka</label>
+                    <input type="datetime-local" class="form-control" id="end_datetime" name="end_datetime" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="all_day" name="all_day">
+                  <label class="custom-control-label" for="all_day">Celodnevni događaj</label>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="location">Lokacija</label>
+                    <input type="text" class="form-control" id="location" name="location">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <div class="custom-control custom-checkbox mt-4">
+                      <input type="checkbox" class="custom-control-input" id="is_online" name="is_online">
+                      <label class="custom-control-label" for="is_online">Online sastanak</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" id="meeting_link_group">
+                <label for="meeting_link">Link za sastanak</label>
+                <input type="url" class="form-control" id="meeting_link" name="meeting_link" placeholder="https://...">
+              </div>
+
+              <div class="form-group">
+                <label for="contact_person">Kontakt osobe</label>
+                <input type="text" class="form-control" id="contact_person"
+                  placeholder="Počnite da kucate ime kontakt osobe...">
+                <div id="contact-tags-container"></div>
+                <input type="hidden" id="contact_persons" name="contact_persons">
+              </div>
+
+              <div class="form-group">
+                <label for="external_attendees">Eksterni učesnici</label>
+                <textarea class="form-control" id="external_attendees" name="external_attendees" rows="2"
+                  placeholder="Ime, email, telefon (jedan po liniji)"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status" required>
+                  <option value="scheduled">Zakazano</option>
+                  <option value="completed">Završeno</option>
+                  <option value="cancelled">Otkazano</option>
+                  <option value="postponed">Odloženo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="notes">Napomene</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" id="deleteAppointmentBtn">Obriši</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
+              <button type="submit" class="btn btn-primary">Sačuvaj</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <form id="appointmentForm">
-        <div class="modal-body">
-          <input type="hidden" id="appointmentId" name="appointmentId">
-          
-          <div class="form-group">
-            <label for="title">Naslov sastanka</label>
-            <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+
+    <!-- Appointment Detail Modal -->
+    <div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji sastanka</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="company">Kompanija</label>
-                <select class="form-control" id="company" name="company" required>
-                  <option value="">Izaberite kompaniju</option>
-                  {% for company in companies %}
-                  <option value="{{ company.id }}">{{ company.name }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="appointment_type">Tip sastanka</label>
-                <select class="form-control" id="appointment_type" name="appointment_type" required>
-                  <option value="">Izaberite tip</option>
-                  <option value="audit">Audit</option>
-                  <option value="meeting">Sastanak</option>
-                  <option value="consultation">Konsultacija</option>
-                  <option value="training">Trening</option>
-                  <option value="other">Ostalo</option>
-                </select>
-              </div>
-            </div>
+          <div class="modal-body" id="appointmentDetailContent">
+            <!-- Content will be loaded dynamically -->
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="start_datetime">Vreme početka</label>
-                <input type="datetime-local" class="form-control" id="start_datetime" name="start_datetime" required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="end_datetime">Vreme završetka</label>
-                <input type="datetime-local" class="form-control" id="end_datetime" name="end_datetime" required>
-              </div>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
           </div>
-          
-          <div class="form-group">
-            <div class="custom-control custom-checkbox">
-              <input type="checkbox" class="custom-control-input" id="all_day" name="all_day">
-              <label class="custom-control-label" for="all_day">Celodnevni događaj</label>
-            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Detail Modal -->
+    <div class="modal fade" id="auditDetailModal" tabindex="-1" aria-labelledby="auditDetailModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="auditDetailModalLabel">Detalji audita</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="location">Lokacija</label>
-                <input type="text" class="form-control" id="location" name="location">
+          <div class="modal-body" id="auditDetailContent">
+            <!-- Content will be loaded dynamically -->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Osnovne informacije</h5>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-striped">
+                      <tbody>
+                        <tr>
+                          <th>Kompanija:</th>
+                          <td id="audit-company"></td>
+                        </tr>
+                        <tr>
+                          <th>Tip audita:</th>
+                          <td id="audit-type"></td>
+                        </tr>
+                        <tr>
+                          <th>Status:</th>
+                          <td id="audit-status"></td>
+                        </tr>
+                        <tr>
+                          <th>Planirani datum:</th>
+                          <td id="audit-planned-date"></td>
+                        </tr>
+                        <tr>
+                          <th>Stvarni datum:</th>
+                          <td id="audit-actual-date"></td>
+                        </tr>
+                        <tr>
+                          <th>Broj dana audita:</th>
+                          <td id="audit-days-count"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Dani audita</h5>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Datum</th>
+                          <th>Planirano</th>
+                          <th>Održano</th>
+                          <th>Napomene</th>
+                        </tr>
+                      </thead>
+                      <tbody id="audit-days-table-body">
+                        <!-- Audit days will be loaded here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <div class="custom-control custom-checkbox mt-4">
-                  <input type="checkbox" class="custom-control-input" id="is_online" name="is_online">
-                  <label class="custom-control-label" for="is_online">Online sastanak</label>
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Napomene</h5>
+                  </div>
+                  <div class="card-body">
+                    <p id="audit-notes"></p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div class="form-group" id="meeting_link_group">
-            <label for="meeting_link">Link za sastanak</label>
-            <input type="url" class="form-control" id="meeting_link" name="meeting_link" placeholder="https://...">
-          </div>
-          
-          <div class="form-group">
-            <label for="contact_person">Kontakt osobe</label>
-            <input type="text" class="form-control" id="contact_person" placeholder="Počnite da kucate ime kontakt osobe...">
-            <div id="contact-tags-container"></div>
-            <input type="hidden" id="contact_persons" name="contact_persons">
-          </div>
-          
-          <div class="form-group">
-            <label for="external_attendees">Eksterni učesnici</label>
-            <textarea class="form-control" id="external_attendees" name="external_attendees" rows="2" placeholder="Ime, email, telefon (jedan po liniji)"></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="status">Status</label>
-            <select class="form-control" id="status" name="status" required>
-              <option value="scheduled">Zakazano</option>
-              <option value="completed">Završeno</option>
-              <option value="cancelled">Otkazano</option>
-              <option value="postponed">Odloženo</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="notes">Napomene</label>
-            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-primary" id="editAuditBtn">Izmeni</button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" id="deleteAppointmentBtn">Obriši</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
-          <button type="submit" class="btn btn-primary">Sačuvaj</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Appointment Detail Modal -->
-<div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji sastanka</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="appointmentDetailContent">
-        <!-- Content will be loaded dynamically -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-        <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Audit Detail Modal -->
-<div class="modal fade" id="auditDetailModal" tabindex="-1" aria-labelledby="auditDetailModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="auditDetailModalLabel">Detalji audita</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="auditDetailContent">
-        <!-- Content will be loaded dynamically -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Osnovne informacije</h5>
+    <!-- Cycle Audit Detail Modal -->
+    <div class="modal fade" id="cycleAuditModal" tabindex="-1" aria-labelledby="cycleAuditModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cycleAuditModalLabel">Detalji certifikacionog ciklusa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Osnovne informacije</h5>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-striped">
+                      <tbody>
+                        <tr>
+                          <th>Kompanija:</th>
+                          <td id="cycle-company"></td>
+                        </tr>
+                        <tr>
+                          <th>Tip audita:</th>
+                          <td id="cycle-audit-type"></td>
+                        </tr>
+                        <tr>
+                          <th>Status:</th>
+                          <td id="cycle-status"></td>
+                        </tr>
+                        <tr>
+                          <th>Planirani datum:</th>
+                          <td id="cycle-planned-date"></td>
+                        </tr>
+                        <tr>
+                          <th>Stvarni datum:</th>
+                          <td id="cycle-actual-date"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-              <div class="card-body">
-                <table class="table table-striped">
-                  <tbody>
-                    <tr>
-                      <th>Kompanija:</th>
-                      <td id="audit-company"></td>
-                    </tr>
-                    <tr>
-                      <th>Tip audita:</th>
-                      <td id="audit-type"></td>
-                    </tr>
-                    <tr>
-                      <th>Status:</th>
-                      <td id="audit-status"></td>
-                    </tr>
-                    <tr>
-                      <th>Planirani datum:</th>
-                      <td id="audit-planned-date"></td>
-                    </tr>
-                    <tr>
-                      <th>Stvarni datum:</th>
-                      <td id="audit-actual-date"></td>
-                    </tr>
-                    <tr>
-                      <th>Broj dana audita:</th>
-                      <td id="audit-days-count"></td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Informacije o ciklusu</h5>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-striped">
+                      <tbody>
+                        <tr>
+                          <th>ID ciklusa:</th>
+                          <td id="cycle-id"></td>
+                        </tr>
+                        <tr>
+                          <th>Početak ciklusa:</th>
+                          <td id="cycle-start-date"></td>
+                        </tr>
+                        <tr>
+                          <th>Kraj ciklusa:</th>
+                          <td id="cycle-end-date"></td>
+                        </tr>
+                        <tr>
+                          <th>Status ciklusa:</th>
+                          <td id="cycle-cycle-status"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title">Napomene</h5>
+                  </div>
+                  <div class="card-body">
+                    <p id="cycle-notes"></p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Dani audita</h5>
-              </div>
-              <div class="card-body">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Datum</th>
-                      <th>Planirano</th>
-                      <th>Održano</th>
-                      <th>Napomene</th>
-                    </tr>
-                  </thead>
-                  <tbody id="audit-days-table-body">
-                    <!-- Audit days will be loaded here -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-primary" id="viewCycleBtn">Pregledaj ciklus</button>
+            <button type="button" class="btn btn-success" id="editCycleAuditBtn">Izmeni audit</button>
           </div>
         </div>
-        <div class="row mt-3">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Napomene</h5>
-              </div>
-              <div class="card-body">
-                <p id="audit-notes"></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-        <button type="button" class="btn btn-primary" id="editAuditBtn">Izmeni</button>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Cycle Audit Detail Modal -->
-<div class="modal fade" id="cycleAuditModal" tabindex="-1" aria-labelledby="cycleAuditModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="cycleAuditModalLabel">Detalji certifikacionog ciklusa</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Osnovne informacije</h5>
+    <!-- Audit Day Modal -->
+    <div class="modal fade" id="auditDayModal" tabindex="-1" aria-labelledby="auditDayModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="auditDayModalLabel">Dan Audita</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Osnovni podaci o auditu -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <h6 class="font-weight-bold">Podaci o auditu</h6>
+                <div class="mb-2">
+                  <strong>Kompanija:</strong>
+                  <span id="audit-company">Učitavanje...</span>
+                </div>
+                <div class="mb-2">
+                  <strong>Tip audita:</strong>
+                  <span id="audit-type">Učitavanje...</span>
+                </div>
+                <div class="mb-2">
+                  <strong>Status audita:</strong>
+                  <span id="audit-status">Učitavanje...</span>
+                </div>
               </div>
-              <div class="card-body">
-                <table class="table table-striped">
-                  <tbody>
-                    <tr>
-                      <th>Kompanija:</th>
-                      <td id="cycle-company"></td>
-                    </tr>
-                    <tr>
-                      <th>Tip audita:</th>
-                      <td id="cycle-audit-type"></td>
-                    </tr>
-                    <tr>
-                      <th>Status:</th>
-                      <td id="cycle-status"></td>
-                    </tr>
-                    <tr>
-                      <th>Planirani datum:</th>
-                      <td id="cycle-planned-date"></td>
-                    </tr>
-                    <tr>
-                      <th>Stvarni datum:</th>
-                      <td id="cycle-actual-date"></td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="col-md-6">
+                <h6 class="font-weight-bold">Datumi</h6>
+                <div class="mb-2">
+                  <strong>Planirani datum:</strong>
+                  <span id="audit-planned-date">Učitavanje...</span>
+                </div>
+                <div class="mb-2">
+                  <strong>Stvarni datum:</strong>
+                  <span id="audit-actual-date">Učitavanje...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Podaci o danu audita -->
+            <div class="row">
+              <div class="col-12">
+                <h6 class="font-weight-bold">Dan audita</h6>
+                <div class="mb-2">
+                  <strong>Planirano:</strong>
+                  <span id="audit-day-is-planned">Učitavanje...</span>
+                </div>
+                <div class="mb-2">
+                  <strong>Realizovano:</strong>
+                  <span id="audit-day-is-actual">Učitavanje...</span>
+                </div>
+                <div class="mb-2">
+                  <strong>Napomene:</strong>
+                  <div id="audit-day-notes" class="mt-1">Učitavanje...</div>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Informacije o ciklusu</h5>
-              </div>
-              <div class="card-body">
-                <table class="table table-striped">
-                  <tbody>
-                    <tr>
-                      <th>ID ciklusa:</th>
-                      <td id="cycle-id"></td>
-                    </tr>
-                    <tr>
-                      <th>Početak ciklusa:</th>
-                      <td id="cycle-start-date"></td>
-                    </tr>
-                    <tr>
-                      <th>Kraj ciklusa:</th>
-                      <td id="cycle-end-date"></td>
-                    </tr>
-                    <tr>
-                      <th>Status ciklusa:</th>
-                      <td id="cycle-cycle-status"></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-primary" id="editAuditDayBtn" disabled>Izmeni</button>
           </div>
         </div>
-        <div class="row mt-3">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">Napomene</h5>
-              </div>
-              <div class="card-body">
-                <p id="cycle-notes"></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-        <button type="button" class="btn btn-primary" id="viewCycleBtn">Pregledaj ciklus</button>
-        <button type="button" class="btn btn-success" id="editCycleAuditBtn">Izmeni audit</button>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Audit Day Modal -->
-<div class="modal fade" id="auditDayModal" tabindex="-1" aria-labelledby="auditDayModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="auditDayModalLabel">Dan Audita</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Osnovni podaci o auditu -->
-        <div class="row mb-4">
-          <div class="col-md-6">
-            <h6 class="font-weight-bold">Podaci o auditu</h6>
-            <div class="mb-2">
-              <strong>Kompanija:</strong>
-              <span id="audit-company">Učitavanje...</span>
-            </div>
-            <div class="mb-2">
-              <strong>Tip audita:</strong>
-              <span id="audit-type">Učitavanje...</span>
-            </div>
-            <div class="mb-2">
-              <strong>Status audita:</strong>
-              <span id="audit-status">Učitavanje...</span>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <h6 class="font-weight-bold">Datumi</h6>
-            <div class="mb-2">
-              <strong>Planirani datum:</strong>
-              <span id="audit-planned-date">Učitavanje...</span>
-            </div>
-            <div class="mb-2">
-              <strong>Stvarni datum:</strong>
-              <span id="audit-actual-date">Učitavanje...</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Podaci o danu audita -->
-        <div class="row">
-          <div class="col-12">
-            <h6 class="font-weight-bold">Dan audita</h6>
-            <div class="mb-2">
-              <strong>Planirano:</strong>
-              <span id="audit-day-is-planned">Učitavanje...</span>
-            </div>
-            <div class="mb-2">
-              <strong>Realizovano:</strong>
-              <span id="audit-day-is-actual">Učitavanje...</span>
-            </div>
-            <div class="mb-2">
-              <strong>Napomene:</strong>
-              <div id="audit-day-notes" class="mt-1">Učitavanje...</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-        <button type="button" class="btn btn-primary" id="editAuditDayBtn" disabled>Izmeni</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Nastavak extra_scripts bloka -->
-<!-- Učitavanje biblioteka sa provjerom grešaka -->
-<script>
-  // Funkcija za učitavanje skripte sa provjerom grešaka
-  function loadScript(url, callback) {
-    console.log('Učitavanje skripte: ' + url);
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    script.onload = function() {
-      console.log('Uspješno učitana skripta: ' + url);
-      if (callback) callback();
-    };
-    script.onerror = function() {
-      console.error('Greška pri učitavanju skripte: ' + url);
-    };
-    document.head.appendChild(script);
-  }
-
-    // Inicijalizacija kalendara nakon provere da su sve skripte učitane
-  // Inicijalizacija kalendara
-  if (typeof initializeCalendar === 'function') {
-    initializeCalendar();
-  }
-</script>
-<!-- jQuery UI -->
-<script src="{% static 'js/jquery-ui.min.js' %}"></script>
-
-<!-- Ensure Bootstrap JS is loaded for modals -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- CSRF Token for AJAX requests -->
-{% csrf_token %}
-
-<!-- URLs for AJAX requests -->
-<script>
-  // Define URLs for the JavaScript file
-  var eventsApiUrl = "{% url 'company:appointment_calendar_json' %}";
-  var contactsApiUrl = "{% url 'company:get_company_contacts' %}";
-  var appointmentCreateUrl = "{% url 'company:appointment_create' %}";
-  var appointmentUpdateUrl = "/company/appointments/0/update/";
-  var appointmentDeleteUrl = "/company/appointments/0/delete/";
-  var appointmentDetailUrl = "/company/appointments/0/";
-  var auditDetailUrl = "{% url 'company:audit_detail_json' 0 %}";
-  var auditUpdateUrl = "{% url 'company:cycle_audit_update' 0 %}";
-  // Base URL za certification_cycle_json koji će se koristiti sa dinamičkim ID-om
-  var certificationCycleJsonBaseUrl = "/company/api/cycles/";
-</script>
-
-<script>
-  // Funkcija za formatiranje datuma
-  function formatDate(dateString) {
-    if (!dateString) return 'Nije postavljen';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Neispravan datum';
-    
-    return date.toLocaleDateString('sr-RS', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  }
-
-  // Funkcija za proveru dostupnosti Bootstrap JS biblioteke
-  function isBootstrapAvailable() {
-    return (typeof $.fn.modal === 'function');
-  }
-
-  // Unapređena funkcija za sigurno otvaranje modala koja podržava i Bootstrap 4 i 5
-  function safeShowModal(modalId) {
-    console.log('safeShowModal pozvan za:', modalId);
-    
-    // Ukloni početni # ako postoji (za konzistentnost)
-    const modalIdClean = modalId.startsWith('#') ? modalId : '#' + modalId;
-    
-    // Dohvati element modala
-    const modalElement = document.querySelector(modalIdClean);
-    
-    if (!modalElement) {
-      console.error('Modal element nije pronađen:', modalIdClean);
-      return;
-    }
-    
-    try {
-      // Pokušaj otvoriti modal koristeći Bootstrap 5 API
-      if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal === 'function') {
-        console.log('Korišćenje Bootstrap 5 API za prikazivanje modala');
-        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        modal.show();
+    <!-- Nastavak extra_scripts bloka -->
+    <!-- Učitavanje biblioteka sa provjerom grešaka -->
+    <script>
+      // Funkcija za učitavanje skripte sa provjerom grešaka
+      function loadScript(url, callback) {
+        console.log('Učitavanje skripte: ' + url);
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onload = function () {
+          console.log('Uspješno učitana skripta: ' + url);
+          if (callback) callback();
+        };
+        script.onerror = function () {
+          console.error('Greška pri učitavanju skripte: ' + url);
+        };
+        document.head.appendChild(script);
       }
-      // Pokušaj otvoriti modal koristeći jQuery API (Bootstrap 4 ili ranije)
-      else if (typeof $ === 'function' && typeof $.fn.modal === 'function') {
-        console.log('Korišćenje jQuery Bootstrap API za prikazivanje modala');
-        $(modalIdClean).modal('show');
+
+      // Inicijalizacija kalendara nakon provere da su sve skripte učitane
+      // Inicijalizacija kalendara
+      if (typeof initializeCalendar === 'function') {
+        initializeCalendar();
       }
-      // Ako ništa od toga ne radi, probaj osnovni pristup
-      else {
-        console.log('Korišćenje osnovnog pristupa za prikazivanje modala');
-        // Popravi potencijalne probleme sa stilovima
-        fixModalStyles(modalElement);
-        
-        modalElement.style.display = 'block';
-        modalElement.classList.add('show');
-        document.body.classList.add('modal-open');
-        
-        // Kreiraj backdrop ako ne postoji
-        let backdrop = document.querySelector('.modal-backdrop');
-        if (!backdrop) {
-          backdrop = document.createElement('div');
-          backdrop.className = 'modal-backdrop fade show';
-          document.body.appendChild(backdrop);
+    </script>
+    <!-- jQuery UI -->
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+
+    <!-- Ensure Bootstrap JS is loaded for modals -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CSRF Token for AJAX requests -->
+    {% csrf_token %}
+
+    <!-- URLs for AJAX requests -->
+    <script>
+      // Define URLs for the JavaScript file
+      var eventsApiUrl = "{% url 'company:appointment_calendar_json' %}";
+      var contactsApiUrl = "{% url 'company:get_company_contacts' %}";
+      var appointmentCreateUrl = "{% url 'company:appointment_create' %}";
+      var appointmentUpdateUrl = "/company/appointments/0/update/";
+      var appointmentDeleteUrl = "/company/appointments/0/delete/";
+      var appointmentDetailUrl = "/company/appointments/0/";
+      var auditDetailUrl = "{% url 'company:audit_detail_json' 0 %}";
+      var auditUpdateUrl = "{% url 'company:cycle_audit_update' 0 %}";
+      // Base URL za certification_cycle_json koji će se koristiti sa dinamičkim ID-om
+      var certificationCycleJsonBaseUrl = "/company/api/cycles/";
+    </script>
+
+    <script>
+      // Funkcija za formatiranje datuma
+      function formatDate(dateString) {
+        if (!dateString) return 'Nije postavljen';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Neispravan datum';
+
+        return date.toLocaleDateString('sr-RS', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+      }
+
+      // Funkcija za proveru dostupnosti Bootstrap JS biblioteke
+      function isBootstrapAvailable() {
+        return (typeof $.fn.modal === 'function');
+      }
+
+      // Unapređena funkcija za sigurno otvaranje modala koja podržava i Bootstrap 4 i 5
+      function safeShowModal(modalId) {
+        console.log('safeShowModal pozvan za:', modalId);
+
+        // Ukloni početni # ako postoji (za konzistentnost)
+        const modalIdClean = modalId.startsWith('#') ? modalId : '#' + modalId;
+
+        // Dohvati element modala
+        const modalElement = document.querySelector(modalIdClean);
+
+        if (!modalElement) {
+          console.error('Modal element nije pronađen:', modalIdClean);
+          return;
+        }
+
+        try {
+          // Pokušaj otvoriti modal koristeći Bootstrap 5 API
+          if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal === 'function') {
+            console.log('Korišćenje Bootstrap 5 API za prikazivanje modala');
+            const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modal.show();
+          }
+          // Pokušaj otvoriti modal koristeći jQuery API (Bootstrap 4 ili ranije)
+          else if (typeof $ === 'function' && typeof $.fn.modal === 'function') {
+            console.log('Korišćenje jQuery Bootstrap API za prikazivanje modala');
+            $(modalIdClean).modal('show');
+          }
+          // Ako ništa od toga ne radi, probaj osnovni pristup
+          else {
+            console.log('Korišćenje osnovnog pristupa za prikazivanje modala');
+            // Popravi potencijalne probleme sa stilovima
+            fixModalStyles(modalElement);
+
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open');
+
+            // Kreiraj backdrop ako ne postoji
+            let backdrop = document.querySelector('.modal-backdrop');
+            if (!backdrop) {
+              backdrop = document.createElement('div');
+              backdrop.className = 'modal-backdrop fade show';
+              document.body.appendChild(backdrop);
+            }
+          }
+        } catch (error) {
+          console.error('Greška pri otvaranju modala:', error);
         }
       }
-    } catch (error) {
-      console.error('Greška pri otvaranju modala:', error);
-    }
-  }
-  
-  // Funkcija za popravljanje stilova modala
-  function fixModalStyles(modalElement) {
-    if (!modalElement) return;
-    
-    // Osiguraj da modal ima ispravne klase
-    if (!modalElement.classList.contains('fade')) {
-      modalElement.classList.add('fade');
-    }
-    
-    // Resetuj inline stilove koji bi mogli uzrokovati probleme
-    modalElement.style.paddingRight = '';
-    modalElement.style.overflow = '';
-    
-    // Postavi z-index da bude ispred drugih elemenata
-    modalElement.style.zIndex = '1050';
-    
-    // Ukloni aria-hidden="true" ako postoji
-    if (modalElement.getAttribute('aria-hidden') === 'true') {
-      modalElement.setAttribute('aria-hidden', 'false');
-    }
-  }
-  
-  // Funkcija za otvaranje modala za detalje audit dana
-  function openAuditDayModal(event) {
-    console.log('Opening audit day modal for event:', event);
-    
-    // Detaljno logovanje event objekta za dijagnostiku
-    console.log('Event object details:');
-    console.log('- title:', event.title);
-    console.log('- id:', event.id);
-    console.log('- start:', event.start);
-    console.log('- end:', event.end);
-    console.log('- extendedProps:', event.extendedProps);
-    
-    try {
-      // Prikaži modal sigurno
-      safeShowModal('#auditDayModal');
-      
-      // Postavi učitavanje za sva polja
-      $('#audit-day-date').text('Učitavanje...');
-      $('#audit-day-is-planned').text('Učitavanje...');
-      $('#audit-day-is-actual').text('Učitavanje...');
-      $('#audit-day-notes').text('Učitavanje...');
-      $('#audit-day-audit-id').text('Učitavanje...');
-      
-      // Dobavi podatke iz event objekta s više mogućih izvora
-      const eventProps = event.extendedProps || {};
-      
-      // Pokušaj izvući ID audita iz više mogućih izvora
-      const auditId = eventProps.audit_id || 
-                      eventProps.id || 
-                      (event.id ? event.id.toString().split('_').pop() : null) || 
-                      (eventProps.url ? eventProps.url.split('/').filter(Boolean).pop() : null);
-      
-      console.log('Extracted Audit ID:', auditId);
-      
-      if (!auditId) {
-        console.error('Nije pronađen ID audita u event objektu');
-        $('#audit-day-date').text('Greška: Nije pronađen ID audita');
-        return;
-      }
-      
-      // Koristimo audit_id za dobavljanje audit_day_id preko AJAX-a
-      const ajaxUrl = `/company/api/audit-days/by-audit/${auditId}/`;
-      console.log('AJAX URL for audit day data:', ajaxUrl);
-      
-      $.ajax({
-        url: ajaxUrl,
-        dataType: 'json',
-        timeout: 10000, // 10 sekundi timeout
-        beforeSend: function() {
-          console.log('Sending AJAX request for audit day data...');
-        },
-        success: function(data) {
-          console.log('Audit day data received:', data);
-          if (data && data.id) {
-            const auditDayId = data.id;
-            updateAuditDayModal(auditDayId, auditId, event, eventProps);
-          } else {
-            console.error('Nema ID-a audit dana u odgovoru');
-            $('#audit-day-date').text('Greška: Nije pronađen ID audit dana u odgovoru');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error('Greška prilikom dohvatanja podataka o audit danu:', error);
-          $('#audit-day-date').text('Greška pri dohvatanju podataka');
-        }
-      });
-      
-  // Funkcija za ažuriranje audit day modala nakon dobijanja ID-a
-  function updateAuditDayModal(auditDayId, auditId, event, eventProps) {
-    // Popuni osnovne podatke iz event objekta
-    $('#audit-day-date').text(formatDate(event.start) || 'N/A');
-    $('#audit-day-is-planned').text(eventProps.auditStatus === 'planned' ? 'Da' : 'Ne');
-    $('#audit-day-is-actual').text(eventProps.auditStatus === 'completed' ? 'Da' : 'Ne');
-    $('#audit-day-notes').text(eventProps.notes || 'Nema napomena');
-    $('#audit-day-audit-id').text(auditId || 'N/A');
-    
-    // Postavi URL za dugme za pregled audita
-    $('#viewAuditBtn').off('click').on('click', function() {
-      if (auditId) {
-        const auditUrl = `/company/audits/${auditId}/`;
-        console.log('Navigating to audit URL:', auditUrl);
-        window.location.href = auditUrl;
-      } else {
-        alert('ID audita nije dostupan.');
-      }
-    });
-    
-    // Postavi URL za dugme za izmenu audit dana
-    $('#editAuditDayBtn').off('click').on('click', function() {
-      if (auditDayId) {
-        const auditDayUrl = `/company/audit-days/${auditDayId}/update/`;
-        console.log('Navigating to audit day update URL:', auditDayUrl);
-        window.location.href = auditDayUrl;
-      } else {
-        alert('ID audit dana nije dostupan.');
-      }
-    });
-  }
-    } catch (e) {
-      console.error('Greška pri otvaranju AuditDay modala:', e);
-    }
-  }
 
-  // Funkcija za otvaranje modala za detalje certifikacionog ciklusa
-  function openCycleAuditModal(event) {
-    console.log('Opening cycle audit modal for event:', event);
-    
-    // Detaljno logovanje event objekta za dijagnostiku
-    console.log('Event object details:');
-    console.log('- title:', event.title);
-    console.log('- id:', event.id);
-    console.log('- start:', event.start);
-    console.log('- end:', event.end);
-    console.log('- extendedProps:', event.extendedProps);
-    
-    try {
-      // Prikaži modal sigurno
-      safeShowModal('#cycleAuditModal');
-      
-      // Postavi učitavanje za sva polja
-      $('#cycle-company').text('Učitavanje...');
-      $('#cycle-audit-type').text('Učitavanje...');
-      $('#cycle-status').text('Učitavanje...');
-      $('#cycle-planned-date').text('Učitavanje...');
-      $('#cycle-actual-date').text('Učitavanje...');
-      $('#cycle-id').text('Učitavanje...');
-      $('#cycle-start-date').text('Učitavanje...');
-      $('#cycle-end-date').text('Učitavanje...');
-      $('#cycle-cycle-status').text('Učitavanje...');
-      $('#cycle-notes').text('Učitavanje...');
-      
-      // Dobavi podatke iz event objekta s više mogućih izvora
-      const eventProps = event.extendedProps || {};
-      
-      // Pokušaj izvući ID ciklusa iz više mogućih izvora
-      const cycleId = eventProps.cycle_id || 
-                     eventProps.id || 
-                     (event.id ? event.id.toString().split('_')[0] : null) || 
-                     (eventProps.url ? eventProps.url.split('/').filter(Boolean)[2] : null);
-      
-      console.log('Extracted Cycle ID:', cycleId);
-      console.log('Original Event ID:', event.id);
-      
-      if (!cycleId) {
-        console.error('Nije pronađen ID ciklusa u event objektu');
-        $('#cycle-company').text('Greška: Nije pronađen ID ciklusa');
-        return;
-      }
-      
-      // Popuni osnovne podatke iz event objekta
-      $('#cycle-company').text(eventProps.company || 'N/A');
-      $('#cycle-audit-type').text(eventProps.type || 'N/A');
-      $('#cycle-status').text(eventProps.status || 'N/A');
-      $('#cycle-id').text(cycleId || 'N/A');
-      $('#cycle-notes').text(eventProps.notes || 'Nema napomena');
-      
-      // Postavi URL za dugme za pregled ciklusa
-      $('#viewCycleBtn').off('click').on('click', function() {
-        const cycleUrl = `/company/cycles/${cycleId}/`;
-        console.log('Navigating to cycle URL:', cycleUrl);
-        window.location.href = cycleUrl;
-      });
-      
-      // Postavi URL za dugme za izmenu audita
-      let auditId;
-      try {
-        auditId = event.id.split('_').pop();
-        console.log('Extracted audit ID:', auditId);
-      } catch (e) {
-        console.error('Error extracting audit ID:', e);
-        auditId = '';
-      }
-      
-      $('#editCycleAuditBtn').off('click').on('click', function() {
-        const auditUrl = `/company/audits/${auditId}/update/`;
-        console.log('Navigating to audit update URL:', auditUrl);
-        window.location.href = auditUrl;
-      });
-      
-      // Proveri da li je URL za dohvatanje podataka o ciklusu dostupan
-      if (!certificationCycleJsonUrl) {
-        console.error('certificationCycleJsonUrl nije definisan');
-        $('#cycle-start-date').text('Greška: URL nije dostupan');
-        $('#cycle-end-date').text('Greška: URL nije dostupan');
-        $('#cycle-cycle-status').text('Greška: URL nije dostupan');
-        return;
-      }
-      
-      const ajaxUrl = certificationCycleJsonUrl.replace('0', cycleId);
-      console.log('AJAX URL for cycle data:', ajaxUrl);
-      
-      // Dohvati dodatne podatke o ciklusu preko AJAX-a
-      $.ajax({
-        url: ajaxUrl,
-        dataType: 'json',
-        timeout: 10000, // 10 sekundi timeout
-        beforeSend: function() {
-          console.log('Sending AJAX request for cycle data...');
-        },
-        success: function(data) {
-          console.log('Cycle data received:', data);
-          
-          if (data && data.cycle) {
-            try {
-              // Popuni podatke o ciklusu
-              $('#cycle-start-date').text(formatDate(data.cycle.start_date));
-              $('#cycle-end-date').text(formatDate(data.cycle.end_date));
-              
-              // Proveri da li postoji status_display, ako ne, koristi status direktno
-              if (data.cycle.status_display) {
-                $('#cycle-cycle-status').text(data.cycle.status_display);
-              } else if (data.cycle.status) {
-                // Mapiraj status na čitljiv tekst
-                const statusMap = {
-                  'active': 'Aktivan',
-                  'completed': 'Završen',
-                  'cancelled': 'Otkazan'
-                };
-                $('#cycle-cycle-status').text(statusMap[data.cycle.status] || data.cycle.status);
-              } else {
-                $('#cycle-cycle-status').text('N/A');
-              }
-              
-              // Popuni podatke o auditu
-              if (data.audit) {
-                $('#cycle-planned-date').text(formatDate(data.audit.planned_date) || 'Nije postavljen');
-                $('#cycle-actual-date').text(formatDate(data.audit.actual_date) || 'Nije postavljen');
-              } else {
-                console.warn('Nema podataka o auditu u odgovoru');
-                $('#cycle-planned-date').text('Nije dostupno');
-                $('#cycle-actual-date').text('Nije dostupno');
-              }
-            } catch (e) {
-              console.error('Greška pri popunjavanju podataka o ciklusu:', e);
-              $('#cycle-start-date').text('Greška pri obradi podataka');
-              $('#cycle-end-date').text('Greška pri obradi podataka');
-              $('#cycle-cycle-status').text('Greška pri obradi podataka');
-            }
-          } else {
-            console.error('Nema podataka o ciklusu u odgovoru');
-            $('#cycle-start-date').text('Nije dostupno');
-            $('#cycle-end-date').text('Nije dostupno');
-            $('#cycle-cycle-status').text('Nije dostupno');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error('Greška prilikom dohvatanja podataka o ciklusu:', error);
-          console.error('Status:', status);
-          console.error('Response text:', xhr.responseText);
-          
-          let errorMsg = 'Greška prilikom dohvatanja podataka';
-          
-          try {
-            const response = JSON.parse(xhr.responseText);
-            if (response && response.error) {
-              errorMsg = response.error;
-            }
-          } catch (e) {
-            console.error('Greška prilikom parsiranja odgovora:', e);
-          }
-          
-          $('#cycle-start-date').text('Greška');
-          $('#cycle-end-date').text('Greška');
-          $('#cycle-cycle-status').text('Greška');
-          alert('Greška prilikom dohvatanja podataka o ciklusu: ' + errorMsg);
-        }
-      });
-    } catch (e) {
-      console.error('Greška pri otvaranju CycleAudit modala:', e);
-    }
-  }
+      // Funkcija za popravljanje stilova modala
+      function fixModalStyles(modalElement) {
+        if (!modalElement) return;
 
-  // Funkcija za otvaranje modala za detalje termina
-  function openAppointmentModal(event) {
-  try {
-    console.log('Opening appointment modal for event:', event);
-    
-    // Detaljno logovanje event objekta za dijagnostiku
-    console.log('Event object details:');
-    console.log('- title:', event.title);
-    console.log('- id:', event.id);
-    console.log('- start:', event.start);
-    console.log('- end:', event.end);
-    console.log('- extendedProps:', event.extendedProps);
-    
-    // Attempt to extract appointment ID from event with more fallbacks
-    const appointmentId = event.extendedProps?.appointment_id || 
-                         event.extendedProps?.id || 
-                         event.id || 
-                         (event.extendedProps?.url ? event.extendedProps.url.split('/').filter(Boolean).pop() : null);
-    
-    console.log('Extracted Appointment ID:', appointmentId);
-    
-    // Set loading placeholders
-    document.getElementById('appointment-title').textContent = 'Učitavanje...';
-    document.getElementById('appointment-company').textContent = 'Učitavanje...';
-    document.getElementById('appointment-type').textContent = 'Učitavanje...';
-    document.getElementById('appointment-start').textContent = 'Učitavanje...';
-    document.getElementById('appointment-end').textContent = 'Učitavanje...';
-    document.getElementById('appointment-location').textContent = 'Učitavanje...';
-    document.getElementById('appointment-status').textContent = 'Učitavanje...';
-    document.getElementById('appointment-contacts').textContent = 'Učitavanje...';
-    document.getElementById('appointment-description').textContent = 'Učitavanje...';
-    
-    if (!appointmentId) {
-        document.getElementById('appointment-title').textContent = 'Greška: Nije pronađen ID termina';
-        document.getElementById('appointment-company').textContent = 'Učitavanje...'; 
-        document.getElementById('appointment-type').textContent = 'Učitavanje...';
-        document.getElementById('appointment-start').textContent = 'Učitavanje...';
-        document.getElementById('appointment-end').textContent = 'Učitavanje...';
-        document.getElementById('appointment-location').textContent = 'Učitavanje...';
-        document.getElementById('appointment-status').textContent = 'Učitavanje...';
-        document.getElementById('appointment-contacts').textContent = 'Učitavanje...';
-        document.getElementById('appointment-description').textContent = 'Učitavanje...';
-        return;
-    }
-    
-    // Fetch appointment data (implement this according to your backend API)
-    // For now, let's just populate with data from the event
-    document.getElementById('appointment-title').textContent = event.title || 'Nema naslova';
-    document.getElementById('appointment-company').textContent = event.extendedProps?.company || 'Nepoznata kompanija';
-    document.getElementById('appointment-type').textContent = event.extendedProps?.appointmentType || 'Sastanak';
-    document.getElementById('appointment-start').textContent = formatDate(event.start) || 'Nepoznato';
-    document.getElementById('appointment-end').textContent = formatDate(event.end) || 'Nepoznato';
-    document.getElementById('appointment-location').textContent = event.extendedProps?.location || 'Nije navedeno';
-    document.getElementById('appointment-status').textContent = event.extendedProps?.status || 'Zakazano';
-    document.getElementById('appointment-contacts').textContent = event.extendedProps?.contacts || 'Nema kontakata';
-    document.getElementById('appointment-description').textContent = event.extendedProps?.description || 'Nema opisa';
-    
-    // Set up the edit button directly with a href attribute
-    const editButton = document.getElementById('editAppointmentBtn');
-    
-    // Set up data and href attributes for the edit button
-    const editUrl = `/company/appointments/${appointmentId}/edit/`;
-    
-    // Convert the button to a proper link that looks like a button
-    const editLink = document.createElement('a');
-    editLink.setAttribute('id', 'editAppointmentBtn');
-    editLink.setAttribute('href', editUrl);
-    editLink.setAttribute('class', editButton.getAttribute('class'));
-    editLink.setAttribute('data-bs-dismiss', 'modal'); // Add this to close the modal
-    editLink.textContent = 'Izmeni';
-    editLink.style.textDecoration = 'none';
-    
-    // Replace the button with the link
-    editButton.parentNode.replaceChild(editLink, editButton);
-    
-    // Log the change
-    console.log('Set up edit link to URL:', editUrl);
-  } catch (e) {
-    console.error('Greška pri otvaranju Appointment modala:', e);
-  }
-}
-  // Duplikat openAuditDayModal funkcije je uklonjen
-  
-  function initializeCalendar() {
-    console.log('Pokretanje inicijalizacije kalendara (v6.1.18)...');
-    
-    // Provera da li je jQuery dostupan
-    if (typeof jQuery === 'undefined') {
-      console.error('jQuery nije dostupan!');
-      return;
-    }
-    
-    // Provera da li je FullCalendar dostupan
-    if (typeof FullCalendar === 'undefined') {
-      console.error('FullCalendar nije dostupan!');
-      return;
-    }
-    
-    // Provera da li postoji element kalendara
-    var calendarEl = document.getElementById('calendar');
-    if (!calendarEl) {
-      console.error('Element kalendara ne postoji!');
-      return;
-    }
-    
-    console.log('Inicijalizacija kalendara...');
-    
-    // Inicijalizacija kalendara - za verziju 6.1.18
-    try {
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        locale: 'sr',
-        initialView: 'dayGridMonth',
-        height: 'auto',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        // U bundlovanoj verziji FullCalendar-a, pluginovi su već uključeni
-        // Nije potrebno eksplicitno navođenje pluginova
-        themeSystem: 'bootstrap5',
-        events: eventsApiUrl,
-        eventClick: function(info) {
-          console.log('=== EVENT CLICK HANDLER POKRENUT (v6.1.18) ===');
-          console.log('Event clicked:', info.event);
-          
-          // Prevent default action and stop propagation
-          if (info.jsEvent) {
-            info.jsEvent.preventDefault();
-            info.jsEvent.stopPropagation();
-          }
-          
-          // Provera tipa događaja - detaljna dijagnostika
-          console.log('=== DETALJNA DIJAGNOSTIKA DOGAĐAJA ===');
-          console.log('Info objekat:', info);
-          console.log('Info.event:', info.event);
-          console.log('Event extended props:', info.event.extendedProps);
-          
-          // Provera da li extendedProps postoje
-          if (!info.event.extendedProps) {
-            console.error('GREŠKA: extendedProps ne postoje na event objektu');
-          }
-          
-          // Dobavljanje tipa događaja iz dostupnih informacija
-          var eventType = info.event.extendedProps?.type || info.event.extendedProps?.eventType;
-          
-          // Ako tip nije pronađen, pokušajmo prepoznati tip iz naslova i drugih atributa
-          if (!eventType) {
-            const title = info.event.title || '';
-            const id = info.event.id || '';
-            
-            console.log('ANALIZA TIPA DOGAĐAJA ZA:', title);
-            console.log('ID događaja za analizu:', id);
-            
-            // POSEBAN SLUČAJ: Prva nadzorna provera - Dan audita
-            if (title === 'Prva nadzorna provera - Dan audita') {
-              eventType = 'audit_day';
-              console.log('POGODAK: Pronađen specifičan slučaj "Prva nadzorna provera - Dan audita"');
-            }
-            // Provera za audit_day događaje
-            else if (title.toLowerCase().includes('dan audita') || 
-                title.toLowerCase().includes('provera') || 
-                title.toLowerCase().includes('nadzorna') || 
-                id.includes('audit_day') || 
-                id.includes('audit-day') ||
-                id.includes('audit')) {
-              eventType = 'audit_day';
-              console.log('Tip događaja određen iz naslova/ID-ja kao audit_day');
-            }
-            // Provera za cycle_audit događaje
-            else if (title.toLowerCase().includes('ciklus') || 
-                     title.toLowerCase().includes('certifikacijski') || 
-                     id.includes('cycle') || 
-                     id.includes('cert_cycle')) {
-              eventType = 'cycle_audit';
-              console.log('Tip događaja određen iz naslova/ID-ja kao cycle_audit');
-            }
-            // Provera za appointment događaje
-            else if (title.toLowerCase().includes('sastanak') || 
-                     title.toLowerCase().includes('termin') || 
-                     id.includes('appointment') || 
-                     id.includes('meeting')) {
-              eventType = 'appointment';
-              console.log('Tip događaja određen iz naslova/ID-ja kao appointment');
-            }
-          }
-          
-          console.log('Detektovan tip događaja:', eventType);
-          
-          // Ispitaj dodatne properties da vidimo šta je dostupno
-          console.log('Svi dostupni propertiji na event objektu:', Object.keys(info.event));
-          console.log('Naslov događaja:', info.event.title);
-          console.log('ID događaja:', info.event.id);
-          
-          // Otvaranje modala na osnovu tipa događaja - sa dodatnim proverama i rukovanjem greškama
-          try {
-            console.log('Pokušavam otvoriti modal za tip:', eventType);
-            
-            // Ako nemamo tip događaja, pokušajmo zaključiti iz naslova
-            if (!eventType && info.event.title === 'Sastanak') {
-              console.log('Naslov je "Sastanak", pretpostavljam da je tip appointment');
-              eventType = 'appointment';
-            }
-            
-            if (eventType === 'audit_day' || eventType === 'audit-day') {
-              console.log('Otvaranje audit_day modala...');
-              // Provera da li element postoji
-              const modalElement = document.getElementById('auditDayModal'); // Changed from auditDetailModal to auditDayModal
-              if (!modalElement) {
-                console.error('Modal auditDayModal nije pronađen');
-                alert('Greška: Modal za audit nije pronađen. Kontaktirajte administratora.');
-                return;
-              }
-              
-              // Otvaranje modala
-              try {
-                const auditModal = new bootstrap.Modal(modalElement);
-                auditModal.show();
-                console.log('Modal auditDayModal je uspešno otvoren');
-                
-                // Popunjavanje podataka sa odlaganjem
-                setTimeout(() => {
-                  try {
-                    openAuditDayModal(info.event);
-                  } catch (err) {
-                    console.error('Greška prilikom popunjavanja audit modala:', err);
-                  }
-                }, 100);
-              } catch (modalError) {
-                console.error('Greška prilikom otvaranja audit modala:', modalError);
-                // Pokušaj alternativni način
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                document.body.classList.add('modal-open');
-              }
-            } else if (eventType === 'cycle_audit' || eventType === 'cycle-audit') {
-              console.log('Otvaranje cycle_audit modala...');
-              // Provera da li element postoji
-              const modalElement = document.getElementById('cycleAuditModal');
-              if (!modalElement) {
-                console.error('Element modala #cycleAuditModal nije pronađen!');
-                alert('Greška: Modal za ciklus audita nije pronađen. Kontaktirajte administratora.');
-                return;
-              }
-              
-              // Otvaranje modala
-              try {
-                const cycleModal = new bootstrap.Modal(modalElement);
-                cycleModal.show();
-                console.log('Modal cycleAuditModal je uspešno otvoren');
-                
-                // Popunjavanje podataka sa odlaganjem
-                setTimeout(() => {
-                  try {
-                    openCycleAuditModal(info.event);
-                  } catch (err) {
-                    console.error('Greška prilikom popunjavanja cycle modala:', err);
-                  }
-                }, 100);
-              } catch (modalError) {
-                console.error('Greška prilikom otvaranja cycle modala:', modalError);
-                // Pokušaj alternativni način
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                document.body.classList.add('modal-open');
-              }
-            } else if (eventType === 'appointment' || info.event.title === 'Sastanak') {
-              console.log('Otvaranje appointment modala...');
-              // Provera da li element postoji
-              const modalElement = document.getElementById('appointmentDetailModal');
-              if (!modalElement) {
-                console.error('Element modala #appointmentDetailModal nije pronađen!');
-                alert('Greška: Modal za sastanak nije pronađen. Kontaktirajte administratora.');
-                return;
-              }
-              
-              // Otvaranje modala
-              try {
-                const appointmentModal = new bootstrap.Modal(modalElement);
-                appointmentModal.show();
-                console.log('Modal appointmentDetailModal je uspešno otvoren');
-                
-                // Popunjavanje podataka sa odlaganjem
-                setTimeout(() => {
-                  try {
-                    openAppointmentModal(info.event);
-                  } catch (err) {
-                    console.error('Greška prilikom popunjavanja appointment modala:', err);
-                  }
-                }, 100);
-              } catch (modalError) {
-                console.error('Greška prilikom otvaranja appointment modala:', modalError);
-                // Pokušaj alternativni način
-                modalElement.classList.add('show');
-                modalElement.style.display = 'block';
-                document.body.classList.add('modal-open');
-              }
-            } else {
-              console.warn('Nepoznat tip događaja:', eventType);
-              alert(`Nepoznat tip događaja: ${eventType || 'nije definisan'}`);
-            }          
-          } catch (error) {
-            console.error('Opšta greška pri otvaranju modala:', error);
-            alert('Došlo je do greške prilikom otvaranja modala. Molimo pokušajte ponovo.');
-          }
-          
-          // Multiple ways to prevent default navigation
-          if (info.jsEvent && typeof info.jsEvent.preventDefault === 'function') {
-            info.jsEvent.preventDefault();
-          }
-          if (info.el && info.el.tagName === 'A') {
-            info.el.setAttribute('href', 'javascript:void(0);');
-          }
-          return false; // Prevent default
-        },
-        eventTimeFormat: { // Formatiranje vremena događaja
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
-        },
-        editable: true,
-        eventStartEditable: true,
-        eventDurationEditable: false, // Onemogućavamo promenu trajanja događaja
-        
-        // Handler za drag-and-drop događaja
-        eventDrop: function(info) {
-          const event = info.event;
-          const eventType = event.extendedProps.type || event.extendedProps.eventType;
-          
-          console.log('Događaj premešten:', event);
-          console.log('Event extended props:', event.extendedProps);
-          
-          // Određivanje ID-a događaja u zavisnosti od tipa
-          let eventId;
-          if (eventType === 'audit_day') {
-            eventId = event.extendedProps.audit_day_id || event.id;
-          } else if (eventType === 'appointment') {
-            eventId = event.extendedProps.appointment_id || event.id;
-          } else {
-            eventId = event.id;
-          }
-          
-          const newDate = event.start;
-          
-          console.log('Događaj premešten - detalji:', {
-            eventType: eventType,
-            eventId: eventId,
-            newDate: newDate
-          });
-          
-          // Provera da li je dozvoljeno pomeranje ovog tipa događaja
-          if (!eventType) {
-            console.warn('Nepoznat tip događaja:', eventType);
-            info.revert(); // Vrati događaj na originalnu poziciju
+        // Osiguraj da modal ima ispravne klase
+        if (!modalElement.classList.contains('fade')) {
+          modalElement.classList.add('fade');
+        }
+
+        // Resetuj inline stilove koji bi mogli uzrokovati probleme
+        modalElement.style.paddingRight = '';
+        modalElement.style.overflow = '';
+
+        // Postavi z-index da bude ispred drugih elemenata
+        modalElement.style.zIndex = '1050';
+
+        // Ukloni aria-hidden="true" ako postoji
+        if (modalElement.getAttribute('aria-hidden') === 'true') {
+          modalElement.setAttribute('aria-hidden', 'false');
+        }
+      }
+
+      // Funkcija za otvaranje modala za detalje audit dana
+      function openAuditDayModal(event) {
+        console.log('Opening audit day modal for event:', event);
+
+        // Detaljno logovanje event objekta za dijagnostiku
+        console.log('Event object details:');
+        console.log('- title:', event.title);
+        console.log('- id:', event.id);
+        console.log('- start:', event.start);
+        console.log('- end:', event.end);
+        console.log('- extendedProps:', event.extendedProps);
+
+        try {
+          // Prikaži modal sigurno
+          safeShowModal('#auditDayModal');
+
+          // Postavi učitavanje za sva polja
+          $('#audit-day-date').text('Učitavanje...');
+          $('#audit-day-is-planned').text('Učitavanje...');
+          $('#audit-day-is-actual').text('Učitavanje...');
+          $('#audit-day-notes').text('Učitavanje...');
+          $('#audit-day-audit-id').text('Učitavanje...');
+
+          // Dobavi podatke iz event objekta s više mogućih izvora
+          const eventProps = event.extendedProps || {};
+
+          // Pokušaj izvući ID audita iz više mogućih izvora
+          const auditId = eventProps.audit_id ||
+            eventProps.id ||
+            (event.id ? event.id.toString().split('_').pop() : null) ||
+            (eventProps.url ? eventProps.url.split('/').filter(Boolean).pop() : null);
+
+          console.log('Extracted Audit ID:', auditId);
+
+          if (!auditId) {
+            console.error('Nije pronađen ID audita u event objektu');
+            $('#audit-day-date').text('Greška: Nije pronađen ID audita');
             return;
           }
-          
-          // Podržani tipovi događaja za drag-and-drop
-          const supportedTypes = ['audit_day', 'cycle_audit', 'appointment'];
-          if (!supportedTypes.includes(eventType)) {
-            console.warn('Pomeranje ovog tipa događaja nije podržano:', eventType);
-            info.revert(); // Vrati događaj na originalnu poziciju
-            return;
-          }
-          
-          // Prikaži modal za potvrdu promene datuma
-          showDateChangeConfirmationModal(event, newDate, function(confirmed) {
-            if (confirmed) {
-              // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-              updateEventDate(eventType, eventId, newDate);
-            } else {
-              // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
-              info.revert();
+
+          // Koristimo audit_id za dobavljanje audit_day_id preko AJAX-a
+          const ajaxUrl = `/company/api/audit-days/by-audit/${auditId}/`;
+          console.log('AJAX URL for audit day data:', ajaxUrl);
+
+          $.ajax({
+            url: ajaxUrl,
+            dataType: 'json',
+            timeout: 10000, // 10 sekundi timeout
+            beforeSend: function () {
+              console.log('Sending AJAX request for audit day data...');
+            },
+            success: function (data) {
+              console.log('Audit day data received:', data);
+              if (data && data.id) {
+                const auditDayId = data.id;
+                updateAuditDayModal(auditDayId, auditId, event, eventProps);
+              } else {
+                console.error('Nema ID-a audit dana u odgovoru');
+                $('#audit-day-date').text('Greška: Nije pronađen ID audit dana u odgovoru');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('Greška prilikom dohvatanja podataka o audit danu:', error);
+              $('#audit-day-date').text('Greška pri dohvatanju podataka');
             }
           });
+
+          // Funkcija za ažuriranje audit day modala nakon dobijanja ID-a
+          function updateAuditDayModal(auditDayId, auditId, event, eventProps) {
+            // Popuni osnovne podatke iz event objekta
+            $('#audit-day-date').text(formatDate(event.start) || 'N/A');
+            $('#audit-day-is-planned').text(eventProps.auditStatus === 'planned' ? 'Da' : 'Ne');
+            $('#audit-day-is-actual').text(eventProps.auditStatus === 'completed' ? 'Da' : 'Ne');
+            $('#audit-day-notes').text(eventProps.notes || 'Nema napomena');
+            $('#audit-day-audit-id').text(auditId || 'N/A');
+
+            // Postavi URL za dugme za pregled audita
+            $('#viewAuditBtn').off('click').on('click', function () {
+              if (auditId) {
+                const auditUrl = `/company/audits/${auditId}/`;
+                console.log('Navigating to audit URL:', auditUrl);
+                window.location.href = auditUrl;
+              } else {
+                alert('ID audita nije dostupan.');
+              }
+            });
+
+            // Postavi URL za dugme za izmenu audit dana
+            $('#editAuditDayBtn').off('click').on('click', function () {
+              if (auditDayId) {
+                const auditDayUrl = `/company/audit-days/${auditDayId}/update/`;
+                console.log('Navigating to audit day update URL:', auditDayUrl);
+                window.location.href = auditDayUrl;
+              } else {
+                alert('ID audit dana nije dostupan.');
+              }
+            });
+          }
+        } catch (e) {
+          console.error('Greška pri otvaranju AuditDay modala:', e);
         }
-      });
-      
-      calendar.render();
-      console.log('Kalendar je uspešno inicijalizovan!');
-    } catch (error) {
-      console.error('Greška prilikom inicijalizacije kalendara:', error);
-    }
-  }
-  // Druga verzija openAppointmentModal funkcije je uklonjena jer je duplirana
-  
-  // Funkcija za ažuriranje svih Bootstrap 4 modalnih kontrola na Bootstrap 5
-  function modernizeBootstrapModals() {
-    console.log('Modernizacija Bootstrap modalnih kontrola...');
-    
-    // Ažuriranje close dugmadi u header sekcijama
-    document.querySelectorAll('.modal .modal-header button.close[data-dismiss="modal"]').forEach(button => {
-      console.log('Ažuriranje close dugmeta u headeru:', button);
-      button.className = 'btn-close';
-      button.removeAttribute('data-dismiss');
-      button.setAttribute('data-bs-dismiss', 'modal');
-      button.innerHTML = '';
-    });
-    
-    // Ažuriranje dugmadi za zatvaranje u footer sekcijama
-    document.querySelectorAll('.modal .modal-footer button[data-dismiss="modal"]').forEach(button => {
-      console.log('Ažuriranje dugmeta u footeru:', button);
-      button.removeAttribute('data-dismiss');
-      button.setAttribute('data-bs-dismiss', 'modal');
-    });
-  }
-  
-  // Automatsko ažuriranje kada se stranica učita
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(modernizeBootstrapModals, 500);
-    
-    // Add event listener for the viewCycleBtn
-    const viewCycleBtn = document.getElementById('viewCycleBtn');
-    if (viewCycleBtn) {
-      viewCycleBtn.addEventListener('click', function() {
-        // Get the cycle ID and navigate to the cycle details page
-        const cycleId = document.getElementById('cycle-id').textContent;
-        if (cycleId) {
-          console.log('Navigating to cycle details:', cycleId);
-          // Use history.pushState to avoid full page reload if possible
-          const url = `/company/cycles/${cycleId}/`;
-          // Close modal before navigation
-          if (typeof bootstrap !== 'undefined') {
-            const modalElement = document.querySelector('#cycleAuditModal');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-              modal.hide();
-              // Wait for modal to close before navigating
-              setTimeout(() => {
+      }
+
+      // Funkcija za otvaranje modala za detalje certifikacionog ciklusa
+      function openCycleAuditModal(event) {
+        console.log('Opening cycle audit modal for event:', event);
+
+        // Detaljno logovanje event objekta za dijagnostiku
+        console.log('Event object details:');
+        console.log('- title:', event.title);
+        console.log('- id:', event.id);
+        console.log('- start:', event.start);
+        console.log('- end:', event.end);
+        console.log('- extendedProps:', event.extendedProps);
+
+        try {
+          // Prikaži modal sigurno
+          safeShowModal('#cycleAuditModal');
+
+          // Postavi učitavanje za sva polja
+          $('#cycle-company').text('Učitavanje...');
+          $('#cycle-audit-type').text('Učitavanje...');
+          $('#cycle-status').text('Učitavanje...');
+          $('#cycle-planned-date').text('Učitavanje...');
+          $('#cycle-actual-date').text('Učitavanje...');
+          $('#cycle-id').text('Učitavanje...');
+          $('#cycle-start-date').text('Učitavanje...');
+          $('#cycle-end-date').text('Učitavanje...');
+          $('#cycle-cycle-status').text('Učitavanje...');
+          $('#cycle-notes').text('Učitavanje...');
+
+          // Dobavi podatke iz event objekta s više mogućih izvora
+          const eventProps = event.extendedProps || {};
+
+          // Stabilan ID ciklusa – dolazi iz extendedProps
+          const cycleId = eventProps.cycle_id || eventProps.certification_cycle_id || null;
+          // Stabilan ID audita – koristi se za edit dugme
+          const auditId = eventProps.audit_id || (event.id ? event.id.toString().split('_').pop() : null);
+
+          console.log('Extracted Cycle ID:', cycleId);
+          console.log('Extracted Audit ID:', auditId);
+          console.log('Original Event ID:', event.id);
+
+          if (!cycleId) {
+            console.error('Nije pronađen ID ciklusa u event objektu');
+            $('#cycle-company').text('Greška: Nije pronađen ID ciklusa');
+            return;
+          }
+
+          // Popuni osnovne podatke iz event objekta
+          $('#cycle-company').text(eventProps.company || 'N/A');
+          $('#cycle-audit-type').text(eventProps.type || 'N/A');
+          $('#cycle-status').text(eventProps.status || 'N/A');
+          $('#cycle-id').text(cycleId || 'N/A');
+          $('#cycle-notes').text(eventProps.notes || 'Nema napomena');
+
+          // Dugme: pregled ciklusa
+          $('#viewCycleBtn').off('click').on('click', function () {
+            const cycleUrl = `/company/cycles/${cycleId}/`;
+            console.log('Navigating to cycle URL:', cycleUrl);
+            window.location.href = cycleUrl;
+          });
+
+          // Dugme: izmena audita u okviru ciklusa
+          $('#editCycleAuditBtn').off('click').on('click', function () {
+            if (auditId) {
+              const auditUrl = `/company/audits/${auditId}/update/`;
+              console.log('Navigating to audit update URL:', auditUrl);
+              window.location.href = auditUrl;
+            } else {
+              alert('ID audita nije dostupan.');
+            }
+          });
+
+          // Proveri da li je URL za dohvatanje podataka o ciklusu dostupan
+          if (!certificationCycleJsonUrl) {
+            console.error('certificationCycleJsonUrl nije definisan');
+            $('#cycle-start-date').text('Greška: URL nije dostupan');
+            $('#cycle-end-date').text('Greška: URL nije dostupan');
+            $('#cycle-cycle-status').text('Greška: URL nije dostupan');
+            return;
+          }
+
+          const ajaxUrl = certificationCycleJsonUrl.replace('0', cycleId);
+          console.log('AJAX URL for cycle data:', ajaxUrl);
+
+          // Dohvati dodatne podatke o ciklusu preko AJAX-a
+          $.ajax({
+            url: ajaxUrl,
+            dataType: 'json',
+            timeout: 10000, // 10 sekundi timeout
+            beforeSend: function () {
+              console.log('Sending AJAX request for cycle data...');
+            },
+            success: function (data) {
+              console.log('Cycle data received:', data);
+
+              if (data && data.cycle) {
+                try {
+                  // Popuni podatke o ciklusu
+                  $('#cycle-start-date').text(formatDate(data.cycle.start_date));
+                  $('#cycle-end-date').text(formatDate(data.cycle.end_date));
+
+                  // Proveri da li postoji status_display, ako ne, koristi status direktno
+                  if (data.cycle.status_display) {
+                    $('#cycle-cycle-status').text(data.cycle.status_display);
+                  } else if (data.cycle.status) {
+                    // Mapiraj status na čitljiv tekst
+                    const statusMap = {
+                      'active': 'Aktivan',
+                      'completed': 'Završen',
+                      'cancelled': 'Otkazan'
+                    };
+                    $('#cycle-cycle-status').text(statusMap[data.cycle.status] || data.cycle.status);
+                  } else {
+                    $('#cycle-cycle-status').text('N/A');
+                  }
+
+                  // Popuni podatke o auditu
+                  if (data.audit) {
+                    $('#cycle-planned-date').text(formatDate(data.audit.planned_date) || 'Nije postavljen');
+                    $('#cycle-actual-date').text(formatDate(data.audit.actual_date) || 'Nije postavljen');
+                  } else {
+                    console.warn('Nema podataka o auditu u odgovoru');
+                    $('#cycle-planned-date').text('Nije dostupno');
+                    $('#cycle-actual-date').text('Nije dostupno');
+                  }
+                } catch (e) {
+                  console.error('Greška pri popunjavanju podataka o ciklusu:', e);
+                  $('#cycle-start-date').text('Greška pri obradi podataka');
+                  $('#cycle-end-date').text('Greška pri obradi podataka');
+                  $('#cycle-cycle-status').text('Greška pri obradi podataka');
+                }
+              } else {
+                console.error('Nema podataka o ciklusu u odgovoru');
+                $('#cycle-start-date').text('Nije dostupno');
+                $('#cycle-end-date').text('Nije dostupno');
+                $('#cycle-cycle-status').text('Nije dostupno');
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('Greška prilikom dohvatanja podataka o ciklusu:', error);
+              console.error('Status:', status);
+              console.error('Response text:', xhr.responseText);
+
+              let errorMsg = 'Greška prilikom dohvatanja podataka';
+
+              try {
+                const response = JSON.parse(xhr.responseText);
+                if (response && response.error) {
+                  errorMsg = response.error;
+                }
+              } catch (e) {
+                console.error('Greška prilikom parsiranja odgovora:', e);
+              }
+
+              $('#cycle-start-date').text('Greška');
+              $('#cycle-end-date').text('Greška');
+              $('#cycle-cycle-status').text('Greška');
+              alert('Greška prilikom dohvatanja podataka o ciklusu: ' + errorMsg);
+            }
+          });
+        } catch (e) {
+          console.error('Greška pri otvaranju CycleAudit modala:', e);
+        }
+      }
+
+      // Funkcija za otvaranje modala za detalje termina
+      function openAppointmentModal(event) {
+        try {
+          console.log('Opening appointment modal for event:', event);
+
+          // Detaljno logovanje event objekta za dijagnostiku
+          console.log('Event object details:');
+          console.log('- title:', event.title);
+          console.log('- id:', event.id);
+          console.log('- start:', event.start);
+          console.log('- end:', event.end);
+          console.log('- extendedProps:', event.extendedProps);
+
+          // Attempt to extract appointment ID from event with more fallbacks
+          const appointmentId = event.extendedProps?.appointment_id ||
+            event.extendedProps?.id ||
+            event.id ||
+            (event.extendedProps?.url ? event.extendedProps.url.split('/').filter(Boolean).pop() : null);
+
+          console.log('Extracted Appointment ID:', appointmentId);
+
+          // Set loading placeholders
+          document.getElementById('appointment-title').textContent = 'Učitavanje...';
+          document.getElementById('appointment-company').textContent = 'Učitavanje...';
+          document.getElementById('appointment-type').textContent = 'Učitavanje...';
+          document.getElementById('appointment-start').textContent = 'Učitavanje...';
+          document.getElementById('appointment-end').textContent = 'Učitavanje...';
+          document.getElementById('appointment-location').textContent = 'Učitavanje...';
+          document.getElementById('appointment-status').textContent = 'Učitavanje...';
+          document.getElementById('appointment-contacts').textContent = 'Učitavanje...';
+          document.getElementById('appointment-description').textContent = 'Učitavanje...';
+
+          if (!appointmentId) {
+            document.getElementById('appointment-title').textContent = 'Greška: Nije pronađen ID termina';
+            document.getElementById('appointment-company').textContent = 'Učitavanje...';
+            document.getElementById('appointment-type').textContent = 'Učitavanje...';
+            document.getElementById('appointment-start').textContent = 'Učitavanje...';
+            document.getElementById('appointment-end').textContent = 'Učitavanje...';
+            document.getElementById('appointment-location').textContent = 'Učitavanje...';
+            document.getElementById('appointment-status').textContent = 'Učitavanje...';
+            document.getElementById('appointment-contacts').textContent = 'Učitavanje...';
+            document.getElementById('appointment-description').textContent = 'Učitavanje...';
+            return;
+          }
+
+          // Fetch appointment data (implement this according to your backend API)
+          // For now, let's just populate with data from the event
+          document.getElementById('appointment-title').textContent = event.title || 'Nema naslova';
+          document.getElementById('appointment-company').textContent = event.extendedProps?.company || 'Nepoznata kompanija';
+          document.getElementById('appointment-type').textContent = event.extendedProps?.appointmentType || 'Sastanak';
+          document.getElementById('appointment-start').textContent = formatDate(event.start) || 'Nepoznato';
+          document.getElementById('appointment-end').textContent = formatDate(event.end) || 'Nepoznato';
+          document.getElementById('appointment-location').textContent = event.extendedProps?.location || 'Nije navedeno';
+          document.getElementById('appointment-status').textContent = event.extendedProps?.status || 'Zakazano';
+          document.getElementById('appointment-contacts').textContent = event.extendedProps?.contacts || 'Nema kontakata';
+          document.getElementById('appointment-description').textContent = event.extendedProps?.description || 'Nema opisa';
+
+          // Set up the edit button directly with a href attribute
+          const editButton = document.getElementById('editAppointmentBtn');
+
+          // Set up data and href attributes for the edit button
+          const editUrl = `/company/appointments/${appointmentId}/edit/`;
+
+          // Convert the button to a proper link that looks like a button
+          const editLink = document.createElement('a');
+          editLink.setAttribute('id', 'editAppointmentBtn');
+          editLink.setAttribute('href', editUrl);
+          editLink.setAttribute('class', editButton.getAttribute('class'));
+          editLink.setAttribute('data-bs-dismiss', 'modal'); // Add this to close the modal
+          editLink.textContent = 'Izmeni';
+          editLink.style.textDecoration = 'none';
+
+          // Replace the button with the link
+          editButton.parentNode.replaceChild(editLink, editButton);
+
+          // Log the change
+          console.log('Set up edit link to URL:', editUrl);
+        } catch (e) {
+          console.error('Greška pri otvaranju Appointment modala:', e);
+        }
+      }
+      // Duplikat openAuditDayModal funkcije je uklonjen
+
+      function initializeCalendar() {
+        console.log('Pokretanje inicijalizacije kalendara (v6.1.18)...');
+
+        // Provera da li je jQuery dostupan
+        if (typeof jQuery === 'undefined') {
+          console.error('jQuery nije dostupan!');
+          return;
+        }
+
+        // Provera da li je FullCalendar dostupan
+        if (typeof FullCalendar === 'undefined') {
+          console.error('FullCalendar nije dostupan!');
+          return;
+        }
+
+        // Provera da li postoji element kalendara
+        var calendarEl = document.getElementById('calendar');
+        if (!calendarEl) {
+          console.error('Element kalendara ne postoji!');
+          return;
+        }
+
+        console.log('Inicijalizacija kalendara...');
+
+        // Inicijalizacija kalendara - za verziju 6.1.18
+        try {
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'sr',
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            headerToolbar: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            // U bundlovanoj verziji FullCalendar-a, pluginovi su već uključeni
+            // Nije potrebno eksplicitno navođenje pluginova
+            themeSystem: 'bootstrap5',
+            events: eventsApiUrl,
+            eventClick: function (info) {
+              console.log('=== EVENT CLICK HANDLER POKRENUT (v6.1.18) ===');
+              console.log('Event clicked:', info.event);
+
+              // Prevent default action and stop propagation
+              if (info.jsEvent) {
+                info.jsEvent.preventDefault();
+                info.jsEvent.stopPropagation();
+              }
+
+              // Provera tipa događaja - detaljna dijagnostika
+              console.log('=== DETALJNA DIJAGNOSTIKA DOGAĐAJA ===');
+              console.log('Info objekat:', info);
+              console.log('Info.event:', info.event);
+              console.log('Event extended props:', info.event.extendedProps);
+
+              // Provera da li extendedProps postoje
+              if (!info.event.extendedProps) {
+                console.error('GREŠKA: extendedProps ne postoje na event objektu');
+              }
+
+              // Dobavljanje tipa događaja iz dostupnih informacija
+              var eventType = info.event.extendedProps?.eventType || info.event.extendedProps?.type;
+
+              // Ako tip nije pronađen, pokušajmo prepoznati tip iz naslova i drugih atributa
+              if (!eventType) {
+                const title = info.event.title || '';
+                const id = info.event.id || '';
+
+                console.log('ANALIZA TIPA DOGAĐAJA ZA:', title);
+                console.log('ID događaja za analizu:', id);
+
+                // POSEBAN SLUČAJ: Prva nadzorna provera - Dan audita
+                if (title === 'Prva nadzorna provera - Dan audita') {
+                  eventType = 'audit_day';
+                  console.log('POGODAK: Pronađen specifičan slučaj "Prva nadzorna provera - Dan audita"');
+                }
+                // Provera za audit_day događaje
+                else if (title.toLowerCase().includes('dan audita') ||
+                  title.toLowerCase().includes('provera') ||
+                  title.toLowerCase().includes('nadzorna') ||
+                  id.includes('audit_day') ||
+                  id.includes('audit-day') ||
+                  id.includes('audit')) {
+                  eventType = 'audit_day';
+                  console.log('Tip događaja određen iz naslova/ID-ja kao audit_day');
+                }
+                // Provera za cycle_audit događaje
+                else if (title.toLowerCase().includes('ciklus') ||
+                  title.toLowerCase().includes('certifikacijski') ||
+                  id.includes('cycle') ||
+                  id.includes('cert_cycle')) {
+                  eventType = 'cycle_audit';
+                  console.log('Tip događaja određen iz naslova/ID-ja kao cycle_audit');
+                }
+                // Provera za appointment događaje
+                else if (title.toLowerCase().includes('sastanak') ||
+                  title.toLowerCase().includes('termin') ||
+                  id.includes('appointment') ||
+                  id.includes('meeting')) {
+                  eventType = 'appointment';
+                  console.log('Tip događaja određen iz naslova/ID-ja kao appointment');
+                }
+              }
+
+              console.log('Detektovan tip događaja:', eventType);
+
+              // Ispitaj dodatne properties da vidimo šta je dostupno
+              console.log('Svi dostupni propertiji na event objektu:', Object.keys(info.event));
+              console.log('Naslov događaja:', info.event.title);
+              console.log('ID događaja:', info.event.id);
+
+              // Otvaranje modala na osnovu tipa događaja - sa dodatnim proverama i rukovanjem greškama
+              try {
+                console.log('Pokušavam otvoriti modal za tip:', eventType);
+
+                // Ako nemamo tip događaja, pokušajmo zaključiti iz naslova
+                if (!eventType && info.event.title === 'Sastanak') {
+                  console.log('Naslov je "Sastanak", pretpostavljam da je tip appointment');
+                  eventType = 'appointment';
+                }
+
+                if (eventType === 'audit_day' || eventType === 'audit-day') {
+                  console.log('Otvaranje audit_day modala...');
+                  // Provera da li element postoji
+                  const modalElement = document.getElementById('auditDayModal'); // Changed from auditDetailModal to auditDayModal
+                  if (!modalElement) {
+                    console.error('Modal auditDayModal nije pronađen');
+                    alert('Greška: Modal za audit nije pronađen. Kontaktirajte administratora.');
+                    return;
+                  }
+
+                  // Otvaranje modala
+                  try {
+                    const auditModal = new bootstrap.Modal(modalElement);
+                    auditModal.show();
+                    console.log('Modal auditDayModal je uspešno otvoren');
+
+                    // Popunjavanje podataka sa odlaganjem
+                    setTimeout(() => {
+                      try {
+                        openAuditDayModal(info.event);
+                      } catch (err) {
+                        console.error('Greška prilikom popunjavanja audit modala:', err);
+                      }
+                    }, 100);
+                  } catch (modalError) {
+                    console.error('Greška prilikom otvaranja audit modala:', modalError);
+                    // Pokušaj alternativni način
+                    modalElement.classList.add('show');
+                    modalElement.style.display = 'block';
+                    document.body.classList.add('modal-open');
+                  }
+                } else if (eventType === 'cycle_audit' || eventType === 'cycle-audit') {
+                  console.log('Otvaranje cycle_audit modala...');
+                  // Provera da li element postoji
+                  const modalElement = document.getElementById('cycleAuditModal');
+                  if (!modalElement) {
+                    console.error('Element modala #cycleAuditModal nije pronađen!');
+                    alert('Greška: Modal za ciklus audita nije pronađen. Kontaktirajte administratora.');
+                    return;
+                  }
+
+                  // Otvaranje modala
+                  try {
+                    const cycleModal = new bootstrap.Modal(modalElement);
+                    cycleModal.show();
+                    console.log('Modal cycleAuditModal je uspešno otvoren');
+
+                    // Popunjavanje podataka sa odlaganjem
+                    setTimeout(() => {
+                      try {
+                        openCycleAuditModal(info.event);
+                      } catch (err) {
+                        console.error('Greška prilikom popunjavanja cycle modala:', err);
+                      }
+                    }, 100);
+                  } catch (modalError) {
+                    console.error('Greška prilikom otvaranja cycle modala:', modalError);
+                    // Pokušaj alternativni način
+                    modalElement.classList.add('show');
+                    modalElement.style.display = 'block';
+                    document.body.classList.add('modal-open');
+                  }
+                } else if (eventType === 'appointment' || info.event.title === 'Sastanak') {
+                  console.log('Otvaranje appointment modala...');
+                  // Provera da li element postoji
+                  const modalElement = document.getElementById('appointmentDetailModal');
+                  if (!modalElement) {
+                    console.error('Element modala #appointmentDetailModal nije pronađen!');
+                    alert('Greška: Modal za sastanak nije pronađen. Kontaktirajte administratora.');
+                    return;
+                  }
+
+                  // Otvaranje modala
+                  try {
+                    const appointmentModal = new bootstrap.Modal(modalElement);
+                    appointmentModal.show();
+                    console.log('Modal appointmentDetailModal je uspešno otvoren');
+
+                    // Popunjavanje podataka sa odlaganjem
+                    setTimeout(() => {
+                      try {
+                        openAppointmentModal(info.event);
+                      } catch (err) {
+                        console.error('Greška prilikom popunjavanja appointment modala:', err);
+                      }
+                    }, 100);
+                  } catch (modalError) {
+                    console.error('Greška prilikom otvaranja appointment modala:', modalError);
+                    // Pokušaj alternativni način
+                    modalElement.classList.add('show');
+                    modalElement.style.display = 'block';
+                    document.body.classList.add('modal-open');
+                  }
+                } else {
+                  console.warn('Nepoznat tip događaja:', eventType);
+                  alert(`Nepoznat tip događaja: ${eventType || 'nije definisan'}`);
+                }
+              } catch (error) {
+                console.error('Opšta greška pri otvaranju modala:', error);
+                alert('Došlo je do greške prilikom otvaranja modala. Molimo pokušajte ponovo.');
+              }
+
+              // Multiple ways to prevent default navigation
+              if (info.jsEvent && typeof info.jsEvent.preventDefault === 'function') {
+                info.jsEvent.preventDefault();
+              }
+              if (info.el && info.el.tagName === 'A') {
+                info.el.setAttribute('href', 'javascript:void(0);');
+              }
+              return false; // Prevent default
+            },
+            eventTimeFormat: { // Formatiranje vremena događaja
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            },
+            editable: true,
+            eventStartEditable: true,
+            eventDurationEditable: false, // Onemogućavamo promenu trajanja događaja
+
+            // Handler za drag-and-drop događaja
+            eventDrop: function (info) {
+              const event = info.event;
+              const eventType = event.extendedProps.eventType || event.extendedProps.type;
+
+              console.log('Događaj premešten:', event);
+              console.log('Event extended props:', event.extendedProps);
+
+              // Određivanje ID-a događaja u zavisnosti od tipa
+              let eventId;
+              if (eventType === 'audit_day') {
+                eventId = event.extendedProps.audit_day_id || event.id;
+              } else if (eventType === 'cycle_audit') {
+                eventId = event.extendedProps.audit_id || event.id;
+              } else if (eventType === 'appointment') {
+                eventId = event.extendedProps.appointment_id || event.id;
+              } else {
+                eventId = event.id;
+              }
+
+              const newDate = event.start;
+
+              console.log('Događaj premešten - detalji:', {
+                eventType: eventType,
+                eventId: eventId,
+                newDate: newDate
+              });
+
+              // Provera da li je dozvoljeno pomeranje ovog tipa događaja
+              if (!eventType) {
+                console.warn('Nepoznat tip događaja:', eventType);
+                info.revert(); // Vrati događaj na originalnu poziciju
+                return;
+              }
+
+              // Podržani tipovi događaja za drag-and-drop
+              const supportedTypes = ['audit_day', 'cycle_audit', 'appointment'];
+              if (!supportedTypes.includes(eventType)) {
+                console.warn('Pomeranje ovog tipa događaja nije podržano:', eventType);
+                info.revert(); // Vrati događaj na originalnu poziciju
+                return;
+              }
+
+              // Prikaži modal za potvrdu promene datuma
+              showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                if (confirmed) {
+                  // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                  updateEventDate(eventType, eventId, newDate);
+                } else {
+                  // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                  info.revert();
+                }
+              });
+            }
+          });
+
+          calendar.render();
+          console.log('Kalendar je uspešno inicijalizovan!');
+        } catch (error) {
+          console.error('Greška prilikom inicijalizacije kalendara:', error);
+        }
+      }
+      // Druga verzija openAppointmentModal funkcije je uklonjena jer je duplirana
+
+      // Funkcija za ažuriranje svih Bootstrap 4 modalnih kontrola na Bootstrap 5
+      function modernizeBootstrapModals() {
+        console.log('Modernizacija Bootstrap modalnih kontrola...');
+
+        // Ažuriranje close dugmadi u header sekcijama
+        document.querySelectorAll('.modal .modal-header button.close[data-dismiss="modal"]').forEach(button => {
+          console.log('Ažuriranje close dugmeta u headeru:', button);
+          button.className = 'btn-close';
+          button.removeAttribute('data-dismiss');
+          button.setAttribute('data-bs-dismiss', 'modal');
+          button.innerHTML = '';
+        });
+
+        // Ažuriranje dugmadi za zatvaranje u footer sekcijama
+        document.querySelectorAll('.modal .modal-footer button[data-dismiss="modal"]').forEach(button => {
+          console.log('Ažuriranje dugmeta u footeru:', button);
+          button.removeAttribute('data-dismiss');
+          button.setAttribute('data-bs-dismiss', 'modal');
+        });
+      }
+
+      // Automatsko ažuriranje kada se stranica učita
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(modernizeBootstrapModals, 500);
+
+        // Add event listener for the viewCycleBtn
+        const viewCycleBtn = document.getElementById('viewCycleBtn');
+        if (viewCycleBtn) {
+          viewCycleBtn.addEventListener('click', function () {
+            // Get the cycle ID and navigate to the cycle details page
+            const cycleId = document.getElementById('cycle-id').textContent;
+            if (cycleId) {
+              console.log('Navigating to cycle details:', cycleId);
+              // Use history.pushState to avoid full page reload if possible
+              const url = `/company/cycles/${cycleId}/`;
+              // Close modal before navigation
+              if (typeof bootstrap !== 'undefined') {
+                const modalElement = document.querySelector('#cycleAuditModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                  modal.hide();
+                  // Wait for modal to close before navigating
+                  setTimeout(() => {
+                    window.location.href = url;
+                  }, 300);
+                } else {
+                  window.location.href = url;
+                }
+              } else {
                 window.location.href = url;
-              }, 300);
-            } else {
-              window.location.href = url;
+              }
             }
-          } else {
-            window.location.href = url;
-          }
+          });
         }
       });
-    }
-  });
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}

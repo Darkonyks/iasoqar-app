@@ -934,7 +934,8 @@ def appointment_calendar_json(request):
                 'type': appointment.get_appointment_type_display(),
                 'status': appointment.get_status_display(),
                 'location': appointment.location or ('Online' if appointment.is_online else 'N/A'),
-                'eventType': 'appointment'
+                'eventType': 'appointment',
+                'appointment_id': appointment.id
             }
         })
     
@@ -1001,6 +1002,7 @@ def appointment_calendar_json(request):
                     'auditStatus': 'planned',
                     'modelType': 'audit_day',
                     'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
+                    'audit_day_id': audit_day.id,
                     'notes': audit_day.notes or audit.notes or 'N/A'
                 }
             })
@@ -1025,6 +1027,7 @@ def appointment_calendar_json(request):
                     'auditStatus': 'completed',
                     'modelType': 'audit_day',
                     'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
+                    'audit_day_id': audit_day.id,
                     'notes': audit_day.notes or audit.notes or 'N/A'
                 }
             })
@@ -1060,6 +1063,7 @@ def appointment_calendar_json(request):
                     'eventType': 'cycle_audit',
                     'auditStatus': 'planned' if not is_completed else 'completed',
                     'modelType': 'new',
+                    'audit_id': audit.id,
                     'notes': audit.notes or 'N/A'
                 }
             })
@@ -1083,6 +1087,7 @@ def appointment_calendar_json(request):
                     'eventType': 'cycle_audit',
                     'auditStatus': 'completed',
                     'modelType': 'new',
+                    'audit_id': audit.id,
                     'notes': audit.notes or 'N/A'
                 }
             })
