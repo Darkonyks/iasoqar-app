@@ -13,7 +13,11 @@
       ansible.builtin.package:
         name: git
         state: present
+- name: Ko sam ja?
+  ansible.builtin.shell: whoami
+  register: ko_sam_ja
 
+- debug: var=ko_sam_ja.stdout
     - name: Kloniraj/Update aplikaciju sa GitHub-a
       ansible.builtin.git:
         repo: "{{ app_git_repo }}"
@@ -31,4 +35,5 @@
 
     # (Opcionalno) Instaliraj dependencies, build, itd.
     # Dodaj po potrebi tasks za python, npm, docker...
+
 
