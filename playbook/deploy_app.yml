@@ -4,20 +4,23 @@
   become: yes  # ako je potrebno da pišeš po /opt ili root folderima
   vars:
     app_git_repo: "git@github.com:Darkonyks/iasoqar-app.git"   # tvoj github repo
-    app_deploy_path: "/home/darko/iasoqar-app"                        # putanja gde će biti deploy
+    app_deploy_path: "/home/darko/iasoqar-app"                 # putanja gde će biti deploy
     app_git_version: "master"                                  # ili main, ili drugi branch
 
   tasks:
-
     - name: Uveri se da je git instaliran
       ansible.builtin.package:
         name: git
         state: present
-- name: Ko sam ja?
-  ansible.builtin.shell: whoami
-  register: ko_sam_ja
 
-- debug: var=ko_sam_ja.stdout
+    - name: Ko sam ja?
+      ansible.builtin.shell: whoami
+      register: ko_sam_ja
+
+    - name: Prikazi korisnika
+      debug:
+        var: ko_sam_ja.stdout
+
     - name: Kloniraj/Update aplikaciju sa GitHub-a
       ansible.builtin.git:
         repo: "{{ app_git_repo }}"
@@ -26,14 +29,5 @@
         update: yes
         force: yes
 
-    # (Opcionalno) Restartuj servis ako treba:
-    # - name: Restartuj aplikacioni servis
-    #   ansible.builtin.systemd:
-    #     name: myapp
-    #     state: restarted
-    #   when: false  # Stavi true i zameni 'myapp' ako koristiš systemd servis
-
-    # (Opcionalno) Instaliraj dependencies, build, itd.
-    # Dodaj po potrebi tasks za python, npm, docker...
 
 
