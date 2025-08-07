@@ -34,8 +34,9 @@
         ansible.builtin.shell: docker compose up -d
         args:
           chdir: /home/darko/iasoqar-app
-        become: true
-        become_user: darko
+      become: true
+      become_user: darko
+
 
 
 
