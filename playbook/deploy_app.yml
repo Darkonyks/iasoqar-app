@@ -31,6 +31,7 @@
       become: true
       become_user: darko
     - name: Pokreni docker compose (up -d) u aplikacionom folderu
+      ansible.builtin.shell: docker compose build
       ansible.builtin.shell: docker compose up -d
       args:
         chdir: /home/darko/iasoqar-app
@@ -54,6 +55,7 @@
         status_code: 200
         timeout: 10
       register: healthcheck
+
 
 
 
