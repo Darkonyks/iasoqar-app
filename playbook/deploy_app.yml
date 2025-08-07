@@ -48,6 +48,13 @@
       ansible.builtin.fail:
         msg: "Aplikacija nije podignuta (nema očekivanog sadržaja na /)!"
       when: "'ISOQAR' not in healthcheck.content"
+    - name: Proveri da li je aplikacija dostupna na javnom URL-u
+      ansible.builtin.uri:
+        url: "http://mojapp.domena.rs/"
+        status_code: 200
+        timeout: 10
+      register: healthcheck
+
 
 
 
