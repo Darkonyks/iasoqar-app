@@ -27,8 +27,6 @@
         repo: "git@github.com:Darkonyks/iasoqar-app.git"
         dest: "/home/darko/iasoqar-app"
         version: "master"
-        update: yes
-        force: yes
           become: false
           become_user: darko
         repo: "{{ app_git_repo }}"
@@ -36,6 +34,7 @@
         version: "{{ app_git_version }}"
         update: yes
         force: yes
+
 
 
 
