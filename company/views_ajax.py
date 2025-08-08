@@ -7,7 +7,7 @@ import logging
 import json
 from datetime import datetime
 from .standard_models import CompanyStandard
-from .models import Company
+from .models import Company, Appointment
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
 from .cycle_models import CertificationCycle, CycleAudit, AuditDay
 
@@ -458,6 +458,50 @@ def update_event_date(request):
                 }
             })
             
+        elif event_type == 'appointment':
+            # Ažuriranje datuma početka (i eventualno kraja) termina/sastanka
+            appt = get_object_or_404(Appointment, pk=event_id)
+            old_start = appt.start_datetime
+            old_end = appt.end_datetime
+
+            # Ako je novi datum bez vremena ili želimo da zadržimo vreme,
+            # koristimo vreme iz starog termina ako postoji.
+            try:
+                # Ako zahtev sadrži kompletan ISO datetime, koristi ga direktno
+                new_start_dt = new_date_obj
+                if timezone.is_naive(new_start_dt):
+                    new_start_dt = timezone.make_aware(new_start_dt, timezone.get_current_timezone())
+            except Exception:
+                # Fallback: samo datum -> zadrži staro vreme
+                old_time = old_start.timetz() if old_start else None
+                if old_time is not None:
+                    new_start_dt = timezone.make_aware(datetime.combine(new_date_obj.date(), old_start.time()), timezone.get_current_timezone())
+                else:
+                    new_start_dt = timezone.make_aware(datetime.combine(new_date_obj.date(), datetime.min.time()), timezone.get_current_timezone())
+
+            appt.start_datetime = new_start_dt
+
+            # Ako postoji kraj, pomeri ga za isti pomak kao i početak (očuvaj trajanje)
+            if old_end:
+                delta = new_start_dt - old_start
+                appt.end_datetime = old_end + delta
+
+            appt.save()
+
+            payload = {
+                'id': appt.id,
+                'start_datetime': appt.start_datetime.isoformat(),
+                'end_datetime': appt.end_datetime.isoformat() if appt.end_datetime else None,
+                'all_day': getattr(appt, 'all_day', False),
+                'status': getattr(appt, 'status', None)
+            }
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Datum termina je uspešno ažuriran.',
+                'appointment': payload
+            })
+        
         else:
             return JsonResponse({
                 'success': False,

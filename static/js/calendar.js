@@ -2284,41 +2284,32 @@ function updateEventDate(eventType, eventId, newDate) {
   console.log('Ažuriranje datuma za događaj:', { eventType, eventId, newDate });
   
   // Formatiranje datuma za backend
-  const formattedDate = formatDateForBackend(newDate);
+  const isoDateTime = (newDate instanceof Date) ? newDate.toISOString() : new Date(newDate).toISOString();
   
   // Određivanje URL-a za ažuriranje u zavisnosti od tipa događaja
-  let updateUrl = '';
-  let postData = {};
-  
-  if (eventType === 'audit_day') {
-    updateUrl = `/company/audit-day/${eventId}/update-date/`;
-    postData = { 
-      date: formattedDate
-    };
-  } else if (eventType === 'cycle_audit') {
-    updateUrl = `/company/audit/${eventId}/update-planned-date/`;
-    postData = { 
-      planned_date: formattedDate
-    };
-  } else if (eventType === 'appointment') {
-    updateUrl = `/company/appointment/${eventId}/update-date/`;
-    postData = { 
-      start_datetime: formattedDate
-    };
-  } else {
+  const updateUrl = '/company/api/events/update-date/';
+  const payload = {
+    eventId: eventId,
+    eventType: eventType,
+    newDate: isoDateTime
+  };
+
+  if (!['audit_day', 'cycle_audit', 'appointment'].includes(eventType)) {
     console.error('Nepoznat tip događaja za ažuriranje:', eventType);
     alert('Greška: Nepoznat tip događaja za ažuriranje. Osvježite stranicu i pokušajte ponovo.');
     return;
   }
   
   // Dodavanje CSRF tokena za Django
-  postData.csrfmiddlewaretoken = getCookie('csrftoken');
+  const csrftoken = getCookie('csrftoken');
   
   // AJAX poziv za ažuriranje datuma
   $.ajax({
     url: updateUrl,
     type: 'POST',
-    data: postData,
+    data: JSON.stringify(payload),
+    contentType: 'application/json',
+    headers: { 'X-CSRFToken': csrftoken },
     dataType: 'json',
     success: function(response) {
       console.log('Datum uspešno ažuriran:', response);
@@ -2371,15 +2362,13 @@ function updateEventDate(eventType, eventId, newDate) {
       } else {
         alert('Greška: ' + errorMsg);
       }
-      
-      // Osvježavanje kalendara nakon greške
-      setTimeout(function() {
-        if (typeof calendar !== 'undefined') {
-          calendar.refetchEvents();
-        } else {
-          location.reload(); // Ako calendar objekat nije dostupan
-        }
-      }, 1000);
+
+      // Pokušaj da vratiš kalendar u prethodno stanje osvežavanjem događaja
+      if (typeof refreshCalendar === 'function') {
+        refreshCalendar();
+      } else {
+        try { location.reload(); } catch (e) {}
+      }
     }
   });
 }
@@ -2407,7 +2396,7 @@ function showDateChangeConfirmationModal(event, newDate, callback) {
   });
   
   // Priprema teksta za modal u zavisnosti od tipa događaja
-  const eventType = event.extendedProps.type;
+  const eventType = (event.extendedProps && (event.extendedProps.eventType || event.extendedProps.type)) || null;
   let title, message, eventTitle;
   
   // Dobijanje naslova događaja za prikaz u modalu
@@ -3329,32 +3318,26 @@ function updateEventDate(eventType, eventId, newDate) {
   console.log('Ažuriranje datuma događaja na serveru:', {
     eventType: eventType,
     eventId: eventId,
-    newDate: newDate.toISOString()
+    newDate: (newDate instanceof Date) ? newDate.toISOString() : new Date(newDate).toISOString()
   });
   
-  // Formatiranje datuma u YYYY-MM-DD format za backend
-  const formattedDate = newDate.toISOString().split('T')[0];
-  
-  // Dobijanje CSRF tokena
   const csrftoken = getCookie('csrftoken');
+  const payload = {
+    eventType: eventType,
+    eventId: eventId,
+    newDate: (newDate instanceof Date) ? newDate.toISOString() : new Date(newDate).toISOString()
+  };
   
-  // Slanje AJAX zahteva za ažuriranje datuma
   $.ajax({
-    url: '/company/update-event-date/',
+    url: '/company/api/events/update-date/',
     type: 'POST',
-    data: {
-      event_type: eventType,
-      event_id: eventId,
-      new_date: formattedDate
-    },
-    headers: {
-      'X-CSRFToken': csrftoken
-    },
+    data: JSON.stringify(payload),
+    contentType: 'application/json',
+    headers: { 'X-CSRFToken': csrftoken },
     success: function(response) {
       console.log('Uspešno ažuriran datum događaja:', response);
       
       if (response.success) {
-        // Prikaži poruku o uspehu
         if (typeof Swal !== 'undefined') {
           Swal.fire({
             title: 'Uspešno',
@@ -3366,10 +3349,8 @@ function updateEventDate(eventType, eventId, newDate) {
           alert('Datum događaja je uspešno ažuriran.');
         }
         
-        // Osveži kalendar
         refreshCalendar();
       } else {
-        // Prikaži poruku o grešci
         if (typeof Swal !== 'undefined') {
           Swal.fire({
             title: 'Greška',
@@ -3383,20 +3364,26 @@ function updateEventDate(eventType, eventId, newDate) {
       }
     },
     error: function(xhr, status, error) {
-      console.error('Greška prilikom ažuriranja datuma događaja:', error);
-      console.error('Status:', status);
-      console.error('Response text:', xhr.responseText);
+      console.error('Greška pri ažuriranju datuma događaja:', error);
       
-      // Prikaži poruku o grešci
+      // Pokušaj da pročitaš JSON odgovor sa greškama i prikažeš korisniku
+      let serverMsg = null;
+      try {
+        const resp = xhr.responseJSON || JSON.parse(xhr.responseText || '{}');
+        serverMsg = resp && (resp.error || resp.message);
+      } catch (e) {
+        // Ignoriši parse grešku
+      }
+
       if (typeof Swal !== 'undefined') {
         Swal.fire({
           title: 'Greška',
-          text: 'Došlo je do greške prilikom ažuriranja datuma događaja.',
+          text: serverMsg || 'Došlo je do greške prilikom ažuriranja datuma događaja.',
           icon: 'error',
           confirmButtonText: 'U redu'
         });
       } else {
-        alert('Greška prilikom ažuriranja datuma događaja.');
+        alert('Greška: ' + (serverMsg || 'Došlo je do greške prilikom ažuriranja datuma događaja.'));
       }
     }
   });
