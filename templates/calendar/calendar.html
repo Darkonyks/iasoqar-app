@@ -466,26 +466,6 @@
       </div>
     </div>
 
-    <!-- Appointment Detail Modal -->
-    <div class="modal fade" id="appointmentDetailModal" tabindex="-1" aria-labelledby="appointmentDetailModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji sastanka</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body" id="appointmentDetailContent">
-            <!-- Content will be loaded dynamically -->
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
-            <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Audit Detail Modal -->
     <div class="modal fade" id="auditDetailModal" tabindex="-1" aria-labelledby="auditDetailModalLabel"
       aria-hidden="true">
@@ -906,6 +886,8 @@
 
           // Dobavi podatke iz event objekta s više mogućih izvora
           const eventProps = event.extendedProps || {};
+          // Pokušaj odmah izvući ID audit dana iz eventa
+          const auditDayIdFromEvent = eventProps.audit_day_id || null;
 
           // Pokušaj izvući ID audita iz više mogućih izvora
           const auditId = eventProps.audit_id ||
@@ -934,17 +916,74 @@
             },
             success: function (data) {
               console.log('Audit day data received:', data);
-              if (data && data.id) {
-                const auditDayId = data.id;
-                updateAuditDayModal(auditDayId, auditId, event, eventProps);
-              } else {
-                console.error('Nema ID-a audit dana u odgovoru');
-                $('#audit-day-date').text('Greška: Nije pronađen ID audit dana u odgovoru');
+              let selectedAuditDayId = auditDayIdFromEvent;
+              let selectedAuditDay = null;
+
+              try {
+                const auditData = (data && data.audit) ? data.audit : null;
+                const days = (auditData && Array.isArray(auditData.audit_days)) ? auditData.audit_days : [];
+
+                // Popuni opšte podatke o auditu
+                if (auditData) {
+                  $('#audit-company').text(auditData.company_name || 'N/A');
+                  $('#audit-type').text(auditData.audit_type_display || auditData.audit_type || 'N/A');
+                  $('#audit-status').text(auditData.audit_status_display || auditData.audit_status || 'N/A');
+                  $('#audit-planned-date').text(auditData.planned_date ? formatDate(auditData.planned_date) : 'N/A');
+                  $('#audit-actual-date').text(auditData.actual_date ? formatDate(auditData.actual_date) : 'N/A');
+                }
+
+                if (!selectedAuditDayId) {
+                  const eventDateStr = event.start ? event.start.toISOString().slice(0, 10) : null;
+                  if (eventDateStr) {
+                    // Pokušaj prvo da pronađeš po datumu i statusu (planirano/održano)
+                    selectedAuditDay = days.find(d => (d.date || '').startsWith(eventDateStr) && ((eventProps.auditStatus === 'planned' && d.is_planned) || (eventProps.auditStatus === 'completed' && d.is_actual)))
+                      || days.find(d => (d.date || '').startsWith(eventDateStr))
+                      || null;
+                    if (selectedAuditDay) {
+                      selectedAuditDayId = selectedAuditDay.id;
+                    }
+                  }
+                } else {
+                  selectedAuditDay = days.find(d => d.id === selectedAuditDayId) || null;
+                }
+
+                // Ako smo pronašli konkretan dan, osveži napomene i status
+                if (selectedAuditDay) {
+                  if (selectedAuditDay.notes) {
+                    eventProps.notes = selectedAuditDay.notes;
+                  }
+                  if (selectedAuditDay.is_actual) {
+                    eventProps.auditStatus = 'completed';
+                  } else if (selectedAuditDay.is_planned) {
+                    eventProps.auditStatus = 'planned';
+                  }
+                }
+              } catch (parseErr) {
+                console.error('Greška prilikom obrade podataka audit dana:', parseErr);
+              }
+
+              // Ažuriraj modal čak i ako nije pronađen precizan ID (link za izmenu će izostati)
+              updateAuditDayModal(selectedAuditDayId, auditId, event, eventProps);
+
+              if (!selectedAuditDayId) {
+                console.warn('Nije moguće utvrditi ID audit dana iz odgovora');
+                $('#audit-day-date').text(formatDate(event.start) || 'N/A');
+                $('#audit-day-notes').text(eventProps.notes || 'Nema napomena');
               }
             },
             error: function (xhr, status, error) {
               console.error('Greška prilikom dohvatanja podataka o audit danu:', error);
-              $('#audit-day-date').text('Greška pri dohvatanju podataka');
+              // Fallback: prikaži podatke iz eventa
+              $('#audit-day-date').text(formatDate(event.start) || 'N/A');
+              $('#audit-day-is-planned').text(eventProps.auditStatus === 'planned' ? 'Da' : 'Ne');
+              $('#audit-day-is-actual').text(eventProps.auditStatus === 'completed' ? 'Da' : 'Ne');
+              $('#audit-day-notes').text(eventProps.notes || 'Nema napomena');
+              // Fallback za opšte podatke
+              $('#audit-company').text('N/A');
+              $('#audit-type').text('N/A');
+              $('#audit-status').text(eventProps.auditStatus || 'N/A');
+              $('#audit-planned-date').text('N/A');
+              $('#audit-actual-date').text('N/A');
             }
           });
 
@@ -955,18 +994,6 @@
             $('#audit-day-is-planned').text(eventProps.auditStatus === 'planned' ? 'Da' : 'Ne');
             $('#audit-day-is-actual').text(eventProps.auditStatus === 'completed' ? 'Da' : 'Ne');
             $('#audit-day-notes').text(eventProps.notes || 'Nema napomena');
-            $('#audit-day-audit-id').text(auditId || 'N/A');
-
-            // Postavi URL za dugme za pregled audita
-            $('#viewAuditBtn').off('click').on('click', function () {
-              if (auditId) {
-                const auditUrl = `/company/audits/${auditId}/`;
-                console.log('Navigating to audit URL:', auditUrl);
-                window.location.href = auditUrl;
-              } else {
-                alert('ID audita nije dostupan.');
-              }
-            });
 
             // Postavi URL za dugme za izmenu audit dana
             $('#editAuditDayBtn').off('click').on('click', function () {
@@ -978,6 +1005,13 @@
                 alert('ID audit dana nije dostupan.');
               }
             });
+
+            // Omogući/onesposobi dugme za izmenu na osnovu dostupnosti ID-a
+            if (auditDayId) {
+              $('#editAuditDayBtn').prop('disabled', false);
+            } else {
+              $('#editAuditDayBtn').prop('disabled', true);
+            }
           }
         } catch (e) {
           console.error('Greška pri otvaranju AuditDay modala:', e);
@@ -1064,7 +1098,8 @@
             return;
           }
 
-          const ajaxUrl = certificationCycleJsonUrl.replace('0', cycleId);
+          const ajaxBase = certificationCycleJsonUrl.replace('0', cycleId);
+          const ajaxUrl = auditId ? `${ajaxBase}?audit_id=${encodeURIComponent(auditId)}` : ajaxBase;
           console.log('AJAX URL for cycle data:', ajaxUrl);
 
           // Dohvati dodatne podatke o ciklusu preko AJAX-a
@@ -1080,6 +1115,14 @@
 
               if (data && data.cycle) {
                 try {
+                  // Ažuriraj osnovne podatke iz backend-a
+                  if (data.cycle.company_name) {
+                    $('#cycle-company').text(data.cycle.company_name);
+                  }
+                  if (typeof data.cycle.notes !== 'undefined') {
+                    $('#cycle-notes').text(data.cycle.notes || 'Nema napomena');
+                  }
+
                   // Popuni podatke o ciklusu
                   $('#cycle-start-date').text(formatDate(data.cycle.start_date));
                   $('#cycle-end-date').text(formatDate(data.cycle.end_date));
@@ -1101,12 +1144,21 @@
 
                   // Popuni podatke o auditu
                   if (data.audit) {
+                    // Ažuriraj tip i status audita iz backend-a
+                    if (data.audit.audit_type_display || data.audit.audit_type) {
+                      $('#cycle-audit-type').text(data.audit.audit_type_display || data.audit.audit_type);
+                    }
+                    if (data.audit.audit_status_display || data.audit.audit_status) {
+                      $('#cycle-status').text(data.audit.audit_status_display || data.audit.audit_status);
+                    }
                     $('#cycle-planned-date').text(formatDate(data.audit.planned_date) || 'Nije postavljen');
                     $('#cycle-actual-date').text(formatDate(data.audit.actual_date) || 'Nije postavljen');
                   } else {
                     console.warn('Nema podataka o auditu u odgovoru');
                     $('#cycle-planned-date').text('Nije dostupno');
                     $('#cycle-actual-date').text('Nije dostupno');
+                    $('#cycle-audit-type').text('Nije dostupno');
+                    $('#cycle-status').text('Nije dostupno');
                   }
                 } catch (e) {
                   console.error('Greška pri popunjavanju podataka o ciklusu:', e);
@@ -1197,7 +1249,7 @@
           // For now, let's just populate with data from the event
           document.getElementById('appointment-title').textContent = event.title || 'Nema naslova';
           document.getElementById('appointment-company').textContent = event.extendedProps?.company || 'Nepoznata kompanija';
-          document.getElementById('appointment-type').textContent = event.extendedProps?.appointmentType || 'Sastanak';
+          document.getElementById('appointment-type').textContent = event.extendedProps?.type || event.extendedProps?.appointmentType || 'Sastanak';
           document.getElementById('appointment-start').textContent = formatDate(event.start) || 'Nepoznato';
           document.getElementById('appointment-end').textContent = formatDate(event.end) || 'Nepoznato';
           document.getElementById('appointment-location').textContent = event.extendedProps?.location || 'Nije navedeno';
@@ -1209,7 +1261,7 @@
           const editButton = document.getElementById('editAppointmentBtn');
 
           // Set up data and href attributes for the edit button
-          const editUrl = `/company/appointments/${appointmentId}/edit/`;
+          const editUrl = `/company/appointments/${appointmentId}/update/`;
 
           // Convert the button to a proper link that looks like a button
           const editLink = document.createElement('a');
