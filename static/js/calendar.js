@@ -1023,7 +1023,6 @@ function openCycleAuditModal(event) {
     $('#cycle-actual-date').text('Učitavanje...');
     $('#cycle-id').text('Učitavanje...');
     $('#cycle-start-date').text('Učitavanje...');
-    $('#cycle-end-date').text('Učitavanje...');
     $('#cycle-cycle-status').text('Učitavanje...');
     $('#cycle-notes').text('Učitavanje...');
     
@@ -1083,8 +1082,7 @@ function openCycleAuditModal(event) {
         
         // Popuni informacije o ciklusu
         $('#cycle-id').text(cycle.id || 'N/A');
-        $('#cycle-start-date').text(formatDate(cycle.start_date) || 'Nije definisano');
-        $('#cycle-end-date').text(formatDate(cycle.end_date) || 'Nije definisano');
+        $('#cycle-start-date').text(formatDate(cycle.planirani_datum) || 'Nije definisano');
         $('#cycle-cycle-status').text(cycle.status_display || 'Nije definisano');
         
         // Postavi URL za dugme za pregled ciklusa
@@ -1127,7 +1125,6 @@ function showCycleAuditError(errorMessage) {
   $('#cycle-notes').text(errorMessage || 'Došlo je do greške pri učitavanju podataka');
   $('#cycle-id').text('N/A');
   $('#cycle-start-date').text('N/A');
-  $('#cycle-end-date').text('N/A');
   $('#cycle-cycle-status').text('N/A');
   $('#cycle-planned-date').text('N/A');
   $('#cycle-actual-date').text('N/A');
@@ -3198,8 +3195,7 @@ function openCycleAuditModal(event) {
     $('#cycle-audit-type').text(event.extendedProps?.audit_type || 'Nije dostupno');
     $('#cycle-status').text(event.extendedProps?.status || 'Nije dostupno');
     $('#cycle-id').text(event.extendedProps?.cycle_id || 'Nije dostupno');
-    $('#cycle-start-date').text(event.extendedProps?.cycle_start_date || 'Nije dostupno');
-    $('#cycle-end-date').text(event.extendedProps?.cycle_end_date || 'Nije dostupno');
+    $('#cycle-start-date').text(event.extendedProps?.planirani_datum || event.extendedProps?.cycle_start_date || 'Nije dostupno');
     $('#cycle-planned-date').text(event.extendedProps?.planned_date || event.start?.toLocaleDateString('sr-RS') || 'Nije dostupno');
     $('#cycle-notes').text(event.extendedProps?.notes || 'Nema napomena');
     
@@ -4233,7 +4229,6 @@ function initializeCalendar() {
       $('#cycle-actual-date').text('Učitavanje...');
       $('#cycle-id').text('Učitavanje...');
       $('#cycle-start-date').text('Učitavanje...');
-      $('#cycle-end-date').text('Učitavanje...');
       $('#cycle-cycle-status').text('Učitavanje...');
       $('#cycle-notes').text('Učitavanje...');
       
@@ -4284,7 +4279,6 @@ function initializeCalendar() {
       if (!certificationCycleJsonUrl) {
         console.error('certificationCycleJsonUrl nije definisan');
         $('#cycle-start-date').text('Greška: URL nije dostupan');
-        $('#cycle-end-date').text('Greška: URL nije dostupan');
         $('#cycle-cycle-status').text('Greška: URL nije dostupan');
         return;
       }
@@ -4305,8 +4299,7 @@ function initializeCalendar() {
           
           if (data && data.cycle) {
             // Popuni podatke o ciklusu
-            $('#cycle-start-date').text(formatDate(data.cycle.start_date));
-            $('#cycle-end-date').text(formatDate(data.cycle.end_date));
+            $('#cycle-start-date').text(formatDate(data.cycle.planirani_datum));
             $('#cycle-cycle-status').text(data.cycle.status_display || 'N/A');
             
             // Popuni podatke o auditu
@@ -4321,7 +4314,6 @@ function initializeCalendar() {
           } else {
             console.error('Nema podataka o ciklusu u odgovoru');
             $('#cycle-start-date').text('Nije dostupno');
-            $('#cycle-end-date').text('Nije dostupno');
             $('#cycle-cycle-status').text('Nije dostupno');
           }
         },
@@ -4342,7 +4334,6 @@ function initializeCalendar() {
           }
           
           $('#cycle-start-date').text('Greška');
-          $('#cycle-end-date').text('Greška');
           $('#cycle-cycle-status').text('Greška');
           alert('Greška prilikom dohvatanja podataka o ciklusu: ' + errorMsg);
         }

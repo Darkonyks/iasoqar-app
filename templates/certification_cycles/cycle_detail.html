@@ -232,25 +232,16 @@
             </div>
             
             <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="info-box">
                   <span class="info-box-icon bg-warning"><i class="fas fa-calendar-plus"></i></span>
                   <div class="info-box-content">
-                    <span class="info-box-text">Datum početka</span>
-                    <span class="info-box-number">{{ cycle.start_date|date:"d.m.Y" }}</span>
+                    <span class="info-box-text">Planirani datum ciklusa</span>
+                    <span class="info-box-number">{{ cycle.planirani_datum|date:"d.m.Y" }}</span>
                   </div>
                 </div>
               </div>
               
-              <div class="col-md-6">
-                <div class="info-box">
-                  <span class="info-box-icon bg-danger"><i class="fas fa-calendar-times"></i></span>
-                  <div class="info-box-content">
-                    <span class="info-box-text">Datum završetka</span>
-                    <span class="info-box-number">{{ cycle.end_date|date:"d.m.Y" }}</span>
-                  </div>
-                </div>
-              </div>
             </div>
             
             <div class="row">

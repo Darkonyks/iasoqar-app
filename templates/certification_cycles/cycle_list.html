@@ -67,8 +67,8 @@
                   </div>
                   <div class="input-group mr-2">
                     <select name="sort_by" class="form-control">
-                      <option value="-start_date" {% if sort_by == '-start_date' %}selected{% endif %}>Najnoviji prvo</option>
-                      <option value="start_date" {% if sort_by == 'start_date' %}selected{% endif %}>Najstariji prvo</option>
+                      <option value="-planirani_datum" {% if sort_by == '-planirani_datum' %}selected{% endif %}>Najnoviji prvo</option>
+                      <option value="planirani_datum" {% if sort_by == 'planirani_datum' %}selected{% endif %}>Najstariji prvo</option>
                       <option value="status" {% if sort_by == 'status' %}selected{% endif %}>Po statusu</option>
                     </select>
                   </div>
@@ -84,8 +84,7 @@
                   <tr>
                     <th>Kompanija</th>
                     <th>Status</th>
-                    <th>Početak</th>
-                    <th>Kraj</th>
+                    <th>Planirani datum</th>
                     <th>Standardi</th>
                     <th>Integrisani sistem</th>
                     <th>Auditi</th>
@@ -111,8 +110,7 @@
                       <span class="badge badge-warning">{{ cycle.get_status_display }}</span>
                       {% endif %}
                     </td>
-                    <td>{{ cycle.start_date|date:"d.m.Y" }}</td>
-                    <td>{{ cycle.end_date|date:"d.m.Y" }}</td>
+                    <td>{{ cycle.planirani_datum|date:"d.m.Y" }}</td>
                     <td>
                       {% for standard in cycle.cycle_standards.all %}
                       <span class="badge badge-primary">{{ standard.standard_definition.code }} {{ standard.standard_definition.version }}</span>
@@ -144,7 +142,7 @@
                   </tr>
                   {% empty %}
                   <tr>
-                    <td colspan="8" class="text-center">Nema pronađenih ciklusa sertifikacije</td>
+                    <td colspan="7" class="text-center">Nema pronađenih ciklusa sertifikacije</td>
                   </tr>
                   {% endfor %}
                 </tbody>

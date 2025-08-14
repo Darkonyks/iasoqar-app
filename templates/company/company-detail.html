@@ -465,7 +465,7 @@
                       <table class="table table-hover">
                         <thead>
                           <tr>
-                            <th>Period</th>
+                            <th>Planirani datum</th>
                             <th>Status</th>
                             <th>Standardi</th>
                             <th>Auditi</th>
@@ -476,7 +476,7 @@
                           {% for cycle in certification_cycles %}
                             <tr {% if cycle.status == 'active' %}class="table-success"{% endif %}>
                               <td>
-                                <strong>{{ cycle.start_date|date:"d.m.Y" }} - {{ cycle.end_date|date:"d.m.Y" }}</strong>
+                                <strong>{{ cycle.planirani_datum|date:"d.m.Y" }}</strong>
                               </td>
                               <td>
                                 {% if cycle.status == 'active' %}
@@ -685,19 +685,10 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="{{ cycle_form.start_date.id_for_label }}">Datum početka</label>
-                {{ cycle_form.start_date }}
-                {% if cycle_form.start_date.errors %}
-                  <div class="text-danger">{{ cycle_form.start_date.errors }}</div>
-                {% endif %}
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="{{ cycle_form.end_date.id_for_label }}">Datum završetka</label>
-                {{ cycle_form.end_date }}
-                {% if cycle_form.end_date.errors %}
-                  <div class="text-danger">{{ cycle_form.end_date.errors }}</div>
+                <label for="{{ cycle_form.initial_audit_date.id_for_label }}">Datum inicijalnog audita</label>
+                {{ cycle_form.initial_audit_date }}
+                {% if cycle_form.initial_audit_date.errors %}
+                  <div class="text-danger">{{ cycle_form.initial_audit_date.errors }}</div>
                 {% endif %}
               </div>
             </div>

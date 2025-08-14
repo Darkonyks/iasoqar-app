@@ -99,7 +99,7 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
         context['iaf_eac_codes'] = CompanyIAFEACCode.objects.filter(company=company).select_related('iaf_eac_code')
         
         # Get certification cycles for the company
-        context['certification_cycles'] = company.certification_cycles.all().order_by('-start_date')
+        context['certification_cycles'] = company.certification_cycles.all().order_by('-planirani_datum')
         
         # Get audit information if available
         try:
@@ -810,25 +810,16 @@ def audit_detail_json(request, pk):
                     'id': audit.certification_cycle.id,
                     'status': audit.certification_cycle.status
                 }
-                
-                # Sigurno formatiranje datuma
+
+                # Sigurno formatiranje datuma ciklusa (planirani_datum)
                 try:
-                    if audit.certification_cycle.start_date:
-                        cycle_data['start_date'] = audit.certification_cycle.start_date.isoformat()
+                    if audit.certification_cycle.planirani_datum:
+                        cycle_data['planirani_datum'] = audit.certification_cycle.planirani_datum.isoformat()
                     else:
-                        cycle_data['start_date'] = None
+                        cycle_data['planirani_datum'] = None
                 except Exception as e:
-                    logger.error(f"Greška sa start_date: {str(e)}")
-                    cycle_data['start_date'] = None
-                    
-                try:
-                    if audit.certification_cycle.end_date:
-                        cycle_data['end_date'] = audit.certification_cycle.end_date.isoformat()
-                    else:
-                        cycle_data['end_date'] = None
-                except Exception as e:
-                    logger.error(f"Greška sa end_date: {str(e)}")
-                    cycle_data['end_date'] = None
+                    logger.error(f"Greška sa planirani_datum: {str(e)}")
+                    cycle_data['planirani_datum'] = None
                     
                 data['certification_cycle'] = cycle_data
             else:
@@ -921,6 +912,22 @@ def appointment_calendar_json(request):
     
     # Add appointments to events
     for appointment in appointments:
+        # Pokušaj da povežeš termin sa Danom audita istog klijenta na isti lokalni datum
+        try:
+            from django.utils import timezone as dj_tz
+            appt_dt = appointment.start_datetime
+            if dj_tz.is_naive(appt_dt):
+                appt_dt = dj_tz.make_aware(appt_dt, dj_tz.get_current_timezone())
+            local_date = dj_tz.localtime(appt_dt, dj_tz.get_current_timezone()).date()
+            # Lokalni import da izbegnemo cirkularne zavisnosti pri uvozu modula
+            from .cycle_models import AuditDay as _AuditDay
+            related_day = _AuditDay.objects.filter(
+                audit__certification_cycle__company=appointment.company,
+                date=local_date
+            ).select_related('audit').first()
+        except Exception:
+            related_day = None
+
         events.append({
             'id': appointment.id,
             'title': appointment.title,
@@ -935,7 +942,12 @@ def appointment_calendar_json(request):
                 'status': appointment.get_status_display(),
                 'location': appointment.location or ('Online' if appointment.is_online else 'N/A'),
                 'eventType': 'appointment',
-                'appointment_id': appointment.id
+                'appointment_id': appointment.id,
+                # Link ka Danu audita ako postoji na isti datum
+                'related_audit_day_id': related_day.id if related_day else None,
+                'related_audit_id': related_day.audit_id if related_day else None,
+                'related_is_planned': related_day.is_planned if related_day else None,
+                'related_is_actual': related_day.is_actual if related_day else None,
             }
         })
     
@@ -982,34 +994,14 @@ def appointment_calendar_json(request):
         is_planned = audit_day.is_planned
         is_actual = audit_day.is_actual
         
-        if is_planned:
-            # Add planned audit day
-            events.append({
-                'id': f'audit_day_planned_{audit_day.id}',
-                'title': f'{company_name} - {audit_name} (planirani dan)',
-                'start': audit_day.date.isoformat(),
-                'allDay': True,
-                'color': audit_type_info.get('color_planned', '#3788d8'),
-                # Uklonjen URL da bi se omogućilo otvaranje modala
-                # 'url': f'/company/audits/{audit.id}/update/',
-                'extendedProps': {
-                    'company': company_name,
-                    'type': f'{audit_name} - Dan audita',
-                    'audit_type': audit.audit_type,
-                    'status': 'Planirano',
-                    'cycle_id': audit.certification_cycle.id,
-                    'eventType': 'audit_day',
-                    'auditStatus': 'planned',
-                    'modelType': 'audit_day',
-                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
-                    'audit_day_id': audit_day.id,
-                    'notes': audit_day.notes or audit.notes or 'N/A'
-                }
-            })
-        
+        # Preferiramo "stvarni" dan nad "planiranim" ako su oba označena
         if is_actual:
-            # Add actual audit day
-            events.append({
+            # Ako je isti datum kao glavni actual_date ciklusa, preskoči (da ne dupliramo cycle event)
+            if audit.actual_date and audit_day.date == audit.actual_date:
+                pass
+            else:
+                # Add actual audit day
+                events.append({
                 'id': f'audit_day_actual_{audit_day.id}',
                 'title': f'{company_name} - {audit_name} (održani dan)',
                 'start': audit_day.date.isoformat(),
@@ -1031,6 +1023,34 @@ def appointment_calendar_json(request):
                     'notes': audit_day.notes or audit.notes or 'N/A'
                 }
             })
+        elif is_planned:
+            # Ako je isti datum kao glavni planned_date ciklusa, preskoči (da ne dupliramo cycle event)
+            if audit.planned_date and audit_day.date == audit.planned_date:
+                pass
+            else:
+                # Add planned audit day
+                events.append({
+                'id': f'audit_day_planned_{audit_day.id}',
+                'title': f'{company_name} - {audit_name} (planirani dan)',
+                'start': audit_day.date.isoformat(),
+                'allDay': True,
+                'color': audit_type_info.get('color_planned', '#3788d8'),
+                # Uklonjen URL da bi se omogućilo otvaranje modala
+                # 'url': f'/company/audits/{audit.id}/update/',
+                'extendedProps': {
+                    'company': company_name,
+                    'type': f'{audit_name} - Dan audita',
+                    'audit_type': audit.audit_type,
+                    'status': 'Planirano',
+                    'cycle_id': audit.certification_cycle.id,
+                    'eventType': 'audit_day',
+                    'auditStatus': 'planned',
+                    'modelType': 'audit_day',
+                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
+                    'audit_day_id': audit_day.id,
+                    'notes': audit_day.notes or audit.notes or 'N/A'
+                }
+            })
     
     # Add cycle audit dates to events (glavni audit datumi)
     for audit in cycle_audits:
@@ -1042,16 +1062,31 @@ def appointment_calendar_json(request):
         # Determine audit status and color
         is_completed = audit.audit_status in ['completed']
         status_text = '(održana)' if is_completed else '(planirana)'
-        color = audit_type_info.get('color_completed' if is_completed else 'color_planned', '#3788d8')
+        # Boje: osnovne i override ako je poslat izveštaj
+        dark_green = '#1B5E20'  # Tamno zelena
+        base_planned_color = audit_type_info.get('color_planned', '#3788d8')
+        base_completed_color = audit_type_info.get('color_completed', '#4CAF50')
+        planned_color = dark_green if audit.poslat_izvestaj else base_planned_color
+        actual_color = dark_green if audit.poslat_izvestaj else base_completed_color
+
+        # Izbegni dupliranje: ako postoje AuditDay zapisi za isti datum, ne prikazuj glavni audit događaj
+        try:
+            has_planned_day = bool(audit.planned_date) and audit.audit_days.filter(is_planned=True, date=audit.planned_date).exists()
+        except Exception:
+            has_planned_day = False
+        try:
+            has_actual_day = bool(audit.actual_date) and audit.audit_days.filter(is_actual=True, date=audit.actual_date).exists()
+        except Exception:
+            has_actual_day = False
         
-        # Add planned audit
+        # Add planned audit uvek (dozvoli prikaz glavnog termina)
         if audit.planned_date:
             events.append({
                 'id': f'cycle_audit_planned_{audit.id}',
                 'title': f'{audit_name} - {company_name} (planiran)',
                 'start': audit.planned_date.isoformat(),
                 'allDay': True,
-                'color': color,
+                'color': planned_color,
                 # Uklonjen URL da bi se omogućilo otvaranje modala
                 # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
@@ -1064,18 +1099,19 @@ def appointment_calendar_json(request):
                     'auditStatus': 'planned' if not is_completed else 'completed',
                     'modelType': 'new',
                     'audit_id': audit.id,
-                    'notes': audit.notes or 'N/A'
+                    'notes': audit.notes or 'N/A',
+                    'poslat_izvestaj': audit.poslat_izvestaj,
                 }
             })
         
-        # Add completed audit
+        # Add completed audit uvek (dozvoli prikaz glavnog termina)
         if audit.actual_date:
             events.append({
                 'id': f'cycle_audit_actual_{audit.id}',
                 'title': f'{company_name} - {audit_name} (održana)',
                 'start': audit.actual_date.isoformat(),
                 'allDay': True,
-                'color': '#4CAF50',  # Green for completed audit events
+                'color': actual_color,
                 # Uklonjen URL da bi se omogućilo otvaranje modala
                 # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
@@ -1088,7 +1124,8 @@ def appointment_calendar_json(request):
                     'auditStatus': 'completed',
                     'modelType': 'new',
                     'audit_id': audit.id,
-                    'notes': audit.notes or 'N/A'
+                    'notes': audit.notes or 'N/A',
+                    'poslat_izvestaj': audit.poslat_izvestaj,
                 }
             })
     

@@ -19,14 +19,14 @@ class CycleAuditInline(nested_admin.NestedTabularInline):
 
 
 class CertificationCycleAdmin(nested_admin.NestedModelAdmin):
-    list_display = ['company', 'start_date', 'end_date', 'is_integrated_system', 'status']
-    list_filter = ['status', 'is_integrated_system', 'start_date']
+    list_display = ['company', 'planirani_datum', 'is_integrated_system', 'status']
+    list_filter = ['status', 'is_integrated_system', 'planirani_datum']
     search_fields = ['company__name']
-    date_hierarchy = 'start_date'
+    date_hierarchy = 'planirani_datum'
     
     fieldsets = [
         ('Osnovne informacije', {
-            'fields': ['company', 'start_date', 'end_date', 'is_integrated_system', 'status', 'notes']
+            'fields': ['company', 'planirani_datum', 'is_integrated_system', 'status', 'notes']
         })
     ]
     

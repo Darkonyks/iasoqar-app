@@ -41,7 +41,7 @@ class CertificationCycleListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(status=status)
         
         # Sort options
-        sort_by = self.request.GET.get('sort_by', '-start_date')
+        sort_by = self.request.GET.get('sort_by', '-planirani_datum')
         queryset = queryset.order_by(sort_by)
         
         return queryset
@@ -50,7 +50,7 @@ class CertificationCycleListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('search', '')
         context['status'] = self.request.GET.get('status', '')
-        context['sort_by'] = self.request.GET.get('sort_by', '-start_date')
+        context['sort_by'] = self.request.GET.get('sort_by', '-planirani_datum')
         
         # Add company context if filtering by company
         company_id = self.kwargs.get('company_id')
@@ -180,6 +180,13 @@ class CertificationCycleDeleteView(LoginRequiredMixin, DeleteView):
     model = CertificationCycle
     template_name = 'certification_cycles/cycle_confirm_delete.html'
     context_object_name = 'cycle'
+    
+    def get_success_url(self):
+        """URL za redirekciju nakon uspešnog brisanja (koristi se u super().delete())."""
+        company_id = getattr(self.object, 'company_id', None)
+        if company_id:
+            return reverse('company:detail', kwargs={'pk': company_id})
+        return reverse('company:cycle_list')
     
     def post(self, request, *args, **kwargs):
         """Kaskadno brisanje ciklusa sertifikacije i povezanih zapisa"""

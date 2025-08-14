@@ -44,7 +44,7 @@ class AuditorAdmin(admin.ModelAdmin):
     list_display = ['ime_prezime', 'email', 'telefon']
 
 class CertificationCycleAdmin(admin.ModelAdmin):
-    list_display = ['company', 'start_date', 'end_date', 'status']
+    list_display = ['company', 'planirani_datum', 'is_integrated_system', 'status']
 
 # Register all models
 admin.site.register(Company, CompanyAdmin)

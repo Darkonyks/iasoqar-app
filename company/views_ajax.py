@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, time
 from .standard_models import CompanyStandard
 from .models import Company, Appointment
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
@@ -253,8 +253,7 @@ def certification_cycle_json(request, pk):
         cycle_data = {
             'id': cycle.id,
             'company_name': cycle.company.name,
-            'start_date': cycle.start_date.isoformat() if cycle.start_date else None,
-            'end_date': cycle.end_date.isoformat() if cycle.end_date else None,
+            'planirani_datum': cycle.planirani_datum.isoformat() if cycle.planirani_datum else None,
             'status': cycle.status,
             'status_display': dict(cycle.CYCLE_STATUS_CHOICES)[cycle.status],
             'is_integrated_system': cycle.is_integrated_system,
@@ -413,19 +412,25 @@ def update_event_date(request):
         
         # Parsiranje datuma
         try:
-            new_date_obj = datetime.fromisoformat(new_date.replace('Z', '+00:00'))
+            new_date_obj = datetime.fromisoformat(str(new_date).replace('Z', '+00:00'))
         except ValueError:
             return JsonResponse({
                 'success': False,
                 'error': 'Neispravan format datuma.'
             }, status=400)
+
+        # Normalizacija na svesno vreme i lokalnu vremensku zonu
+        tz = timezone.get_current_timezone()
+        aware_dt = timezone.make_aware(new_date_obj, tz) if timezone.is_naive(new_date_obj) else new_date_obj
+        local_dt = timezone.localtime(aware_dt, tz)
         
         # Ažuriranje datuma u zavisnosti od tipa događaja
         if event_type == 'audit_day':
             # Ažuriranje datuma audit dana
             audit_day = get_object_or_404(AuditDay, pk=event_id)
             old_date = audit_day.date
-            audit_day.date = new_date_obj.date()
+            # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
+            audit_day.date = local_dt.date()
             audit_day.save()
             
             return JsonResponse({
@@ -444,8 +449,13 @@ def update_event_date(request):
             # Ažuriranje planiranog datuma audita
             audit = get_object_or_404(CycleAudit, pk=event_id)
             old_date = audit.planned_date
-            audit.planned_date = new_date_obj.date()
-            audit.save()
+            # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
+            # Važno: koristimo queryset update da NE bismo pozvali save() i automatsko
+            # regenerisanje AuditDay zapisa u CycleAudit.save().
+            new_planned = local_dt.date()
+            CycleAudit.objects.filter(pk=audit.pk).update(planned_date=new_planned)
+            # Ažuriramo instancu samo za odgovor (bez poziva save())
+            audit.planned_date = new_planned
             
             return JsonResponse({
                 'success': True,
@@ -464,20 +474,16 @@ def update_event_date(request):
             old_start = appt.start_datetime
             old_end = appt.end_datetime
 
-            # Ako je novi datum bez vremena ili želimo da zadržimo vreme,
-            # koristimo vreme iz starog termina ako postoji.
-            try:
-                # Ako zahtev sadrži kompletan ISO datetime, koristi ga direktno
-                new_start_dt = new_date_obj
-                if timezone.is_naive(new_start_dt):
-                    new_start_dt = timezone.make_aware(new_start_dt, timezone.get_current_timezone())
-            except Exception:
-                # Fallback: samo datum -> zadrži staro vreme
-                old_time = old_start.timetz() if old_start else None
-                if old_time is not None:
-                    new_start_dt = timezone.make_aware(datetime.combine(new_date_obj.date(), old_start.time()), timezone.get_current_timezone())
-                else:
-                    new_start_dt = timezone.make_aware(datetime.combine(new_date_obj.date(), datetime.min.time()), timezone.get_current_timezone())
+            # Ako je all-day termin, postavi na lokalnu ponoć novog datuma.
+            # Inače koristi precizno novo vreme (svestan datetime) koje je client poslao
+            if getattr(appt, 'all_day', False):
+                new_start_dt = timezone.make_aware(
+                    datetime.combine(local_dt.date(), time.min),
+                    timezone.get_current_timezone()
+                )
+            else:
+                # Koristi precizni trenutak
+                new_start_dt = aware_dt
 
             appt.start_datetime = new_start_dt
 

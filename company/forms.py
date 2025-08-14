@@ -213,7 +213,7 @@ class CertificationCycleForm(forms.ModelForm):
     class Meta:
         model = CertificationCycle
         fields = [
-            'company', 'end_date', 'datum_sprovodjenja_inicijalne',
+            'company', 'datum_sprovodjenja_inicijalne',
             'status', 'is_integrated_system',
             'inicijalni_broj_dana',
             'broj_dana_nadzora',
@@ -222,7 +222,6 @@ class CertificationCycleForm(forms.ModelForm):
         ]
         widgets = {
             'company': forms.Select(attrs={'class': 'form-control'}),
-            'end_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'datum_sprovodjenja_inicijalne': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
             'is_integrated_system': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
@@ -247,9 +246,9 @@ class CertificationCycleForm(forms.ModelForm):
             )
             company_id = instance.company_id
             
-            # Inicijalizujemo initial_audit_date sa start_date instance
-            if instance.start_date:
-                self.initial['initial_audit_date'] = instance.start_date
+            # Inicijalizujemo initial_audit_date sa planirani_datum instance
+            if instance.planirani_datum:
+                self.initial['initial_audit_date'] = instance.planirani_datum
                 
             # Pokušavamo da dobijemo podatke o inicijalnom auditu
             try:
@@ -297,17 +296,6 @@ class CertificationCycleForm(forms.ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
-        initial_audit_date = cleaned_data.get('initial_audit_date')
-        end_date = cleaned_data.get('end_date')
-        
-        # Automatski postavi end_date na 3 godine nakon initial_audit_date ako nije postavljen
-        if initial_audit_date and not end_date:
-            cleaned_data['end_date'] = initial_audit_date.replace(year=initial_audit_date.year + 3)
-        
-        # Proveri da li je end_date nakon initial_audit_date
-        if initial_audit_date and end_date and end_date <= initial_audit_date:
-            self.add_error('end_date', _('Datum završetka mora biti nakon datuma inicijalnog audita'))
-        
         return cleaned_data
     
     def save(self, commit=True):
@@ -320,7 +308,7 @@ class CertificationCycleForm(forms.ModelForm):
         
         # Ako je postavljen datum inicijalnog audita, koristimo ga kao start_date i datum_sprovodjenja_inicijalne
         if initial_audit_date:
-            instance.start_date = initial_audit_date
+            instance.planirani_datum = initial_audit_date
             # Eksplicitno postavljamo datum_sprovodjenja_inicijalne na isti datum
             instance.datum_sprovodjenja_inicijalne = initial_audit_date
         else:

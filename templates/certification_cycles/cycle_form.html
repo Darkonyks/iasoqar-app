@@ -190,24 +190,6 @@
                     <small class="form-text text-muted">Ovaj datum će biti postavljen kao datum početka ciklusa.</small>
                   </div>
                 </div>
-                
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="{{ form.end_date.id_for_label }}">Datum završetka (opciono)</label>
-                    <div class="input-group date" id="end_date_picker" data-target-input="nearest">
-                      {{ form.end_date }}
-                      <div class="input-group-append" data-target="#end_date_picker" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
-                    </div>
-                    {% if form.end_date.errors %}
-                    <div class="invalid-feedback d-block">
-                      {{ form.end_date.errors }}
-                    </div>
-                    {% endif %}
-                    <small class="form-text text-muted">Ako nije unet, biće automatski postavljen na 3 godine od datuma inicijalnog audita.</small>
-                  </div>
-                </div>
               </div>
               
               <div class="row">

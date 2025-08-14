@@ -50,10 +50,8 @@ class CertificationCycle(models.Model):
     )
     
     # Datum početka ciklusa sertifikacije (datum inicijalne sertifikacije)
-    start_date = models.DateField(_('Datum početka ciklusa'), help_text=_('Datum inicijalne sertifikacije'))
-    
-    # Datum završetka ciklusa (3 godine nakon inicijalne sertifikacije)
-    end_date = models.DateField(_('Datum završetka ciklusa'), null=True, blank=True, help_text=_('Datum isteka ciklusa (3 godine nakon inicijalne sertifikacije)'))
+    # Fizička kolona u bazi: 'planirani_datum' (preimenovana sa 'start_date' kroz migraciju 0033)
+    planirani_datum = models.DateField(_('Planirani datum ciklusa'), help_text=_('Datum inicijalne sertifikacije'))
     
     datum_sprovodjenja_inicijalne = models.DateField(_('Datum sprovođenja inicijalne'), null=True, blank=True, help_text=_('Datum kada je sprovedena inicijalna provera'))
     
@@ -92,19 +90,14 @@ class CertificationCycle(models.Model):
     class Meta:
         verbose_name = _('Ciklus sertifikacije')
         verbose_name_plural = _('Ciklusi sertifikacije')
-        ordering = ['-start_date']
+        ordering = ['-planirani_datum']
     
     def __str__(self):
         status_display = dict(self.CYCLE_STATUS_CHOICES)[self.status]
-        return f"{self.company.name} - {self.start_date.strftime('%Y-%m-%d')} do {self.end_date.strftime('%Y-%m-%d')} ({status_display})"
+        return f"{self.company.name} - {self.planirani_datum.strftime('%Y-%m-%d')} ({status_display})"
     
     def save(self, *args, **kwargs):
-        # Automatski postavi end_date na 3 godine nakon start_date ako nije postavljen
-        if self.start_date and not self.end_date:
-            self.end_date = self.start_date + datetime.timedelta(days=3*365)
-            
         super().save(*args, **kwargs)
-        
         # Nakon snimanja proverimo i ažuriramo status integrisanog sistema
         self.detect_integrated_system()
     
@@ -147,8 +140,8 @@ class CertificationCycle(models.Model):
                 certification_cycle=self,
                 audit_type='initial',
                 defaults={
-                    'planned_date': self.start_date,
-                    'actual_date': self.start_date,
+                    'planned_date': self.planirani_datum,
+                    'actual_date': self.planirani_datum,
                     'audit_status': 'completed'
                 }
             )
@@ -168,7 +161,7 @@ class CertificationCycle(models.Model):
                 )
             else:
                 # Ako nemamo potrebne podatke, koristimo standardnu formulu (godinu dana nakon inicijalnog)
-                first_surveillance_date = self.start_date + timedelta(days=365)
+                first_surveillance_date = self.planirani_datum + timedelta(days=365)
                 CycleAudit.objects.get_or_create(
                     certification_cycle=self,
                     audit_type='surveillance_1',
@@ -190,11 +183,11 @@ class CertificationCycle(models.Model):
         if recertification_audit and recertification_audit.actual_date:
             new_start_date = recertification_audit.actual_date
         else:
-            # Ako nema stvarnog datuma, koristimo planirani datum ili trenutni datum
+            # Ako nema stvarnog datuma, koristimo planirani datum ili projekciju kraja ciklusa (3 godine od početka)
             if recertification_audit and recertification_audit.planned_date:
                 new_start_date = recertification_audit.planned_date
             else:
-                new_start_date = self.end_date
+                new_start_date = self.planirani_datum + timedelta(days=3*365)
         
         logger.info(f"Novi početni datum: {new_start_date}")
         
@@ -207,22 +200,18 @@ class CertificationCycle(models.Model):
         logger.info(f"Ciklus {self.id} označen kao završen")
         
         # Kreiramo novi ciklus sertifikacije
-        new_end_date = new_start_date + timedelta(days=3*365)  # 3 godine od nove resertifikacije
-        
-        # Kreiramo novi ciklus sertifikacije
         new_cycle = CertificationCycle.objects.create(
             company=self.company,
             is_integrated_system=self.is_integrated_system,
-            start_date=new_start_date,
-            end_date=new_end_date,
+            planirani_datum=new_start_date,
             datum_sprovodjenja_inicijalne=new_start_date,  # Postavljamo datum sprovođenja inicijalne na početak novog ciklusa
             status='active',
             inicijalni_broj_dana=self.inicijalni_broj_dana,
             broj_dana_nadzora=self.broj_dana_nadzora,
             broj_dana_resertifikacije=self.broj_dana_resertifikacije,
-            notes=f"Novi ciklus kreiran nakon završetka prethodnog ciklusa. Početak: {new_start_date.strftime('%Y-%m-%d')}, Kraj: {new_end_date.strftime('%Y-%m-%d')}"
+            notes=f"Novi ciklus kreiran nakon završetka prethodnog ciklusa. Početak: {new_start_date.strftime('%Y-%m-%d')}"
         )
-        logger.info(f"Kreiran novi ciklus {new_cycle.id} sa početkom {new_start_date} i krajem {new_end_date}")
+        logger.info(f"Kreiran novi ciklus {new_cycle.id} sa početkom {new_start_date}")
         
         # Kopiramo standarde iz starog ciklusa u novi
         for cycle_standard in self.cycle_standards.all():
@@ -305,7 +294,7 @@ class CycleStandard(models.Model):
         unique_together = [['certification_cycle', 'standard_definition']]
         
     def __str__(self):
-        return f"{self.certification_cycle.company.name} - {self.standard_definition.code} ({self.certification_cycle.start_date.strftime('%Y-%m-%d')})"
+        return f"{self.certification_cycle.company.name} - {self.standard_definition.code} ({self.certification_cycle.planirani_datum.strftime('%Y-%m-%d')})"
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
