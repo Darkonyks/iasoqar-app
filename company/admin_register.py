@@ -7,6 +7,7 @@ registruju odmah nakon što se aplikacija inicijalizira.
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 import nested_admin
+from .forms import CycleAuditForm
 
 # Import svih modela
 from .company_models import Company, KontaktOsoba, OstalaLokacija
@@ -14,7 +15,7 @@ from .iaf_models import IAFScopeReference, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, StandardIAFScopeReference, CompanyStandard
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from .calendar_models import CalendarEvent, Appointment
-from .cycle_models import CertificationCycle, CycleAudit, CycleStandard
+from .cycle_models import CertificationCycle, CycleAudit, CycleStandard, AuditorReservation
 
 # Inline klase za model Company
 class KontaktOsobaInline(admin.TabularInline):
@@ -122,6 +123,7 @@ class CycleAuditAdmin(admin.ModelAdmin):
     list_filter = ['audit_type', 'audit_status', 'planned_date']
     search_fields = ['certification_cycle__company__name', 'lead_auditor__ime_prezime']
     date_hierarchy = 'planned_date'
+    form = CycleAuditForm
     
     fieldsets = [
         ('Osnovne informacije', {
@@ -161,6 +163,12 @@ class AppointmentAdmin(admin.ModelAdmin):
             'fields': ['description', 'notes']
         })
     ]
+
+class AuditorReservationAdmin(admin.ModelAdmin):
+    list_display = ['auditor', 'date', 'audit', 'role']
+    list_filter = ['date', 'role']
+    search_fields = ['auditor__ime_prezime', 'audit__certification_cycle__company__name']
+    date_hierarchy = 'date'
 
 # Inline klase za model Auditor sa nested_admin podrškom
 class AuditorStandardIAFEACCodeInline(nested_admin.NestedTabularInline):
@@ -206,11 +214,11 @@ admin.site.register(CompanyStandard)
 admin.site.register(Auditor, AuditorAdmin)
 admin.site.register(AuditorStandard, AuditorStandardAdmin)
 admin.site.register(AuditorStandardIAFEACCode)
-# Registracija NaredneProvere je uklonjena jer je model izbačen
 admin.site.register(CalendarEvent)
 admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)
 admin.site.register(CycleStandard)
 admin.site.register(CycleAudit, CycleAuditAdmin)
+admin.site.register(AuditorReservation, AuditorReservationAdmin)
 
 print("Admin registracije su uspešno učitane!")

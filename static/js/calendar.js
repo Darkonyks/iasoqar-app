@@ -2590,7 +2590,7 @@ function handleEventDateChange(info) {
   if (eventType === 'audit_day') {
     eventId = eventProps.audit_day_id || event.id;
   } else if (eventType === 'cycle_audit') {
-    eventId = eventProps.cycle_id || event.id;
+    eventId = eventProps.audit_id || event.id;
   } else if (eventType === 'appointment') {
     eventId = event.id.replace('appointment_', '');
   } else {

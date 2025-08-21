@@ -201,8 +201,6 @@
                   <span class="info-box-icon bg-success">
                     {% if cycle.status == 'active' %}
                     <i class="fas fa-check-circle"></i>
-                    {% elif cycle.status == 'planned' %}
-                    <i class="fas fa-calendar-alt"></i>
                     {% elif cycle.status == 'completed' %}
                     <i class="fas fa-flag-checkered"></i>
                     {% elif cycle.status == 'cancelled' %}
@@ -216,8 +214,6 @@
                     <span class="info-box-number">
                       {% if cycle.status == 'active' %}
                       <span class="badge badge-success">Aktivan</span>
-                      {% elif cycle.status == 'planned' %}
-                      <span class="badge badge-info">Planiran</span>
                       {% elif cycle.status == 'completed' %}
                       <span class="badge badge-secondary">Završen</span>
                       {% elif cycle.status == 'cancelled' %}
@@ -439,16 +435,14 @@
                         <td>{{ audit.actual_date|date:"d.m.Y"|default:"-" }}</td>
                         <td>
                           {% if audit.lead_auditor %}
-                          <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}">
-                            {{ audit.lead_auditor.get_full_name }} (Lead auditor)
-                          </a>
+                          <a href="{% url 'company:auditor_detail' audit.lead_auditor.id %}" class="badge badge-primary">{{ audit.lead_auditor.ime_prezime }}</a>
                           {% else %}
                           -
                           {% endif %}
                         </td>
                         <td>
                           {% for auditor in audit.audit_team.all %}
-                          <span class="badge badge-info">{{ auditor.get_full_name }}</span>
+                          <a href="{% url 'company:auditor_detail' auditor.id %}" class="badge badge-info">{{ auditor.ime_prezime }}</a>
                           {% empty %}
                           -
                           {% endfor %}
@@ -537,11 +531,11 @@ function showCompleted() {
           </div>
           
           <div class="form-group">
-            <label for="{{ audit_form.status.id_for_label }}">Status</label>
-            {{ audit_form.status }}
-            {% if audit_form.status.errors %}
+            <label for="{{ audit_form.audit_status.id_for_label }}">Status</label>
+            {{ audit_form.audit_status }}
+            {% if audit_form.audit_status.errors %}
             <div class="invalid-feedback d-block">
-              {{ audit_form.status.errors }}
+              {{ audit_form.audit_status.errors }}
             </div>
             {% endif %}
           </div>

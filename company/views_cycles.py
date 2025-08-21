@@ -77,7 +77,12 @@ class CertificationCycleDetailView(LoginRequiredMixin, DetailView):
         context['standards'] = cycle.cycle_standards.all()
         
         # Get audits for this cycle
-        context['audits'] = cycle.audits.all().order_by('planned_date')
+        context['audits'] = (
+            cycle.audits
+            .select_related('lead_auditor')
+            .prefetch_related('audit_team')
+            .order_by('planned_date')
+        )
         
         # Check if we need to show audit form
         edit_audit = self.request.GET.get('edit_audit')
@@ -107,7 +112,8 @@ class CertificationCycleDetailView(LoginRequiredMixin, DetailView):
             if form.is_valid():
                 audit = form.save()
                 messages.success(request, 'Audit je uspešno sačuvan.')
-                return redirect('company:cycle_detail', pk=cycle.id)
+                # Nakon čuvanja preusmeri na kalendar (bez potrebe za ručnim osvežavanjem)
+                return redirect('company:calendar')
             else:
                 context = self.get_context_data(**kwargs)
                 context['audit_form'] = form
@@ -253,7 +259,8 @@ class CycleAuditCreateView(LoginRequiredMixin, CreateView):
         return response
     
     def get_success_url(self):
-        return reverse('company:cycle_detail', kwargs={'pk': self.object.certification_cycle.pk})
+        # Nakon kreiranja audita, preusmeri na kalendar
+        return reverse('company:calendar')
 
 
 class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
@@ -299,7 +306,7 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
         return response
     
     def get_success_url(self):
-        return reverse('company:cycle_detail', kwargs={'pk': self.object.certification_cycle.pk})
+        return reverse('company:calendar')
 
 
 class CycleAuditDeleteView(LoginRequiredMixin, DeleteView):

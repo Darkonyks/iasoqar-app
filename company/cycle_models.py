@@ -93,13 +93,24 @@ class CertificationCycle(models.Model):
         ordering = ['-planirani_datum']
     
     def __str__(self):
-        status_display = dict(self.CYCLE_STATUS_CHOICES)[self.status]
-        return f"{self.company.name} - {self.planirani_datum.strftime('%Y-%m-%d')} ({status_display})"
+        return f"{self.company.name} - {self.planirani_datum.strftime('%Y-%m-%d')} ({self.get_status_display()})"
     
     def save(self, *args, **kwargs):
+        # Detektujemo prethodnu vrednost stvarnog datuma inicijalne provere
+        prev_actual_date = None
+        if self.pk:
+            try:
+                prev_actual_date = CertificationCycle.objects.get(pk=self.pk).datum_sprovodjenja_inicijalne
+            except CertificationCycle.DoesNotExist:
+                prev_actual_date = None
+
         super().save(*args, **kwargs)
         # Nakon snimanja proverimo i ažuriramo status integrisanog sistema
         self.detect_integrated_system()
+
+        # Ako je unet ili promenjen stvarni datum inicijalne provere, zakaži prvi nadzor
+        if self.datum_sprovodjenja_inicijalne and self.datum_sprovodjenja_inicijalne != prev_actual_date:
+            self.ensure_first_surveillance_scheduled()
     
     def detect_integrated_system(self):
         """
@@ -128,47 +139,53 @@ class CertificationCycle(models.Model):
     
     def create_default_audits(self, is_first_cycle=False):
         """
-        Automatski kreira inicijalni audit i prvi nadzorni audit za ciklus sertifikacije.
-        Za prvi ciklus kreira inicijalni audit, a zatim prvi nadzorni audit prema formuli.
+        Automatski kreira inicijalni audit i (kada je dostupan stvarni datum inicijalne provere)
+        prvi nadzorni audit za ciklus sertifikacije.
+        Za prvi ciklus kreira samo inicijalni audit kao planiran; prvi nadzor se zakazuje tek
+        nakon unosa stvarnog datuma inicijalne provere.
         """
         from datetime import timedelta
         
         # Samo za prvi ciklus kreiramo inicijalni audit
         if is_first_cycle:
-            # Inicijalni audit (već je obavljen na datum početka ciklusa)
+            # Inicijalni audit (planiran na datum početka ciklusa)
             initial_audit, created = CycleAudit.objects.get_or_create(
                 certification_cycle=self,
                 audit_type='initial',
                 defaults={
                     'planned_date': self.planirani_datum,
-                    'actual_date': self.planirani_datum,
-                    'audit_status': 'completed'
+                    'audit_status': 'planned'
                 }
             )
-            
-            # Ako imamo datum sprovođenja inicijalne provere i broj dana nadzora, kreiramo prvi nadzorni audit
-            if self.datum_sprovodjenja_inicijalne and self.broj_dana_nadzora:
-                # Zaokružujemo broj_dana_nadzora na veći ceo broj ako ima decimalni deo .5 ili veći
-                broj_dana = zaokruzi_na_veci_broj(self.broj_dana_nadzora)
-                # Prvi nadzor = Datum sprovođenja inicijelne provere - Broj dana nadzora + 1 godina
-                first_surveillance_date = self.datum_sprovodjenja_inicijalne + timedelta(days=365) - timedelta(days=broj_dana)
-                CycleAudit.objects.get_or_create(
-                    certification_cycle=self,
-                    audit_type='surveillance_1',
-                    defaults={
-                        'planned_date': first_surveillance_date
-                    }
-                )
-            else:
-                # Ako nemamo potrebne podatke, koristimo standardnu formulu (godinu dana nakon inicijalnog)
-                first_surveillance_date = self.planirani_datum + timedelta(days=365)
-                CycleAudit.objects.get_or_create(
-                    certification_cycle=self,
-                    audit_type='surveillance_1',
-                    defaults={
-                        'planned_date': first_surveillance_date
-                    }
-                )
+            # Ako je već unet stvarni datum, odmah zakazujemo prvi nadzor
+            if self.datum_sprovodjenja_inicijalne:
+                self.ensure_first_surveillance_scheduled()
+
+    def ensure_first_surveillance_scheduled(self):
+        """Zakazuje ili ažurira prvi nadzorni audit na osnovu stvarnog datuma inicijalne provere."""
+        from datetime import timedelta
+        if not self.datum_sprovodjenja_inicijalne:
+            return
+        
+        # Izračunavanje datuma prvog nadzora
+        if self.broj_dana_nadzora:
+            broj_dana = zaokruzi_na_veci_broj(self.broj_dana_nadzora)
+            first_surveillance_date = self.datum_sprovodjenja_inicijalne + timedelta(days=365) - timedelta(days=broj_dana)
+        else:
+            # Fallback: godinu dana nakon stvarnog datuma inicijalne provere
+            first_surveillance_date = self.datum_sprovodjenja_inicijalne + timedelta(days=365)
+
+        audit, created = CycleAudit.objects.get_or_create(
+            certification_cycle=self,
+            audit_type='surveillance_1',
+            defaults={
+                'planned_date': first_surveillance_date,
+                'audit_status': 'planned'
+            }
+        )
+        if not created and audit.planned_date != first_surveillance_date:
+            audit.planned_date = first_surveillance_date
+            audit.save(update_fields=['planned_date'])
     
     def extend_with_new_audits(self, recertification_audit=None):
         """
@@ -199,27 +216,33 @@ class CertificationCycle(models.Model):
         self.save(update_fields=['status', 'notes'])
         logger.info(f"Ciklus {self.id} označen kao završen")
         
-        # Kreiramo novi ciklus sertifikacije
-        new_cycle = CertificationCycle.objects.create(
-            company=self.company,
-            is_integrated_system=self.is_integrated_system,
-            planirani_datum=new_start_date,
-            datum_sprovodjenja_inicijalne=new_start_date,  # Postavljamo datum sprovođenja inicijalne na početak novog ciklusa
-            status='active',
-            inicijalni_broj_dana=self.inicijalni_broj_dana,
-            broj_dana_nadzora=self.broj_dana_nadzora,
-            broj_dana_resertifikacije=self.broj_dana_resertifikacije,
-            notes=f"Novi ciklus kreiran nakon završetka prethodnog ciklusa. Početak: {new_start_date.strftime('%Y-%m-%d')}"
-        )
+        # Ako već postoji ciklus sa istim početnim datumom za istu kompaniju, koristimo njega (idempotentnost)
+        new_cycle = CertificationCycle.objects.filter(company=self.company, planirani_datum=new_start_date).first()
+        if new_cycle:
+            logger.info(f"Pronađen postojeći ciklus {new_cycle.id} sa istim početnim datumom {new_start_date}, preskačem kreiranje.")
+        else:
+            # Kreiramo novi ciklus sertifikacije
+            new_cycle = CertificationCycle.objects.create(
+                company=self.company,
+                is_integrated_system=self.is_integrated_system,
+                planirani_datum=new_start_date,
+                status='active',
+                inicijalni_broj_dana=self.inicijalni_broj_dana,
+                broj_dana_nadzora=self.broj_dana_nadzora,
+                broj_dana_resertifikacije=self.broj_dana_resertifikacije,
+                notes=f"Novi ciklus kreiran nakon završetka prethodnog ciklusa. Početak: {new_start_date.strftime('%Y-%m-%d')}"
+            )
         logger.info(f"Kreiran novi ciklus {new_cycle.id} sa početkom {new_start_date}")
         
-        # Kopiramo standarde iz starog ciklusa u novi
+        # Kopiramo standarde iz starog ciklusa u novi (idempotentno)
         for cycle_standard in self.cycle_standards.all():
-            CycleStandard.objects.create(
+            CycleStandard.objects.get_or_create(
                 certification_cycle=new_cycle,
                 standard_definition=cycle_standard.standard_definition,
-                company_standard=cycle_standard.company_standard,
-                notes=cycle_standard.notes
+                defaults={
+                    'company_standard': cycle_standard.company_standard,
+                    'notes': cycle_standard.notes,
+                }
             )
         logger.info(f"Kopirani standardi iz ciklusa {self.id} u novi ciklus {new_cycle.id}")
         
@@ -236,13 +259,19 @@ class CertificationCycle(models.Model):
             # Ako nemamo potrebne podatke, koristimo standardnu formulu (godinu dana nakon inicijalne)
             first_surveillance_date = new_start_date + timedelta(days=365)
         
-        CycleAudit.objects.create(
+        # Kreiramo prvi nadzorni audit za novi ciklus (idempotentno)
+        s1_audit, s1_created = CycleAudit.objects.get_or_create(
             certification_cycle=new_cycle,
             audit_type='surveillance_1',
-            planned_date=first_surveillance_date,
-            audit_status='planned'
+            defaults={
+                'planned_date': first_surveillance_date,
+                'audit_status': 'planned'
+            }
         )
-        logger.info(f"Kreiran prvi nadzorni audit za novi ciklus {new_cycle.id} sa planiranim datumom {first_surveillance_date}")
+        if not s1_created and s1_audit.planned_date != first_surveillance_date:
+            s1_audit.planned_date = first_surveillance_date
+            s1_audit.save(update_fields=['planned_date'])
+        logger.info(f"Prvi nadzorni audit za novi ciklus {new_cycle.id}: ID={s1_audit.id}, planirani datum={s1_audit.planned_date}")
         
         return new_cycle
         
@@ -325,6 +354,41 @@ class AuditDay(models.Model):
         return f"{self.audit} - {self.date.strftime('%Y-%m-%d')}"
 
 
+class AuditorReservation(models.Model):
+    """Rezervacija auditora po datumu kako bi se sprečilo duplo zakazivanje."""
+    auditor = models.ForeignKey(
+        Auditor,
+        on_delete=models.CASCADE,
+        related_name='reservations',
+        verbose_name=_('Auditor')
+    )
+    date = models.DateField(_('Datum'))
+    audit = models.ForeignKey(
+        'CycleAudit',
+        on_delete=models.CASCADE,
+        related_name='auditor_reservations',
+        verbose_name=_('Audit')
+    )
+    role = models.CharField(
+        _('Uloga'),
+        max_length=10,
+        blank=True,
+        null=True,
+        choices=[('lead', _('Vodeći')), ('team', _('Tim'))]
+    )
+    created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)
+    updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('Rezervacija auditora')
+        verbose_name_plural = _('Rezervacije auditora')
+        unique_together = [['auditor', 'date']]
+        ordering = ['date']
+
+    def __str__(self):
+        return f"{self.auditor} - {self.date.strftime('%Y-%m-%d')} ({self.audit})"
+
+
 class CycleAudit(models.Model):
     """Model za praćenje pojedinačnih audita u okviru ciklusa sertifikacije."""
     AUDIT_TYPE_CHOICES = [
@@ -384,6 +448,7 @@ class CycleAudit(models.Model):
     # Pratimo prethodne vrednosti za detekciju promena
     _prev_audit_status = None
     _prev_planned_date = None
+    _prev_actual_date = None
     
     class Meta:
         verbose_name = _('Audit u ciklusu')
@@ -396,11 +461,15 @@ class CycleAudit(models.Model):
         self._prev_audit_status = self.audit_status if self.pk else None
         # Pratimo prethodni planirani datum da bismo znali kada je promenjen
         self._prev_planned_date = self.planned_date if self.pk else None
+        # Pratimo prethodni stvarni datum da bismo mogli reagovati i kada se ukloni/stavi
+        self._prev_actual_date = self.actual_date if self.pk else None
     
     def create_audit_days(self):
         """
-        Kreira dane audita na osnovu planiranog datuma i broja dana audita.
-        Planirani dani se kreiraju unazad od planiranog datuma.
+        Kreira dane audita na osnovu planiranog/stvarnog datuma i broja dana audita.
+        Pravilo:
+        - Ako postoji stvarni datum (actual_date), brišu se SVI planirani dani i kreiraju se samo stvarni dani.
+        - Ako ne postoji stvarni datum, kreiraju se planirani dani unazad od planiranog datuma.
         """
         import logging
         from datetime import timedelta
@@ -417,28 +486,18 @@ class CycleAudit(models.Model):
         else:
             broj_dana = 1  # Podrazumevano 1 dan ako nije definisano
         
-        logger.info(f"Kreiranje {broj_dana} dana audita za audit ID={self.pk}, tip={self.audit_type}, planirani datum={self.planned_date}")
+        logger.info(f"Priprema dana audita za audit ID={self.pk}, tip={self.audit_type}, planned={self.planned_date}, actual={self.actual_date}")
         
-        # Brišemo postojeće planirane dane audita
-        self.audit_days.filter(is_planned=True, is_actual=False).delete()
+        # Uvek obriši postojeće planirane dane; ne želimo ih kada postoji actual_date
+        deleted_planned, _ = self.audit_days.filter(is_planned=True).delete()
+        logger.info(f"Obrisano planiranih dana: {deleted_planned}")
         
-        # Kreiramo nove planirane dane audita unazad od planiranog datuma
         audit_days = []
-        for i in range(broj_dana):
-            audit_date = self.planned_date - timedelta(days=i)
-            audit_day = AuditDay(
-                audit=self,
-                date=audit_date,
-                is_planned=True,
-                is_actual=False
-            )
-            audit_days.append(audit_day)
         
-        # Ako postoji stvarni datum, kreiramo i stvarne dane audita
         if self.actual_date:
-            # Brišemo postojeće stvarne dane audita
-            self.audit_days.filter(is_actual=True).delete()
-            
+            # Kada postoji stvarni datum, kreiramo SAMO stvarne dane
+            deleted_actual, _ = self.audit_days.filter(is_actual=True).delete()
+            logger.info(f"Obrisano stvarnih dana (pre re-kreiranja): {deleted_actual}")
             for i in range(broj_dana):
                 audit_date = self.actual_date - timedelta(days=i)
                 audit_day = AuditDay(
@@ -448,10 +507,63 @@ class CycleAudit(models.Model):
                     is_actual=True
                 )
                 audit_days.append(audit_day)
+        else:
+            # Nema stvarnog datuma -> kreiramo planirane dane od planiranog datuma
+            # Takođe, ako su eventualno postojali stvarni dani od ranije, obriši ih
+            deleted_actual, _ = self.audit_days.filter(is_actual=True).delete()
+            if deleted_actual:
+                logger.info(f"Obrisano stvarnih dana (jer actual_date nije postavljen): {deleted_actual}")
+            for i in range(broj_dana):
+                audit_date = self.planned_date - timedelta(days=i)
+                audit_day = AuditDay(
+                    audit=self,
+                    date=audit_date,
+                    is_planned=True,
+                    is_actual=False
+                )
+                audit_days.append(audit_day)
         
         # Čuvamo dane audita
         AuditDay.objects.bulk_create(audit_days)
-        logger.info(f"Kreirano {len(audit_days)} dana audita")
+        logger.info(f"Kreirano novih dana audita: {len(audit_days)}")
+    
+    def sync_auditor_reservations(self):
+        """
+        Sinhronizuje rezervacije auditora sa trenutnim danima audita i dodeljenim auditorima
+        (vodeći + tim). Ne pravi duplikate i uklanja zastarele rezervacije za ovaj audit.
+        """
+        from django.db.models import Q
+        # Trenutno dodeljeni auditori
+        assigned_auditors = list(self.audit_team.all())
+        if self.lead_auditor_id:
+            assigned_auditors.append(self.lead_auditor)
+
+        # Svi datumi audita (planirani ili stvarni)
+        dates = list(self.audit_days.values_list('date', flat=True))
+
+        # Ako nema datuma ili nema auditora, obriši sve rezervacije za ovaj audit
+        if not dates or not assigned_auditors:
+            AuditorReservation.objects.filter(audit=self).delete()
+            return
+
+        # Ukloni rezervacije ovog audita koje se više ne odnose na aktuelne datume ili auditore
+        AuditorReservation.objects.filter(audit=self).exclude(date__in=dates).delete()
+        AuditorReservation.objects.filter(audit=self).exclude(auditor__in=[a.id for a in assigned_auditors]).delete()
+
+        # Kreiraj rezervacije za sve kombinacije (auditor, date) koje nedostaju
+        for auditor in assigned_auditors:
+            role = 'lead' if self.lead_auditor_id and auditor.id == self.lead_auditor_id else 'team'
+            for d in dates:
+                # Ako već postoji rezervacija za istog auditora i datum za drugi audit, preskoči (sukob)
+                conflict = AuditorReservation.objects.filter(auditor=auditor, date=d).exclude(audit=self).exists()
+                if conflict:
+                    # Ne prekidamo tok ovde; validacija u formi treba da spreči ovakav slučaj
+                    continue
+                AuditorReservation.objects.get_or_create(
+                    auditor=auditor,
+                    date=d,
+                    defaults={'audit': self, 'role': role}
+                )
     
     def save(self, *args, **kwargs):
         # Debug ispisi
@@ -467,6 +579,10 @@ class CycleAudit(models.Model):
         is_planned_date_changed = self.planned_date != self._prev_planned_date
         logger.info(f"is_planned_date_changed = {is_planned_date_changed}")
         
+        # Proveravamo da li je promenjen stvarni datum
+        is_actual_date_changed = self.actual_date != self._prev_actual_date
+        logger.info(f"is_actual_date_changed = {is_actual_date_changed}")
+        
         # Proveravamo tip audita
         is_recertification = self.audit_type == 'recertification'
         is_surveillance_1 = self.audit_type == 'surveillance_1'
@@ -479,8 +595,26 @@ class CycleAudit(models.Model):
         super().save(*args, **kwargs)
         logger.info("super().save() završen")
         
-        # Ako je resertifikacioni audit označen kao završen
-        if is_status_completed and is_recertification:
+        # Ako je inicijalni audit završen ili je upravo unet/izmenjen stvarni datum,
+        # propagiramo datum na ciklus i zakazujemo prvi nadzorni audit
+        if self.audit_type == 'initial' and self.actual_date and (is_status_completed or is_actual_date_changed):
+            try:
+                cycle = self.certification_cycle
+                prev_cycle_actual = cycle.datum_sprovodjenja_inicijalne
+                if prev_cycle_actual != self.actual_date:
+                    cycle.datum_sprovodjenja_inicijalne = self.actual_date
+                    # Snimamo ciklus da bismo aktivirali ensure_first_surveillance_scheduled preko save()
+                    cycle.save(update_fields=['datum_sprovodjenja_inicijalne'])
+                else:
+                    # Ako je već postavljen isti datum, ipak osiguramo zakazivanje
+                    cycle.ensure_first_surveillance_scheduled()
+            except Exception:
+                # Ne blokiramo dalji tok u slučaju greške
+                pass
+        # Ako je resertifikacioni audit završen i postoji stvarni datum,
+        # kreiramo (idempotentno) novi ciklus sertifikacije u skladu sa formulom
+        # Trigerujemo ako je došlo do prelaza u 'completed' ili je promenjen actual_date dok je status već 'completed'.
+        if is_recertification and self.actual_date and self.audit_status == 'completed' and (is_status_completed or is_actual_date_changed):
             # Umesto kreiranja novog ciklusa sertifikacije, dodajemo nove audite u postojeći ciklus
             self.certification_cycle.extend_with_new_audits(recertification_audit=self)
         
@@ -508,8 +642,9 @@ class CycleAudit(models.Model):
                 }
             )
         
-        # Ako je drugi nadzorni audit označen kao završen, kreiramo resertifikacioni audit
-        elif is_status_completed and is_surveillance_2 and self.actual_date:
+        # Ako je drugi nadzorni audit označen kao završen ILI je upravo unet/izmenjen stvarni datum,
+        # kreiramo ili ažuriramo planirani resertifikacioni audit
+        elif is_surveillance_2 and self.actual_date and (is_status_completed or is_actual_date_changed):
             # Resertifikacija = Drugi nadzorni audit Stvarni datum - Broj dana resertifikacije + 1 godina
             from datetime import timedelta
             cycle = self.certification_cycle
@@ -521,8 +656,7 @@ class CycleAudit(models.Model):
             else:
                 recertification_date = self.actual_date + timedelta(days=365) - timedelta(days=30)  # 30 dana pre isteka ako nemamo broj dana
             
-            # Kreiramo resertifikacioni audit
-            CycleAudit.objects.get_or_create(
+            recert_audit, created = CycleAudit.objects.get_or_create(
                 certification_cycle=cycle,
                 audit_type='recertification',
                 defaults={
@@ -530,17 +664,27 @@ class CycleAudit(models.Model):
                     'audit_status': 'planned'
                 }
             )
+            if not created and recert_audit.planned_date != recertification_date:
+                recert_audit.planned_date = recertification_date
+                recert_audit.save(update_fields=['planned_date'])
         
-        # Kreiramo dane audita ako je novi audit ili ako je promenjen planirani datum ili stvarni datum
-        if self.pk is None or is_planned_date_changed or self.actual_date:
+        # Kreiramo dane audita ako je novi audit ili ako je promenjen planirani ili stvarni datum
+        if self.pk is None or is_planned_date_changed or is_actual_date_changed:
             self.create_audit_days()
             logger.info("Kreirani dani audita")
+            # Sinhronizujemo rezervacije auditora sa aktuelnim danima audita
+            try:
+                self.sync_auditor_reservations()
+            except Exception:
+                pass
         
         # Ažuriramo prethodne vrednosti
         self._prev_audit_status = self.audit_status
         self._prev_planned_date = self.planned_date
+        self._prev_actual_date = self.actual_date
         logger.info(f"_prev_audit_status postavljen na {self._prev_audit_status}")
         logger.info(f"_prev_planned_date postavljen na {self._prev_planned_date}")
+        logger.info(f"_prev_actual_date postavljen na {self._prev_actual_date}")
         logger.info("CycleAudit.save završena")
     
     def __str__(self):

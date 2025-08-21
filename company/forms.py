@@ -2,8 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from .models import Company, IAFEACCode, CompanyIAFEACCode
-from .cycle_models import CycleAudit, CertificationCycle
-from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
+from .cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditorReservation, zaokruzi_na_veci_broj
 from .standard_models import StandardDefinition, CompanyStandard
 from .auditor_models import Auditor
 from .audit_utils import is_auditor_qualified_for_company, is_auditor_qualified_for_audit
@@ -192,7 +191,7 @@ class CertificationCycleForm(forms.ModelForm):
     # Polja za inicijalni audit
     initial_audit_date = forms.DateField(
         required=True,
-        label=_('Datum inicijalnog audita'),
+        label=_('Datum planiranog inicijalnog audita'),
         widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
     )
     
@@ -233,24 +232,29 @@ class CertificationCycleForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Dobijamo kompaniju iz inicijalnih podataka ili iz instance
-        instance = kwargs.get('instance')
-        initial_data = kwargs.get('initial', {})
+
+        # Ispravno dobijamo instancu i inicijalne vrednosti nakon super().__init__
+        instance = getattr(self, 'instance', None)
+        initial_data = dict(self.initial) if hasattr(self, 'initial') else {}
+
+        # Odredi company_id iz initial ili iz instance
         company_id = initial_data.get('company')
-        
-        if instance:
-            # Ako je instanca već kreirana, popunjavamo polje standards sa postojećim standardima
-            self.initial['standards'] = StandardDefinition.objects.filter(
+        if not company_id and instance and instance.pk:
+            company_id = instance.company_id
+
+        # Ako je ovo izmena postojećeg ciklusa, popuni inicijalne vrednosti
+        if instance and instance.pk:
+            # Preselektuj već dodeljene standarde ciklusu
+            current_standards_qs = StandardDefinition.objects.filter(
                 certification_cycles__certification_cycle=instance
             )
-            company_id = instance.company_id
-            
-            # Inicijalizujemo initial_audit_date sa planirani_datum instance
+            self.initial['standards'] = list(current_standards_qs.values_list('id', flat=True))
+
+            # Inicijalizuj initial_audit_date iz planiranog datuma ciklusa
             if instance.planirani_datum:
                 self.initial['initial_audit_date'] = instance.planirani_datum
-                
-            # Pokušavamo da dobijemo podatke o inicijalnom auditu
+
+            # Pokušaj da dohvatiš lead auditora i broj izveštaja sa inicijalnog audita
             try:
                 initial_audit = instance.audits.get(audit_type='initial')
                 if initial_audit:
@@ -258,41 +262,50 @@ class CertificationCycleForm(forms.ModelForm):
                         self.initial['lead_auditor'] = initial_audit.lead_auditor.id
                     if initial_audit.report_number:
                         self.initial['report_number'] = initial_audit.report_number
-            except:
+            except Exception:
                 pass
-            
-        # Filtriramo standarde samo za one koji su dodeljeni kompaniji i nemaju već dodeljen ciklus
+
+        # Filtriraj opcije standarda:
+        # - prikazuj samo standarde koji su dodeljeni kompaniji
+        # - isključi one koji su već korišćeni u drugim ciklusima iste kompanije
+        # - ali UVEK uključi trenutno odabrane standarde za ovaj ciklus kako bi bili vidljivi prilikom izmene
         if company_id:
-            # Prvo dobijamo sve standarde kompanije
-            company_standards = CompanyStandard.objects.filter(company_id=company_id)
-            standard_ids = company_standards.values_list('standard_definition_id', flat=True)
-            
-            # Zatim dobijamo sve standarde koji su već u nekom ciklusu za ovu kompaniju
-            # (osim trenutnog ciklusa ako je u pitanju ažuriranje)
-            exclude_cycle_id = instance.id if instance else None
-            
-            # Standardi koji su već dodeljeni nekom ciklusu
-            used_standard_ids = set()
-            cycles = CertificationCycle.objects.filter(company_id=company_id)
-            if exclude_cycle_id:
-                cycles = cycles.exclude(id=exclude_cycle_id)
-                
-            for cycle in cycles:
-                cycle_standard_ids = CycleStandard.objects.filter(
-                    certification_cycle=cycle
-                ).values_list('standard_definition_id', flat=True)
-                used_standard_ids.update(cycle_standard_ids)
-            
-            # Filtriramo samo standarde koji su dodeljeni kompaniji i nisu u drugim ciklusima
-            available_standard_ids = [std_id for std_id in standard_ids if std_id not in used_standard_ids]
-            
-            # Postavljamo queryset za standards polje
-            self.fields['standards'].queryset = StandardDefinition.objects.filter(
-                id__in=available_standard_ids
+            # Svi standardi koje kompanija ima
+            company_std_ids = set(
+                CompanyStandard.objects.filter(company_id=company_id)
+                .values_list('standard_definition_id', flat=True)
+            )
+
+            # Standardi korišćeni u drugim ciklusima ove kompanije (ne uključuj trenutni ciklus)
+            cycles_qs = CertificationCycle.objects.filter(company_id=company_id)
+            if instance and instance.pk:
+                cycles_qs = cycles_qs.exclude(id=instance.id)
+
+            used_in_other_cycles = set(
+                CycleStandard.objects.filter(certification_cycle__in=cycles_qs)
+                .values_list('standard_definition_id', flat=True)
+            )
+
+            available_ids = company_std_ids - used_in_other_cycles
+
+            # Dodaj trenutno dodeljene standarde (da budu vidljivi i selektovani)
+            if instance and instance.pk:
+                current_ids = set(
+                    CycleStandard.objects.filter(certification_cycle=instance)
+                    .values_list('standard_definition_id', flat=True)
+                )
+                available_ids |= current_ids
+
+            self.fields['standards'].queryset = (
+                StandardDefinition.objects.filter(id__in=available_ids).order_by('code')
             )
         else:
-            # Ako nema kompanije, prikazujemo praznu listu
-            self.fields['standards'].queryset = StandardDefinition.objects.none()
+            # Ako nemamo company_id, prikaži makar trenutno dodeljene standarde (za slučaj izmene)
+            if instance and instance.pk:
+                current_ids = CycleStandard.objects.filter(certification_cycle=instance).values_list('standard_definition_id', flat=True)
+                self.fields['standards'].queryset = StandardDefinition.objects.filter(id__in=current_ids).order_by('code')
+            else:
+                self.fields['standards'].queryset = StandardDefinition.objects.none()
     
     def clean(self):
         cleaned_data = super().clean()
@@ -306,14 +319,12 @@ class CertificationCycleForm(forms.ModelForm):
         lead_auditor = self.cleaned_data.get('lead_auditor')
         report_number = self.cleaned_data.get('report_number')
         
-        # Ako je postavljen datum inicijalnog audita, koristimo ga kao start_date i datum_sprovodjenja_inicijalne
+        # Ako je postavljen datum planiranog inicijalnog audita, koristimo ga kao planirani datum ciklusa
         if initial_audit_date:
             instance.planirani_datum = initial_audit_date
-            # Eksplicitno postavljamo datum_sprovodjenja_inicijalne na isti datum
-            instance.datum_sprovodjenja_inicijalne = initial_audit_date
         else:
             # Ako nema datuma inicijalnog audita, ne možemo nastaviti
-            raise forms.ValidationError(_('Datum inicijalnog audita je obavezan.'))
+            raise forms.ValidationError(_('Datum planiranog inicijalnog audita je obavezan.'))
         
         if commit:
             instance.save()
@@ -366,8 +377,8 @@ class CertificationCycleForm(forms.ModelForm):
                     
                     # Postavi podatke iz forme
                     initial_audit.planned_date = initial_audit_date
-                    initial_audit.actual_date = initial_audit_date
-                    initial_audit.audit_status = 'completed'
+                    # Ne postavljamo actual_date niti završavamo audit ovde
+                    initial_audit.audit_status = 'planned'
                     
                     if lead_auditor:
                         initial_audit.lead_auditor = lead_auditor
@@ -450,7 +461,8 @@ class CycleAuditForm(forms.ModelForm):
             cleaned_data['audit_status'] = 'completed'
             # Dodaj informativnu poruku koja će biti prikazana korisniku
             from django.contrib import messages
-            messages.info(self.request, 'Status audita je automatski postavljen na "Završeno" jer je unet stvarni datum.')
+            if getattr(self, 'request', None):
+                messages.info(self.request, 'Status audita je automatski postavljen na "Završeno" jer je unet stvarni datum.')
         
         # Proveri da li je lead_auditor kvalifikovan za audit
         if lead_auditor and certification_cycle and self.instance.pk:
@@ -458,7 +470,88 @@ class CycleAuditForm(forms.ModelForm):
             if not is_qualified:
                 missing_codes = ', '.join([std.code for std in missing_standards])
                 self.add_error('lead_auditor', _(f'Auditor nije kvalifikovan za standarde: {missing_codes}'))
-        
+
+        # Validacija konflikata rezervacija auditora (spreči duplo zakazivanje)
+        # Odredi ciklus, tip audita i osnovni datum za izračun dana audita
+        cycle = certification_cycle or getattr(self.instance, 'certification_cycle', None)
+        audit_type = cleaned_data.get('audit_type') or getattr(self.instance, 'audit_type', None)
+        planned_date = cleaned_data.get('planned_date') or getattr(self.instance, 'planned_date', None)
+        base_date = actual_date or planned_date
+
+        # Ako nemamo ciklus ili osnovni datum, ne možemo proveriti konflikt
+        if cycle and base_date:
+            # Odredi broj dana audita na osnovu ciklusa i tipa
+            if audit_type == 'initial' and cycle.inicijalni_broj_dana:
+                days_count = zaokruzi_na_veci_broj(cycle.inicijalni_broj_dana)
+            elif audit_type in ('surveillance_1', 'surveillance_2') and cycle.broj_dana_nadzora:
+                days_count = zaokruzi_na_veci_broj(cycle.broj_dana_nadzora)
+            elif audit_type == 'recertification' and cycle.broj_dana_resertifikacije:
+                days_count = zaokruzi_na_veci_broj(cycle.broj_dana_resertifikacije)
+            else:
+                days_count = 1
+
+            # Generiši datume audita (unazad od osnovnog datuma)
+            dates = [base_date - timedelta(days=i) for i in range(days_count)]
+
+            # Sakupi sve odabrane auditore (lead + tim)
+            team_selected = cleaned_data.get('audit_team') or []
+            auditors = set(a.id for a in team_selected)
+            if lead_auditor:
+                auditors.add(lead_auditor.id)
+
+            if auditors and dates:
+                qs = AuditorReservation.objects.filter(auditor_id__in=auditors, date__in=dates)
+                if getattr(self.instance, 'pk', None):
+                    qs = qs.exclude(audit_id=self.instance.pk)
+
+                conflicts_by_auditor = {}
+                for res in qs.select_related('auditor', 'audit', 'audit__certification_cycle__company'):
+                    conflicts_by_auditor.setdefault(res.auditor_id, []).append(res)
+
+                if conflicts_by_auditor:
+                    # Poruke za lead i tim posebno
+                    # Lead auditor
+                    if lead_auditor and lead_auditor.id in conflicts_by_auditor:
+                        msgs = []
+                        for res in conflicts_by_auditor[lead_auditor.id]:
+                            company = getattr(res.audit.certification_cycle.company, 'name', '')
+                            audit_type_disp = dict(res.audit.AUDIT_TYPE_CHOICES).get(res.audit.audit_type, res.audit.audit_type)
+                            msgs.append(f"{res.date.isoformat()} (audit: {company} - {audit_type_disp})")
+                        self.add_error(
+                            'lead_auditor',
+                            _(
+                                f'Vodeći auditor {lead_auditor} je već rezervisan za sledeće datume: ' + ', '.join(msgs) +
+                                '. Izaberite drugi datum ili auditora.'
+                            )
+                        )
+
+                    # Tim auditora
+                    team_conflicts_msgs = []
+                    for auditor_id, res_list in conflicts_by_auditor.items():
+                        if lead_auditor and auditor_id == lead_auditor.id:
+                            continue
+                        # Ovo su članovi tima sa konfliktom
+                        auditor_obj = next((a for a in (team_selected or []) if a.id == auditor_id), None)
+                        if auditor_obj:
+                            parts = []
+                            for res in res_list:
+                                company = getattr(res.audit.certification_cycle.company, 'name', '')
+                                audit_type_disp = dict(res.audit.AUDIT_TYPE_CHOICES).get(res.audit.audit_type, res.audit.audit_type)
+                                parts.append(f"{res.date.isoformat()} (audit: {company} - {audit_type_disp})")
+                            team_conflicts_msgs.append(f"{auditor_obj} -> " + ', '.join(parts))
+
+                    if team_conflicts_msgs:
+                        self.add_error(
+                            'audit_team',
+                            _(
+                                'Sledeći članovi tima su već rezervisani: ' + '; '.join(team_conflicts_msgs) +
+                                '. Izaberite drugi datum ili uklonite konfliktne članove.'
+                            )
+                        )
+
+                    # Globalna greška da sprečimo snimanje
+                    raise ValidationError(_('Postoje konflikti rezervacija auditora; proverite označena polja.'))
+
         return cleaned_data
     
     def save(self, commit=True):
@@ -507,7 +600,6 @@ class CycleAuditForm(forms.ModelForm):
             if is_surveillance_1 and is_status_completed and actual_date:
                 logger.info("Dodatna provera: Pokušavam direktno kreirati drugi nadzorni audit")
                 from datetime import timedelta
-                from .cycle_models import CycleAudit, zaokruzi_na_veci_broj
                 
                 cycle = instance.certification_cycle
                 if cycle.broj_dana_nadzora:
@@ -538,6 +630,12 @@ class CycleAuditForm(forms.ModelForm):
             if audit_team is not None:
                 instance.audit_team.clear()
                 instance.audit_team.add(*audit_team)
+
+            # Sinhronizuj rezervacije auditora nakon izmene tima/lead auditora
+            try:
+                instance.sync_auditor_reservations()
+            except Exception:
+                pass
         
         logger.info("CycleAuditForm.save završena")
         return instance

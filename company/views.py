@@ -980,8 +980,13 @@ def appointment_calendar_json(request):
         }
     }
     
-    # Get all audit days
-    audit_days = AuditDay.objects.all().select_related('audit__certification_cycle__company')
+    # Get all audit days EXCEPT those belonging to completed audits with an actual_date.
+    # Zahtev: kada je Status: Završen i Stvarni datum postavljen, ne prikazivati povezane dane audita.
+    audit_days = (
+        AuditDay.objects
+        .exclude(audit__audit_status='completed', audit__actual_date__isnull=False)
+        .select_related('audit__certification_cycle__company')
+    )
     
     # Add audit days to events
     for audit_day in audit_days:
@@ -1079,8 +1084,9 @@ def appointment_calendar_json(request):
         except Exception:
             has_actual_day = False
         
-        # Add planned audit uvek (dozvoli prikaz glavnog termina)
-        if audit.planned_date:
+        # Add planned audit only if not completed with an actual date
+        # Ako je audit završen i postoji stvarni datum, ne prikazuj planirani događaj
+        if audit.planned_date and not (is_completed and audit.actual_date):
             events.append({
                 'id': f'cycle_audit_planned_{audit.id}',
                 'title': f'{audit_name} - {company_name} (planiran)',

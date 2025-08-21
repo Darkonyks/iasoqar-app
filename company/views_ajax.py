@@ -450,12 +450,12 @@ def update_event_date(request):
             audit = get_object_or_404(CycleAudit, pk=event_id)
             old_date = audit.planned_date
             # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
-            # Važno: koristimo queryset update da NE bismo pozvali save() i automatsko
-            # regenerisanje AuditDay zapisa u CycleAudit.save().
+            # Važno: sada želimo da pozovemo save() kako bi se u CycleAudit.save()
+            # automatski regenerisali AuditDay zapisi kada se promeni planned_date.
             new_planned = local_dt.date()
-            CycleAudit.objects.filter(pk=audit.pk).update(planned_date=new_planned)
-            # Ažuriramo instancu samo za odgovor (bez poziva save())
             audit.planned_date = new_planned
+            logger.info("Pozivam audit.save(update_fields=['planned_date']) radi regeneracije audit dana")
+            audit.save(update_fields=['planned_date'])
             
             return JsonResponse({
                 'success': True,

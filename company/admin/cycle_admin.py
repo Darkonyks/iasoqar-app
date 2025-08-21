@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 import nested_admin
 
 from ..cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditDay
+from ..forms import CycleAuditForm
 
 
 class CycleStandardInline(nested_admin.NestedTabularInline):
@@ -48,6 +49,7 @@ class CycleAuditAdmin(admin.ModelAdmin):
     list_filter = ['audit_type', 'audit_status', 'planned_date']
     search_fields = ['certification_cycle__company__name', 'lead_auditor__ime_prezime']
     date_hierarchy = 'planned_date'
+    form = CycleAuditForm
     
     fieldsets = [
         ('Osnovne informacije', {

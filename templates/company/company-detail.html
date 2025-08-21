@@ -481,12 +481,12 @@
                               <td>
                                 {% if cycle.status == 'active' %}
                                   <span class="badge badge-success">Aktivan</span>
-                                {% elif cycle.status == 'planned' %}
-                                  <span class="badge badge-info">Planiran</span>
                                 {% elif cycle.status == 'completed' %}
                                   <span class="badge badge-secondary">Završen</span>
                                 {% elif cycle.status == 'cancelled' %}
                                   <span class="badge badge-danger">Otkazan</span>
+                                {% else %}
+                                  <span class="badge badge-warning">{{ cycle.get_status_display }}</span>
                                 {% endif %}
                               </td>
                               <td>
@@ -685,7 +685,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="{{ cycle_form.initial_audit_date.id_for_label }}">Datum inicijalnog audita</label>
+                <label for="{{ cycle_form.initial_audit_date.id_for_label }}">Datum planiranog inicijalnog audita</label>
                 {{ cycle_form.initial_audit_date }}
                 {% if cycle_form.initial_audit_date.errors %}
                   <div class="text-danger">{{ cycle_form.initial_audit_date.errors }}</div>

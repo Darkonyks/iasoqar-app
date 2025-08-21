@@ -175,7 +175,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="{{ form.initial_audit_date.id_for_label }}">Datum inicijalnog audita</label>
+                    <label for="{{ form.initial_audit_date.id_for_label }}">Datum planiranog inicijalnog audita</label>
                     <div class="input-group date" id="initial_audit_date_picker" data-target-input="nearest">
                       {{ form.initial_audit_date }}
                       <div class="input-group-append" data-target="#initial_audit_date_picker" data-toggle="datetimepicker">
@@ -195,7 +195,7 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="{{ form.datum_sprovodjenja_inicijalne.id_for_label }}">Datum sprovođenja inicijalne</label>
+                    <label for="{{ form.datum_sprovodjenja_inicijalne.id_for_label }}">Datum sprovođenja inicijalne provere</label>
                     <div class="input-group date" id="datum_sprovodjenja_inicijalne_picker" data-target-input="nearest">
                       {{ form.datum_sprovodjenja_inicijalne }}
                       <div class="input-group-append" data-target="#datum_sprovodjenja_inicijalne_picker" data-toggle="datetimepicker">
@@ -258,9 +258,9 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <div class="custom-control custom-checkbox">
+                    <div class="form-check mt-1">
                       {{ form.is_integrated_system }}
-                      <label class="custom-control-label" for="{{ form.is_integrated_system.id_for_label }}">
+                      <label class="form-check-label" for="{{ form.is_integrated_system.id_for_label }}">
                         Integrisani sistem
                       </label>
                     </div>
