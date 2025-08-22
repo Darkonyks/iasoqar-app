@@ -280,14 +280,14 @@ def certification_cycle_json(request, pk):
         
         if audit_id:
             try:
-                audit = CycleAudit.objects.get(pk=audit_id, certification_cycle=cycle)
+                audit = CycleAudit.objects.select_related('lead_auditor').prefetch_related('audit_team').get(pk=audit_id, certification_cycle=cycle)
                 logger.info(f"Pronađen audit ID={audit_id} za ciklus ID={pk}")
             except CycleAudit.DoesNotExist:
                 audit = None
                 logger.warning(f"Nije pronađen audit ID={audit_id} za ciklus ID={pk}")
         else:
             # Ako nije prosleđen ID audita, uzimamo poslednji audit u ciklusu
-            audit = cycle.audits.order_by('-planned_date').first()
+            audit = cycle.audits.select_related('lead_auditor').prefetch_related('audit_team').order_by('-planned_date').first()
             logger.info(f"Uzimamo poslednji audit za ciklus ID={pk}: {audit.id if audit else None}")
         
         if audit:
@@ -313,6 +313,33 @@ def certification_cycle_json(request, pk):
                     'notes': day.notes or ''
                 })
             audit_data['audit_days'] = audit_days
+
+            # Lead auditor
+            if audit.lead_auditor:
+                lead = audit.lead_auditor
+                audit_data['lead_auditor'] = {
+                    'id': lead.id,
+                    'ime_prezime': lead.ime_prezime,
+                    'email': lead.email,
+                    'telefon': lead.telefon,
+                    'kategorija': lead.kategorija,
+                    'kategorija_display': lead.get_kategorija_display(),
+                }
+            else:
+                audit_data['lead_auditor'] = None
+
+            # Audit team
+            team_list = []
+            for auditor in audit.audit_team.all().order_by('ime_prezime'):
+                team_list.append({
+                    'id': auditor.id,
+                    'ime_prezime': auditor.ime_prezime,
+                    'email': auditor.email,
+                    'telefon': auditor.telefon,
+                    'kategorija': auditor.kategorija,
+                    'kategorija_display': auditor.get_kategorija_display(),
+                })
+            audit_data['audit_team'] = team_list
         
         # Vraćamo podatke o ciklusu i auditu
         return JsonResponse({

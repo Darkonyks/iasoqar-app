@@ -40,4 +40,5 @@ from .cycle_models import (
     CertificationCycle,
     CycleStandard,
     CycleAudit,
+    AuditorReservation,
 )

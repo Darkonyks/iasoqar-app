@@ -4231,6 +4231,7 @@ function initializeCalendar() {
       $('#cycle-start-date').text('Učitavanje...');
       $('#cycle-cycle-status').text('Učitavanje...');
       $('#cycle-notes').text('Učitavanje...');
+      // Auditor sections removed from UI
       
       // Dobavi podatke iz event objekta
       const eventProps = event.extendedProps || {};
@@ -4259,15 +4260,18 @@ function initializeCalendar() {
         window.location.href = cycleUrl;
       });
       
-      // Postavi URL za dugme za izmenu audita
-      let auditId;
-      try {
-        auditId = event.id.split('_').pop();
-        console.log('Extracted audit ID:', auditId);
-      } catch (e) {
-        console.error('Error extracting audit ID:', e);
-        auditId = '';
+      // Postavi URL za dugme za izmenu audita i pripremi auditId
+      let auditId = eventProps.audit_id;
+      if (!auditId) {
+        try {
+          const idStr = String(event.id || '');
+          const match = idStr.match(/(\d+)/);
+          if (match) auditId = match[1];
+        } catch (e) {
+          console.warn('Ne mogu da izdvojim auditId iz event.id:', e);
+        }
       }
+      console.log('Using audit ID:', auditId);
       
       $('#editCycleAuditBtn').off('click').on('click', function() {
         const auditUrl = `/company/audits/${auditId}/update/`;
@@ -4282,8 +4286,9 @@ function initializeCalendar() {
         $('#cycle-cycle-status').text('Greška: URL nije dostupan');
         return;
       }
-      
-      const ajaxUrl = certificationCycleJsonUrl.replace('0', cycleId);
+      // Build URL and include audit_id when poznat
+      const ajaxBase = certificationCycleJsonUrl.replace('0', cycleId);
+      const ajaxUrl = auditId ? `${ajaxBase}?audit_id=${encodeURIComponent(auditId)}` : ajaxBase;
       console.log('AJAX URL for cycle data:', ajaxUrl);
       
       // Dohvati dodatne podatke o ciklusu preko AJAX-a
@@ -4299,22 +4304,31 @@ function initializeCalendar() {
           
           if (data && data.cycle) {
             // Popuni podatke o ciklusu
+            $('#cycle-company').text(data.cycle.company_name || 'N/A');
             $('#cycle-start-date').text(formatDate(data.cycle.planirani_datum));
             $('#cycle-cycle-status').text(data.cycle.status_display || 'N/A');
+            $('#cycle-notes').text(data.cycle.notes || 'Nema napomena');
             
             // Popuni podatke o auditu
             if (data.audit) {
               $('#cycle-planned-date').text(formatDate(data.audit.planned_date) || 'Nije postavljen');
               $('#cycle-actual-date').text(formatDate(data.audit.actual_date) || 'Nije postavljen');
+              // Tip i status audita
+              $('#cycle-audit-type').text(data.audit.audit_type_display || data.audit.audit_type || 'N/A');
+              $('#cycle-status').text(data.audit.audit_status_display || data.audit.audit_status || 'N/A');
+              // Auditor sections removed from UI
             } else {
               console.warn('Nema podataka o auditu u odgovoru');
               $('#cycle-planned-date').text('Nije dostupno');
               $('#cycle-actual-date').text('Nije dostupno');
+              $('#cycle-audit-type').text('Nije dostupno');
+              $('#cycle-status').text('Nije dostupno');
             }
           } else {
             console.error('Nema podataka o ciklusu u odgovoru');
             $('#cycle-start-date').text('Nije dostupno');
             $('#cycle-cycle-status').text('Nije dostupno');
+            // Auditor sections removed from UI
           }
         },
         error: function(xhr, status, error) {
