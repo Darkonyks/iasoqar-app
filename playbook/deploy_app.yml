@@ -30,6 +30,14 @@
         force: yes
       become: true
       become_user: darko
+
+    - name: docker compose down
+      ansible.builtin.shell: docker compose down
+      args:
+        chdir: /home/darko/iasoqar-app
+      become: true
+      become_user: darko 
+      
     - name: Pokreni docker compose build u aplikacionom folderu
       ansible.builtin.shell: docker compose build
       args:
