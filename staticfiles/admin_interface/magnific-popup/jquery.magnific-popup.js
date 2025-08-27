@@ -511,8 +511,20 @@
                 // allows to modify markup
                 _mfpTrigger('FirstMarkupParse', markup);
 
-                if(markup) {
-                    mfp.currTemplate[type] = $(markup);
+                if (markup) {
+                    // Unsafe jQuery plugin fix: by default, disallow direct HTML templates unless explicitly enabled
+                    var allowUnsafe = mfp.st.allowUnsafeMarkup === true;
+                    if (typeof markup === 'string' && /^\s*<[\s\S]*>/.test(markup) && !allowUnsafe) {
+                        // Document the unsafe usage and prevent XSS
+                        if(window && window.console && typeof window.console.warn === 'function') {
+                            console.warn("MagnificPopup: Unsafe HTML markup detected in options[type].markup. " +
+                                "To allow raw HTML you must set allowUnsafeMarkup: true, and ensure it is properly sanitized.");
+                        }
+                        // Prevent injection of raw HTML
+                        mfp.currTemplate[type] = $('<div></div>');
+                    } else {
+                        mfp.currTemplate[type] = $(markup);
+                    }
                 } else {
                     // if there is no markup found we just define that template is parsed
                     mfp.currTemplate[type] = true;
@@ -862,6 +874,10 @@
 
             // Info about options is in docs:
             // http://dimsemenov.com/plugins/magnific-popup/documentation.html#options
+            //
+            // WARNING: If 'markup' or any type-specific .markup is a string starting with '<',
+            // it WILL be interpreted as HTML and injected into the DOM.
+            // To enable this, set allowUnsafeMarkup: true and SANITIZE THE CONTENT.
 
             disableOn: 0,
 
