@@ -305,12 +305,36 @@ def certification_cycle_json(request, pk):
             # Dohvatamo dane audita
             audit_days = []
             for day in audit.audit_days.all().order_by('date'):
+                # Per-day auditor assignments from reservations
+                reservations_data = []
+                lead_ids = []
+                team_ids = []
+                for res in day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                    reservations_data.append({
+                        'id': res.id,
+                        'role': res.role,
+                        'auditor': {
+                            'id': res.auditor.id,
+                            'ime_prezime': res.auditor.ime_prezime,
+                            'email': res.auditor.email,
+                            'telefon': res.auditor.telefon,
+                            'kategorija': res.auditor.kategorija,
+                            'kategorija_display': res.auditor.get_kategorija_display(),
+                        }
+                    })
+                    if res.role == 'lead':
+                        lead_ids.append(res.auditor.id)
+                    elif res.role == 'team':
+                        team_ids.append(res.auditor.id)
                 audit_days.append({
                     'id': day.id,
                     'date': day.date.isoformat() if day.date else None,
                     'is_planned': day.is_planned,
                     'is_actual': day.is_actual,
-                    'notes': day.notes or ''
+                    'notes': day.notes or '',
+                    'reservations': reservations_data,
+                    'lead_auditors': lead_ids,
+                    'team_auditors': team_ids,
                 })
             audit_data['audit_days'] = audit_days
 
@@ -385,12 +409,35 @@ def audit_days_by_audit_id(request, audit_id):
         # Dohvatamo dane audita
         audit_days = []
         for day in audit.audit_days.all().order_by('date'):
+            reservations_data = []
+            lead_ids = []
+            team_ids = []
+            for res in day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                reservations_data.append({
+                    'id': res.id,
+                    'role': res.role,
+                    'auditor': {
+                        'id': res.auditor.id,
+                        'ime_prezime': res.auditor.ime_prezime,
+                        'email': res.auditor.email,
+                        'telefon': res.auditor.telefon,
+                        'kategorija': res.auditor.kategorija,
+                        'kategorija_display': res.auditor.get_kategorija_display(),
+                    }
+                })
+                if res.role == 'lead':
+                    lead_ids.append(res.auditor.id)
+                elif res.role == 'team':
+                    team_ids.append(res.auditor.id)
             audit_days.append({
                 'id': day.id,
                 'date': day.date.isoformat() if day.date else None,
                 'is_planned': day.is_planned,
                 'is_actual': day.is_actual,
-                'notes': day.notes or ''
+                'notes': day.notes or '',
+                'reservations': reservations_data,
+                'lead_auditors': lead_ids,
+                'team_auditors': team_ids,
             })
         audit_data['audit_days'] = audit_days
         
@@ -453,13 +500,56 @@ def update_event_date(request):
         
         # Ažuriranje datuma u zavisnosti od tipa događaja
         if event_type == 'audit_day':
-            # Ažuriranje datuma audit dana
+            # Ažuriranje datuma audit dana uz proveru konflikata rezervacija i resync
             audit_day = get_object_or_404(AuditDay, pk=event_id)
             old_date = audit_day.date
+            new_local_date = local_dt.date()
+
+            # Proveri potencijalne konflikate za sve dodeljene auditore (lead + tim)
+            audit = audit_day.audit
+            assigned_auditors = list(audit.audit_team.all())
+            if audit.lead_auditor_id:
+                assigned_auditors.append(audit.lead_auditor)
+
+            conflicting = []
+            if assigned_auditors:
+                from .cycle_models import AuditorReservation
+                for a in assigned_auditors:
+                    if AuditorReservation.objects.filter(auditor=a, date=new_local_date).exclude(audit=audit).exists():
+                        conflicting.append(a.ime_prezime)
+
+            if conflicting:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Nemoguće pomeriti dan audita zbog konflikta rezervacija za sledeće auditore: ' + ', '.join(conflicting)
+                }, status=409)
+
             # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
-            audit_day.date = local_dt.date()
+            audit_day.date = new_local_date
             audit_day.save()
-            
+
+            # Resync rezervacija za audit kako bi se azurirala veza na nove dane i datume
+            try:
+                audit.sync_auditor_reservations()
+            except Exception:
+                pass
+
+            # Pripremi rezervacije za vraćanje klijentu
+            reservations_payload = []
+            for res in audit_day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                reservations_payload.append({
+                    'id': res.id,
+                    'role': res.role,
+                    'auditor': {
+                        'id': res.auditor.id,
+                        'ime_prezime': res.auditor.ime_prezime,
+                        'email': res.auditor.email,
+                        'telefon': res.auditor.telefon,
+                        'kategorija': res.auditor.kategorija,
+                        'kategorija_display': res.auditor.get_kategorija_display(),
+                    }
+                })
+
             return JsonResponse({
                 'success': True,
                 'message': f'Datum audit dana je uspešno ažuriran sa {old_date} na {audit_day.date}.',
@@ -468,7 +558,8 @@ def update_event_date(request):
                     'date': audit_day.date.isoformat(),
                     'is_planned': audit_day.is_planned,
                     'is_actual': audit_day.is_actual,
-                    'notes': audit_day.notes or ''
+                    'notes': audit_day.notes or '',
+                    'reservations': reservations_payload,
                 }
             })
             

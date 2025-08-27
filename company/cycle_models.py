@@ -369,6 +369,14 @@ class AuditorReservation(models.Model):
         related_name='auditor_reservations',
         verbose_name=_('Audit')
     )
+    audit_day = models.ForeignKey(
+        'AuditDay',
+        on_delete=models.CASCADE,
+        related_name='reservations',
+        verbose_name=_('Dan audita'),
+        null=True,
+        blank=True
+    )
     role = models.CharField(
         _('Uloga'),
         max_length=10,
@@ -384,6 +392,9 @@ class AuditorReservation(models.Model):
         verbose_name_plural = _('Rezervacije auditora')
         unique_together = [['auditor', 'date']]
         ordering = ['date']
+        indexes = [
+            models.Index(fields=['audit', 'date'], name='audres_audit_date_idx'),
+        ]
 
     def __str__(self):
         return f"{self.auditor} - {self.date.strftime('%Y-%m-%d')} ({self.audit})"
@@ -538,8 +549,9 @@ class CycleAudit(models.Model):
         if self.lead_auditor_id:
             assigned_auditors.append(self.lead_auditor)
 
-        # Svi datumi audita (planirani ili stvarni)
-        dates = list(self.audit_days.values_list('date', flat=True))
+        # Mapiranje datuma -> AuditDay radi direktnog povezivanja rezervacija sa danima
+        day_by_date = {ad.date: ad for ad in self.audit_days.all()}
+        dates = list(day_by_date.keys())
 
         # Ako nema datuma ili nema auditora, obriši sve rezervacije za ovaj audit
         if not dates or not assigned_auditors:
@@ -550,20 +562,30 @@ class CycleAudit(models.Model):
         AuditorReservation.objects.filter(audit=self).exclude(date__in=dates).delete()
         AuditorReservation.objects.filter(audit=self).exclude(auditor__in=[a.id for a in assigned_auditors]).delete()
 
-        # Kreiraj rezervacije za sve kombinacije (auditor, date) koje nedostaju
+        # Kreiraj ili ažuriraj rezervacije i poveži ih sa odgovarajućim AuditDay zapisom
         for auditor in assigned_auditors:
             role = 'lead' if self.lead_auditor_id and auditor.id == self.lead_auditor_id else 'team'
             for d in dates:
-                # Ako već postoji rezervacija za istog auditora i datum za drugi audit, preskoči (sukob)
-                conflict = AuditorReservation.objects.filter(auditor=auditor, date=d).exclude(audit=self).exists()
-                if conflict:
-                    # Ne prekidamo tok ovde; validacija u formi treba da spreči ovakav slučaj
+                # Ako već postoji rezervacija za istog auditora i datum za DRUGI audit, preskoči (sukob)
+                if AuditorReservation.objects.filter(auditor=auditor, date=d).exclude(audit=self).exists():
                     continue
-                AuditorReservation.objects.get_or_create(
+                res, created = AuditorReservation.objects.get_or_create(
                     auditor=auditor,
                     date=d,
-                    defaults={'audit': self, 'role': role}
+                    audit=self,
+                    defaults={'role': role, 'audit_day': day_by_date.get(d)}
                 )
+                # Ažuriraj ulogu i vezu na audit_day ako je potrebno
+                to_update = []
+                if res.role != role:
+                    res.role = role
+                    to_update.append('role')
+                desired_day = day_by_date.get(d)
+                if res.audit_day_id != (desired_day.id if desired_day else None):
+                    res.audit_day = desired_day
+                    to_update.append('audit_day')
+                if to_update:
+                    res.save(update_fields=to_update)
     
     def save(self, *args, **kwargs):
         # Debug ispisi
