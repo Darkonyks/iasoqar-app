@@ -1725,16 +1725,98 @@
                 return;
               }
 
-              // Prikaži modal za potvrdu promene datuma
-              showDateChangeConfirmationModal(event, newDate, function (confirmed) {
-                if (confirmed) {
-                  // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                  updateEventDate(eventType, eventId, newDate);
-                } else {
-                  // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
-                  info.revert();
+              // Za appointment tip događaja, proveri da li auditor već ima rezervaciju na odabrani datum
+              if (eventType === 'appointment') {
+                // Formatiranje datuma za API
+                const formattedDate = newDate.toISOString().split('T')[0];
+                const csrftoken = getCookie('csrftoken');
+                const auditorId = event.extendedProps.auditor_id;
+                
+                if (!auditorId) {
+                  console.warn('Nedostaje ID auditora za proveru rezervacija');
+                  
+                  // Prikaži modal za potvrdu promene datuma
+                  showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                    if (confirmed) {
+                      // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                      updateEventDate(eventType, eventId, newDate);
+                    } else {
+                      // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                      info.revert();
+                    }
+                  });
+                  return;
                 }
-              });
+                
+                // Provera da li auditor već ima rezervaciju na odabrani datum
+                $.ajax({
+                  url: `/company/api/validate-auditor-reservation/`,
+                  type: 'POST',
+                  data: JSON.stringify({
+                    auditor_id: auditorId,
+                    date: formattedDate,
+                    appointment_id: eventId // ID trenutnog appointment-a za izuzetak
+                  }),
+                  contentType: 'application/json',
+                  headers: { 'X-CSRFToken': csrftoken },
+                  success: function(response) {
+                    console.log('Validacija auditora:', response);
+                    
+                    if (response.valid) {
+                      // Nema konflikta, prikaži standardni modal za potvrdu
+                      showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                        if (confirmed) {
+                          // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                          updateEventDate(eventType, eventId, newDate);
+                        } else {
+                          // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                          info.revert();
+                        }
+                      });
+                    } else {
+                      // Postoji konflikt, prikaži poruku o grešci
+                      if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                          title: 'Konflikt rezervacija',
+                          text: response.message || 'Auditor već ima rezervaciju na izabrani datum.',
+                          icon: 'error',
+                          confirmButtonText: 'U redu'
+                        });
+                      } else {
+                        alert('Konflikt rezervacija: ' + (response.message || 'Auditor već ima rezervaciju na izabrani datum.'));
+                      }
+                      info.revert(); // Vrati događaj na originalnu poziciju
+                    }
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('Greška pri validaciji rezervacije auditora:', error);
+                    
+                    // Prikaži grešku i vrati događaj na originalnu poziciju
+                    if (typeof Swal !== 'undefined') {
+                      Swal.fire({
+                        title: 'Greška',
+                        text: 'Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.',
+                        icon: 'error',
+                        confirmButtonText: 'U redu'
+                      });
+                    } else {
+                      alert('Greška: Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.');
+                    }
+                    info.revert();
+                  }
+                });
+              } else {
+                // Za ostale tipove događaja, prikaži standardni modal za potvrdu
+                showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                  if (confirmed) {
+                    // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                    updateEventDate(eventType, eventId, newDate);
+                  } else {
+                    // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                    info.revert();
+                  }
+                });
+              }
             }
           });
 

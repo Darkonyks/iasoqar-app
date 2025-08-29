@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import logging
 import json
-from datetime import datetime, time
+from datetime import datetime, time, date
 from .standard_models import CompanyStandard
 from .models import Company, Appointment
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
-from .cycle_models import CertificationCycle, CycleAudit, AuditDay
+from .cycle_models import CertificationCycle, CycleAudit, AuditDay, AuditorReservation
+from .auditor_models import Auditor
 
 @require_POST
 @login_required
@@ -639,4 +640,102 @@ def update_event_date(request):
         return JsonResponse({
             'success': False,
             'error': str(e)
+        }, status=500)
+
+
+@require_POST
+@login_required
+def validate_auditor_reservation(request):
+    """
+    API endpoint za validaciju da li auditor već ima rezervaciju na odabrani datum.
+    Prima ID auditora i datum kao POST parametre.
+    Vraća JSON odgovor o dostupnosti auditora.
+    """
+    logger = logging.getLogger('django')
+    logger.info(f"Validacija dostupnosti auditora za rezervaciju")
+    
+    try:
+        # Parsiranje JSON podataka iz POST zahteva
+        data = json.loads(request.body)
+        auditor_id = data.get('auditor_id')
+        target_date = data.get('date')
+        appointment_id = data.get('appointment_id')  # ID trenutnog termina za izuzetak
+        
+        logger.info(f"Primljeni podaci: auditor_id={auditor_id}, date={target_date}, appointment_id={appointment_id}")
+        
+        # Validacija podataka
+        if not auditor_id or not target_date:
+            return JsonResponse({
+                'valid': False,
+                'message': 'Nedostaju obavezni parametri (auditor_id, date).'
+            }, status=400)
+        
+        # Dohvatanje auditora
+        try:
+            auditor = get_object_or_404(Auditor, pk=auditor_id)
+        except Auditor.DoesNotExist:
+            return JsonResponse({
+                'valid': False,
+                'message': f'Auditor sa ID={auditor_id} nije pronađen.'
+            }, status=404)
+        
+        # Parsiranje datuma
+        try:
+            if isinstance(target_date, str):
+                # Format datuma može biti YYYY-MM-DD
+                target_date_obj = datetime.strptime(target_date, '%Y-%m-%d').date()
+            elif isinstance(target_date, date):
+                target_date_obj = target_date
+            else:
+                return JsonResponse({
+                    'valid': False,
+                    'message': 'Neispravan format datuma.'
+                }, status=400)
+        except ValueError:
+            return JsonResponse({
+                'valid': False,
+                'message': 'Neispravan format datuma.'
+            }, status=400)
+        
+        # Provera da li auditor već ima rezervaciju na odabrani datum
+        # Isključujemo trenutni termin ako je prosleđen ID
+        existing_reservations = AuditorReservation.objects.filter(
+            auditor=auditor,
+            date=target_date_obj
+        )
+        
+        # Ako postoje rezervacije, auditor nije dostupan
+        if existing_reservations.exists():
+            # Dobavi detaljnije informacije o konfliktima
+            conflicts = []
+            
+            for res in existing_reservations:
+                audit_day = res.audit_day
+                conflicts.append({
+                    'type': 'reservation',
+                    'id': res.id,
+                    'audit_day_id': audit_day.id if audit_day else None,
+                    'audit_id': audit_day.audit_id if audit_day else None,
+                    'date': res.date.isoformat() if res.date else None,
+                })
+            
+            return JsonResponse({
+                'valid': False,
+                'message': f'Auditor {auditor.ime_prezime} već ima rezervaciju na datum {target_date_obj.isoformat()}.',
+                'conflicts': conflicts
+            }, status=409)  # 409 Conflict
+        
+        # Ako nema rezervacija ili termina, auditor je dostupan
+        return JsonResponse({
+            'valid': True,
+            'message': f'Auditor {auditor.ime_prezime} je dostupan na datum {target_date_obj.isoformat()}.'
+        })
+    
+    except Exception as e:
+        import traceback
+        logger.error(f"Greška prilikom validacije rezervacije auditora: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JsonResponse({
+            'valid': False,
+            'message': str(e)
         }, status=500)
