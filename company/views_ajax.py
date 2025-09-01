@@ -661,7 +661,7 @@ def validate_auditor_reservation(request):
         target_date = data.get('date')
         appointment_id = data.get('appointment_id')  # ID trenutnog termina za izuzetak
         
-        logger.info(f"Primljeni podaci: auditor_id={auditor_id}, date={target_date}, appointment_id={appointment_id}")
+        logger.info("Primljeni podaci za proveru dostupnosti auditora su primljeni.")
         
         # Validacija podataka
         if not auditor_id or not target_date:
