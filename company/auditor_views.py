@@ -519,7 +519,8 @@ def get_qualified_auditors(request):
         
         return JsonResponse({'success': True, 'data': qualified_auditors})
     except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+        logger.exception("Greška u get_qualified_auditors: %s", e)
+        return JsonResponse({'success': False, 'message': 'Desila se greška na serveru. Pokušajte ponovo.'}, status=400)
 
 
 @login_required
