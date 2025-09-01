@@ -994,209 +994,6 @@ function updateAuditDayModal(data, event) {
   }
 }
 
-// Pomoćna funkcija za prikazivanje greške u modalu
-function showAuditDayError(errorMessage) {
-  $('#audit-day-is-planned').text('Greška');
-  $('#audit-day-is-actual').text('Greška');
-  $('#audit-day-notes').text(errorMessage || 'Došlo je do greške');
-  $('#editAuditDayBtn').prop('disabled', true);
-}
-
-// Funkcija za otvaranje modala za detalje nadzorne provere (iz Python backend API-ja)
-function openCycleAuditModal(event) {
-  console.log('Opening cycle audit modal for event:', event);
-  
-  try {
-    // Prikaži osnovne podatke o događaju za debugging
-    const eventStr = JSON.stringify(event, function(key, value) {
-      // Handle circular references
-      if (key === 'source' || key === 'sourceId') return '[CIRCULAR]';
-      return value;
-    }, 2);
-    console.log('Event data structure:', eventStr);
-    
-    // Postavi učitavanje za sva polja
-    $('#cycle-company').text('Učitavanje...');
-    $('#cycle-audit-type').text('Učitavanje...');
-    $('#cycle-status').text('Učitavanje...');
-    $('#cycle-planned-date').text('Učitavanje...');
-    $('#cycle-actual-date').text('Učitavanje...');
-    $('#cycle-id').text('Učitavanje...');
-    $('#cycle-start-date').text('Učitavanje...');
-    $('#cycle-cycle-status').text('Učitavanje...');
-    $('#cycle-notes').text('Učitavanje...');
-    
-    // Izvuci audit ID iz event objekta na više načina
-    let auditId = extractAuditId(event);
-    
-    if (!auditId) {
-      console.error('Nije pronađen ID audita u event objektu');
-      showCycleAuditError('Nije moguće identifikovati audit iz događaja u kalendaru.');
-      return;
-    }
-    
-    console.log('Extracted Audit ID from event:', auditId);
-    
-    // Postavi URL za API zahtev
-    const apiUrl = `/company/api/supervision-audit/${auditId}/`;
-    console.log('Calling API endpoint:', apiUrl);
-    
-    // Pripremi AJAX zahtev za dohvatanje podataka sa backend-a
-    $.ajax({
-      url: apiUrl,
-      type: 'GET',
-      dataType: 'json',
-      headers: {
-        'X-CSRFToken': getCsrfToken()
-      },
-      success: function(response) {
-        console.log('API response success:', response);
-        
-        if (!response.success) {
-          console.error('API returned error:', response.message);
-          showCycleAuditError(response.message || 'Došlo je do greške prilikom dohvatanja podataka.');
-          return;
-        }
-        
-        // Dobavljeni podaci sa backend-a
-        const audit = response.audit;
-        const cycle = response.cycle;
-        const company = response.company;
-        
-        // Popuni informacije o kompaniji
-        $('#cycle-company').text(company.name);
-        
-        // Popuni informacije o auditu
-        $('#cycle-audit-type').text(audit.audit_type_display || 'Nije definisano');
-        $('#cycle-status').text(audit.audit_status_display || 'Nije definisano');
-        $('#cycle-planned-date').text(formatDate(audit.planned_date) || 'Nije definisano');
-        $('#cycle-actual-date').text(formatDate(audit.actual_date) || 'Nije definisano');
-        $('#cycle-notes').text(audit.notes || 'Nema napomena');
-        
-        // Postavi ID audita na dugme za izmenu
-        if (audit.id) {
-          $('#editAuditBtn').prop('disabled', false).data('audit-id', audit.id);
-        } else {
-          $('#editAuditBtn').prop('disabled', true);
-        }
-        
-        // Popuni informacije o ciklusu
-        $('#cycle-id').text(cycle.id || 'N/A');
-        $('#cycle-start-date').text(formatDate(cycle.planirani_datum) || 'Nije definisano');
-        $('#cycle-cycle-status').text(cycle.status_display || 'Nije definisano');
-        
-        // Postavi URL za dugme za pregled ciklusa
-        $('#viewCycleBtn').off('click').on('click', function() {
-          window.location.href = `/company/cycles/${cycle.id}/`;
-        }).prop('disabled', !cycle.id);
-        
-        // Postavi URL za dugme za izmenu audita
-        $('#editAuditBtn').off('click').on('click', function() {
-          window.location.href = `/company/cycles/${cycle.id}/audits/${audit.id}/update/`;
-        }).prop('disabled', !audit.id);
-        
-        // Osiguraj da se modal prikaže
-        try {
-          showModal('#cycleAuditModal');
-        } catch (e) {
-          console.error('Error showing modal:', e);
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error('API error:', error);
-        console.error('Status:', status);
-        console.error('Response:', xhr.responseText);
-        showCycleAuditError('Greška pri dohvatanju podataka sa servera: ' + error);
-      }
-    });
-    
-  } catch (e) {
-    console.error('Greška pri otvaranju CycleAudit modala:', e);
-    showCycleAuditError(`Neočekivana greška: ${e.message}`);
-  }
-}
-
-// Pomoćna funkcija za prikazivanje greške u modalu za nadzornu proveru
-function showCycleAuditError(errorMessage) {
-  // Postavi poruku greške i osiguraj da se modal prikaže
-  $('#cycle-company').text('Greška');
-  $('#cycle-audit-type').text('Greška');
-  $('#cycle-status').text('Greška');
-  $('#cycle-notes').text(errorMessage || 'Došlo je do greške pri učitavanju podataka');
-  $('#cycle-id').text('N/A');
-  $('#cycle-start-date').text('N/A');
-  $('#cycle-cycle-status').text('N/A');
-  $('#cycle-planned-date').text('N/A');
-  $('#cycle-actual-date').text('N/A');
-  
-  // Onemogući dugmad
-  $('#viewCycleBtn').prop('disabled', true);
-  $('#editAuditBtn').prop('disabled', true);
-  
-  // Osiguraj da se modal prikaže
-  try {
-    showModal('#cycleAuditModal');
-  } catch (e) {
-    console.error('Error showing error modal:', e);
-  }
-}
-
-// Pomoćna funkcija za izvlačenje audit ID iz event objekta
-function extractAuditId(event) {
-  let auditId = null;
-  
-  // Pomoćna funkcija za izvlačenje ID-a iz string formata
-  function extractIdFromString(str) {
-    if (!str) return null;
-    
-    // Check for common formats like 'audit_123' or just '123'
-    if (str.includes('audit_')) {
-      return str.split('audit_').pop();
-    } else if (str.includes('_')) {
-      return str.split('_').pop();
-    } else if (!isNaN(parseInt(str))) {
-      return str;
-    }
-    return null;
-  }
-  
-  // 1. Try from extendedProps
-  if (event.extendedProps) {
-    const props = event.extendedProps;
-    auditId = props.audit_id || props.auditId || props.id;
-  }
-  
-  // 2. Try from event._def.extendedProps
-  if (!auditId && event._def && event._def.extendedProps) {
-    const defProps = event._def.extendedProps;
-    auditId = defProps.audit_id || defProps.auditId || defProps.id;
-  }
-  
-  // 3. Try from event.id
-  if (!auditId && event.id) {
-    auditId = extractIdFromString(event.id);
-  }
-  
-  // 4. Try from event._def.publicId
-  if (!auditId && event._def && event._def.publicId) {
-    auditId = extractIdFromString(event._def.publicId);
-  }
-  
-  // 5. Scan all properties for anything containing 'audit' and 'id'
-  if (!auditId) {
-    Object.keys(event).forEach(key => {
-      if (key.toLowerCase().includes('id') || key.toLowerCase().includes('audit')) {
-        const potentialId = extractIdFromString(event[key]);
-        if (potentialId) {
-          console.log('Found potential audit ID in property:', key, potentialId);
-          auditId = potentialId;
-        }
-      }
-    });
-  }
-  
-  return auditId;
-}
 
 // Funkcija za otvaranje modala za detalje termina
 function openAppointmentModal(event) {
@@ -2276,100 +2073,6 @@ function setupCalendarEventHandlers() {
 // Event handleri za drag-and-drop se sada takođe definišu u HTML šablonu
 // Funkcije za rad sa kalendar događajima su i dalje dostupne u JS fajlu
 
-// Funkcija za ažuriranje datuma događaja nakon drag-and-drop operacije
-function updateEventDate(eventType, eventId, newDate) {
-  console.log('Ažuriranje datuma za događaj:', { eventType, eventId, newDate });
-  
-  // Formatiranje datuma za backend
-  const isoDateTime = (newDate instanceof Date) ? newDate.toISOString() : new Date(newDate).toISOString();
-  
-  // Određivanje URL-a za ažuriranje u zavisnosti od tipa događaja
-  const updateUrl = '/company/api/events/update-date/';
-  const payload = {
-    eventId: eventId,
-    eventType: eventType,
-    newDate: isoDateTime
-  };
-
-  if (!['audit_day', 'cycle_audit', 'appointment'].includes(eventType)) {
-    console.error('Nepoznat tip događaja za ažuriranje:', eventType);
-    alert('Greška: Nepoznat tip događaja za ažuriranje. Osvježite stranicu i pokušajte ponovo.');
-    return;
-  }
-  
-  // Dodavanje CSRF tokena za Django
-  const csrftoken = getCookie('csrftoken');
-  
-  // AJAX poziv za ažuriranje datuma
-  $.ajax({
-    url: updateUrl,
-    type: 'POST',
-    data: JSON.stringify(payload),
-    contentType: 'application/json',
-    headers: { 'X-CSRFToken': csrftoken },
-    dataType: 'json',
-    success: function(response) {
-      console.log('Datum uspešno ažuriran:', response);
-      
-      // Prikazivanje poruke o uspehu
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: 'Uspeh!',
-          text: 'Datum je uspešno ažuriran.',
-          icon: 'success',
-          confirmButtonText: 'U redu'
-        });
-      } else {
-        alert('Datum je uspešno ažuriran.');
-      }
-      
-      // Osvježavanje kalendara nakon uspešne promene
-      setTimeout(function() {
-        if (typeof calendar !== 'undefined') {
-          calendar.refetchEvents();
-        } else {
-          location.reload(); // Ako calendar objekat nije dostupan
-        }
-      }, 1000);
-    },
-    error: function(xhr, status, error) {
-      console.error('Greška pri ažuriranju datuma:', error);
-      console.error('Status:', status);
-      console.error('Response text:', xhr.responseText);
-      
-      let errorMsg = 'Greška prilikom ažuriranja datuma.';
-      
-      try {
-        const response = JSON.parse(xhr.responseText);
-        if (response && response.error) {
-          errorMsg = response.error;
-        }
-      } catch (e) {
-        console.error('Greška prilikom parsiranja odgovora:', e);
-      }
-      
-      // Prikazivanje poruke o grešci
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: 'Greška!',
-          text: errorMsg,
-          icon: 'error',
-          confirmButtonText: 'U redu'
-        });
-      } else {
-        alert('Greška: ' + errorMsg);
-      }
-
-      // Pokušaj da vratiš kalendar u prethodno stanje osvežavanjem događaja
-      if (typeof refreshCalendar === 'function') {
-        refreshCalendar();
-      } else {
-        try { location.reload(); } catch (e) {}
-      }
-    }
-  });
-}
-
 // Pomoćna funkcija za formatiranje datuma za backend (YYYY-MM-DD format)
 function formatDateForBackend(date) {
   if (typeof date === 'string') {
@@ -3371,43 +3074,30 @@ function updateEventDate(eventType, eventId, newDate) {
         // Ignoriši parse grešku
       }
 
+      const isConflict = xhr && xhr.status === 409;
+      const title = isConflict ? 'Konflikt rezervacija' : 'Greška';
+      const fallbackMsg = isConflict
+        ? 'Nemoguće pomeriti događaj zbog konflikta rezervacija. Izaberite drugi datum.'
+        : 'Došlo je do greške prilikom ažuriranja datuma događaja.';
+
       if (typeof Swal !== 'undefined') {
         Swal.fire({
-          title: 'Greška',
-          text: serverMsg || 'Došlo je do greške prilikom ažuriranja datuma događaja.',
+          title: title,
+          text: serverMsg || fallbackMsg,
           icon: 'error',
           confirmButtonText: 'U redu'
         });
       } else {
-        alert('Greška: ' + (serverMsg || 'Došlo je do greške prilikom ažuriranja datuma događaja.'));
+        alert((title + ': ' + (serverMsg || fallbackMsg)));
       }
+
+      // Vrati prikaz u konzistentno stanje
+      try { refreshCalendar(); } catch (e) { window.location.reload(); }
     }
   });
 }
 
-// Funkcija za osvežavanje kalendara
-function refreshCalendar() {
-  try {
-    // Pokušaj da dobiješ instancu kalendara
-    const calendarEl = document.getElementById('calendar');
-    if (calendarEl) {
-      const calendarApi = calendarEl._calendar?.getApi ? calendarEl._calendar.getApi() : null;
-      
-      if (calendarApi) {
-        console.log('Osvežavanje kalendara...');
-        calendarApi.refetchEvents();
-        return;
-      }
-    }
-    
-    // Ako ne može da dobije instancu kalendara, osveži stranicu
-    console.warn('Ne mogu da pristupim API-ju kalendara, osvežavam stranicu...');
-    window.location.reload();
-  } catch (error) {
-    console.error('Greška prilikom osvežavanja kalendara:', error);
-    window.location.reload();
-  }
-}
+ 
 
 // Funkcija za proveru i učitavanje Bootstrap JS-a ako nije dostupan
 function ensureBootstrapLoaded() {
@@ -3463,9 +3153,6 @@ function ensureBootstrapLoaded() {
   }
 }
 
-// Funkcija updateEventDate je implementirana u calendar_drag_drop.js fajlu
-// Ovde je uklonjena duplikat implementacija da bi se izbegli konflikti
-
 // Pomoćna funkcija za prikazivanje toast poruka
 function showToast(message, type = 'info') {
   // Proveri da li postoji Toastr biblioteka
@@ -3497,20 +3184,27 @@ function hideToast(toast) {
 // Pomoćna funkcija za osvežavanje kalendara
 function refreshCalendar() {
   try {
-    // Pronađi instancu kalendara
+    // 1) Pokušaj preko globalne instance koju kreira calendar.html
+    if (typeof window !== 'undefined' && window.calendar && typeof window.calendar.refetchEvents === 'function') {
+      console.log('Osvežavanje kalendara preko globalne calendar instance');
+      window.calendar.refetchEvents();
+      return;
+    }
+
+    // 2) Alternativno pokušaj preko instance vezane za DOM element (ako postoji)
     const calendarEl = document.getElementById('calendar');
-    if (calendarEl) {
-      // Koristi FullCalendar v5 API za osvežavanje događaja
-      const calendarApi = calendarEl._calendar;
-      if (calendarApi && typeof calendarApi.refetchEvents === 'function') {
-        console.log('Osvežavanje kalendara pomoću FullCalendar v5 API-ja');
-        calendarApi.refetchEvents();
+    const candidates = [calendarEl && calendarEl._calendar];
+    for (var i = 0; i < candidates.length; i++) {
+      var api = candidates[i];
+      if (api && typeof api.refetchEvents === 'function') {
+        console.log('Osvežavanje kalendara preko pronađenog API-ja');
+        api.refetchEvents();
         return;
       }
     }
-    
-    console.warn('Nije moguće osvežiti kalendar direktno, osvežavanje stranice...');
-    // Ako ne možemo direktno osvežiti kalendar, osvežimo stranicu
+
+    // 3) Fallback na reload
+    console.warn('Ne mogu da pristupim API-ju kalendara, osvežavam stranicu...');
     window.location.reload();
   } catch (error) {
     console.error('Greška prilikom osvežavanja kalendara:', error);
@@ -4231,6 +3925,8 @@ function initializeCalendar() {
       $('#cycle-start-date').text('Učitavanje...');
       $('#cycle-cycle-status').text('Učitavanje...');
       $('#cycle-notes').text('Učitavanje...');
+      // Lead auditor placeholder
+      $('#lead-auditor-name').text('Učitavanje...');
       // Auditor sections removed from UI
       
       // Dobavi podatke iz event objekta
@@ -4316,6 +4012,12 @@ function initializeCalendar() {
               // Tip i status audita
               $('#cycle-audit-type').text(data.audit.audit_type_display || data.audit.audit_type || 'N/A');
               $('#cycle-status').text(data.audit.audit_status_display || data.audit.audit_status || 'N/A');
+              // Lead auditor
+              if (data.audit.lead_auditor && data.audit.lead_auditor.ime_prezime) {
+                $('#lead-auditor-name').text(data.audit.lead_auditor.ime_prezime);
+              } else {
+                $('#lead-auditor-name').text('Nije dodeljen');
+              }
               // Auditor sections removed from UI
             } else {
               console.warn('Nema podataka o auditu u odgovoru');
@@ -4323,12 +4025,14 @@ function initializeCalendar() {
               $('#cycle-actual-date').text('Nije dostupno');
               $('#cycle-audit-type').text('Nije dostupno');
               $('#cycle-status').text('Nije dostupno');
+              $('#lead-auditor-name').text('Nije dostupno');
             }
           } else {
             console.error('Nema podataka o ciklusu u odgovoru');
             $('#cycle-start-date').text('Nije dostupno');
             $('#cycle-cycle-status').text('Nije dostupno');
             // Auditor sections removed from UI
+            $('#lead-auditor-name').text('Nije dostupno');
           }
         },
         error: function(xhr, status, error) {
@@ -4349,6 +4053,7 @@ function initializeCalendar() {
           
           $('#cycle-start-date').text('Greška');
           $('#cycle-cycle-status').text('Greška');
+          $('#lead-auditor-name').text('Greška');
           alert('Greška prilikom dohvatanja podataka o ciklusu: ' + errorMsg);
         }
       });

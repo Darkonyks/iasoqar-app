@@ -1,0 +1,79 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Konfigurisanje npm zavisnosti
+  - package-ecosystem: "npm" # Za JavaScript/Node.js projekte (npm, yarn)
+    directory: "/" # Lokacija package.json fajla
+    schedule:
+      interval: "weekly" # Nedeljne provere za ažuriranje
+      day: "monday" # Provere ponedeljkom
+      time: "09:00" # U 9 ujutru
+      timezone: "Europe/Belgrade" # Vremenska zona za Srbiju
+    open-pull-requests-limit: 10 # Maksimalan broj otvorenih PR-ova
+    versioning-strategy: "auto" # Automatski izaberi strategiju verzioniranja
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "npm"
+      include: "scope"
+    ignore:
+      # Ignorisanje određenih paketa ili verzija
+      - dependency-name: "express"
+        versions: ["4.x.x"] # Ignorisanje major verzije 4
+    allow:
+      # Dozvoli samo određene tipove ažuriranja
+      - dependency-type: "direct" # Samo direktne zavisnosti
+    reviewers:
+      - "darkonyks" # Dodajte vašeg korisnika za pregled
+    assignees:
+      - "darkonyks" # Dodajte vašeg korisnika kao dodelenog
+  # Dodajte dodatne sekcije za druge ekosisteme ako ih koristite
+  # Na primer, za Python projekte:
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+  labels:
+    - "dependencies"
+    - "python"
+  commit-message:
+    prefix: "pip"
+    include: "scope"
+# Za Docker projekte:
+- package-ecosystem: "docker"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  labels:
+    - "dependencies"
+    - "docker"
+  commit-message:
+    prefix: "docker"
+    include: "scope"
+
+# GitHub Actions:
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "monthly" # Mesečno za Actions
+  labels:
+    - "dependencies"
+    - "github-actions"
+  commit-message:
+    prefix: "github-actions"
+    include: "scope"
+
+# Zavisnosti kompozitnih akcija:
+- package-ecosystem: "github-actions"
+  directory: "/.github/actions"
+  schedule:
+    interval: "monthly"
+  labels:
+    - "dependencies"
+    - "github-actions"

@@ -25,11 +25,6 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
   }
   
-  /* Cycle Audit modal: responsiveness and overflow handling */
-  /* Fixed width requested: 800px */
-  #cycleAuditModal .modal-dialog.modal-xl {
-    --bs-modal-width: 800px !important;
-  }
   #cycleAuditModal .modal-body {
     max-height: none;
     overflow-y: visible;
@@ -631,27 +626,18 @@
               <div class="col-12 col-lg-6">
                 <div class="card">
                   <div class="card-header">
-                    <h5 class="card-title">Informacije o ciklusu</h5>
+                    <h5 class="card-title">Vodeći auditor</h5>
                   </div>
                   <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-striped table-sm text-break mb-0">
-                        <tbody>
-                        <tr>
-                          <th>ID ciklusa:</th>
-                          <td id="cycle-id"></td>
-                        </tr>
-                        <tr>
-                          <th>Planirani datum ciklusa:</th>
-                          <td id="cycle-start-date"></td>
-                        </tr>
-                        <tr>
-                          <th>Status ciklusa:</th>
-                          <td id="cycle-cycle-status"></td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <p class="mb-0"><strong>Ime i prezime:</strong> <span id="lead-auditor-name">Učitavanje...</span></p>
+                  </div>
+                </div>
+                <div class="card mt-3">
+                  <div class="card-header">
+                    <h5 class="card-title">Tim auditora</h5>
+                  </div>
+                  <div class="card-body">
+                    <ul id="audit-team-list" class="mb-0 list-unstyled"></ul>
                   </div>
                 </div>
               </div>
@@ -674,6 +660,30 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
             <button type="button" class="btn btn-primary" id="viewCycleBtn">Pregledaj ciklus</button>
             <button type="button" class="btn btn-success" id="editCycleAuditBtn">Izmeni audit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generic Calendar Error Modal -->
+    <div class="modal fade" id="calendarErrorModal" tabindex="-1" aria-labelledby="calendarErrorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="calendarErrorModalLabel">Greška</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="calendarErrorModalMessage" class="mb-2"></p>
+            <div id="calendarErrorDetailsWrapper" class="mt-2" style="display:none;">
+              <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#calendarErrorModalDetails" aria-expanded="false" aria-controls="calendarErrorModalDetails">Prikaži detalje</button>
+              <div class="collapse" id="calendarErrorModalDetails">
+                <pre id="calendarErrorModalDetailsContent" class="small bg-light p-2 mb-0" style="white-space: pre-wrap; word-break: break-word;"></pre>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
           </div>
         </div>
       </div>
@@ -1042,6 +1052,44 @@
         }
       }
 
+      // Helper: centralizovani prikaz grešaka u kalendaru preko Bootstrap modala
+      function showErrorModal(title, message, details) {
+        try {
+          if (title) {
+            $('#calendarErrorModalLabel').text(title);
+          }
+          $('#calendarErrorModalMessage').text(message || 'Došlo je do greške.');
+
+          if (details) {
+            $('#calendarErrorDetailsWrapper').show();
+            // Ograniči veoma dugačke detalje
+            var content = String(details);
+            if (content.length > 2000) {
+              content = content.substring(0, 2000) + '\n… (skraćeno)';
+            }
+            $('#calendarErrorModalDetailsContent').text(content);
+          } else {
+            $('#calendarErrorDetailsWrapper').hide();
+            $('#calendarErrorModalDetailsContent').text('');
+          }
+
+          // Prikaži modal sigurno (podržani BS5/BS4 fallbackovi su u safeShowModal)
+          if (typeof safeShowModal === 'function') {
+            safeShowModal('#calendarErrorModal');
+          } else if (window.bootstrap && window.bootstrap.Modal) {
+            var modalEl = document.getElementById('calendarErrorModal');
+            var bsModal = new bootstrap.Modal(modalEl);
+            bsModal.show();
+          } else {
+            // Fallback u krajnjoj nuždi
+            alert((title ? (title + ': ') : '') + (message || '') + (details ? ('\n\nDetalji: ' + details) : ''));
+          }
+        } catch (err) {
+          console.error('Greška pri prikazu error modala:', err);
+          alert((title ? (title + ': ') : '') + (message || '') + (details ? ('\n\nDetalji: ' + details) : ''));
+        }
+      }
+
       // Funkcija za otvaranje modala za detalje certifikacionog ciklusa
       function openCycleAuditModal(event) {
         console.log('Opening cycle audit modal for event:', event);
@@ -1068,6 +1116,10 @@
           $('#cycle-start-date').text('Učitavanje...');
           $('#cycle-cycle-status').text('Učitavanje...');
           $('#cycle-notes').text('Učitavanje...');
+          // Lead auditor placeholder
+          $('#lead-auditor-name').text('Učitavanje...');
+          // Audit team placeholder
+          $('#audit-team-list').html('<li><em>Učitavanje...</em></li>');
 
           // Dobavi podatke iz event objekta s više mogućih izvora
           const eventProps = event.extendedProps || {};
@@ -1075,7 +1127,19 @@
           // Stabilan ID ciklusa – dolazi iz extendedProps
           const cycleId = eventProps.cycle_id || eventProps.certification_cycle_id || null;
           // Stabilan ID audita – koristi se za edit dugme
-          const auditId = eventProps.audit_id || (event.id ? event.id.toString().split('_').pop() : null);
+          // Pokušaji redom: extendedProps.audit_id, extendedProps.auditId, extendedProps.id (ako izgleda kao broj),
+          // pa ekstrakcija prve numeričke sekvence iz event.id
+          let auditId = null;
+          if (eventProps.audit_id) {
+            auditId = eventProps.audit_id;
+          } else if (eventProps.auditId) {
+            auditId = eventProps.auditId;
+          } else if (eventProps.id && /^\d+$/.test(String(eventProps.id))) {
+            auditId = String(eventProps.id);
+          } else if (event && event.id) {
+            const match = String(event.id).match(/\d+/);
+            if (match) auditId = match[0];
+          }
 
           console.log('Extracted Cycle ID:', cycleId);
           console.log('Extracted Audit ID:', auditId);
@@ -1084,6 +1148,13 @@
           if (!cycleId) {
             console.error('Nije pronađen ID ciklusa u event objektu');
             $('#cycle-company').text('Greška: Nije pronađen ID ciklusa');
+            try {
+              var d = {
+                event_id: String(event && event.id || ''),
+                extended_props: JSON.stringify(event && event.extendedProps || {})
+              };
+              showErrorModal('Nedostaje ID ciklusa', 'Nije moguće otvoriti detalje ciklusa jer nedostaje ID ciklusa.', 'Event ID: ' + d.event_id + '\nExtended props: ' + d.extended_props);
+            } catch (ee) { /* noop */ }
             return;
           }
 
@@ -1108,7 +1179,7 @@
               console.log('Navigating to audit update URL:', auditUrl);
               window.location.href = auditUrl;
             } else {
-              alert('ID audita nije dostupan.');
+              showErrorModal('Nedostaje ID audita', 'ID audita nije dostupan za ovaj događaj.');
             }
           });
 
@@ -1117,6 +1188,7 @@
             console.error('certificationCycleJsonUrl nije definisan');
             $('#cycle-start-date').text('Greška: URL nije dostupan');
             $('#cycle-cycle-status').text('Greška: URL nije dostupan');
+            showErrorModal('Interna greška konfiguracije', 'URL za čitanje podataka o ciklusu nije definisan. Kontaktirajte administratora.');
             return;
           }
 
@@ -1165,6 +1237,9 @@
 
                   // Popuni podatke o auditu
                   if (data.audit) {
+                    console.log('Audit iz API-ja:', data.audit);
+                    console.log('Lead auditor iz API-ja:', data.audit.lead_auditor);
+                    console.log('Audit team iz API-ja:', data.audit.audit_team);
                     // Ažuriraj tip i status audita iz backend-a
                     if (data.audit.audit_type_display || data.audit.audit_type) {
                       $('#cycle-audit-type').text(data.audit.audit_type_display || data.audit.audit_type);
@@ -1174,12 +1249,29 @@
                     }
                     $('#cycle-planned-date').text(formatDate(data.audit.planned_date) || 'Nije postavljen');
                     $('#cycle-actual-date').text(formatDate(data.audit.actual_date) || 'Nije postavljen');
+                    // Vodeći auditor
+                    if (data.audit.lead_auditor && data.audit.lead_auditor.ime_prezime) {
+                      $('#lead-auditor-name').text(data.audit.lead_auditor.ime_prezime);
+                    } else {
+                      $('#lead-auditor-name').text('Nije dodeljen');
+                    }
+                    // Tim auditora
+                    if (Array.isArray(data.audit.audit_team) && data.audit.audit_team.length) {
+                      const items = data.audit.audit_team.map(function (m) {
+                        return '<li>' + (m.ime_prezime || 'Nepoznato') + '</li>';
+                      }).join('');
+                      $('#audit-team-list').html(items);
+                    } else {
+                      $('#audit-team-list').html('<li><em>Nema dodeljenih članova</em></li>');
+                    }
                   } else {
                     console.warn('Nema podataka o auditu u odgovoru');
                     $('#cycle-planned-date').text('Nije dostupno');
                     $('#cycle-actual-date').text('Nije dostupno');
                     $('#cycle-audit-type').text('Nije dostupno');
                     $('#cycle-status').text('Nije dostupno');
+                    $('#lead-auditor-name').text('Nije dostupno');
+                    $('#audit-team-list').html('<li><em>Nije dostupno</em></li>');
                   }
                 } catch (e) {
                   console.error('Greška pri popunjavanju podataka o ciklusu:', e);
@@ -1190,6 +1282,8 @@
                 console.error('Nema podataka o ciklusu u odgovoru');
                 $('#cycle-start-date').text('Nije dostupno');
                 $('#cycle-cycle-status').text('Nije dostupno');
+                $('#lead-auditor-name').text('Nije dostupno');
+                $('#audit-team-list').html('<li><em>Nije dostupno</em></li>');
               }
             },
             error: function (xhr, status, error) {
@@ -1210,7 +1304,12 @@
 
               $('#cycle-start-date').text('Greška');
               $('#cycle-cycle-status').text('Greška');
-              alert('Greška prilikom dohvatanja podataka o ciklusu: ' + errorMsg);
+              $('#lead-auditor-name').text('Greška');
+              $('#audit-team-list').html('<li><em>Greška</em></li>');
+              var details = 'Status: ' + (status || 'N/A') + '\n' +
+                            'HTTP: ' + (xhr.status || 'N/A') + ' ' + (xhr.statusText || '') + '\n' +
+                            'Detalji: ' + (errorMsg || '') + (xhr.responseText ? ('\nOdgovor servera: ' + String(xhr.responseText).substring(0, 800)) : '');
+              showErrorModal('Greška prilikom dohvatanja podataka o ciklusu', 'Nismo uspeli da učitamo podatke o ciklusu. Pokušajte ponovo.', details);
             }
           });
         } catch (e) {
@@ -1626,16 +1725,98 @@
                 return;
               }
 
-              // Prikaži modal za potvrdu promene datuma
-              showDateChangeConfirmationModal(event, newDate, function (confirmed) {
-                if (confirmed) {
-                  // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                  updateEventDate(eventType, eventId, newDate);
-                } else {
-                  // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
-                  info.revert();
+              // Za appointment tip događaja, proveri da li auditor već ima rezervaciju na odabrani datum
+              if (eventType === 'appointment') {
+                // Formatiranje datuma za API
+                const formattedDate = newDate.toISOString().split('T')[0];
+                const csrftoken = getCookie('csrftoken');
+                const auditorId = event.extendedProps.auditor_id;
+                
+                if (!auditorId) {
+                  console.warn('Nedostaje ID auditora za proveru rezervacija');
+                  
+                  // Prikaži modal za potvrdu promene datuma
+                  showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                    if (confirmed) {
+                      // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                      updateEventDate(eventType, eventId, newDate);
+                    } else {
+                      // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                      info.revert();
+                    }
+                  });
+                  return;
                 }
-              });
+                
+                // Provera da li auditor već ima rezervaciju na odabrani datum
+                $.ajax({
+                  url: `/company/api/validate-auditor-reservation/`,
+                  type: 'POST',
+                  data: JSON.stringify({
+                    auditor_id: auditorId,
+                    date: formattedDate,
+                    appointment_id: eventId // ID trenutnog appointment-a za izuzetak
+                  }),
+                  contentType: 'application/json',
+                  headers: { 'X-CSRFToken': csrftoken },
+                  success: function(response) {
+                    console.log('Validacija auditora:', response);
+                    
+                    if (response.valid) {
+                      // Nema konflikta, prikaži standardni modal za potvrdu
+                      showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                        if (confirmed) {
+                          // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                          updateEventDate(eventType, eventId, newDate);
+                        } else {
+                          // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                          info.revert();
+                        }
+                      });
+                    } else {
+                      // Postoji konflikt, prikaži poruku o grešci
+                      if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                          title: 'Konflikt rezervacija',
+                          text: response.message || 'Auditor već ima rezervaciju na izabrani datum.',
+                          icon: 'error',
+                          confirmButtonText: 'U redu'
+                        });
+                      } else {
+                        alert('Konflikt rezervacija: ' + (response.message || 'Auditor već ima rezervaciju na izabrani datum.'));
+                      }
+                      info.revert(); // Vrati događaj na originalnu poziciju
+                    }
+                  },
+                  error: function(xhr, status, error) {
+                    console.error('Greška pri validaciji rezervacije auditora:', error);
+                    
+                    // Prikaži grešku i vrati događaj na originalnu poziciju
+                    if (typeof Swal !== 'undefined') {
+                      Swal.fire({
+                        title: 'Greška',
+                        text: 'Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.',
+                        icon: 'error',
+                        confirmButtonText: 'U redu'
+                      });
+                    } else {
+                      alert('Greška: Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.');
+                    }
+                    info.revert();
+                  }
+                });
+              } else {
+                // Za ostale tipove događaja, prikaži standardni modal za potvrdu
+                showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                  if (confirmed) {
+                    // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                    updateEventDate(eventType, eventId, newDate);
+                  } else {
+                    // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                    info.revert();
+                  }
+                });
+              }
             }
           });
 

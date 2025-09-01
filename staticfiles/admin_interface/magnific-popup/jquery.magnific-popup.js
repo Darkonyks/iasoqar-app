@@ -511,8 +511,29 @@
                 // allows to modify markup
                 _mfpTrigger('FirstMarkupParse', markup);
 
-                if(markup) {
-                    mfp.currTemplate[type] = $(markup);
+                if (markup) {
+                    // By default, prevent direct HTML templates injection unless explicitly enabled with allowUnsafeMarkup
+                    var allowUnsafe = mfp.st.allowUnsafeMarkup === true;
+                    if (typeof markup === 'string' && /^\s*<[\s\S]*>/.test(markup)) {
+                        if (!allowUnsafe) {
+                            // Always document and block by default
+                            if(window && window.console && typeof window.console.warn === 'function') {
+                                console.warn("MagnificPopup: Unsafe HTML markup detected in options[type].markup. "
+                                    + "For security, raw HTML injection via the 'markup' option is blocked by default."
+                                    + " To allow, set allowUnsafeMarkup: true AND ENSURE THE CONTENT IS FULLY SANITIZED.");
+                            }
+                            // Prevent injection of raw HTML
+                            mfp.currTemplate[type] = $('<div></div>');
+                        } else {
+                            if(window && window.console && typeof window.console.warn === 'function') {
+                                console.warn("MagnificPopup: allowUnsafeMarkup: true is set. "
+                                    + "You MUST ensure that all 'markup' content is trusted and properly sanitized to prevent XSS.");
+                            }
+                            mfp.currTemplate[type] = $(markup);
+                        }
+                    } else {
+                        mfp.currTemplate[type] = $(markup);
+                    }
                 } else {
                     // if there is no markup found we just define that template is parsed
                     mfp.currTemplate[type] = true;
@@ -862,6 +883,12 @@
 
             // Info about options is in docs:
             // http://dimsemenov.com/plugins/magnific-popup/documentation.html#options
+            //
+            // WARNING: Never provide untrusted or user-supplied data to the 'markup' option or any type-specific .markup.
+            // If 'markup' (or options[type].markup) is a string starting with '<', it will normally be BLOCKED from being injected as HTML for security.
+            // To explicitly allow direct HTML injection (NOT RECOMMENDED), set allowUnsafeMarkup: true;
+            // In such cases, YOU MUST FULLY SANITIZE the content yourself - otherwise, XSS vulnerabilities WILL occur.
+            // If allowUnsafeMarkup is not set, HTML markup is replaced with a harmless <div>.
 
             disableOn: 0,
 

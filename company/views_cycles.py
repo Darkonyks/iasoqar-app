@@ -115,6 +115,18 @@ class CertificationCycleDetailView(LoginRequiredMixin, DetailView):
                 # Nakon čuvanja preusmeri na kalendar (bez potrebe za ručnim osvežavanjem)
                 return redirect('company:calendar')
             else:
+                # Jasna notifikacija kada postoje konflikti rezervacija auditora
+                non_field_errs = [str(e) for e in form.non_field_errors()]
+                has_conflict = (
+                    'lead_auditor' in form.errors or
+                    'audit_team' in form.errors or
+                    any('konflikt' in e.lower() for e in non_field_errs)
+                )
+                if has_conflict:
+                    messages.error(request, 'Konflikt rezervacije auditora: jedan ili više auditora su već rezervisani za izabrane datume. Proverite označena polja.')
+                else:
+                    messages.error(request, 'Greška pri čuvanju audita. Proverite formular.')
+
                 context = self.get_context_data(**kwargs)
                 context['audit_form'] = form
                 context['show_audit_form'] = True
@@ -257,6 +269,20 @@ class CycleAuditCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Audit je uspešno kreiran.')
         return response
+
+    def form_invalid(self, form):
+        # Jasna poruka o konfliktu rezervacija (ako postoji)
+        non_field_errs = [str(e) for e in form.non_field_errors()]
+        has_conflict = (
+            'lead_auditor' in form.errors or
+            'audit_team' in form.errors or
+            any('konflikt' in e.lower() for e in non_field_errs)
+        )
+        if has_conflict:
+            messages.error(self.request, 'Konflikt rezervacije auditora: jedan ili više auditora su već rezervisani za izabrane datume. Proverite označena polja.')
+        else:
+            messages.error(self.request, 'Greška pri čuvanju audita. Proverite formular.')
+        return super().form_invalid(form)
     
     def get_success_url(self):
         # Nakon kreiranja audita, preusmeri na kalendar
@@ -304,6 +330,20 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
         
         messages.success(self.request, 'Audit je uspešno ažuriran.')
         return response
+    
+    def form_invalid(self, form):
+        # Jasna poruka o konfliktu rezervacija (ako postoji)
+        non_field_errs = [str(e) for e in form.non_field_errors()]
+        has_conflict = (
+            'lead_auditor' in form.errors or
+            'audit_team' in form.errors or
+            any('konflikt' in e.lower() for e in non_field_errs)
+        )
+        if has_conflict:
+            messages.error(self.request, 'Konflikt rezervacije auditora: jedan ili više auditora su već rezervisani za izabrane datume. Proverite označena polja.')
+        else:
+            messages.error(self.request, 'Greška pri čuvanju audita. Proverite formular.')
+        return super().form_invalid(form)
     
     def get_success_url(self):
         return reverse('company:calendar')

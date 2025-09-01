@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.contrib import messages
 from .models import Company, IAFEACCode, CompanyIAFEACCode
 from .cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditorReservation, zaokruzi_na_veci_broj
 from .standard_models import StandardDefinition, CompanyStandard
@@ -456,13 +457,32 @@ class CycleAuditForm(forms.ModelForm):
         actual_date = cleaned_data.get('actual_date')
         audit_status = cleaned_data.get('audit_status')
         
-        # Automatski postavi status na 'completed' ako je unet stvarni datum
-        if actual_date and audit_status == 'planned':
-            cleaned_data['audit_status'] = 'completed'
-            # Dodaj informativnu poruku koja će biti prikazana korisniku
-            from django.contrib import messages
-            if getattr(self, 'request', None):
-                messages.info(self.request, 'Status audita je automatski postavljen na "Završeno" jer je unet stvarni datum.')
+        # Onemogući promenu tipa audita nakon kreiranja
+        if self.instance.pk:
+            original_type = getattr(self.instance, 'audit_type', None)
+            new_type = cleaned_data.get('audit_type')
+            if new_type and original_type and new_type != original_type:
+                self.add_error('audit_type', _('Tip audita nije moguće menjati nakon kreiranja.'))
+                cleaned_data['audit_type'] = original_type
+
+        # Automatski postavi status na 'completed' ako je unet stvarni datum (osim kada je status 'cancelled')
+        if actual_date:
+            if audit_status in ('planned', 'in_progress', 'postponed'):
+                cleaned_data['audit_status'] = 'completed'
+                # Dodaj informativnu poruku koja će biti prikazana korisniku
+                if getattr(self, 'request', None):
+                    messages.info(self.request, _('Status audita je automatski postavljen na "Završeno" jer je unet stvarni datum.'))
+            elif audit_status == 'cancelled':
+                self.add_error('actual_date', _('Za status "Otkazano" ne sme biti postavljen stvarni datum.'))
+
+        # Ako je status 'completed', mora biti postavljen stvarni datum
+        if cleaned_data.get('audit_status') == 'completed' and not actual_date:
+            self.add_error('actual_date', _('Stvarni datum je obavezan kada je status "Završeno".'))
+
+        # Lead auditor ne može biti i član tima
+        team_selected_initial = cleaned_data.get('audit_team')
+        if lead_auditor and team_selected_initial and lead_auditor in team_selected_initial:
+            self.add_error('audit_team', _('Vodeći auditor ne može biti i član tima.'))
         
         # Proveri da li je lead_auditor kvalifikovan za audit
         if lead_auditor and certification_cycle and self.instance.pk:

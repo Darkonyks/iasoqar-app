@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import logging
 import json
-from datetime import datetime, time
+from datetime import datetime, time, date
 from .standard_models import CompanyStandard
 from .models import Company, Appointment
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
-from .cycle_models import CertificationCycle, CycleAudit, AuditDay
+from .cycle_models import CertificationCycle, CycleAudit, AuditDay, AuditorReservation
+from .auditor_models import Auditor
 
 @require_POST
 @login_required
@@ -305,12 +306,36 @@ def certification_cycle_json(request, pk):
             # Dohvatamo dane audita
             audit_days = []
             for day in audit.audit_days.all().order_by('date'):
+                # Per-day auditor assignments from reservations
+                reservations_data = []
+                lead_ids = []
+                team_ids = []
+                for res in day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                    reservations_data.append({
+                        'id': res.id,
+                        'role': res.role,
+                        'auditor': {
+                            'id': res.auditor.id,
+                            'ime_prezime': res.auditor.ime_prezime,
+                            'email': res.auditor.email,
+                            'telefon': res.auditor.telefon,
+                            'kategorija': res.auditor.kategorija,
+                            'kategorija_display': res.auditor.get_kategorija_display(),
+                        }
+                    })
+                    if res.role == 'lead':
+                        lead_ids.append(res.auditor.id)
+                    elif res.role == 'team':
+                        team_ids.append(res.auditor.id)
                 audit_days.append({
                     'id': day.id,
                     'date': day.date.isoformat() if day.date else None,
                     'is_planned': day.is_planned,
                     'is_actual': day.is_actual,
-                    'notes': day.notes or ''
+                    'notes': day.notes or '',
+                    'reservations': reservations_data,
+                    'lead_auditors': lead_ids,
+                    'team_auditors': team_ids,
                 })
             audit_data['audit_days'] = audit_days
 
@@ -385,12 +410,35 @@ def audit_days_by_audit_id(request, audit_id):
         # Dohvatamo dane audita
         audit_days = []
         for day in audit.audit_days.all().order_by('date'):
+            reservations_data = []
+            lead_ids = []
+            team_ids = []
+            for res in day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                reservations_data.append({
+                    'id': res.id,
+                    'role': res.role,
+                    'auditor': {
+                        'id': res.auditor.id,
+                        'ime_prezime': res.auditor.ime_prezime,
+                        'email': res.auditor.email,
+                        'telefon': res.auditor.telefon,
+                        'kategorija': res.auditor.kategorija,
+                        'kategorija_display': res.auditor.get_kategorija_display(),
+                    }
+                })
+                if res.role == 'lead':
+                    lead_ids.append(res.auditor.id)
+                elif res.role == 'team':
+                    team_ids.append(res.auditor.id)
             audit_days.append({
                 'id': day.id,
                 'date': day.date.isoformat() if day.date else None,
                 'is_planned': day.is_planned,
                 'is_actual': day.is_actual,
-                'notes': day.notes or ''
+                'notes': day.notes or '',
+                'reservations': reservations_data,
+                'lead_auditors': lead_ids,
+                'team_auditors': team_ids,
             })
         audit_data['audit_days'] = audit_days
         
@@ -453,13 +501,56 @@ def update_event_date(request):
         
         # Ažuriranje datuma u zavisnosti od tipa događaja
         if event_type == 'audit_day':
-            # Ažuriranje datuma audit dana
+            # Ažuriranje datuma audit dana uz proveru konflikata rezervacija i resync
             audit_day = get_object_or_404(AuditDay, pk=event_id)
             old_date = audit_day.date
+            new_local_date = local_dt.date()
+
+            # Proveri potencijalne konflikate za sve dodeljene auditore (lead + tim)
+            audit = audit_day.audit
+            assigned_auditors = list(audit.audit_team.all())
+            if audit.lead_auditor_id:
+                assigned_auditors.append(audit.lead_auditor)
+
+            conflicting = []
+            if assigned_auditors:
+                from .cycle_models import AuditorReservation
+                for a in assigned_auditors:
+                    if AuditorReservation.objects.filter(auditor=a, date=new_local_date).exclude(audit=audit).exists():
+                        conflicting.append(a.ime_prezime)
+
+            if conflicting:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Nemoguće pomeriti dan audita zbog konflikta rezervacija za sledeće auditore: ' + ', '.join(conflicting)
+                }, status=409)
+
             # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
-            audit_day.date = local_dt.date()
+            audit_day.date = new_local_date
             audit_day.save()
-            
+
+            # Resync rezervacija za audit kako bi se azurirala veza na nove dane i datume
+            try:
+                audit.sync_auditor_reservations()
+            except Exception:
+                pass
+
+            # Pripremi rezervacije za vraćanje klijentu
+            reservations_payload = []
+            for res in audit_day.reservations.select_related('auditor').all().order_by('auditor__ime_prezime'):
+                reservations_payload.append({
+                    'id': res.id,
+                    'role': res.role,
+                    'auditor': {
+                        'id': res.auditor.id,
+                        'ime_prezime': res.auditor.ime_prezime,
+                        'email': res.auditor.email,
+                        'telefon': res.auditor.telefon,
+                        'kategorija': res.auditor.kategorija,
+                        'kategorija_display': res.auditor.get_kategorija_display(),
+                    }
+                })
+
             return JsonResponse({
                 'success': True,
                 'message': f'Datum audit dana je uspešno ažuriran sa {old_date} na {audit_day.date}.',
@@ -468,7 +559,8 @@ def update_event_date(request):
                     'date': audit_day.date.isoformat(),
                     'is_planned': audit_day.is_planned,
                     'is_actual': audit_day.is_actual,
-                    'notes': audit_day.notes or ''
+                    'notes': audit_day.notes or '',
+                    'reservations': reservations_payload,
                 }
             })
             
@@ -548,4 +640,102 @@ def update_event_date(request):
         return JsonResponse({
             'success': False,
             'error': str(e)
+        }, status=500)
+
+
+@require_POST
+@login_required
+def validate_auditor_reservation(request):
+    """
+    API endpoint za validaciju da li auditor već ima rezervaciju na odabrani datum.
+    Prima ID auditora i datum kao POST parametre.
+    Vraća JSON odgovor o dostupnosti auditora.
+    """
+    logger = logging.getLogger('django')
+    logger.info(f"Validacija dostupnosti auditora za rezervaciju")
+    
+    try:
+        # Parsiranje JSON podataka iz POST zahteva
+        data = json.loads(request.body)
+        auditor_id = data.get('auditor_id')
+        target_date = data.get('date')
+        appointment_id = data.get('appointment_id')  # ID trenutnog termina za izuzetak
+        
+        logger.info(f"Primljeni podaci: auditor_id={auditor_id}, date={target_date}, appointment_id={appointment_id}")
+        
+        # Validacija podataka
+        if not auditor_id or not target_date:
+            return JsonResponse({
+                'valid': False,
+                'message': 'Nedostaju obavezni parametri (auditor_id, date).'
+            }, status=400)
+        
+        # Dohvatanje auditora
+        try:
+            auditor = get_object_or_404(Auditor, pk=auditor_id)
+        except Auditor.DoesNotExist:
+            return JsonResponse({
+                'valid': False,
+                'message': f'Auditor sa ID={auditor_id} nije pronađen.'
+            }, status=404)
+        
+        # Parsiranje datuma
+        try:
+            if isinstance(target_date, str):
+                # Format datuma može biti YYYY-MM-DD
+                target_date_obj = datetime.strptime(target_date, '%Y-%m-%d').date()
+            elif isinstance(target_date, date):
+                target_date_obj = target_date
+            else:
+                return JsonResponse({
+                    'valid': False,
+                    'message': 'Neispravan format datuma.'
+                }, status=400)
+        except ValueError:
+            return JsonResponse({
+                'valid': False,
+                'message': 'Neispravan format datuma.'
+            }, status=400)
+        
+        # Provera da li auditor već ima rezervaciju na odabrani datum
+        # Isključujemo trenutni termin ako je prosleđen ID
+        existing_reservations = AuditorReservation.objects.filter(
+            auditor=auditor,
+            date=target_date_obj
+        )
+        
+        # Ako postoje rezervacije, auditor nije dostupan
+        if existing_reservations.exists():
+            # Dobavi detaljnije informacije o konfliktima
+            conflicts = []
+            
+            for res in existing_reservations:
+                audit_day = res.audit_day
+                conflicts.append({
+                    'type': 'reservation',
+                    'id': res.id,
+                    'audit_day_id': audit_day.id if audit_day else None,
+                    'audit_id': audit_day.audit_id if audit_day else None,
+                    'date': res.date.isoformat() if res.date else None,
+                })
+            
+            return JsonResponse({
+                'valid': False,
+                'message': f'Auditor {auditor.ime_prezime} već ima rezervaciju na datum {target_date_obj.isoformat()}.',
+                'conflicts': conflicts
+            }, status=409)  # 409 Conflict
+        
+        # Ako nema rezervacija ili termina, auditor je dostupan
+        return JsonResponse({
+            'valid': True,
+            'message': f'Auditor {auditor.ime_prezime} je dostupan na datum {target_date_obj.isoformat()}.'
+        })
+    
+    except Exception as e:
+        import traceback
+        logger.error(f"Greška prilikom validacije rezervacije auditora: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JsonResponse({
+            'valid': False,
+            'message': str(e)
         }, status=500)
