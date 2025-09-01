@@ -431,6 +431,10 @@ class CycleAuditForm(forms.ModelForm):
         
         super().__init__(*args, **kwargs)
         
+        # Uvek prikaži sve auditore u padajućoj listi za lead_auditor
+        # (kvalifikacija se proverava u clean())
+        self.fields['lead_auditor'].queryset = Auditor.objects.all().order_by('ime_prezime')
+        
         # Ako je instanca već kreirana, popunjavamo polje audit_team sa postojećim auditorima
         instance = kwargs.get('instance')
         if instance:
@@ -442,13 +446,7 @@ class CycleAuditForm(forms.ModelForm):
             # Dodatno sakrij polje audit_type da bi bilo nemoguće promeniti ga
             self.fields['audit_type'].widget.attrs['style'] = 'pointer-events: none;'
             
-            # Ograniči lead_auditor samo na kvalifikovane auditore
-            if instance.certification_cycle_id:
-                qualified_auditors = Auditor.objects.filter(id__in=[
-                    auditor.id for auditor in Auditor.objects.all()
-                    if is_auditor_qualified_for_audit(auditor.id, instance.id)[0]
-                ])
-                self.fields['lead_auditor'].queryset = qualified_auditors
+            # Queryset već postavljen globalno; ostavljamo sve auditore dostupne
     
     def clean(self):
         cleaned_data = super().clean()
