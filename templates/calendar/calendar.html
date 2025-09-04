@@ -4,14 +4,9 @@
 {% block title %}Kalendar Sastanaka{% endblock %}
 
 {% block extrastyle %}
-<!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- Don't use FullCalendar CSS from CDN since it has MIME issues -->
 <!-- Custom Calendar CSS -->
 <link href="{% static 'css/calendar.css' %}" rel="stylesheet">
-
-<!-- Load Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Modalni stilovi - pojednostavljeni pristup -->
 <style>
@@ -148,7 +143,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji termina</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <div class="row mb-3">
@@ -193,7 +188,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
             <button type="button" class="btn btn-primary" id="editAppointmentBtn">Izmeni</button>
           </div>
         </div>
@@ -202,15 +197,7 @@
     {% endblock %}
 
     {% block extra_scripts %}
-    <!-- jQuery (ako već nije učitan u base.html) -->
-    <script>
-      if (typeof jQuery === 'undefined') {
-        document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>');
-      }
-    </script>
-
-    <!-- Eksplicitno učitavanje Bootstrap JS-a za modalne dijaloge -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Rely on jQuery and Bootstrap 4 from base.html -->
 
     <script>
       // Pomoćna funkcija za sigurno otvaranje modala
@@ -361,7 +348,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="appointmentModalLabel">Novi sastanak</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <form id="appointmentForm">
             <div class="modal-body">
@@ -475,7 +462,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" id="deleteAppointmentBtn">Obriši</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Otkaži</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
               <button type="submit" class="btn btn-primary">Sačuvaj</button>
             </div>
           </form>
@@ -490,7 +477,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="auditDetailModalLabel">Detalji audita</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body" id="auditDetailContent">
             <!-- Content will be loaded dynamically -->
@@ -570,7 +557,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
             <button type="button" class="btn btn-primary" id="editAuditBtn">Izmeni</button>
           </div>
         </div>
@@ -584,7 +571,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="cycleAuditModalLabel">Detalji certifikacionog ciklusa</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <div class="row">
@@ -657,7 +644,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
             <button type="button" class="btn btn-primary" id="viewCycleBtn">Pregledaj ciklus</button>
             <button type="button" class="btn btn-success" id="editCycleAuditBtn">Izmeni audit</button>
           </div>
@@ -671,19 +658,19 @@
         <div class="modal-content">
           <div class="modal-header bg-danger text-white">
             <h5 class="modal-title" id="calendarErrorModalLabel">Greška</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="text-white">&times;</span></button>
           </div>
           <div class="modal-body">
             <p id="calendarErrorModalMessage" class="mb-2"></p>
             <div id="calendarErrorDetailsWrapper" class="mt-2" style="display:none;">
-              <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#calendarErrorModalDetails" aria-expanded="false" aria-controls="calendarErrorModalDetails">Prikaži detalje</button>
+              <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-toggle="collapse" data-target="#calendarErrorModalDetails" aria-expanded="false" aria-controls="calendarErrorModalDetails">Prikaži detalje</button>
               <div class="collapse" id="calendarErrorModalDetails">
                 <pre id="calendarErrorModalDetailsContent" class="small bg-light p-2 mb-0" style="white-space: pre-wrap; word-break: break-word;"></pre>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
           </div>
         </div>
       </div>
@@ -695,7 +682,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="auditDayModalLabel">Dan Audita</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <!-- Osnovni podaci o auditu -->
@@ -748,7 +735,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zatvori</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
             <button type="button" class="btn btn-primary" id="editAuditDayBtn" disabled>Izmeni</button>
           </div>
         </div>
@@ -780,11 +767,7 @@
         initializeCalendar();
       }
     </script>
-    <!-- jQuery UI -->
-    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
-
-    <!-- Ensure Bootstrap JS is loaded for modals -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Rely on jQuery UI and Bootstrap 4 from base.html -->
 
     <!-- CSRF Token for AJAX requests -->
     {% csrf_token %}
