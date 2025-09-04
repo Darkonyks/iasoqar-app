@@ -17,7 +17,7 @@ pytz==2025.1
 
 # Export functionality
 xhtml2pdf==0.2.17
-reportlab==4.1.0
+reportlab==4.4.3
 
 # REST API (if needed for calendar frontend)
 djangochannelsrestframework==1.1.0
