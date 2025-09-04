@@ -2,7 +2,6 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
   # Konfigurisanje npm zavisnosti
@@ -32,48 +31,52 @@ updates:
       - "darkonyks" # Dodajte vašeg korisnika za pregled
     assignees:
       - "darkonyks" # Dodajte vašeg korisnika kao dodelenog
-  # Dodajte dodatne sekcije za druge ekosisteme ako ih koristite
-  # Na primer, za Python projekte:
-- package-ecosystem: "pip"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-    day: "monday"
-  labels:
-    - "dependencies"
-    - "python"
-  commit-message:
-    prefix: "pip"
-    include: "scope"
-# Za Docker projekte:
-- package-ecosystem: "docker"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  labels:
-    - "dependencies"
-    - "docker"
-  commit-message:
-    prefix: "docker"
-    include: "scope"
 
-# GitHub Actions:
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    interval: "monthly" # Mesečno za Actions
-  labels:
-    - "dependencies"
-    - "github-actions"
-  commit-message:
-    prefix: "github-actions"
-    include: "scope"
+  # Za Python projekte:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "pip"
+      include: "scope"
 
-# Zavisnosti kompozitnih akcija:
-- package-ecosystem: "github-actions"
-  directory: "/.github/actions"
-  schedule:
-    interval: "monthly"
-  labels:
-    - "dependencies"
-    - "github-actions"
+  # Za Docker projekte:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+
+  # GitHub Actions:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly" # Mesečno za Actions
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "github-actions"
+      include: "scope"
+
+  # Zavisnosti kompozitnih akcija:
+  - package-ecosystem: "github-actions"
+    directory: "/.github/actions"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "github-actions"
+      include: "scope"
