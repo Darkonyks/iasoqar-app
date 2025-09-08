@@ -13,7 +13,7 @@ tzdata==2025.2
 
 # Calendar functionality
 # django-fullcalendar==1.1.1 # Privremeno iskljuceno za Docker build
-pytz==2025.1
+pytz==2025.2
 
 # Export functionality
 xhtml2pdf==0.2.17
