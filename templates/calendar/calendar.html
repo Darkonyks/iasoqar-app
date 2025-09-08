@@ -19,6 +19,48 @@
   .modal-content {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
   }
+  /* Fix: ensure the modal close button renders correctly (×) and not as a minus */
+  .modal-header .close {
+    background: transparent !important;
+    border: 0 !important;
+    outline: none;
+    box-shadow: none;
+    padding: 0.25rem 0.5rem;
+    margin-left: auto;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .75;
+  }
+  .modal-header .close:hover { opacity: 1; }
+  .modal-header .close span[aria-hidden="true"] {
+    /* Some themes/fonts override the glyph; enforce a sane sans-serif font */
+    font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+    line-height: 1;
+    display: inline-block;
+  }
+  /* Use a custom close button class to avoid theme overrides entirely */
+  .modal-header .modal-close-btn {
+    background: transparent !important;
+    border: 0 !important;
+    outline: none;
+    box-shadow: none;
+    padding: 0.25rem 0.5rem;
+    margin-left: auto;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgba(0,0,0,.5);
+    cursor: pointer;
+  }
+  .modal-header .modal-close-btn:hover { color: rgba(0,0,0,.85); }
+  .modal-header .modal-close-btn span[aria-hidden="true"] {
+    font-family: "Source Sans Pro", Arial, Helvetica, sans-serif !important;
+    line-height: 1;
+    display: inline-block;
+  }
+  .modal-header.bg-danger .modal-close-btn,
+  .modal-header.bg-danger .modal-close-btn span[aria-hidden="true"] { color: #fff !important; }
   
   #cycleAuditModal .modal-body {
     max-height: none;
@@ -143,7 +185,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="appointmentDetailModalLabel">Detalji termina</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <div class="row mb-3">
@@ -348,7 +390,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="appointmentModalLabel">Novi sastanak</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true">&times;</span></button>
           </div>
           <form id="appointmentForm">
             <div class="modal-body">
@@ -477,7 +519,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="auditDetailModalLabel">Detalji audita</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body" id="auditDetailContent">
             <!-- Content will be loaded dynamically -->
@@ -571,11 +613,11 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="cycleAuditModalLabel">Detalji certifikacionog ciklusa</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-lg-7">
                 <div class="card">
                   <div class="card-header">
                     <h5 class="card-title">Osnovne informacije</h5>
@@ -610,7 +652,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-lg-5">
                 <div class="card">
                   <div class="card-header">
                     <h5 class="card-title">Vodeći auditor</h5>
@@ -658,7 +700,7 @@
         <div class="modal-content">
           <div class="modal-header bg-danger text-white">
             <h5 class="modal-title" id="calendarErrorModalLabel">Greška</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="text-white">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true" class="text-white">&times;</span></button>
           </div>
           <div class="modal-body">
             <p id="calendarErrorModalMessage" class="mb-2"></p>
@@ -682,7 +724,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="auditDayModalLabel">Dan Audita</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="modal-close-btn" data-dismiss="modal" aria-label="Close" title="Zatvori"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="modal-body">
             <!-- Osnovni podaci o auditu -->
