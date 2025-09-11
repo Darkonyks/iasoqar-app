@@ -9,7 +9,7 @@ from datetime import datetime, time, date
 from .standard_models import CompanyStandard
 from .models import Company, Appointment
 from .iaf_models import IAFEACCode, CompanyIAFEACCode
-from .cycle_models import CertificationCycle, CycleAudit, AuditDay, AuditorReservation
+from .cycle_models import CertificationCycle, CycleAudit, AuditDay, AuditorReservation, zaokruzi_na_veci_broj
 from .auditor_models import Auditor
 
 @require_POST
@@ -512,17 +512,39 @@ def update_event_date(request):
             if audit.lead_auditor_id:
                 assigned_auditors.append(audit.lead_auditor)
 
-            conflicting = []
+            conflicts = []
             if assigned_auditors:
-                from .cycle_models import AuditorReservation
+                # Proveri potencijalne konflikte i vrati detalje za poruku na frontendu
                 for a in assigned_auditors:
-                    if AuditorReservation.objects.filter(auditor=a, date=new_local_date).exclude(audit=audit).exists():
-                        conflicting.append(a.ime_prezime)
+                    existing = AuditorReservation.objects.select_related(
+                        'audit__certification_cycle__company',
+                        'audit_day__audit__certification_cycle__company'
+                    ).filter(auditor=a, date=new_local_date).exclude(audit=audit).first()
+                    if existing:
+                        company_name = 'druga kompanija'
+                        try:
+                            if getattr(existing, 'audit', None) and existing.audit and existing.audit.certification_cycle:
+                                company_name = existing.audit.certification_cycle.company.name
+                            elif existing.audit_day and existing.audit_day.audit and existing.audit_day.audit.certification_cycle:
+                                company_name = existing.audit_day.audit.certification_cycle.company.name
+                        except Exception:
+                            pass
+                        conflicts.append({
+                            'auditor': a.ime_prezime,
+                            'date': new_local_date.isoformat(),
+                            'company': company_name,
+                            'conflicting_audit_id': getattr(existing, 'audit_id', None),
+                        })
 
-            if conflicting:
+            if conflicts:
+                # Vraćamo 409 sa detaljima konflikata kako bi frontend prikazao preciznu poruku
+                primary = conflicts[0]
+                primary_msg = f"Nije moguće promeniti datum auditu jer je za ovaj {primary['date']} već dodeljen {primary['auditor']} za {primary['company']}."
                 return JsonResponse({
                     'success': False,
-                    'error': 'Nemoguće pomeriti dan audita zbog konflikta rezervacija za sledeće auditore: ' + ', '.join(conflicting)
+                    'error': 'Nemoguće pomeriti dan audita zbog konflikta rezervacija.',
+                    'message': primary_msg,
+                    'conflicts': conflicts,
                 }, status=409)
 
             # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
@@ -565,17 +587,65 @@ def update_event_date(request):
             })
             
         elif event_type == 'cycle_audit':
-            # Ažuriranje planiranog datuma audita
+            # Ažuriranje planiranog datuma audita uz prethodnu proveru konflikata rezervacija
             audit = get_object_or_404(CycleAudit, pk=event_id)
             old_date = audit.planned_date
-            # Koristi lokalni datum (ne UTC) da se izbegne pomeranje za jedan dan
-            # Važno: sada želimo da pozovemo save() kako bi se u CycleAudit.save()
-            # automatski regenerisali AuditDay zapisi kada se promeni planned_date.
-            new_planned = local_dt.date()
+            new_planned = local_dt.date()  # koristimo lokalni datum (bez UTC pomaka)
+
+            # 1) Izračunaj planirane datume audita posle promene
+            from datetime import timedelta
+            cycle = audit.certification_cycle
+
+            # Broj dana audita prema tipu i podešavanjima ciklusa (isti model kao u CycleAudit.create_audit_days)
+            if audit.audit_type == 'initial' and cycle.inicijalni_broj_dana:
+                broj_dana = zaokruzi_na_veci_broj(cycle.inicijalni_broj_dana)
+            elif (audit.audit_type == 'surveillance_1' or audit.audit_type == 'surveillance_2') and cycle.broj_dana_nadzora:
+                broj_dana = zaokruzi_na_veci_broj(cycle.broj_dana_nadzora)
+            elif audit.audit_type == 'recertification' and cycle.broj_dana_resertifikacije:
+                broj_dana = zaokruzi_na_veci_broj(cycle.broj_dana_resertifikacije)
+            else:
+                broj_dana = 1
+
+            # Ako postoji stvarni datum, datumi se zasnivaju na actual_date; u suprotnom na new_planned
+            anchor_date = audit.actual_date if audit.actual_date else new_planned
+            target_dates = [anchor_date - timedelta(days=i) for i in range(broj_dana)]
+
+            # 2) Prikupi sve dodeljene auditore (lead + tim)
+            assigned_auditors = list(audit.audit_team.all())
+            if audit.lead_auditor_id:
+                assigned_auditors.append(audit.lead_auditor)
+
+            # 3) Provera konflikata sa postojećim rezervacijama drugih audita
+            conflicts = []
+            if assigned_auditors:
+                for a in assigned_auditors:
+                    for d in target_dates:
+                        existing = AuditorReservation.objects.select_related(
+                            'audit__certification_cycle__company'
+                        ).filter(auditor=a, date=d).exclude(audit=audit).first()
+                        if existing:
+                            company_name = existing.audit.certification_cycle.company.name if existing.audit and existing.audit.certification_cycle else 'druga kompanija'
+                            conflicts.append({
+                                'auditor': a.ime_prezime,
+                                'date': d.isoformat(),
+                                'company': company_name,
+                                'conflicting_audit_id': existing.audit_id,
+                            })
+
+            if conflicts:
+                # Vraćamo 409 Conflict sa detaljima kako bi frontend prikazao poruku i vratio prikaz
+                conflict_msgs = [f"{c['auditor']} ({c['date']}) — {c['company']}" for c in conflicts]
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Nemoguće pomeriti audit zbog konflikta rezervacija za sledeće auditore: ' + ', '.join(conflict_msgs),
+                    'conflicts': conflicts,
+                }, status=409)
+
+            # 4) Nema konflikata – ažuriraj datum i pokreni regeneraciju dana/rezevacija kroz save()
             audit.planned_date = new_planned
-            logger.info("Pozivam audit.save(update_fields=['planned_date']) radi regeneracije audit dana")
+            logger.info("Pozivam audit.save(update_fields=['planned_date']) radi regeneracije audit dana i rezervacija")
             audit.save(update_fields=['planned_date'])
-            
+
             return JsonResponse({
                 'success': True,
                 'message': f'Planirani datum audita je uspešno ažuriran sa {old_date} na {audit.planned_date}.',
@@ -699,7 +769,10 @@ def validate_auditor_reservation(request):
         
         # Provera da li auditor već ima rezervaciju na odabrani datum
         # Isključujemo trenutni termin ako je prosleđen ID
-        existing_reservations = AuditorReservation.objects.filter(
+        existing_reservations = AuditorReservation.objects.select_related(
+            'audit__certification_cycle__company',
+            'audit_day__audit__certification_cycle__company'
+        ).filter(
             auditor=auditor,
             date=target_date_obj
         )
@@ -711,17 +784,35 @@ def validate_auditor_reservation(request):
             
             for res in existing_reservations:
                 audit_day = res.audit_day
+                # Odredi kompaniju povezanu sa postojećom rezervacijom
+                company_name = None
+                try:
+                    if getattr(res, 'audit', None) and res.audit and res.audit.certification_cycle:
+                        company_name = res.audit.certification_cycle.company.name
+                    elif audit_day and audit_day.audit and audit_day.audit.certification_cycle:
+                        company_name = audit_day.audit.certification_cycle.company.name
+                except Exception:
+                    company_name = None
+
                 conflicts.append({
                     'type': 'reservation',
                     'id': res.id,
                     'audit_day_id': audit_day.id if audit_day else None,
-                    'audit_id': audit_day.audit_id if audit_day else None,
+                    'audit_id': (audit_day.audit_id if audit_day else (res.audit_id if getattr(res, 'audit_id', None) else None)),
                     'date': res.date.isoformat() if res.date else None,
+                    'auditor': auditor.ime_prezime,
+                    'company': company_name or 'drugu firmu',
                 })
+            
+            # Poruka u standardizovanom formatu (prvi konflikt)
+            primary_msg = None
+            if conflicts:
+                c = conflicts[0]
+                primary_msg = f"Nije moguće promeniti datum auditu jer je za ovaj {c['date']} već dodeljen {c['auditor']} za {c['company']}."
             
             return JsonResponse({
                 'valid': False,
-                'message': f'Auditor {auditor.ime_prezime} već ima rezervaciju na datum {target_date_obj.isoformat()}.',
+                'message': primary_msg or f'Auditor {auditor.ime_prezime} već ima rezervaciju na datum {target_date_obj.isoformat()}.',
                 'conflicts': conflicts
             }, status=409)  # 409 Conflict
         

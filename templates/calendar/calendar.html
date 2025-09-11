@@ -294,6 +294,9 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/sr.js"></script>
 
+    <!-- SweetAlert2 za poboljšane dijaloge -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- FullCalendar biblioteke - verzija 6.1.17 - učitavamo sve zajedno za garantovano pravilno funkcionisanje -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.js'></script>
 
@@ -351,6 +354,9 @@
     </style>
 
     <script>
+      // Obeleži da je pre-validacija i upravljanje DnD u ovom template-u aktivno
+      // Koristi se da static/js/calendar.js preskoči svoje DnD handlere
+      window.__calendar_prevalidation_active = true;
       // Configure calendar URLs
       window.eventsApiUrl = '{% url "company:appointment_calendar_json" %}';
       // Za certification_cycle_json je potreban ID parametar koji ćemo prosleđivati dinamički
@@ -362,7 +368,7 @@
     </script>
 
     <!-- Calendar initialization and event handlers -->
-    <script src="{% static 'js/calendar.js' %}?v=2.0"></script>
+    <script src="{% static 'js/calendar.js' %}?v=2.1"></script>
 
     <!-- Inicijalizacija kalendara kada se dokument učita -->
     <script>
@@ -1458,7 +1464,7 @@
             headerToolbar: {
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
             },
             // U bundlovanoj verziji FullCalendar-a, pluginovi su već uključeni
             // Nije potrebno eksplicitno navođenje pluginova
@@ -1764,7 +1770,10 @@
                   showDateChangeConfirmationModal(event, newDate, function (confirmed) {
                     if (confirmed) {
                       // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                      updateEventDate(eventType, eventId, newDate);
+                      updateEventDate(eventType, eventId, newDate, {
+                        onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
+                        onError: function() { try { info.revert(); } catch (e) { /* ignore */ } }
+                      });
                     } else {
                       // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
                       info.revert();
@@ -1792,41 +1801,132 @@
                       showDateChangeConfirmationModal(event, newDate, function (confirmed) {
                         if (confirmed) {
                           // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                          updateEventDate(eventType, eventId, newDate);
+                          updateEventDate(eventType, eventId, newDate, {
+                            onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
+                            onError: function() { try { info.revert(); } catch (e) { /* ignore */ } }
+                          });
                         } else {
                           // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
                           info.revert();
                         }
                       });
                     } else {
-                      // Postoji konflikt, prikaži poruku o grešci
+                      // Postoji konflikt, prikaži poruku o grešci sa detaljima
+                      const conflicts = Array.isArray(response.conflicts) ? response.conflicts : [];
+                      let conflictMsg = null;
+                      if (conflicts.length > 0) {
+                        const c = conflicts[0];
+                        const d = c && c.date ? new Date(c.date) : null;
+                        const formatted = d ? d.toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : (event && event.start ? new Date(event.start).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'odabrani datum');
+                        const auditorName = c && c.auditor ? c.auditor : (event.extendedProps && event.extendedProps.auditor_name ? event.extendedProps.auditor_name : 'auditor');
+                        const companyName = c && c.company ? c.company : (event.extendedProps && event.extendedProps.company_name ? event.extendedProps.company_name : 'drugu firmu');
+                        conflictMsg = `Nije moguće promeniti datum auditu jer je za ovaj ${formatted} već dodeljen ${auditorName} za ${companyName}.`;
+                      }
+
+                      const finalMsg = conflictMsg || response.message || 'Auditor već ima rezervaciju na izabrani datum.';
+
                       if (typeof Swal !== 'undefined') {
                         Swal.fire({
                           title: 'Konflikt rezervacija',
-                          text: response.message || 'Auditor već ima rezervaciju na izabrani datum.',
+                          text: finalMsg,
                           icon: 'error',
-                          confirmButtonText: 'U redu'
+                          confirmButtonText: 'U redu',
+                          allowOutsideClick: false,
+                          allowEscapeKey: false
+                        }).then(() => {
+                          info.revert(); // Vrati događaj na originalnu poziciju
                         });
                       } else {
-                        alert('Konflikt rezervacija: ' + (response.message || 'Auditor već ima rezervaciju na izabrani datum.'));
+                        alert('Konflikt rezervacija: ' + finalMsg);
+                        info.revert(); // Vrati događaj na originalnu poziciju
                       }
-                      info.revert(); // Vrati događaj na originalnu poziciju
                     }
                   },
                   error: function(xhr, status, error) {
                     console.error('Greška pri validaciji rezervacije auditora:', error);
                     
+                    // Ako je konflikt (409), izgradi poruku sa detaljima iz odgovora
+                    let finalMsg = 'Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.';
+                    if (xhr && xhr.status === 409) {
+                      try {
+                        const resp = xhr.responseJSON || JSON.parse(xhr.responseText || '{}');
+                        if (resp && Array.isArray(resp.conflicts) && resp.conflicts.length > 0) {
+                          const c = resp.conflicts[0];
+                          const d = c && c.date ? new Date(c.date) : (newDate || null);
+                          const formatted = d ? new Date(d).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : (event && event.start ? new Date(event.start).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'odabrani datum');
+                          const auditorName = c && c.auditor ? c.auditor : (event.extendedProps && event.extendedProps.auditor_name ? event.extendedProps.auditor_name : 'auditor');
+                          const companyName = c && c.company ? c.company : (event.extendedProps && event.extendedProps.company_name ? event.extendedProps.company_name : 'drugu firmu');
+                          finalMsg = `Nije moguće promeniti datum auditu jer je za ovaj ${formatted} već dodeljen ${auditorName} za ${companyName}.`;
+                        } else if (resp && (resp.message || resp.error)) {
+                          finalMsg = resp.message || resp.error;
+                        }
+                      } catch (e) {
+                        // ostavi default
+                      }
+                    }
+
                     // Prikaži grešku i vrati događaj na originalnu poziciju
                     if (typeof Swal !== 'undefined') {
                       Swal.fire({
-                        title: 'Greška',
-                        text: 'Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.',
+                        title: 'Konflikt rezervacija',
+                        text: finalMsg,
                         icon: 'error',
-                        confirmButtonText: 'U redu'
+                        confirmButtonText: 'U redu',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                      }).then(() => {
+                        info.revert();
                       });
                     } else {
-                      alert('Greška: Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.');
+                      alert('Konflikt rezervacija: ' + finalMsg);
+                      info.revert();
                     }
+                  }
+                });
+              } else if (eventType === 'cycle_audit') {
+                // Posebno rukovanje za cycle_audit događaje
+                // Prikaži modal za potvrdu promene datuma
+                showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                  if (confirmed) {
+                    // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                    updateEventDate(eventType, eventId, newDate, {
+                      onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
+                      onError: function(xhr, message) { 
+                        try { 
+                          // Prikaži detaljan error modal za konflikt auditora
+                          if (xhr && xhr.status === 409) {
+                            const isConflict = true;
+                            const title = 'Konflikt rezervacija';
+                            let messageToShow = message || 'Auditor je već dodeljen za taj dan.';
+                            
+                            console.log('Prikazujem SweetAlert za konflikt cycle_audit:', message);
+                            
+                            if (typeof Swal !== 'undefined') {
+                              Swal.fire({
+                                title: title,
+                                text: messageToShow,
+                                icon: 'error',
+                                confirmButtonText: 'U redu',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                              }).then(() => {
+                                // Osvežavanje kalendara nakon zatvaranja dijaloga
+                                refreshCalendar();
+                              });
+                            } else {
+                              alert(title + ': ' + messageToShow);
+                              refreshCalendar();
+                            }
+                          }
+                          info.revert(); 
+                        } catch (e) { 
+                          console.error('Error handling conflict:', e);
+                          info.revert(); 
+                        } 
+                      }
+                    });
+                  } else {
+                    // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
                     info.revert();
                   }
                 });
@@ -1835,7 +1935,40 @@
                 showDateChangeConfirmationModal(event, newDate, function (confirmed) {
                   if (confirmed) {
                     // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                    updateEventDate(eventType, eventId, newDate);
+                    updateEventDate(eventType, eventId, newDate, {
+                      onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
+                      onError: function(xhr, message) { 
+                        try { 
+                          // Prikaži detaljan error modal za konflikt auditora
+                          if (xhr && xhr.status === 409) {
+                            const isConflict = true;
+                            const title = 'Konflikt rezervacija';
+                            let messageToShow = message || 'Auditor je već dodeljen za taj dan.';
+                            
+                            if (typeof Swal !== 'undefined') {
+                              Swal.fire({
+                                title: title,
+                                text: messageToShow,
+                                icon: 'error',
+                                confirmButtonText: 'U redu',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                              }).then(() => {
+                                // Osvežavanje kalendara nakon zatvaranja dijaloga
+                                refreshCalendar();
+                              });
+                            } else {
+                              alert(title + ': ' + messageToShow);
+                              refreshCalendar();
+                            }
+                          }
+                          info.revert(); 
+                        } catch (e) { 
+                          console.error('Error handling conflict:', e);
+                          info.revert(); 
+                        } 
+                      }
+                    });
                   } else {
                     // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
                     info.revert();
@@ -1845,8 +1978,415 @@
             }
           });
 
+          // Učini FullCalendar instancu dostupnom globalno da refreshCalendar() ne radi full reload
+          window.calendar = calendar;
           calendar.render();
           console.log('Kalendar je uspešno inicijalizovan!');
+
+          // Globalni stub kako bi izbegli ReferenceError pre inicijalizacije
+          window.addMonthTitleClickListeners = window.addMonthTitleClickListeners || function(){};
+
+          // Delegirani klik handler: radi i posle rerendera, bez potrebe za re-bind
+          try {
+            // Vizuelno: naslov meseca izgleda kao link
+            const styleEl = document.createElement('style');
+            styleEl.textContent = '.fc .fc-multimonth-title{cursor:pointer;}';
+            document.head.appendChild(styleEl);
+
+            document.addEventListener('click', function(ev) {
+              try {
+                if (!window.calendar) return;
+                const view = window.calendar.view;
+                if (!view || !(view.type === 'multiMonthYear' || (view.type && view.type.includes('multiMonth')))) return;
+
+                const titleEl = ev.target && ev.target.closest(
+                  '.fc-multimonth-title, .fc-multiMonthYear-header h2, .fc-multimonth-header h2, .fc-multimonth-header'
+                );
+                if (!titleEl) return;
+
+                // Pokušaj 1: parsiraj mesec iz naslova i koristi godinu iz currentStart
+                const rawText = (titleEl.innerText || titleEl.textContent || '').replace(/\u00A0/g, ' ').trim();
+                // Očisti eventualne ikonice i ne-alfabetske znakove oko naziva
+                const textParts = rawText.split(' ');
+                const monthNameCandidate = (textParts[0] || '').trim();
+                const monthsMap = {
+                  // Latinica
+                  'januar':0,'februar':1,'mart':2,'april':3,'maj':4,'jun':5,'jul':6,'avgust':7,'septembar':8,'oktobar':9,'novembar':10,'decembar':11,
+                  'Januar':0,'Februar':1,'Mart':2,'April':3,'Maj':4,'Jun':5,'Jul':6,'Avgust':7,'Septembar':8,'Oktobar':9,'Novembar':10,'Decembar':11,
+                  // Ćirilica
+                  'јануар':0,'фебруар':1,'март':2,'април':3,'мај':4,'јун':5,'јул':6,'август':7,'септембар':8,'октобар':9,'новембар':10,'децембар':11,
+                  'Јануар':0,'Фебруар':1,'Март':2,'Април':3,'Мај':4,'Јун':5,'Јул':6,'Август':7,'Септембар':8,'Октобар':9,'Новембар':10,'Децембар':11,
+                  // Engleski
+                  'january':0,'february':1,'march':2,'april':3,'may':4,'june':5,'july':6,'august':7,'september':8,'october':9,'november':10,'december':11,
+                  'January':0,'February':1,'March':2,'April':3,'May':4,'June':5,'July':6,'August':7,'September':8,'October':9,'November':10,'December':11
+                };
+                let monthIndex = monthsMap[monthNameCandidate];
+                if (monthIndex === undefined) {
+                  monthIndex = monthsMap[monthNameCandidate.toLowerCase ? monthNameCandidate.toLowerCase() : monthNameCandidate];
+                }
+                if (monthIndex !== undefined) {
+                  const year = (view.currentStart || new Date()).getFullYear();
+                  const date = new Date(year, monthIndex, 1);
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  window.calendar.changeView('dayGridMonth', date);
+                  return;
+                }
+
+                // Pokušaj 2: fallback na prvi [data-date] iz tela meseca
+                let container = titleEl.closest('.fc-multimonth-month, .fc-multiMonthYear-month, .fc-multimonth');
+                let dateCell = container ? container.querySelector('.fc-daygrid-day[data-date], [data-date]') : null;
+                const dateStr = dateCell ? dateCell.getAttribute('data-date') : null;
+                if (dateStr) {
+                  ev.preventDefault();
+                  ev.stopPropagation();
+                  window.calendar.changeView('dayGridMonth', dateStr);
+                }
+              } catch (e) { console.error('Delegated month-title click failed:', e); }
+            }, true);
+          } catch (e) {
+            console.warn('Delegated handler init failed:', e);
+          }
+          
+          // Dodavanje event listenera za klikove na naslove meseci u godišnjem prikazu
+          setTimeout(function() {
+            // Funkcija za dodavanje event listenera na naslove meseci (izložena globalno)
+            window.addMonthTitleClickListeners = function() {
+              // Direktno targetiranje naslova meseci na osnovu HTML strukture
+              // Selektori su sortirani od najspecifičnijih do najopštijih
+              const selectors = [
+                // Na osnovu prikazane slike, fokusiramo se na naslove meseci u FC6
+                '.fc-multiMonthYear-header h2', // Glavni cilj - h2 elementi u zaglavlju meseca
+                '.fc-multimonth-title',         // Direktno po klasi naziva
+                '.fc-month-title',              // Alternativna klasa u novijim verzijama
+                '.fc-header-toolbar th.fc-multimonth-header', // Alternativna struktura
+                '.fc-header-toolbar h2',        // Opštiji pristup
+                'h2.fc-toolbar-title',         // Naslov u toolbaru
+                // Selektori koji ciljaju dodatne strukture koje mogu biti prisutne
+                '.fc-toolbar h2',               // Opštiji pristup za toolbar
+                '.fc div[class*="month-title"]',// Bilo koji element sa klasom koja sadrži month-title
+                '.fc div[class*="title"]:not(.fc-toolbar-title)', // Bilo koji title osim glavnog
+                // Krajnji selektori kao fallback
+                'th.fc-multimonth-header',      // Header ćelije 
+                '.fc th button',                // Dugmad u header ćelijama (v6 može koristiti buttons)
+                '.fc h2',                       // Svi h2 elementi unutar kalendara
+                'h2'                            // Apsolutni fallback - svi h2 elementi
+              ];
+              
+              // Probaj svaki selektor dok ne nađeš naslove meseci
+              let monthTitles = [];
+              for (const selector of selectors) {
+                monthTitles = document.querySelectorAll(selector);
+                if (monthTitles.length > 0) {
+                  console.log('Pronađeni naslovi meseci koristeći selektor:', selector);
+                  break;
+                }
+              }
+              
+              // Ako nema naslova meseci, znači da nismo u godišnjem prikazu
+              if (monthTitles.length === 0) {
+                console.log('Nismo pronašli naslove meseci, možda nismo u godišnjem prikazu');
+                return;
+              }
+              
+              console.log('Dodavanje event listenera za', monthTitles.length, 'naslova meseci');
+              
+              // Dodavanje event listenera za svaki naslov meseca
+              monthTitles.forEach(function(titleElement) {
+                // Proveri da li već ima event listener
+                if (!titleElement.hasAttribute('data-listener-added')) {
+                  // Oznaka da je dodat listener
+                  titleElement.setAttribute('data-listener-added', 'true');
+                  
+                  // Čuvamo originalni tekst za kasnije (pre dodavanja ikonica)
+                  const originalText = titleElement.innerText || titleElement.textContent;
+                  
+                  // Dodavanje stilova da naslov izgleda kao link
+                  titleElement.style.position = 'relative'; // Za pozicioniranje dekoracije
+                  titleElement.style.cursor = 'pointer';
+                  titleElement.style.color = '#0275d8'; // Bootstrap plava boja
+                  titleElement.style.textDecoration = 'none';
+                  titleElement.style.border = '1px solid transparent'; // Da ne pomera layout pri hoveru
+                  titleElement.style.padding = '2px 8px';
+                  titleElement.style.borderRadius = '4px';
+                  titleElement.style.transition = 'all 0.2s';
+                  
+                  // Dodajemo hover efekat
+                  titleElement.addEventListener('mouseover', function() {
+                    this.style.textDecoration = 'underline';
+                    this.style.backgroundColor = 'rgba(2, 117, 216, 0.1)'; // Blaga plava pozadina
+                    this.style.boxShadow = '0 1px 2px rgba(0,0,0,0.15)';
+                    this.style.border = '1px solid rgba(2, 117, 216, 0.3)'; // Blagi okvir
+                    // Prikaži poruku
+                    if (this._tooltip) {
+                      this._tooltip.style.visibility = 'visible';
+                      this._tooltip.style.opacity = '1';
+                    }
+                  });
+                  
+                  titleElement.addEventListener('mouseout', function() {
+                    this.style.textDecoration = 'none';
+                    this.style.backgroundColor = 'transparent';
+                    this.style.boxShadow = 'none';
+                    this.style.border = '1px solid transparent';
+                    // Sakrij poruku
+                    if (this._tooltip) {
+                      this._tooltip.style.visibility = 'hidden';
+                      this._tooltip.style.opacity = '0';
+                    }
+                  });
+                  
+                  // Dodaj jasnu oznaku da je klikabilno
+                  const span = document.createElement('span');
+                  span.innerHTML = ' &#128279;'; // Link simbol - mala ikona lanca
+                  span.style.fontSize = '0.7em';
+                  span.style.opacity = '0.7';
+                  span.style.verticalAlign = 'super';
+                  span.style.marginLeft = '3px';
+                  span.style.display = 'inline-block';
+                  titleElement.appendChild(span);
+                  
+                  // Dodaj tooltip
+                  const tooltip = document.createElement('div');
+                  tooltip.textContent = 'Kliknite za prikaz meseca ' + originalText;
+                  tooltip.style.position = 'absolute';
+                  tooltip.style.bottom = '-25px';
+                  tooltip.style.left = '50%';
+                  tooltip.style.transform = 'translateX(-50%)';
+                  tooltip.style.backgroundColor = '#333';
+                  tooltip.style.color = '#fff';
+                  tooltip.style.padding = '3px 8px';
+                  tooltip.style.borderRadius = '4px';
+                  tooltip.style.fontSize = '12px';
+                  tooltip.style.zIndex = '1000';
+                  tooltip.style.whiteSpace = 'nowrap';
+                  tooltip.style.transition = 'opacity 0.3s, visibility 0.3s';
+                  tooltip.style.visibility = 'hidden';
+                  tooltip.style.opacity = '0';
+                  tooltip.style.pointerEvents = 'none'; // Da ne smeta klikovima
+                  titleElement.appendChild(tooltip);
+                  
+                  // Sačuvaj referencu na tooltip
+                  titleElement._tooltip = tooltip;
+                  
+                  // Dodavanje event listenera za klik
+                  titleElement.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Moramo koristiti sačuvani originalni tekst umesto trenutnog innerText
+                    // jer smo naslovu dodali HTML elemente (ikonica linka i tooltip)
+                    // koji će smetati parsiranju
+                    const monthText = originalText;
+                    console.log('Kliknuto na mesec (originalni tekst):', monthText);
+                    
+                    try {
+                      // 1) Najpouzdanije: pokušaj da dobiješ datum iz DOM-a (data-date u telu tog meseca)
+                      let container = titleElement.closest('.fc-multimonth-month, .fc-multiMonthYear-month, .fc-multimonth');
+                      let dateStr = null;
+                      if (container) {
+                        const firstDateEl = container.querySelector('[data-date]');
+                        if (firstDateEl) {
+                          dateStr = firstDateEl.getAttribute('data-date');
+                        }
+                      }
+
+                      if (dateStr) {
+                        console.log('Detektovan data-date iz DOM-a:', dateStr);
+                        window.calendar.changeView('dayGridMonth', dateStr);
+                        return;
+                      }
+
+                      // Parsiranje meseca i godine iz teksta
+                      const parts = monthText.replace(/\u00A0/g, ' ').split(' ');
+                      console.log('Delovi naslova meseca:', parts);
+                      
+                      if (parts.length >= 2) {
+                        // Meseci u srpskom (latinica i ćirilica)
+                        const monthsMap = {
+                          // Latinica
+                          'januar': 0, 'februar': 1, 'mart': 2, 'april': 3, 'maj': 4, 'jun': 5,
+                          'jul': 6, 'avgust': 7, 'septembar': 8, 'oktobar': 9, 'novembar': 10, 'decembar': 11,
+                          'Januar': 0, 'Februar': 1, 'Mart': 2, 'April': 3, 'Maj': 4, 'Jun': 5,
+                          'Jul': 6, 'Avgust': 7, 'Septembar': 8, 'Oktobar': 9, 'Novembar': 10, 'Decembar': 11,
+                          
+                          // Ćirilica
+                          'јануар': 0, 'фебруар': 1, 'март': 2, 
+                          'април': 3, 'мај': 4, 'јун': 5,
+                          'јул': 6, 'август': 7, 'септембар': 8, 
+                          'октобар': 9, 'новембар': 10, 'децембар': 11,
+                          'Јануар': 0, 'Фебруар': 1, 'Март': 2, 
+                          'Април': 3, 'Мај': 4, 'Јун': 5,
+                          'Јул': 6, 'Август': 7, 'Септембар': 8, 
+                          'Октобар': 9, 'Новембар': 10, 'Децембар': 11,
+                          
+                          // Engleska imena meseci (fallback)
+                          'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+                          'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11,
+                          'January': 0, 'February': 1, 'March': 2, 'April': 3, 'May': 4, 'June': 5,
+                          'July': 6, 'August': 7, 'September': 8, 'October': 9, 'November': 10, 'December': 11
+                        };
+                        
+                        // Za slučaj kada se prikazuje samo ime meseca bez godine
+                        // Očistimo moguće znakove koji nisu slova
+                        const cleanMonthText = monthText.replace(/[^a-zA-ZЀ-ӿ]/g, '').trim();
+                        
+                        // Pokušavamo da dobijemo ime meseca i godinu iz teksta
+                        let monthIndex = null;
+                        let yearValue = null;
+                        
+                        // Prvo pokušavamo direktno parsiranje prvog dela kao meseca
+                        const firstPart = parts[0];
+                        monthIndex = monthsMap[firstPart];
+                        
+                        // Ako to ne uspe, pokušavamo sa lowercase verzijom
+                        if (monthIndex === undefined) {
+                          monthIndex = monthsMap[firstPart.toLowerCase()];
+                        }
+                        
+                        // Tražimo godinu u poslednjoj reči (najčešći slučaj)
+                        const lastPart = parts[parts.length-1];
+                        yearValue = parseInt(lastPart);
+                        
+                        // Ako nije uspelo, prolazimo kroz sve delove i tražimo mesec i godinu
+                        if (monthIndex === undefined || isNaN(yearValue)) {
+                          console.log('Potrebna detaljnija analiza naziva meseca');
+                          
+                          // Tražimo bilo koji deo koji izgleda kao godina (4 cifre)
+                          for (let i = 0; i < parts.length; i++) {
+                            const yearCandidate = parseInt(parts[i].replace(/\D/g, ''));
+                            if (!isNaN(yearCandidate) && yearCandidate > 1000 && yearCandidate < 3000) {
+                              yearValue = yearCandidate;
+                              console.log('Pronađena godina:', yearValue);
+                              break;
+                            }
+                          }
+                          
+                          // Tražimo bilo koji deo koji odgovara imenu meseca
+                          for (let i = 0; i < parts.length; i++) {
+                            const cleanPart = parts[i].toLowerCase().trim();
+                            if (monthsMap[cleanPart] !== undefined) {
+                              monthIndex = monthsMap[cleanPart];
+                              console.log('Pronađen mesec (lowercase):', cleanPart, monthIndex);
+                              break;
+                            } else if (monthsMap[parts[i]] !== undefined) {
+                              monthIndex = monthsMap[parts[i]];
+                              console.log('Pronađen mesec (original):', parts[i], monthIndex);
+                              break;
+                            }
+                          }
+                        }
+                        
+                        // Prvo pokusamo direktno sa cistim tekstom za slucaj da je samo ime meseca
+                        if (monthIndex === null || monthIndex === undefined) {
+                          monthIndex = monthsMap[cleanMonthText];
+                          if (monthIndex === undefined) {
+                            monthIndex = monthsMap[cleanMonthText.toLowerCase()];
+                          }
+                        }
+                        
+                        // Ako imamo samo mesec bez godine, koristimo trenutnu godinu
+                        if (monthIndex !== null && monthIndex !== undefined && (yearValue === null || isNaN(yearValue))) {
+                          // Uzmi trenutnu godinu
+                          const currentDate = new Date();
+                          yearValue = currentDate.getFullYear();
+                          console.log('Koristimo trenutnu godinu:', yearValue, 'za mesec:', monthIndex);
+                        }
+                        
+                        // Provera da li smo uspešno dobili mesec (godina je opciona, koristimo trenutnu)
+                        if (monthIndex !== null && monthIndex !== undefined) {
+                          console.log('Uspešno parsiranje: mesec =', monthIndex, 'godina =', yearValue);
+                          
+                          // Kreiranje datuma za prvi dan tog meseca
+                          const date = new Date(yearValue, monthIndex, 1);
+                          
+                          // Prebacivanje na mesečni prikaz sa odabranim mesecom
+                          window.calendar.changeView('dayGridMonth', date);
+                          console.log('Prebacivanje na mesečni prikaz:', date);
+                        } else {
+                          console.error('Nije moguće parsirati mesec iz:', monthText);
+                          console.error('Pokušano sa delovima:', parts);
+                          console.error('I sa čistim tekstom:', cleanMonthText);
+                          
+                          // Pokusaj jos jednom sa fiksnim mapiranjem za mesec maj
+                          if (monthText.includes('мај') || monthText.toLowerCase().includes('maj')) {
+                            console.log('Detektovan mesec maj, koristimo hardkodirano');
+                            const currentDate = new Date();
+                            const date = new Date(currentDate.getFullYear(), 4, 1); // Maj je indeks 4
+                            window.calendar.changeView('dayGridMonth', date);
+                            console.log('Prebacivanje na maj:', date);
+                          }
+                        }
+                      }
+                    } catch (err) {
+                      console.error('Greška pri parsiranju naslova meseca:', err);
+                    }
+                  });
+                }
+              });
+            }
+            
+            // Dodavanje event listenera za promenu prikaza kalendara
+            calendar.on('viewDidMount', function(info) {
+              console.log('Promena pogleda kalendara na:', info.view.type);
+              // Provera da li je godišnji pogled
+              if (info.view.type === 'multiMonthYear' || info.view.type.includes('multiMonth')) {
+                console.log('Ušli smo u godišnji prikaz, dodajem listenere na naslove meseci');
+                // Sačekaj da se DOM ažurira
+                setTimeout(addMonthTitleClickListeners, 100);
+                // Dodaj još jedan pokušaj nakon dužeg vremena (za sporije učitavanje)
+                setTimeout(addMonthTitleClickListeners, 500);
+              }
+            });
+            
+            // Dodatni event listeneri za hvatanje različitih događaja koji mogu uticati na prikaz
+            calendar.on('datesSet', function() {
+              // Kada se promeni set datuma (npr. mesec/godina), sačekaj da se DOM ažurira
+              setTimeout(addMonthTitleClickListeners, 100);
+            });
+            
+            // Obavezno dodaj za prepravku nakon odredjenog vremena
+            setInterval(function() {
+              const view = calendar.view;
+              if (view && (view.type === 'multiMonthYear' || view.type.includes('multiMonth'))) {
+                addMonthTitleClickListeners();
+              }
+            }, 1000); // Svake sekunde
+            
+            // Inicijalno dodavanje event listenera (u slučaju da je godišnji prikaz default)
+            addMonthTitleClickListeners();
+            // Dodatni pokušaj nakon nekog vremena (za pouzdanije učitavanje)
+            setTimeout(addMonthTitleClickListeners, 500); 
+            setTimeout(addMonthTitleClickListeners, 1000);
+
+            // Dodavanje globalnog event listenera za klik na Year dugme - unutar istog scope-a
+            setTimeout(function() {
+              // Koristimo samo validne CSS selektore
+              let yearButtons = document.querySelectorAll('button.fc-multiMonthYear-button, button[title="year"], button.fc-yearView-button');
+
+              // Ako nisu pronađeni, fallback: pretraži sva dugmad i filtriraj po tekstu
+              if (!yearButtons || yearButtons.length === 0) {
+                const allButtons = document.querySelectorAll('.fc button, .fc-header-toolbar button, button');
+                yearButtons = Array.from(allButtons).filter(function(btn) {
+                  const t = (btn.innerText || btn.textContent || '').trim().toLowerCase();
+                  return t === 'year' || t === 'година' || t === 'godina';
+                });
+              }
+
+              (yearButtons ? Array.from(yearButtons) : []).forEach(function(btn) {
+                if (!btn.hasAttribute('data-year-listener')) {
+                  btn.setAttribute('data-year-listener', 'true');
+                  btn.addEventListener('click', function() {
+                    console.log('Kliknuto Year dugme, dodajem listenere nakon promene prikaza');
+                    // Sačekaj da se promeni prikaz
+                    setTimeout(addMonthTitleClickListeners, 200);
+                    setTimeout(addMonthTitleClickListeners, 500);
+                    setTimeout(addMonthTitleClickListeners, 1000);
+                  });
+                }
+              });
+            }, 1000);
+          }, 500); // Sačekaj da se kalendar u potpunosti renderuje
         } catch (error) {
           console.error('Greška prilikom inicijalizacije kalendara:', error);
         }

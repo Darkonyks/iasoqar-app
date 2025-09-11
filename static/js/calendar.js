@@ -2277,6 +2277,15 @@ function showDateChangeConfirmationModal(event, newDate, callback) {
 
 // Funkcija za obradu promene datuma događaja nakon drag-and-drop
 function handleEventDateChange(info) {
+  // Ako je aktivna pre-validacija i rukovanje u template-u, ne radi ništa ovde
+  try {
+    if (typeof window !== 'undefined' && window.__calendar_prevalidation_active) {
+      console.log('Pre-validacija aktivna u template-u; preskačem handleEventDateChange iz static/js.');
+      return; // prepusti templatu da kompletno obradi DnD
+    }
+  } catch (e) {
+    // Ignoriši
+  }
   const event = info.event;
   const eventProps = event.extendedProps || {};
   const eventType = eventProps.eventType;
@@ -2390,15 +2399,13 @@ function safeShowModal(modalSelector) {
   console.log(`Sačuvana pozicija scrollovanja: ${scrollY}px`);
   
   // 6. KORISTIMO NAŠU POTPUNO NOVU IMPLEMENTACIJU
-  return fixModalPosition(modalElement);
-}
-  
+  // Dodatna zaštita pre prikaza i konsolidacija logike (premešteno izvan funkcije)
   // Osiguranje da nema dupliranih modala pre prikaza
   removeDuplicateModals();
-  
+
   // Fiksiranje veličine prozora pre otvaranja modala
   document.body.style.width = `${window.innerWidth}px`;
-  
+
   // Osiguranje da su modali inicijalno sakriveni (osim onog koji treba prikazati)
   document.querySelectorAll('.modal').forEach(modal => {
     if (modal !== modalElement) {
@@ -2407,23 +2414,25 @@ function safeShowModal(modalSelector) {
       modal.setAttribute('aria-hidden', 'true');
     }
   });
-  
+
   // Uklanjanje postojećih backdrop-ova ili prilagodba z-index vrednosti
   document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
     // Umesto uklanjanja, postavimo backdrop iza modala
     backdrop.style.zIndex = '1040'; // Vrednost ispod modala (2060)
   });
-  
-  // Dodatno, kreiramo novi backdrop sa definisanim z-index-om
-  // koji će biti ispod modala
+
+  // Dodatno, kreiramo novi backdrop sa definisanim z-index-om koji će biti ispod modala
   const newBackdrop = document.createElement('div');
   newBackdrop.className = 'modal-backdrop fade show';
   newBackdrop.style.zIndex = '1040';
   document.body.appendChild(newBackdrop);
-  
+
   // Uklanjanje modal-open klase sa body-ja pre ponovnog otvaranja
   document.body.classList.remove('modal-open');
   document.body.style.paddingRight = '';
+
+  return fixModalPosition(modalElement);
+}
 
 /**
  * Funkcija za temeljito čišćenje svih modal backdrop elemenata
@@ -3013,7 +3022,9 @@ function showDateChangeConfirmationModal(event, newDate, callback) {
 }
 
 // Funkcija za ažuriranje datuma događaja na serveru
-function updateEventDate(eventType, eventId, newDate) {
+// Opcioni 4. parametar: opts = { onSuccess: function(resp){}, onError: function(xhr, message){}}
+function updateEventDate(eventType, eventId, newDate, opts) {
+  opts = opts || {};
   console.log('Ažuriranje datuma događaja na serveru:', {
     eventType: eventType,
     eventId: eventId,
@@ -3037,63 +3048,95 @@ function updateEventDate(eventType, eventId, newDate) {
       console.log('Uspešno ažuriran datum događaja:', response);
       
       if (response.success) {
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
-            title: 'Uspešno',
-            text: 'Datum događaja je uspešno ažuriran.',
-            icon: 'success',
-            confirmButtonText: 'U redu'
-          });
+        // Ne prikazujemo uspešan popup kako bismo izbegli duple poruke/konfuziju
+        if (typeof opts.onSuccess === 'function') {
+          try { opts.onSuccess(response); } catch (e) { console.warn('onSuccess handler error:', e); }
         } else {
-          alert('Datum događaja je uspešno ažuriran.');
+          try { refreshCalendar(); } catch (e) { window.location.reload(); }
         }
-        
-        refreshCalendar();
       } else {
         if (typeof Swal !== 'undefined') {
           Swal.fire({
             title: 'Greška',
             text: response.error || 'Došlo je do greške prilikom ažuriranja datuma događaja.',
             icon: 'error',
-            confirmButtonText: 'U redu'
+            confirmButtonText: 'U redu',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then(() => {
+            if (typeof opts.onError === 'function') {
+              try { opts.onError(null, response.error || 'Došlo je do greške prilikom ažuriranja datuma događaja.'); } catch (e) { console.warn('onError handler error:', e); }
+            }
           });
         } else {
           alert('Greška: ' + (response.error || 'Došlo je do greške prilikom ažuriranja datuma događaja.'));
+          if (typeof opts.onError === 'function') {
+            try { opts.onError(null, response.error || 'Došlo je do greške prilikom ažuriranja datuma događaja.'); } catch (e) { console.warn('onError handler error:', e); }
+          }
         }
       }
     },
     error: function(xhr, status, error) {
-      console.error('Greška pri ažuriranju datuma događaja:', error);
-      
-      // Pokušaj da pročitaš JSON odgovor sa greškama i prikažeš korisniku
-      let serverMsg = null;
-      try {
-        const resp = xhr.responseJSON || JSON.parse(xhr.responseText || '{}');
-        serverMsg = resp && (resp.error || resp.message);
-      } catch (e) {
-        // Ignoriši parse grešku
+    console.error('Greška pri ažuriranju datuma događaja:', error);
+    
+    // Pokušaj da pročitaš JSON odgovor sa greškama i prikažeš korisniku
+    let serverMsg = null;
+    let conflictsMsg = null;
+    const isConflict = xhr && xhr.status === 409;
+    try {
+      const resp = xhr.responseJSON || JSON.parse(xhr.responseText || '{}');
+      serverMsg = resp && (resp.error || resp.message);
+      // Ako imamo 409 i listu konflikata, formiraj detaljnu poruku za korisnika
+      if (isConflict && resp && Array.isArray(resp.conflicts) && resp.conflicts.length > 0) {
+        conflictsMsg = resp.conflicts.map(function(c) {
+          try {
+            const d = c && c.date ? new Date(c.date) : null;
+            const formatted = d ? d.toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'odabrani datum';
+            const auditorName = (c && c.auditor) ? c.auditor : 'auditor';
+            const companyName = (c && c.company) ? c.company : 'drugu firmu';
+            return `Nije moguće promeniti datum auditu jer je za ovaj ${formatted} već dodeljen ${auditorName} za ${companyName}.`;
+          } catch (e) {
+            return null;
+          }
+        }).filter(Boolean).join('\n');
       }
-
-      const isConflict = xhr && xhr.status === 409;
-      const title = isConflict ? 'Konflikt rezervacija' : 'Greška';
-      const fallbackMsg = isConflict
-        ? 'Nemoguće pomeriti događaj zbog konflikta rezervacija. Izaberite drugi datum.'
-        : 'Došlo je do greške prilikom ažuriranja datuma događaja.';
-
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: title,
-          text: serverMsg || fallbackMsg,
-          icon: 'error',
-          confirmButtonText: 'U redu'
-        });
-      } else {
-        alert((title + ': ' + (serverMsg || fallbackMsg)));
-      }
-
-      // Vrati prikaz u konzistentno stanje
-      try { refreshCalendar(); } catch (e) { window.location.reload(); }
+    } catch (e) {
+      // Ignoriši parse grešku
     }
+
+    const title = isConflict ? 'Konflikt rezervacija' : 'Greška';
+    const fallbackMsg = isConflict
+      ? 'Auditor je već dodeljen za taj dan. Izaberite drugi datum.'
+      : 'Došlo je do greške prilikom ažuriranja datuma događaja.';
+    const messageToShow = conflictsMsg || serverMsg || fallbackMsg;
+
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        title: title,
+        text: messageToShow,
+        icon: 'error',
+        confirmButtonText: 'U redu',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      }).then(() => {
+        // Ako je prosleđen onError, prepustimo caller-u (npr. template-u) da odluči da li da revertuje bez refreša
+        if (typeof opts.onError === 'function') {
+          try { opts.onError(xhr, messageToShow); } catch (e) { console.warn('onError handler error:', e); }
+        } else {
+          // Fallback: osveži prikaz nakon potvrde korisnika
+          try { refreshCalendar(); } catch (e) { window.location.reload(); }
+        }
+      });
+    } else {
+      alert((title + ': ' + messageToShow));
+      if (typeof opts.onError === 'function') {
+        try { opts.onError(xhr, messageToShow); } catch (e) { console.warn('onError handler error:', e); }
+      } else {
+        // Fallback: odmah osveži nakon alert-a
+        try { refreshCalendar(); } catch (e) { window.location.reload(); }
+      }
+    }
+  }
   });
 }
 
@@ -3219,6 +3262,15 @@ function getCsrfToken() {
 }
 
 function initializeCalendar() {
+  // Ako stranicu upravlja kalendarom preko template-a (sa pre-validacijom), preskačemo ovu inicijalizaciju
+  try {
+    if (typeof window !== 'undefined' && window.__calendar_prevalidation_active) {
+      console.log('initializeCalendar preskočen: template upravlja kalendarom sa pre-validacijom.');
+      return;
+    }
+  } catch (e) {
+    // Ignoriši
+  }
   // Handle all_day checkbox to toggle time fields
   $('#all_day').change(function() {
     if($(this).is(':checked')) {
