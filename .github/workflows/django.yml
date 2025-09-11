@@ -27,4 +27,5 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python manage.py test
+        # Test u preimenovanom direktorijumu
+        python manage.py test company.tests.test_modules.test_update_event_date --verbosity=2
