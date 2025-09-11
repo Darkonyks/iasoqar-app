@@ -21,8 +21,7 @@ html, body {
   margin-left: 250px !important; /* Uskladiti sa širinom sidebara */
   width: calc(100% - 250px) !important;
   overflow-x: hidden !important;
-  position: relative;
-  z-index: 1000;
+  position: relative; /* Ne postavljati z-index ovde! Ako se doda, kreira se stacking context i Bootstrap .modal ostaje ispod .modal-backdrop */
 }
 
 /* Fix za collapsed sidebar */

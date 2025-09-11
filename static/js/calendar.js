@@ -1311,62 +1311,52 @@ function resetModalStyles(modalElement) {
   console.log('Stilovi modala su resetovani');
 }
 
-// Neutralizacija stacking context-a na body i wrapper elementima
+// Neutralizacija stacking context-a na body i wrapper elementima (minimalna)
 function neutralizeBodyForModal() {
-  console.log('Neutralizacija konteksta za modalni prozor');
+  console.log('Neutralizacija konteksta za modalni prozor (minimalna)');
+  // Ukloni eventualne prilagođene portale/backdropove
+  document.querySelectorAll('[id^="portal-modal-container-"], [id^="portal-modal-backdrop-"]').forEach(el => el.remove());
 
-  // Resetuj kritične stilove na body
-  document.body.style.position = 'static';
-  document.body.style.zIndex = 'auto';
-  document.body.style.pointerEvents = 'auto';
+  // Resetuj eventualne prisilne inline stilove
+  document.body.style.position = '';
+  document.body.style.zIndex = '';
+  document.body.style.pointerEvents = '';
   document.body.style.transform = '';
   document.body.style.background = '';
   document.body.style.boxShadow = '';
 
-  // Resetuj stacking context i pointer-events na ključnim layout elementima
   document.querySelectorAll('.wrapper, .main-header, .main-sidebar, .content-wrapper, nav, header, aside').forEach(el => {
-    el.style.position = 'static';
-    el.style.zIndex = 'auto';
-    el.style.pointerEvents = 'auto';
+    el.style.position = '';
+    el.style.zIndex = '';
+    el.style.pointerEvents = '';
     el.style.transform = '';
     el.style.background = '';
     el.style.boxShadow = '';
   });
-
-  // Osiguraj da modal i modal-dialog elementi budu u fokusu sa najvišim z-index
-  setTimeout(() => {
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.style.position = 'fixed';
-      modal.style.zIndex = '9999';
-      modal.style.display = 'block';
-      modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-
-      // Osiguraj da modal-dialog bude pravilno pozicioniran
-      const dialog = modal.querySelector('.modal-dialog');
-      if (dialog) {
-        dialog.style.position = 'relative';
-        dialog.style.zIndex = '10000';
-        dialog.style.margin = '1.75rem auto';
-        dialog.style.pointerEvents = 'auto';
-      }
-    });
-
-    // Osiguraj da modalni backdrop ima odgovarajući z-index
-    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-      backdrop.style.position = 'fixed';
-      backdrop.style.zIndex = '9998';
-      backdrop.style.backgroundColor = 'rgba(0,0,0,0.5)';
-      backdrop.style.pointerEvents = 'auto';
-    });
-  }, 0);
 }
 
 // Pojednostavljena funkcija za pravilno prikazivanje modala
 function fixModalPosition(modalElement) {
   neutralizeBodyForModal();
   const modalId = modalElement ? modalElement.id || 'unnamed-modal' : 'undefined';
-  console.log('ULTRA-RADIKALNA implementacija modalnog prozora:', modalId);
-  
+  console.log('fixModalPosition (light) for:', modalId);
+
+  // Short-circuit: prikaži modal standardnim putem i završi
+  try {
+    if (window.bootstrap && typeof bootstrap.Modal === 'function') {
+      const inst = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement, { backdrop: 'static', focus: true, keyboard: true });
+      inst.show();
+      document.querySelectorAll('.modal-backdrop').forEach(b => b.style.zIndex = '1040');
+      return true;
+    } else if (window.jQuery && typeof $.fn.modal === 'function') {
+      $(modalElement).modal({ show: true, backdrop: 'static', keyboard: true });
+      document.querySelectorAll('.modal-backdrop').forEach(b => b.style.zIndex = '1040');
+      return true;
+    }
+  } catch (e) {
+    console.warn('Standard show modal nije uspeo, koristi fallback.', e);
+  }
+
   // 1. Provera da li je modal element uopšte prosleđen
   if (!modalElement) {
     console.warn('fixModalPosition: Modal element nije prosleđen');
@@ -1380,171 +1370,14 @@ function fixModalPosition(modalElement) {
   }
 
   try {
-    // 1. Onemogući sve postojeće Bootstrap modal instance i njihove događaje
-    if ($.fn && $.fn.modal) {
-      try {
-        $(modalElement).modal('dispose');
-      } catch (e) {
-        console.log('Ne mogu dispose modal, verovatno nije inicijalizovan:', e);
-      }
-    }
-    
-    // 2. Ukloni sve postojeće modal backdrops
-    $('.modal-backdrop').remove();
-    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-    document.querySelectorAll('[id^="portal-modal-container-"]').forEach(el => el.remove());
-    document.querySelectorAll('[id^="portal-modal-backdrop-"]').forEach(el => el.remove());
-    
-    // 3. EKSTREMNO AGRESIVAN PRISTUP ZA REŠAVANJE PROBLEMA SA Z-INDEKSIMA
-    
-    // 3.1. Sačuvaj stanje skrolovanja pre otvaranja modala
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    document.body.style.top = `-${scrollY}px`;
+    // Fallback: minimalno osiguraj vidljivost bez agresivnih intervencija
+    modalElement.classList.add('show');
+    modalElement.style.display = 'block';
     document.body.classList.add('modal-open');
-    
-    // 3.2. Generiši jedinstvene ID-jeve za naše elemente
-    const portalId = 'portal-modal-container-' + (Math.random().toString(36).substring(2, 10));
-    const backdropId = 'portal-modal-backdrop-' + (Math.random().toString(36).substring(2, 10));
-    
-    // 3.3. Neutrališi sve postojeće stilove na body elementu i drugim važnim elementima
-    const originalStyles = {};
-    ['position', 'zIndex', 'overflow', 'pointerEvents'].forEach(prop => {
-      originalStyles[prop] = document.body.style[prop];
-    });
-    
-    // 3.4. Potpuno onemogući interakciju sa elementima ispod modala
-    document.body.style.cssText += 'pointer-events: none !important; position: relative !important; z-index: auto !important;';
-    
-    // 3.5. Neutrališi sve problematične elemente koji bi mogli imati visok z-index
-    document.querySelectorAll('.wrapper, .main-header, .main-sidebar, .content-wrapper, nav, header, aside').forEach(el => {
-      if (el) {
-        el.style.cssText += 'position: static !important; z-index: auto !important;';
-      }
-    });
-    
-    // 3.6. Sakrij originalni modal da se ne bi duplirao
-    modalElement.style.display = 'none';
-    
-    // 4. KREIRAJ POTPUNO NOVI PORTAL KONTEJNER
-    // Ovaj kontejner ima NAJVIŠI MOGUĆI Z-INDEX
-    const portalContainer = document.createElement('div');
-    portalContainer.id = portalId;
-    portalContainer.setAttribute('data-original-styles', JSON.stringify(originalStyles));
-    portalContainer.setAttribute('data-scroll-position', scrollY);
-    
-    // 4.1. Postavi ekstremno agresivne stilove za portal kontejner
-    // Koristimo sve moguće tehnike da osiguramo da će se modal prikazati iznad svega
-    portalContainer.style.cssText = `
-      all: initial !important; /* Reset svih stilova */
-      position: fixed !important;
-      inset: 0 !important; /* shorthand za top, right, bottom, left */
-      width: 100vw !important;
-      height: 100vh !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      z-index: 2147483647 !important; /* Apsolutno najveći mogući z-index */
-      pointer-events: auto !important;
-      isolation: isolate !important; /* Kreira novi stacking context */
-      transform: translateZ(999999px) !important; /* Kreira novi stacking context */
-      will-change: transform !important; /* Poboljšava rendering u GPU */
-      visibility: visible !important;
-      opacity: 1 !important;
-      contain: layout style paint !important; /* Performance optimizacija */
-    `;
-    
-    // Uklonimo sve događaje koji bi mogli prekrivati modal
-    document.querySelectorAll('*:not(.modal-dialog):not(.modal-content):not(.modal-body):not(.modal-header):not(.modal-footer)').forEach(el => {
-      if (el !== portalContainer && !portalContainer.contains(el) && el !== modalElement) {
-        el.style.pointerEvents = 'none';
-      }
-    });
-    
-    // 5. KREIRAJ BACKDROP
-    const backdropElement = document.createElement('div');
-    backdropElement.id = backdropId;
-    backdropElement.style.cssText = `
-      position: absolute !important;
-      inset: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      background-color: rgba(0, 0, 0, 0.5) !important;
-      pointer-events: auto !important;
-      z-index: 0 !important;
-    `;
-    portalContainer.appendChild(backdropElement);
-    
-    // 6. KLONIRAJ SADRŽAJ MODALA U NAŠ PORTAL
-    const dialogElement = modalElement.querySelector('.modal-dialog');
-    if (!dialogElement) {
-      console.error('Modal dialog element nije pronađen');
-      return false;
+    const dialog = modalElement.querySelector('.modal-dialog');
+    if (dialog) {
+      dialog.style.margin = '1.75rem auto';
     }
-    
-    // 6.1. Kloniraj i stilizuj modal dialog
-    const newDialog = dialogElement.cloneNode(true);
-    newDialog.style.cssText = `
-      position: relative !important;
-      margin: 1.75rem auto !important;
-      pointer-events: auto !important;
-      width: auto !important;
-      max-width: 700px !important;
-      z-index: 1 !important;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3) !important;
-    `;
-    
-    // 6.2. Osiguraj da modal-content ima ispravne stilove
-    const modalContent = newDialog.querySelector('.modal-content');
-    if (modalContent) {
-      modalContent.style.cssText += `
-        background-color: white !important;
-        border-radius: 4px !important;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2) !important;
-      `;
-    }
-    
-    // 6.3. Dodaj dijalog u portal kontejner
-    portalContainer.appendChild(newDialog);
-    
-    // 7. DODAJ PORTAL NA KRAJ BODY-JA
-    document.body.appendChild(portalContainer);
-    
-    // 8. POSTAVLJANJE EVENTOVA ZA ZATVARANJE
-    
-    // Funkcija za zatvaranje modala i čišćenje
-    const closeModal = function() {
-      // Pozovi našu safeHideModal funkciju
-      safeHideModal(modalElement);
-    };
-    
-    // 8.1. Zatvaranje klikom na X dugme
-    const closeButtons = newDialog.querySelectorAll('[data-dismiss="modal"], .close, .btn-close');
-    closeButtons.forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        closeModal();
-      });
-    });
-    
-    // 8.2. Zatvaranje na taster ESC
-    const escHandler = function(e) {
-      if (e.key === 'Escape') {
-        closeModal();
-        document.removeEventListener('keydown', escHandler);
-      }
-    };
-    document.addEventListener('keydown', escHandler);
-    
-    // 8.3. Zatvaranje klikom na backdrop
-    backdropElement.addEventListener('click', closeModal);
-    
-    // 8.4. Sprečavanje propagacije klika na modal dialog
-    newDialog.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-    
-    console.log('Modal uspešno prikazan u portalu sa maksimalnim z-indeksom');
     return true;
   } catch (error) {
     console.error('fixModalPosition: Greška prilikom prikazivanja modala:', error);
@@ -1580,85 +1413,15 @@ $(document).on('click', '.fc-event', function(e) {
   const styleElement = document.createElement('style');
   styleElement.id = 'modal-override-styles';
   styleElement.textContent = `
-    /* Kreiraj vlastiti backdrop umesto Bootstrap-ovog */
-    body.modal-open::after { 
-      content: '' !important;
-      position: fixed !important; 
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      background-color: rgba(0, 0, 0, 0.5) !important; 
-      z-index: 1950 !important;
-    }
-    
-    /* Sakrij Bootstrap backdrop elemente potpuno */
-    .modal-backdrop { 
-      display: none !important; 
-      opacity: 0 !important; 
-      z-index: -1 !important;
-      pointer-events: none !important;
-    }
-    
-    /* Potpuno fiksiranje body elementa kada je modal otvoren */
-    body.modal-open {
-      overflow: hidden !important;
-      position: fixed !important;
-      width: 100% !important;
-      height: 100% !important;
-      padding-right: 0 !important; /* Uklanjamo padding jer može uzrokovati probleme */
-    }
-    
-    /* Sprečavanje scrollovanja celog dokumenta */
-    html.modal-open-html {
-      overflow: hidden !important;
-    }
-    
-    /* Osiguranje da modal ima značajno veći z-index od svih elemenata na stranici */
-    .modal {
-      z-index: 2000 !important;
-      display: block !important;
-      position: fixed !important;
-      top: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      overflow-x: hidden !important;
-      overflow-y: auto !important;
-      outline: 0 !important;
-    }
-    
-    /* Ispravna pozicija i stil za modal-dialog */
-    .modal-dialog {
-      margin: 1.75rem auto !important;
-      position: relative !important;
-      width: auto !important;
-      max-width: 500px !important;
-      transform: translate(0, 0) !important;
-      top: 10% !important;
-    }
-    
-    /* Ispravna pozicija za modal-content */
-    .modal-content {
-      position: relative !important;
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-      background-color: #fff !important;
-      border-radius: 0.3rem !important;
-      box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.5) !important;
-      outline: 0 !important;
-    }
-    
-    /* Backdrop stil */
-    .modal-backdrop {
-      z-index: 1050 !important;
-    }
-    
-    /* Sakrivanje modala koji nisu aktivni */
-    .modal:not(.show) {
-      display: none !important;
-    }
+    /* Minimalno + centriranje: oslanjamo se na Bootstrap, ali osiguravamo fiksni overlay i centriranje */
+    .modal { z-index: 1050 !important; }
+    .modal-backdrop { z-index: 1040 !important; display: block !important; opacity: 0.5 !important; }
+    /* Kada je modal vidljiv, budi fiksni overlay preko celog prozora */
+    .modal.show { position: fixed !important; top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; display: block !important; overflow-y: auto !important; }
+    /* Vertikalno centriranje */
+    .modal-dialog-centered { min-height: calc(100% - 3.5rem) !important; display: flex !important; align-items: center !important; }
+    /* Centriraj sve modal-dialog elemente kada je modal vidljiv, čak i bez .modal-dialog-centered */
+    .modal.show .modal-dialog { min-height: calc(100% - 3.5rem) !important; display: flex !important; align-items: center !important; margin: 1.75rem auto !important; top: auto !important; transform: none !important; }
   `;
   
   document.head.appendChild(styleElement);
@@ -2415,17 +2178,12 @@ function safeShowModal(modalSelector) {
     }
   });
 
-  // Uklanjanje postojećih backdrop-ova ili prilagodba z-index vrednosti
+  // Uklanjanje postojećih backdrop-ova koji su ostali od prethodnih otvaranja
+  // Prepusti Bootstrap-u da kreira backdrop; ne dodajemo sopstveni
   document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-    // Umesto uklanjanja, postavimo backdrop iza modala
-    backdrop.style.zIndex = '1040'; // Vrednost ispod modala (2060)
+    // Obezbedi ispravan stacking bez duplikata
+    backdrop.style.zIndex = '1050';
   });
-
-  // Dodatno, kreiramo novi backdrop sa definisanim z-index-om koji će biti ispod modala
-  const newBackdrop = document.createElement('div');
-  newBackdrop.className = 'modal-backdrop fade show';
-  newBackdrop.style.zIndex = '1040';
-  document.body.appendChild(newBackdrop);
 
   // Uklanjanje modal-open klase sa body-ja pre ponovnog otvaranja
   document.body.classList.remove('modal-open');
