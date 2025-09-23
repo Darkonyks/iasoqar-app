@@ -1,5 +1,5 @@
 from django import forms
-from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
+from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode, AuditorIAFEACCode
 from .standard_models import StandardDefinition
 from .iaf_models import IAFEACCode
 
@@ -41,6 +41,23 @@ class AuditorStandardIAFEACForm(forms.ModelForm):
     
     class Meta:
         model = AuditorStandardIAFEACCode
+        fields = ['iaf_eac_code', 'is_primary', 'notes']
+        widgets = {
+            'iaf_eac_code': forms.Select(attrs={'class': 'form-control'}),
+            'is_primary': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['iaf_eac_code'].queryset = IAFEACCode.objects.all().order_by('iaf_code')
+
+
+class AuditorIAFEACForm(forms.ModelForm):
+    """Forma za direktno dodeljivanje IAF/EAC koda tehničkom ekspertu"""
+
+    class Meta:
+        model = AuditorIAFEACCode
         fields = ['iaf_eac_code', 'is_primary', 'notes']
         widgets = {
             'iaf_eac_code': forms.Select(attrs={'class': 'form-control'}),

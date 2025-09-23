@@ -251,7 +251,7 @@ class CompanyDeleteView(DeleteView):
 
 class AuditListView(LoginRequiredMixin, ListView):
     """Pregled svih audita u sistemu"""
-    template_name = 'company/audit-list.html'
+    template_name = 'audit/audit-list.html'
     context_object_name = 'audits'
     paginate_by = 10
     ordering = ['-created_at']
@@ -384,7 +384,7 @@ class AuditListView(LoginRequiredMixin, ListView):
 
 
 class CompanyAuditsView(AuditListView):
-    template_name = 'company/company-audits.html'
+    template_name = 'audit/company-audits.html'
     
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -408,7 +408,7 @@ class CompanyAuditsView(AuditListView):
 
 class CompanyAuditDetailView(LoginRequiredMixin, DetailView):
     """Pregled detalja audita"""
-    template_name = 'company/audit-detail.html'
+    template_name = 'audit/audit-detail.html'
     context_object_name = 'audit'
     
     def get_object(self):
@@ -590,7 +590,7 @@ class AuditUpdateView(LoginRequiredMixin, UpdateView):
 
 class AuditDeleteView(LoginRequiredMixin, DeleteView):
     """Brisanje audita"""
-    template_name = 'company/audit-confirm-delete.html'
+    template_name = 'audit/audit-confirm-delete.html'
     success_url = reverse_lazy('company:audit_list')
     
     def get_object(self):

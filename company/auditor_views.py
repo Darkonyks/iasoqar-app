@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 import logging
 
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 class AuditorListView(LoginRequiredMixin, ListView):
     model = Auditor
-    template_name = 'company/auditor_list.html'
+    template_name = 'auditor/auditor_list.html'
     context_object_name = 'auditors'
     paginate_by = 20
     
@@ -67,7 +68,7 @@ class AuditorListView(LoginRequiredMixin, ListView):
 
 class AuditorDetailView(LoginRequiredMixin, DetailView):
     model = Auditor
-    template_name = 'company/auditor_detail.html'
+    template_name = 'auditor/auditor_detail.html'
     context_object_name = 'auditor'
     
     def get_context_data(self, **kwargs):
@@ -87,7 +88,7 @@ class AuditorDetailView(LoginRequiredMixin, DetailView):
 class AuditorCreateView(LoginRequiredMixin, CreateView):
     model = Auditor
     form_class = AuditorForm
-    template_name = 'company/auditor_form.html'
+    template_name = 'auditor/auditor_form.html'
     success_url = reverse_lazy('company:auditor_list')
     
     def get_context_data(self, **kwargs):
@@ -105,7 +106,7 @@ class AuditorCreateView(LoginRequiredMixin, CreateView):
 class AuditorUpdateView(LoginRequiredMixin, UpdateView):
     model = Auditor
     form_class = AuditorForm
-    template_name = 'company/auditor_form.html'
+    template_name = 'auditor/auditor_form.html'
     success_url = reverse_lazy('company:auditor_list')
     context_object_name = 'auditor'
     
@@ -124,7 +125,7 @@ class AuditorUpdateView(LoginRequiredMixin, UpdateView):
 class AuditorDeleteView(LoginRequiredMixin, DeleteView):
     model = Auditor
     success_url = reverse_lazy('company:auditor_list')
-    template_name = 'company/auditor_confirm_delete.html'
+    template_name = 'auditor/auditor_confirm_delete.html'
     context_object_name = 'auditor'
     
     def get(self, request, *args, **kwargs):
@@ -154,12 +155,16 @@ class AuditorDeleteView(LoginRequiredMixin, DeleteView):
 def auditor_standard_create(request, auditor_id):
     """View za dodavanje novog standarda auditoru"""
     auditor = get_object_or_404(Auditor, pk=auditor_id)
+    # Blokiraj dodelu standarda tehničkom ekspertu preko UI-a
+    if auditor.kategorija == Auditor.CATEGORY_TECHNICAL_EXPERT:
+        messages.error(request, 'Tehnički ekspertima se standardi ne dodeljuju. Dodelite direktno IAF/EAC kodove u adminu.')
+        return redirect('company:auditor_detail', pk=auditor.id)
     
     if request.method == 'POST':
-        form = AuditorStandardForm(request.POST)
+        # Veži auditora na instancu pre validacije kako bi model clean imao kontekst
+        form = AuditorStandardForm(request.POST, instance=AuditorStandard(auditor=auditor))
         if form.is_valid():
             standard = form.save(commit=False)
-            standard.auditor = auditor
             
             # Provera da li već postoji veza sa ovim standardom
             existing = AuditorStandard.objects.filter(
@@ -171,9 +176,16 @@ def auditor_standard_create(request, auditor_id):
                 messages.error(request, f'Auditor već ima dodeljen standard {form.cleaned_data["standard"].code}.')
                 return redirect('company:auditor_detail', pk=auditor.id)
             
-            standard.save()
-            messages.success(request, f'Standard {standard.standard.code} je uspešno dodeljen auditoru {auditor.ime_prezime}.')
-            return redirect('company:auditor_detail', pk=auditor.id)
+            try:
+                standard.save()
+                messages.success(request, f'Standard {standard.standard.code} je uspešno dodeljen auditoru {auditor.ime_prezime}.')
+                return redirect('company:auditor_detail', pk=auditor.id)
+            except ValidationError as ve:
+                # Prikaži validacione greške iz modela
+                for field, errs in ve.message_dict.items():
+                    for err in errs:
+                        messages.error(request, err)
+                return redirect('company:auditor_detail', pk=auditor.id)
     else:
         form = AuditorStandardForm()
     
@@ -184,7 +196,7 @@ def auditor_standard_create(request, auditor_id):
         'submit_text': 'Sačuvaj'
     }
     
-    return render(request, 'company/auditor_standard_form.html', context)
+    return render(request, 'auditor/auditor_standard_form.html', context)
 
 
 @login_required
@@ -252,7 +264,7 @@ def auditor_standard_update(request, auditor_id, pk):
     }
     
     # Koristimo prilagođeni template koji ne koristi Django formu
-    return render(request, 'company/auditor_standard_manual_edit.html', context)
+    return render(request, 'auditor/auditor_standard_manual_edit.html', context)
 
 
 
@@ -279,7 +291,7 @@ def auditor_standard_delete(request, auditor_id, pk):
         'cancel_url': reverse_lazy('company:auditor_detail', kwargs={'pk': auditor.id})
     }
     
-    return render(request, 'company/auditor_standard_confirm_delete.html', context)
+    return render(request, 'auditor/auditor_standard_confirm_delete.html', context)
 
 
 @login_required
@@ -318,7 +330,7 @@ def auditor_standard_iaf_eac_create(request, standard_id):
         'submit_text': 'Sačuvaj'
     }
     
-    return render(request, 'company/auditor_standard_iaf_eac_form.html', context)
+    return render(request, 'auditor/auditor_standard_iaf_eac_form.html', context)
 
 
 @login_required
@@ -374,7 +386,7 @@ def auditor_standard_iaf_eac_update(request, standard_id, pk):
     }
     
     # Koristi specijalni template za manualnu izmenu, koji ne dozvoljava promenu IAF/EAC koda
-    return render(request, 'company/auditor_standard_iaf_eac_manual_edit.html', context)
+    return render(request, 'auditor/auditor_standard_iaf_eac_manual_edit.html', context)
 
 
 @login_required
@@ -398,7 +410,7 @@ def auditor_standard_iaf_eac_delete(request, standard_id, pk):
         'cancel_url': reverse('company:auditor_detail', kwargs={'pk': auditor.id})
     }
     
-    return render(request, 'company/generic_confirm_delete.html', context)
+    return render(request, 'auditor/generic_confirm_delete.html', context)
 
 
 def check_auditor_qualification_for_company(auditor_id, company_id):

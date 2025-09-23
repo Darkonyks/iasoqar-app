@@ -13,7 +13,7 @@ from .forms import CycleAuditForm
 from .company_models import Company, KontaktOsoba, OstalaLokacija
 from .iaf_models import IAFScopeReference, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, StandardIAFScopeReference, CompanyStandard
-from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
+from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode, AuditorIAFEACCode
 from .calendar_models import CalendarEvent, Appointment
 from .cycle_models import CertificationCycle, CycleAudit, CycleStandard, AuditorReservation
 
@@ -182,6 +182,12 @@ class AuditorStandardInline(nested_admin.NestedStackedInline):
     fields = ['standard', 'datum_potpisivanja', 'napomena']
     inlines = [AuditorStandardIAFEACCodeInline]
 
+# Inline for direct IAF/EAC codes (Technical Expert only)
+class AuditorIAFEACCodeInline(nested_admin.NestedTabularInline):
+    model = AuditorIAFEACCode
+    extra = 1
+    fields = ['iaf_eac_code', 'is_primary', 'notes']
+
 # Admin klasa za Auditor model
 class AuditorAdmin(nested_admin.NestedModelAdmin):
     list_display = ['ime_prezime', 'email', 'telefon', 'kategorija']
@@ -192,7 +198,20 @@ class AuditorAdmin(nested_admin.NestedModelAdmin):
             'fields': ['ime_prezime', 'email', 'telefon', 'kategorija']
         }),
     ]
-    inlines = [AuditorStandardInline]
+
+    def get_inline_instances(self, request, obj=None):
+        """
+        Show standards inline for non-TE auditors;
+        Show direct IAF/EAC codes inline for Technical Experts.
+        If obj is None (creating), show no inlines until saved and category set.
+        """
+        inline_classes = []
+        if obj:
+            if obj.kategorija == Auditor.CATEGORY_TECHNICAL_EXPERT:
+                inline_classes = [AuditorIAFEACCodeInline]
+            else:
+                inline_classes = [AuditorStandardInline]
+        return [inline_class(self.model, self.admin_site) for inline_class in inline_classes]
 
 # Admin klasa za AuditorStandard model
 class AuditorStandardAdmin(nested_admin.NestedModelAdmin):
