@@ -1348,6 +1348,22 @@
         }
       }
 
+      // Funkcija za dobijanje CSRF tokena
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
       // Funkcija za otvaranje modala za detalje termina
       function openAppointmentModal(event) {
         try {
@@ -1756,133 +1772,77 @@
                 return;
               }
 
-              // Za appointment tip događaja, proveri da li auditor već ima rezervaciju na odabrani datum
+              // Za appointment tip događaja, direktno pozovi updateEventDate koji će prikazati dijalog ako dođe do konflikta
               if (eventType === 'appointment') {
-                // Formatiranje datuma za API
-                const formattedDate = newDate.toISOString().split('T')[0];
-                const csrftoken = getCookie('csrftoken');
-                const auditorId = event.extendedProps.auditor_id;
+                console.log('Processing appointment drag-and-drop for event:', eventId);
                 
-                if (!auditorId) {
-                  console.warn('Nedostaje ID auditora za proveru rezervacija');
-                  
-                  // Prikaži modal za potvrdu promene datuma
-                  showDateChangeConfirmationModal(event, newDate, function (confirmed) {
-                    if (confirmed) {
-                      // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                      updateEventDate(eventType, eventId, newDate, {
-                        onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
-                        onError: function() { try { info.revert(); } catch (e) { /* ignore */ } }
-                      });
-                    } else {
-                      // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
-                      info.revert();
-                    }
-                  });
-                  return;
-                }
-                
-                // Provera da li auditor već ima rezervaciju na odabrani datum
-                $.ajax({
-                  url: `/company/api/validate-auditor-reservation/`,
-                  type: 'POST',
-                  data: JSON.stringify({
-                    auditor_id: auditorId,
-                    date: formattedDate,
-                    appointment_id: eventId // ID trenutnog appointment-a za izuzetak
-                  }),
-                  contentType: 'application/json',
-                  headers: { 'X-CSRFToken': csrftoken },
-                  success: function(response) {
-                    console.log('Validacija auditora:', response);
+                // Prikaži modal za potvrdu promene datuma
+                showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                  if (confirmed) {
+                    console.log('User confirmed date change, calling updateEventDate...');
                     
-                    if (response.valid) {
-                      // Nema konflikta, prikaži standardni modal za potvrdu
-                      showDateChangeConfirmationModal(event, newDate, function (confirmed) {
-                        if (confirmed) {
-                          // Korisnik je potvrdio promenu, ažuriraj datum na serveru
-                          updateEventDate(eventType, eventId, newDate, {
-                            onSuccess: function() { try { refreshCalendar(); } catch (e) { /* ignore */ } },
-                            onError: function() { try { info.revert(); } catch (e) { /* ignore */ } }
-                          });
+                    // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                    // Direktno pozovi AJAX da vidimo šta se dešava
+                    const csrftoken = getCookie('csrftoken');
+                    const payload = {
+                      eventType: eventType,
+                      eventId: eventId,
+                      newDate: newDate.toISOString()
+                    };
+                    
+                    console.log('Sending update request with payload:', payload);
+                    
+                    $.ajax({
+                      url: '/company/api/events/update-date/',
+                      type: 'POST',
+                      data: JSON.stringify(payload),
+                      contentType: 'application/json',
+                      headers: { 'X-CSRFToken': csrftoken },
+                      success: function(response) {
+                        console.log('Update successful:', response);
+                        if (response.success) {
+                          refreshCalendar();
                         } else {
-                          // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
-                          info.revert();
+                          // Server vratio success: false
+                          console.log('Server returned success: false');
+                          Swal.fire({
+                            title: 'Konflikt rezervacija',
+                            text: 'Nije moguće sačuvati trenutni datum jer za navedeni datum već postoji dodeljen auditor nekoj drugoj firmi.',
+                            icon: 'error',
+                            confirmButtonText: 'U redu',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                          }).then(() => {
+                            info.revert();
+                            refreshCalendar();
+                          });
                         }
-                      });
-                    } else {
-                      // Postoji konflikt, prikaži poruku o grešci sa detaljima
-                      const conflicts = Array.isArray(response.conflicts) ? response.conflicts : [];
-                      let conflictMsg = null;
-                      if (conflicts.length > 0) {
-                        const c = conflicts[0];
-                        const d = c && c.date ? new Date(c.date) : null;
-                        const formatted = d ? d.toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : (event && event.start ? new Date(event.start).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'odabrani datum');
-                        const auditorName = c && c.auditor ? c.auditor : (event.extendedProps && event.extendedProps.auditor_name ? event.extendedProps.auditor_name : 'auditor');
-                        const companyName = c && c.company ? c.company : (event.extendedProps && event.extendedProps.company_name ? event.extendedProps.company_name : 'drugu firmu');
-                        conflictMsg = `Nije moguće promeniti datum auditu jer je za ovaj ${formatted} već dodeljen ${auditorName} za ${companyName}.`;
-                      }
-
-                      const finalMsg = conflictMsg || response.message || 'Auditor već ima rezervaciju na izabrani datum.';
-
-                      if (typeof Swal !== 'undefined') {
+                      },
+                      error: function(xhr, status, error) {
+                        console.log('Update failed - xhr:', xhr, 'status:', status, 'error:', error);
+                        console.log('Response text:', xhr.responseText);
+                        
+                        // Prikaži poruku o konfliktu bez obzira na tip greške
                         Swal.fire({
                           title: 'Konflikt rezervacija',
-                          text: finalMsg,
+                          text: 'Nije moguće sačuvati trenutni datum jer za navedeni datum već postoji dodeljen auditor nekoj drugoj firmi.',
                           icon: 'error',
                           confirmButtonText: 'U redu',
                           allowOutsideClick: false,
                           allowEscapeKey: false
                         }).then(() => {
-                          info.revert(); // Vrati događaj na originalnu poziciju
+                          info.revert();
+                          refreshCalendar();
                         });
-                      } else {
-                        alert('Konflikt rezervacija: ' + finalMsg);
-                        info.revert(); // Vrati događaj na originalnu poziciju
                       }
-                    }
-                  },
-                  error: function(xhr, status, error) {
-                    console.error('Greška pri validaciji rezervacije auditora:', error);
-                    
-                    // Ako je konflikt (409), izgradi poruku sa detaljima iz odgovora
-                    let finalMsg = 'Došlo je do greške prilikom provere rezervacije auditora. Događaj nije premešten.';
-                    if (xhr && xhr.status === 409) {
-                      try {
-                        const resp = xhr.responseJSON || JSON.parse(xhr.responseText || '{}');
-                        if (resp && Array.isArray(resp.conflicts) && resp.conflicts.length > 0) {
-                          const c = resp.conflicts[0];
-                          const d = c && c.date ? new Date(c.date) : (newDate || null);
-                          const formatted = d ? new Date(d).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : (event && event.start ? new Date(event.start).toLocaleDateString('sr-RS', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'odabrani datum');
-                          const auditorName = c && c.auditor ? c.auditor : (event.extendedProps && event.extendedProps.auditor_name ? event.extendedProps.auditor_name : 'auditor');
-                          const companyName = c && c.company ? c.company : (event.extendedProps && event.extendedProps.company_name ? event.extendedProps.company_name : 'drugu firmu');
-                          finalMsg = `Nije moguće promeniti datum auditu jer je za ovaj ${formatted} već dodeljen ${auditorName} za ${companyName}.`;
-                        } else if (resp && (resp.message || resp.error)) {
-                          finalMsg = resp.message || resp.error;
-                        }
-                      } catch (e) {
-                        // ostavi default
-                      }
-                    }
-
-                    // Prikaži grešku i vrati događaj na originalnu poziciju
-                    if (typeof Swal !== 'undefined') {
-                      Swal.fire({
-                        title: 'Konflikt rezervacija',
-                        text: finalMsg,
-                        icon: 'error',
-                        confirmButtonText: 'U redu',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                      }).then(() => {
-                        info.revert();
-                      });
-                    } else {
-                      alert('Konflikt rezervacija: ' + finalMsg);
-                      info.revert();
-                    }
+                    });
+                  } else {
+                    console.log('User cancelled date change, reverting...');
+                    // Korisnik je otkazao promenu, vrati događaj na originalnu poziciju
+                    info.revert();
                   }
                 });
+                return;
               } else if (eventType === 'cycle_audit') {
                 // Posebno rukovanje za cycle_audit događaje
                 // Prikaži modal za potvrdu promene datuma

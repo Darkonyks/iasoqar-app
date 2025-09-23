@@ -68,7 +68,7 @@ def kontakt_osoba_update(request, company_id, pk):
         'submit_text': 'Sačuvaj izmene'
     }
     
-    return render(request, 'company/kontakt-form.html', context)
+    return render(request, 'contact/kontakt-form.html', context)
 
 def kontakt_osoba_delete(request, company_id, pk):
     """
@@ -88,4 +88,4 @@ def kontakt_osoba_delete(request, company_id, pk):
         'kontakt': kontakt,
     }
     
-    return render(request, 'company/kontakt-confirm-delete.html', context)
+    return render(request, 'contact/kontakt-confirm-delete.html', context)

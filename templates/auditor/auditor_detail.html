@@ -148,9 +148,13 @@
                                 <div class="card-header">
                                     <h3 class="card-title">Standardi auditora</h3>
                                     <div class="card-tools">
+                                        {% if auditor.kategorija != 'technical_expert' %}
                                         <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-plus"></i> Dodaj standard
                                         </a>
+                                        {% else %}
+                                        <!-- Za tehničke eksperte ne prikazujemo dugme za dodavanje standarda -->
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="card-body">
