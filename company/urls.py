@@ -1,5 +1,6 @@
 from django.urls import path
 from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, AuditorUpdateView, auditor_standard_create, auditor_standard_update, auditor_standard_delete, auditor_standard_iaf_eac_create, auditor_standard_iaf_eac_update, auditor_standard_iaf_eac_delete, get_auditor_details, get_qualified_auditors
+from .auditor_direct_iaf_views import auditor_direct_iaf_eac_create, auditor_direct_iaf_eac_update, auditor_direct_iaf_eac_delete
 from .contact_views import kontakt_osoba_create, kontakt_osoba_update, kontakt_osoba_delete
 from .location_views import LocationListView, LocationDetailView, LocationCreateView, LocationUpdateView, LocationDeleteView
 from .views_cycles import (CertificationCycleListView, CertificationCycleDetailView, CertificationCycleCreateView, 
@@ -132,6 +133,12 @@ urlpatterns = [
     path('auditor-standards/<int:standard_id>/iaf-eac/add/', auditor_standard_iaf_eac_create, name='auditor_standard_iaf_eac_create'),
     path('auditor-standards/<int:standard_id>/iaf-eac/<int:pk>/update/', auditor_standard_iaf_eac_update, name='auditor_standard_iaf_eac_update'),
     path('auditor-standards/<int:standard_id>/iaf-eac/<int:pk>/delete/', auditor_standard_iaf_eac_delete, name='auditor_standard_iaf_eac_delete'),
+    
+    # Direct IAF/EAC code management for technical experts
+    path('auditors/<int:auditor_id>/direct-iaf-eac/add/', auditor_direct_iaf_eac_create, name='auditor_direct_iaf_eac_create'),
+    path('auditors/<int:auditor_id>/direct-iaf-eac/<int:pk>/update/', auditor_direct_iaf_eac_update, name='auditor_direct_iaf_eac_update'),
+    path('auditors/<int:auditor_id>/direct-iaf-eac/<int:pk>/delete/', auditor_direct_iaf_eac_delete, name='auditor_direct_iaf_eac_delete'),
+    
     path('api/auditors/<int:pk>/details/', get_auditor_details, name='auditor_details_api'),
     path('api/qualified-auditors/', get_qualified_auditors, name='qualified_auditors_api'),
     

@@ -141,6 +141,70 @@
                         </div>
                     </div>
 
+                    {% if auditor.kategorija == 'technical_expert' %}
+                    <!-- Tabela sa direktno dodeljenim IAF/EAC kodovima za tehničke eksperte -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">IAF/EAC kodovi tehničkog eksperta</h3>
+                                    <div class="card-tools">
+                                        <a href="{% url 'company:auditor_direct_iaf_eac_create' auditor.id %}" class="btn btn-success btn-sm">
+                                            <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped" id="direct-iaf-eac-table">
+                                            <thead>
+                                                <tr>
+                                                    <th width="15%">Kod</th>
+                                                    <th width="55%">Opis</th>
+                                                    <th width="15%">Primarni</th>
+                                                    <th width="15%">Akcije</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for iaf_eac in direct_iaf_links %}
+                                                <tr {% if iaf_eac.is_primary %}class="table-warning"{% endif %}>
+                                                    <td><strong>{{ iaf_eac.iaf_code }}</strong></td>
+                                                    <td>{{ iaf_eac.description }}</td>
+                                                    <td class="text-center">
+                                                        {% if iaf_eac.is_primary %}
+                                                        <i class="fas fa-star text-warning" title="Primarni kod"></i>
+                                                        {% else %}
+                                                        <i class="fas fa-minus text-muted"></i>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="{% url 'company:auditor_direct_iaf_eac_update' auditor_id=auditor.id pk=iaf_eac.id %}" class="btn btn-xs btn-info" title="Izmeni">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a href="{% url 'company:auditor_direct_iaf_eac_delete' auditor_id=auditor.id pk=iaf_eac.id %}" class="btn btn-xs btn-danger" title="Obriši">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center">
+                                                        <div class="alert alert-info mb-0">
+                                                            Ovaj tehnički ekspert nema dodeljenih IAF/EAC kodova.
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if auditor.kategorija != 'technical_expert' %}
                     <!-- Tabela sa svim standardima auditora -->
                     <div class="row mt-4">
                         <div class="col-md-12">
@@ -152,8 +216,6 @@
                                         <a href="{% url 'company:auditor_standard_create' auditor.id %}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-plus"></i> Dodaj standard
                                         </a>
-                                        {% else %}
-                                        <!-- Za tehničke eksperte ne prikazujemo dugme za dodavanje standarda -->
                                         {% endif %}
                                     </div>
                                 </div>
@@ -212,7 +274,9 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
 
+                    {% if auditor.kategorija != 'technical_expert' %}
                     <!-- Globalna pretraga IAF/EAC kodova -->
                     <div class="row mt-4">
                         <div class="col-md-12">
@@ -269,6 +333,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     
                 </div>
             </div>
@@ -300,6 +365,20 @@
                 "previous": "Prethodni"
             }
         };
+        
+        // Inicijalizacija tabele sa direktno dodeljenim IAF/EAC kodovima za tehničke eksperte
+        if ($('#direct-iaf-eac-table').length) {
+            $('#direct-iaf-eac-table').DataTable({
+                "language": srLatnLanguage,
+                "pageLength": 10,
+                "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Sve"]],
+                "ordering": true,
+                "responsive": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": 3 } // Isključujemo sortiranje za kolonu sa akcijama
+                ]
+            });
+        }
         
         // Inicijalizacija tabele sa svim standardima auditora
         $('#all-standards-table').DataTable({

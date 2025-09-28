@@ -1,0 +1,64 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Izmena IAF/EAC koda za tehničkog eksperta</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label>IAF/EAC kod:</label>
+                                    <input type="text" class="form-control" value="{{ current_iaf_eac_code }}" readonly>
+                                    <small class="form-text text-muted">IAF/EAC kod se ne može menjati.</small>
+                                </div>
+                                
+                                <div class="form-group form-check">
+                                    <input type="checkbox" class="form-check-input" id="is_primary" name="is_primary" {% if is_primary %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_primary">Primarni kod</label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="notes">Napomene:</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="2">{{ notes|default:'' }}</textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">{{ submit_text }}</button>
+                                    <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-default">Odustani</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{% endblock %}

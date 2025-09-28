@@ -82,6 +82,34 @@ class AuditorDetailView(LoginRequiredMixin, DetailView):
         )
         context['auditor_standards'] = auditor_standards
         
+        # Za tehničke eksperte, dohvati direktno dodeljene IAF/EAC kodove korišćenjem direktnog SQL upita
+        if self.object.kategorija == Auditor.CATEGORY_TECHNICAL_EXPERT:
+            from django.db import connection
+            
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """SELECT a.id, c.iaf_code, c.description, a.is_primary, a.notes 
+                       FROM company_auditoriafeaccode a 
+                       JOIN company_iafeaccode c ON a.iaf_eac_code_id = c.id 
+                       WHERE a.auditor_id = %s
+                       ORDER BY a.is_primary DESC, c.iaf_code""",
+                    [self.object.id]
+                )
+                rows = cursor.fetchall()
+                
+                # Kreiraj listu direktnih IAF/EAC kodova
+                direct_iaf_links = []
+                for row in rows:
+                    direct_iaf_links.append({
+                        'id': row[0],
+                        'iaf_code': row[1],
+                        'description': row[2],
+                        'is_primary': row[3],
+                        'notes': row[4]
+                    })
+                
+                context['direct_iaf_links'] = direct_iaf_links
+        
         return context
 
 
