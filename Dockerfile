@@ -5,7 +5,21 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-# Instaliraj zavisnosti
+# Instaliraj sistemske zavisnosti potrebne za kompilaciju Python paketa
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    libcairo2-dev \
+    pkg-config \
+    python3-dev \
+    libpango1.0-dev \
+    libgdk-pixbuf-2.0-dev \
+    libffi-dev \
+    shared-mime-info \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instaliraj Python zavisnosti
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
