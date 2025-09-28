@@ -6,6 +6,7 @@
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/company/company-detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -72,38 +73,42 @@
             <input type="hidden" id="standards_data" name="standards_data" value="[]">
             
             <!-- Tabs navigation -->
-            <ul class="nav nav-tabs" id="companyFormTabs" role="tablist">
+            <ul class="nav nav-tabs company-tabs" id="companyFormTabs" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">
-                  <i class="fas fa-info-circle"></i> Osnovne informacije
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="certificate-tab" data-toggle="tab" href="#certificate" role="tab" aria-controls="certificate" aria-selected="false">
-                  <i class="fas fa-certificate"></i> Sertifikat
+                  <i class="fas fa-info-circle"></i> Osnovni Podaci
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="standards-tab" data-toggle="tab" href="#standards" role="tab" aria-controls="standards" aria-selected="false">
-                  <i class="fas fa-award"></i> Standardi
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="address-tab" data-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="false">
-                  <i class="fas fa-map-marker-alt"></i> Adresa i kontakt
+                  <i class="fas fa-certificate"></i> Standardi i Sertifikati
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="iaf-tab" data-toggle="tab" href="#iaf" role="tab" aria-controls="iaf" aria-selected="false">
-                  <i class="fas fa-tags"></i> IAF/EAC kodovi
+                  <i class="fas fa-tags"></i> IAF/EAC Kodovi
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="contacts-tab" data-toggle="tab" href="#contacts" role="tab" aria-controls="contacts" aria-selected="false">
-                  <i class="fas fa-users"></i> Kontakt osobe
+                  <i class="fas fa-address-book"></i> Kontakti
                 </a>
               </li>
-              <!-- Tab Napomene je uklonjen -->
+              <li class="nav-item">
+                <a class="nav-link" id="locations-tab" data-toggle="tab" href="#locations" role="tab" aria-controls="locations" aria-selected="false">
+                  <i class="fas fa-map-marker-alt"></i> Lokacije
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="audits-tab" data-toggle="tab" href="#audits" role="tab" aria-controls="audits" aria-selected="false">
+                  <i class="fas fa-clipboard-check"></i> Provere i Auditi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="meetings-tab" data-toggle="tab" href="#meetings" role="tab" aria-controls="meetings" aria-selected="false">
+                  <i class="fas fa-calendar-alt"></i> Sastanci
+                </a>
+              </li>
             </ul>
             
             <!-- Tab content -->
@@ -188,86 +193,92 @@
                 </div>
               </div>
               
-              <!-- Tab: Sertifikat -->
-              <div class="tab-pane fade" id="certificate" role="tabpanel" aria-labelledby="certificate-tab">
-                <div class="row">
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.certificate_number.id_for_label }}">Broj sertifikata</label>
-                      {{ form.certificate_number.errors }}
-                      <input type="text" name="{{ form.certificate_number.name }}" id="{{ form.certificate_number.id_for_label }}" 
-                             class="form-control {% if form.certificate_number.errors %}is-invalid{% endif %}" 
-                             value="{{ form.certificate_number.value|default:'' }}">
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.initial_audit_conducted_date.id_for_label }}">Datum inicijalnog audita</label>
-                      {{ form.initial_audit_conducted_date.errors }}
-                      <input type="date" name="{{ form.initial_audit_conducted_date.name }}" id="{{ form.initial_audit_conducted_date.id_for_label }}" 
-                             class="form-control {% if form.initial_audit_conducted_date.errors %}is-invalid{% endif %}" 
-                             value="{{ form.initial_audit_conducted_date.value|date:'Y-m-d'|default:'' }}">
-                    </div>
-                  </div>
-
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.suspension_until_date.id_for_label }}">Suspenzija do datuma</label>
-                      {{ form.suspension_until_date.errors }}
-                      <input type="date" name="{{ form.suspension_until_date.name }}" id="{{ form.suspension_until_date.id_for_label }}" 
-                             class="form-control {% if form.suspension_until_date.errors %}is-invalid{% endif %}" 
-                             value="{{ form.suspension_until_date.value|date:'Y-m-d'|default:'' }}">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="{{ form.audit_days.id_for_label }}">Broj dana audita</label>
-                      {{ form.audit_days.errors }}
-                      <input type="number" step="0.1" name="{{ form.audit_days.name }}" id="{{ form.audit_days.id_for_label }}" 
-                             class="form-control {% if form.audit_days.errors %}is-invalid{% endif %}" 
-                             value="{{ form.audit_days.value|default:'' }}">
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="{{ form.visits_per_year.id_for_label }}">Poseta godišnje</label>
-                      {{ form.visits_per_year.errors }}
-                      <input type="number" name="{{ form.visits_per_year.name }}" id="{{ form.visits_per_year.id_for_label }}" 
-                             class="form-control {% if form.visits_per_year.errors %}is-invalid{% endif %}" 
-                             value="{{ form.visits_per_year.value|default:'' }}">
-                    </div>
-                  </div>
-
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="{{ form.audit_days_each.id_for_label }}">Dana po auditu</label>
-                      {{ form.audit_days_each.errors }}
-                      <input type="number" step="0.1" name="{{ form.audit_days_each.name }}" id="{{ form.audit_days_each.id_for_label }}" 
-                             class="form-control {% if form.audit_days_each.errors %}is-invalid{% endif %}" 
-                             value="{{ form.audit_days_each.value|default:'' }}">
-                    </div>
-                  </div>
-
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
-                      {{ form.oblast_registracije.errors }}
-                      <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
-                           class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
-                           rows="3">{{ form.oblast_registracije.value|default:'' }}</textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!-- Tab: Sertifikat je uklonjen; sadržaj je prebačen u tab 'Standardi i Sertifikati' -->
               
-              <!-- Tab: Standardi -->
+              <!-- Tab: Standardi i Sertifikati -->
               <div class="tab-pane fade" id="standards" role="tabpanel" aria-labelledby="standards-tab">
-                <h5 class="mb-3">Standardi</h5>
+                <h5 class="mb-3">Standardi i Sertifikati</h5>
+                <!-- Sekcija: Podaci o sertifikatu (prebačeno iz posebnog taba) -->
+                <div class="card card-info mb-3">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-id-badge"></i> Podaci o sertifikatu</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.certificate_number.id_for_label }}">Broj sertifikata</label>
+                          {{ form.certificate_number.errors }}
+                          <input type="text" name="{{ form.certificate_number.name }}" id="{{ form.certificate_number.id_for_label }}" 
+                                 class="form-control {% if form.certificate_number.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.certificate_number.value|default:'' }}">
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.initial_audit_conducted_date.id_for_label }}">Datum inicijalnog audita</label>
+                          {{ form.initial_audit_conducted_date.errors }}
+                          <input type="date" name="{{ form.initial_audit_conducted_date.name }}" id="{{ form.initial_audit_conducted_date.id_for_label }}" 
+                                 class="form-control {% if form.initial_audit_conducted_date.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.initial_audit_conducted_date.value|date:'Y-m-d'|default:'' }}">
+                        </div>
+                      </div>
+
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.suspension_until_date.id_for_label }}">Suspenzija do datuma</label>
+                          {{ form.suspension_until_date.errors }}
+                          <input type="date" name="{{ form.suspension_until_date.name }}" id="{{ form.suspension_until_date.id_for_label }}" 
+                                 class="form-control {% if form.suspension_until_date.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.suspension_until_date.value|date:'Y-m-d'|default:'' }}">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="{{ form.audit_days.id_for_label }}">Broj dana audita</label>
+                          {{ form.audit_days.errors }}
+                          <input type="number" step="0.1" name="{{ form.audit_days.name }}" id="{{ form.audit_days.id_for_label }}" 
+                                 class="form-control {% if form.audit_days.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.audit_days.value|default:'' }}">
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="{{ form.visits_per_year.id_for_label }}">Poseta godišnje</label>
+                          {{ form.visits_per_year.errors }}
+                          <input type="number" name="{{ form.visits_per_year.name }}" id="{{ form.visits_per_year.id_for_label }}" 
+                                 class="form-control {% if form.visits_per_year.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.visits_per_year.value|default:'' }}">
+                        </div>
+                      </div>
+
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="{{ form.audit_days_each.id_for_label }}">Dana po auditu</label>
+                          {{ form.audit_days_each.errors }}
+                          <input type="number" step="0.1" name="{{ form.audit_days_each.name }}" id="{{ form.audit_days_each.id_for_label }}" 
+                                 class="form-control {% if form.audit_days_each.errors %}is-invalid{% endif %}" 
+                                 value="{{ form.audit_days_each.value|default:'' }}">
+                        </div>
+                      </div>
+
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
+                          {{ form.oblast_registracije.errors }}
+                          <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
+                               class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
+                               rows="3">{{ form.oblast_registracije.value|default:'' }}</textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="card">
                   <div class="card-body">
                     <div class="table-responsive mb-4">
@@ -291,6 +302,9 @@
                                 <td>{{ standard.notes|default:"-" }}</td>
                                 <td>
                                   <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'company:standard_detail' company_id=object.id pk=standard.id %}" class="btn btn-outline-info">
+                                      <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="{% url 'company:standard_update' company_id=object.id pk=standard.id %}" class="btn btn-outline-primary">
                                       <i class="fas fa-edit"></i>
                                     </a>
@@ -372,109 +386,361 @@
                           </div>
                         </div>
                       </div>
-
-                      <div class="form-group">
-                        <button type="button" id="directStandardAdd" class="btn btn-success" data-company-id="{{ object.id|default:0 }}">
-                          <i class="fas fa-plus"></i> Dodaj standard
-                        </button>
-                      </div>
                     </form>
-                    
-                    <!-- Skrivena polja više nisu potrebna jer koristimo backend pristup -->
                   </div>
                 </div>
               </div>
               
-              <!-- Tab: Adresa i kontakt -->
-              <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-                <h5 class="mb-3">Adresa</h5>
+              <!-- Tab: Lokacije -->
+              <div class="tab-pane fade" id="locations" role="tabpanel" aria-labelledby="locations-tab">
+                <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Lokacije kompanije</h5>
                 
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label for="{{ form.street.id_for_label }}">Ulica *</label>
-                      {{ form.street.errors }}
-                      <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
-                             class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
-                             value="{{ form.street.value|default:'' }}" required>
-                    </div>
+                <!-- Glavna lokacija -->
+                <div class="card card-primary card-outline mb-4 shadow-sm">
+                  <div class="card-header bg-primary text-white">
+                    <h3 class="card-title"><i class="fas fa-home"></i> Glavna lokacija</h3>
                   </div>
-                  
-                  <div class="col-md-2">
-                    <div class="form-group">
-                      <label for="{{ form.street_number.id_for_label }}">Broj *</label>
-                      {{ form.street_number.errors }}
-                      <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
-                             class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
-                             value="{{ form.street_number.value|default:'' }}" required>
+                  <div class="card-body">
+                    <h5 class="mb-3"><i class="fas fa-map"></i> Adresa</h5>
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="{{ form.street.id_for_label }}"><i class="fas fa-road"></i> Ulica *</label>
+                          {{ form.street.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-road text-primary"></i></span>
+                            </div>
+                            <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
+                                   class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.street.value|default:'' }}" required placeholder="npr. Bulevar oslobođenja">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label for="{{ form.street_number.id_for_label }}"><i class="fas fa-hashtag"></i> Broj *</label>
+                          {{ form.street_number.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-hashtag text-primary"></i></span>
+                            </div>
+                            <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
+                                   class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.street_number.value|default:'' }}" required placeholder="npr. 76">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.city.id_for_label }}"><i class="fas fa-city"></i> Grad *</label>
+                          {{ form.city.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-city text-primary"></i></span>
+                            </div>
+                            <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                                    class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
+                              <option value="">Izaberite grad</option>
+                              {% for value, text in form.fields.city.choices %}
+                                <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
+                                  {{ text }}
+                                </option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.city.id_for_label }}">Grad *</label>
-                      {{ form.city.errors }}
-                      <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
-                              class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
-                        <option value="">Izaberite grad</option>
-                        {% for value, text in form.fields.city.choices %}
-                          <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
-                            {{ text }}
-                          </option>
-                        {% endfor %}
-                      </select>
+                    
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.postal_code.id_for_label }}"><i class="fas fa-mail-bulk"></i> Poštanski broj</label>
+                          {{ form.postal_code.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-mail-bulk text-primary"></i></span>
+                            </div>
+                            <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
+                                   class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.postal_code.value|default:'' }}" placeholder="npr. 11000">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <h5 class="mt-4 mb-3"><i class="fas fa-address-card"></i> Kontakt informacije</h5>
+                    
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.phone.id_for_label }}"><i class="fas fa-phone"></i> Telefon</label>
+                          {{ form.phone.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-phone text-primary"></i></span>
+                            </div>
+                            <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                                   class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.phone.value|default:'' }}" placeholder="npr. +381 11 123-4567">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.email.id_for_label }}"><i class="fas fa-envelope"></i> Email</label>
+                          {{ form.email.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-envelope text-primary"></i></span>
+                            </div>
+                            <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.email.value|default:'' }}" placeholder="npr. info@kompanija.rs">
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="{{ form.website.id_for_label }}"><i class="fas fa-globe"></i> Website</label>
+                          {{ form.website.errors }}
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text bg-light"><i class="fas fa-globe text-primary"></i></span>
+                            </div>
+                            <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
+                                   class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.website.value|default:'' }}" placeholder="https://www.kompanija.rs">
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                <div class="row">
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.postal_code.id_for_label }}">Poštanski broj</label>
-                      {{ form.postal_code.errors }}
-                      <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
-                             class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
-                             value="{{ form.postal_code.value|default:'' }}">
+                <!-- Ostale lokacije -->
+                <div class="card card-info card-outline shadow-sm">
+                  <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h3 class="card-title"><i class="fas fa-building"></i> Ostale lokacije</h3>
+                    {% if object and object.id %}
+                    <div class="card-tools">
+                      <a href="{% url 'company:location_create' %}?company={{ object.id }}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-plus"></i> Nova lokacija
+                      </a>
                     </div>
+                    {% endif %}
+                  </div>
+                  <div class="card-body">
+                    {% if object and object.locations.exists %}
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <thead class="thead-light">
+                          <tr>
+                            <th>Naziv</th>
+                            <th>Adresa</th>
+                            <th>Grad</th>
+                            <th>Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for location in object.locations.all %}
+                          <tr>
+                            <td><strong>{{ location.name }}</strong></td>
+                            <td>
+                              {% if location.full_address %}
+                                {{ location.full_address }}
+                              {% else %}
+                                <span class="text-muted">Nije uneto</span>
+                              {% endif %}
+                            </td>
+                            <td>{{ location.city|default:"Nije uneto" }}</td>
+                            <td>
+                              <div class="btn-group">
+                                <a href="{% url 'company:location_detail' location.id %}" class="btn btn-info btn-sm" title="Detalji">
+                                  <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'company:location_update' location.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                                  <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'company:location_delete' location.id %}" class="btn btn-danger btn-sm" title="Obriši">
+                                  <i class="fas fa-trash"></i>
+                                </a>
+                              </div>
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle"></i> Nema dodatnih lokacija.
+                      {% if object and object.id %}
+                      <a href="{% url 'company:location_create' %}?company={{ object.id }}" class="btn btn-info btn-sm ml-2">
+                        <i class="fas fa-plus"></i> Dodaj prvu lokaciju
+                      </a>
+                      {% else %}
+                      <p>Sačuvajte kompaniju prvo da biste mogli dodati lokacije.</p>
+                      {% endif %}
+                    </div>
+                    {% endif %}
                   </div>
                 </div>
-                
-                <h5 class="mt-4 mb-3">Kontakt informacije</h5>
-                
+              </div>
+              
+              <!-- Tab: Kontakti -->
+              <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
                 <div class="row">
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.phone.id_for_label }}">Telefon</label>
-                      {{ form.phone.errors }}
-                      <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
-                             class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
-                             value="{{ form.phone.value|default:'' }}">
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.email.id_for_label }}">Email</label>
-                      {{ form.email.errors }}
-                      <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
-                             class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
-                             value="{{ form.email.value|default:'' }}">
-                    </div>
-                  </div>
-                  
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.website.id_for_label }}">Website</label>
-                      {{ form.website.errors }}
-                      <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
-                             class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
-                             value="{{ form.website.value|default:'' }}" placeholder="https://">
+                  <div class="col-12">
+                    <div class="card card-primary card-outline">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-address-book"></i> Kontakt osobe</h3>
+                        {% if object and object.id %}
+                        <div class="card-tools">
+                          <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addContactModal">
+                            <i class="fas fa-plus"></i> Nova kontakt osoba
+                          </button>
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="card-body">
+                        {% if object and object.kontakt_osobe.exists %}
+                          <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                              <thead class="thead-light">
+                                <tr>
+                                  <th>Ime i prezime</th>
+                                  <th>Pozicija</th>
+                                  <th>Email</th>
+                                  <th>Telefon</th>
+                                  <th>Status</th>
+                                  <th>Akcije</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for contact in object.kontakt_osobe.all %}
+                                  <tr {% if contact.is_primary %} class="table-primary"{% endif %}>
+                                    <td><strong>{{ contact.ime_prezime }}</strong></td>
+                                    <td>{{ contact.pozicija|default:"-" }}</td>
+                                    <td>{% if contact.email %}<a href="mailto:{{ contact.email }}">{{ contact.email }}</a>{% else %}-{% endif %}</td>
+                                    <td>{{ contact.telefon|default:"-" }}</td>
+                                    <td>{% if contact.is_primary %}<span class="badge badge-primary">Primarni kontakt</span>{% endif %}</td>
+                                    <td>
+                                      <div class="btn-group">
+                                        <button type="button" class="btn btn-warning btn-sm edit-contact" 
+                                                data-contact-id="{{ contact.id }}" 
+                                                data-contact-name="{{ contact.ime_prezime }}" 
+                                                data-contact-position="{{ contact.pozicija|default:'' }}" 
+                                                data-contact-email="{{ contact.email|default:'' }}" 
+                                                data-contact-phone="{{ contact.telefon|default:'' }}" 
+                                                data-contact-primary="{{ contact.is_primary|yesno:'true,false' }}">
+                                          <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm delete-contact" 
+                                                data-contact-id="{{ contact.id }}" 
+                                                data-contact-name="{{ contact.ime_prezime }}">
+                                          <i class="fas fa-trash"></i>
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        {% else %}
+                          <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Nema kontakt osoba.
+                            {% if object and object.id %}
+                              <button type="button" class="btn btn-primary btn-sm ml-2" data-toggle="modal" data-target="#addContactModal">
+                                <i class="fas fa-plus"></i> Dodaj prvu kontakt osobu
+                              </button>
+                            {% else %}
+                              <p>Sačuvajte kompaniju prvo da biste mogli dodati kontakt osobe.</p>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            
-            <!-- Tab: IAF/EAC Kodovi -->
+              
+              <!-- Tab: Provere i Auditi -->
+              <div class="tab-pane fade" id="audits" role="tabpanel" aria-labelledby="audits-tab">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card card-primary card-outline">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-clipboard-check"></i> Ciklusi Sertifikacije</h3>
+                        {% if object and object.id %}
+                        <div class="card-tools">
+                          <a href="{% url 'company:company_cycle_create' object.id %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus"></i> Novi Ciklus Sertifikacije
+                          </a>
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="card-body">
+                        {% if object and object.id %}
+                          <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Cikluse sertifikacije možete dodati nakon što sačuvate osnovne podatke o kompaniji.
+                            <a href="{% url 'company:company_cycle_create' object.id %}" class="btn btn-primary btn-sm ml-2">
+                              <i class="fas fa-plus"></i> Dodaj ciklus sertifikacije
+                            </a>
+                          </div>
+                        {% else %}
+                          <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Sačuvajte kompaniju prvo da biste mogli dodati cikluse sertifikacije.
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Sastanci -->
+              <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="meetings-tab">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card card-primary card-outline">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Sastanci i Termini</h3>
+                        {% if object and object.id %}
+                        <div class="card-tools">
+                          <a href="{% url 'company:calendar' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-calendar"></i> Svi sastanci
+                          </a>
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="card-body">
+                        {% if object and object.id %}
+                          <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Sastanke možete dodati nakon što sačuvate osnovne podatke o kompaniji.
+                            <a href="{% url 'company:calendar' %}" class="btn btn-primary btn-sm ml-2">
+                              <i class="fas fa-calendar-plus"></i> Dodaj novi sastanak
+                            </a>
+                          </div>
+                        {% else %}
+                          <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Sačuvajte kompaniju prvo da biste mogli dodati sastanke.
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: IAF/EAC Kodovi -->
               <div class="tab-pane fade" id="iaf" role="tabpanel" aria-labelledby="iaf-tab">
                 <h5 class="mb-3">IAF/EAC Kodovi</h5>
                 <div class="card">
@@ -543,189 +809,6 @@
                     
                     <!-- Skriveno polje za IAF/EAC kodove -->
                     <input type="hidden" name="iaf_eac_codes_data" id="iaf_eac_codes_data" value="">
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Tab: IAF/EAC kodovi -->
-              <div class="tab-pane fade" id="iaf" role="tabpanel" aria-labelledby="iaf-tab">
-                <div class="row">
-                  <div class="col-md-12">
-                    <!-- Tabela za prikaz IAF/EAC kodova -->
-                    <div class="table-responsive mb-4">
-                      <table class="table table-bordered table-striped">
-                        <thead class="thead-light">
-                          <tr>
-                            <th>IAF/EAC kod</th>
-                            <th>Opis</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody id="iaf-eac-codes-list" data-company-id="{{ object.id|default:0 }}">
-                          <!-- JavaScript će dinamički popuniti ovu tabelu -->
-                        </tbody>
-                      </table>
-                      
-                      <!-- Poruka kada nema kodova -->
-                      <div id="no-iaf-codes-message" class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni IAF/EAC kodovi. Dodajte kodove ispod.
-                      </div>
-                    </div>
-                    
-                    <!-- Forma za dodavanje IAF/EAC koda -->
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="iaf_eac_code">Izaberite IAF/EAC kod</label>
-                          <select id="iaf_eac_code" class="form-control">
-                            <option value="">-- Izaberite kod --</option>
-                            {% for code in iaf_codes %}
-                              <option value="{{ code.id }}">{{ code.code }} - {{ code.description }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="iaf_eac_code_notes">Napomena</label>
-                          <input type="text" id="iaf_eac_code_notes" class="form-control" placeholder="Unesite napomenu (opciono)">
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                      <div class="col-md-12">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="iaf_eac_is_primary">
-                          <label class="form-check-label" for="iaf_eac_is_primary">Primarni kod</label>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <p class="text-muted small">ID kompanije: {{ object.id|default:0 }}</p>
-                          <button type="button" class="btn btn-success" id="addIafEacButton" data-company-id="{{ object.id|default:0 }}">
-                            <i class="fas fa-plus"></i> Dodaj IAF/EAC kod
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Tab: Kontakt osobe -->
-              <div class="tab-pane fade" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-                <h5 class="mb-3">Kontakt osobe</h5>
-                <div class="card">
-                  <div class="card-body">
-                    <div class="table-responsive mb-4">
-                      <table class="table table-sm table-striped table-hover">
-                        <thead class="thead-light">
-                          <tr>
-                            <th width="25%">Ime i prezime</th>
-                            <th width="20%">Pozicija</th>
-                            <th width="20%">Email</th>
-                            <th width="15%">Telefon</th>
-                            <th width="10%">Primarni</th>
-                            <th width="10%">Akcije</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% if kontakt_osobe %}
-                            {% for kontakt in kontakt_osobe %}
-                              <tr>
-                                <td><strong>{{ kontakt.ime_prezime }}</strong></td>
-                                <td>{{ kontakt.pozicija|default:"-" }}</td>
-                                <td>{{ kontakt.email|default:"-" }}</td>
-                                <td>{{ kontakt.telefon|default:"-" }}</td>
-                                <td>
-                                  {% if kontakt.is_primary %}
-                                    <span class="badge badge-success">Da</span>
-                                  {% else %}
-                                    <span class="badge badge-secondary">Ne</span>
-                                  {% endif %}
-                                </td>
-                                <td>
-                                  <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'company:kontakt_update' company_id=object.id pk=kontakt.id %}" class="btn btn-outline-primary">
-                                      <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'company:kontakt_delete' company_id=object.id pk=kontakt.id %}" class="btn btn-outline-danger">
-                                      <i class="fas fa-trash"></i>
-                                    </a>
-                                  </div>
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          {% else %}
-                            <tr>
-                              <td colspan="6" class="text-center">
-                                <div class="alert alert-info mb-0">
-                                  <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljene kontakt osobe. Dodajte kontakt osobe ispod.
-                                </div>
-                              </td>
-                            </tr>
-                          {% endif %}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <!-- Forma za dodavanje nove kontakt osobe -->
-                    <form method="post" action="{% url 'company:kontakt_create' company_id=object.id|default:0 %}" class="mt-4" id="kontaktAddForm">
-                      {% csrf_token %}
-                      <h6 class="font-weight-bold mb-3">Dodaj novu kontakt osobu</h6>
-                      
-                      <div class="row">
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label for="ime_prezime">Ime i prezime</label>
-                            <input type="text" id="ime_prezime" name="ime_prezime" class="form-control" required>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label for="pozicija">Pozicija</label>
-                            <input type="text" id="pozicija" name="pozicija" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="row">
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label for="telefon">Telefon</label>
-                            <input type="text" id="telefon" name="telefon" class="form-control">
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <div class="form-check mt-4">
-                              <input type="checkbox" class="form-check-input" id="is_primary" name="is_primary">
-                              <label class="form-check-label" for="is_primary">Primarna kontakt osoba</label>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-4">
-                          <div class="form-group mt-4">
-                            <button type="submit" class="btn btn-success">
-                              <i class="fas fa-plus"></i> Dodaj kontakt osobu
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
                   </div>
                 </div>
               </div>

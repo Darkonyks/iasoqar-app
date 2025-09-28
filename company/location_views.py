@@ -55,6 +55,16 @@ class LocationCreateView(CreateView):
     form_class = LocationForm
     template_name = 'company/location/location-form.html'
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        
+        # Prosleđujemo company_id formi ako je prosleđen u URL-u
+        company_id = self.request.GET.get('company', None)
+        if company_id:
+            kwargs['company_id'] = company_id
+            
+        return kwargs
+    
     def get_initial(self):
         initial = super().get_initial()
         

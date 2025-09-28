@@ -59,20 +59,32 @@
                                         <h5 class="card-title">Osnovni podaci</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="form-group">
-                                            <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
-                                            {{ form.company }}
-                                            {% if form.company.errors %}
-                                                <div class="invalid-feedback d-block">
-                                                    {% for error in form.company.errors %}
-                                                        {{ error }}
-                                                    {% endfor %}
+                                        {% if company %}
+                                            <!-- Kada je kompanija već određena, prikazujemo je kao readonly informaciju -->
+                                            <div class="form-group">
+                                                <label>Kompanija</label>
+                                                <div class="form-control-plaintext">
+                                                    <strong>{{ company.name }}</strong>
                                                 </div>
-                                            {% endif %}
-                                            {% if form.company.help_text %}
-                                                <small class="form-text text-muted">{{ form.company.help_text }}</small>
-                                            {% endif %}
-                                        </div>
+                                                {{ form.company }} <!-- Skriveno polje -->
+                                            </div>
+                                        {% else %}
+                                            <!-- Standardno polje za izbor kompanije -->
+                                            <div class="form-group">
+                                                <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
+                                                {{ form.company }}
+                                                {% if form.company.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.company.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if form.company.help_text %}
+                                                    <small class="form-text text-muted">{{ form.company.help_text }}</small>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
                                         
                                         <div class="form-group">
                                             <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
