@@ -339,13 +339,13 @@
                         <div class="col-md-2">
                           <div class="form-group">
                             <label for="issue_date">Datum izdavanja</label>
-                            <input type="date" id="issue_date" name="issue_date" class="form-control" placeholder="Datum izdavanja">
+                            <input type="date" id="issue_date" name="issue_date" class="form-control issue-date-input" placeholder="Datum izdavanja">
                           </div>
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
                             <label for="expiry_date">Datum isteka</label>
-                            <input type="date" id="expiry_date" name="expiry_date" class="form-control" placeholder="Datum isteka">
+                            <input type="date" id="expiry_date" name="expiry_date" class="form-control expiry-date-input" placeholder="Datum isteka">
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -2020,6 +2020,17 @@
     $(document).ready(function() {
         initDirectStandardAdd();
     });
+    
+})(jQuery);
+</script>
+
+<!-- Napomena: Automatsko izračunavanje datuma isteka se sada vrši na backend strani -->
+<script>
+(function($) {
+    'use strict';
+    
+    // Napomena: Automatsko izračunavanje datuma isteka se sada vrši na backend strani
+    // u metodi save() modela CompanyStandard
     
 })(jQuery);
 </script>

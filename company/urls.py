@@ -31,6 +31,7 @@ from .views import (
     audit_detail_json,
     # Standard CRUD funkcije
     company_standard_create,
+    company_standard_detail,
     company_standard_update,
     company_standard_delete
 )
@@ -67,6 +68,7 @@ urlpatterns = [
     
     # Standardi CRUD URLs
     path('companies/<int:company_id>/standards/add/', company_standard_create, name='standard_create'),
+    path('companies/<int:company_id>/standards/<int:pk>/', company_standard_detail, name='standard_detail'),
     path('companies/<int:company_id>/standards/<int:pk>/update/', company_standard_update, name='standard_update'),
     path('companies/<int:company_id>/standards/<int:pk>/delete/', company_standard_delete, name='standard_delete'),
     

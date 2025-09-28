@@ -16,6 +16,57 @@
     $('.select2').select2({
       theme: 'bootstrap4'
     });
+    
+    // Funkcionalnost za dugme za brisanje standarda
+    $('.delete-standard').on('click', function() {
+      const standardId = $(this).data('standard-id');
+      const standardName = $(this).data('standard-name');
+      
+      // Postavljanje podataka u modal
+      $('#standard-name-to-delete').text(standardName);
+      $('#delete-standard-form').attr('action', '{% url "company:standard_delete" company_id=company.id pk=0 %}'.replace('0', standardId));
+      
+      // Prikazivanje modala
+      $('#deleteStandardModal').modal('show');
+    });
+    
+    
+    // Funkcija za automatsko izračunavanje datuma isteka sertifikata (3 godine od datuma izdavanja)
+    function calculateExpiryDate(issueDate) {
+      if (!issueDate) return '';
+      
+      // Parsiranje datuma izdavanja
+      const parts = issueDate.split('.');
+      if (parts.length !== 3) return '';
+      
+      // Kreiranje Date objekta (format je dd.mm.yyyy)
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Meseci u JS su 0-11
+      const year = parseInt(parts[2], 10);
+      
+      const date = new Date(year, month, day);
+      
+      // Dodavanje 3 godine
+      date.setFullYear(date.getFullYear() + 3);
+      
+      // Formatiranje datuma nazad u dd.mm.yyyy
+      const expiryDay = date.getDate().toString().padStart(2, '0');
+      const expiryMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+      const expiryYear = date.getFullYear();
+      
+      return `${expiryDay}.${expiryMonth}.${expiryYear}`;
+    }
+    
+    // Dodavanje event listenera za polje datuma izdavanja
+    $(document).on('change', '.issue-date-input', function() {
+      const issueDate = $(this).val();
+      const expiryDateField = $(this).closest('tr').find('.expiry-date-input');
+      
+      if (issueDate) {
+        const expiryDate = calculateExpiryDate(issueDate);
+        expiryDateField.val(expiryDate);
+      }
+    });
   });
 </script>
 {% endblock %}
@@ -208,6 +259,7 @@
                             <th>Datum izdavanja</th>
                             <th>Datum isteka</th>
                             <th>Auditori</th>
+                            <th>Akcije</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -242,6 +294,19 @@
                                 {% else %}
                                   <span class="text-muted">Nema dodeljenih auditora</span>
                                 {% endif %}
+                              </td>
+                              <td>
+                                <div class="btn-group">
+                                  <a href="{% url 'company:standard_detail' company_id=company.id pk=standard_item.standard.id %}" class="btn btn-info btn-sm" title="Pregled">
+                                    <i class="fas fa-eye"></i>
+                                  </a>
+                                  <a href="{% url 'company:standard_update' company_id=company.id pk=standard_item.standard.id %}" class="btn btn-warning btn-sm" title="Izmeni">
+                                    <i class="fas fa-edit"></i>
+                                  </a>
+                                  <button type="button" class="btn btn-danger btn-sm delete-standard" title="Obriši" data-standard-id="{{ standard_item.standard.id }}" data-standard-name="{{ standard_item.standard.standard_definition.standard }}">
+                                    <i class="fas fa-trash"></i>
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           {% endfor %}
@@ -657,6 +722,31 @@
     </div> <!-- kraj container-fluid -->
   </div> <!-- kraj content -->
 </div> <!-- kraj content-wrapper -->
+
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standard-name-to-delete"></strong>?</p>
+        <p class="text-danger">Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
+        <form id="delete-standard-form" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal za ciklus sertifikacije -->
 {% if show_cycle_form %}

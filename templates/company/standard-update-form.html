@@ -9,23 +9,40 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Ažuriranje standarda kompanije: {{ company.name }}</h5>
-            <a href="{% url 'company:update' pk=company.id %}" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Nazad
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Ažuriranje standarda</h1>
+          <p class="text-muted">Kompanija: {{ company.name }}</p>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:detail' pk=company.id %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na kompaniju
             </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card card-primary card-outline">
+        <div class="card-header">
+          <h3 class="card-title">Podaci o standardu</h3>
         </div>
         <div class="card-body">
             <form method="post" action="{% url 'company:standard_update' company_id=company.id pk=standard.id %}">
                 {% csrf_token %}
                 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="standard_definition">Standard</label>
-                            <select id="standard_definition" name="standard_definition" class="form-control" required>
+                            <label for="standard_definition"><i class="fas fa-certificate"></i> Standard</label>
+                            <select id="standard_definition" name="standard_definition" class="form-control select2" required>
                                 <option value="">-- Izaberite standard --</option>
                                 {% for std_def in all_standard_definitions %}
                                     <option value="{{ std_def.id }}" {% if std_def.id == standard.standard_definition.id %}selected{% endif %}>
@@ -35,25 +52,38 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="issue_date">Datum izdavanja</label>
-                            <input type="date" id="issue_date" name="issue_date" class="form-control" 
-                                   value="{{ standard.issue_date|date:'Y-m-d' }}">
+                            <label for="issue_date"><i class="fas fa-calendar-plus"></i> Datum izdavanja</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+                                <input type="date" id="issue_date" name="issue_date" class="form-control issue-date-input" 
+                                       value="{{ standard.issue_date|date:'Y-m-d' }}">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="expiry_date">Datum isteka</label>
-                            <input type="date" id="expiry_date" name="expiry_date" class="form-control" 
-                                   value="{{ standard.expiry_date|date:'Y-m-d' }}">
+                            <label for="expiry_date"><i class="fas fa-calendar-times"></i> Datum isteka</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                </div>
+                                <input type="date" id="expiry_date" name="expiry_date" class="form-control expiry-date-input" 
+                                       value="{{ standard.expiry_date|date:'Y-m-d' }}">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="form-group">
-                            <label for="notes">Napomena</label>
-                            <input type="text" id="notes" name="notes" class="form-control" 
-                                   value="{{ standard.notes }}" placeholder="Unesite napomenu (opciono)">
+                            <label for="notes"><i class="fas fa-sticky-note"></i> Napomena</label>
+                            <textarea id="notes" name="notes" class="form-control" rows="3"
+                                   placeholder="Unesite napomenu (opciono)">{{ standard.notes }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -61,42 +91,42 @@
                 <hr>
                 
                 <!-- Dodavanje auditora za standard -->
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <h5>Auditori za standard</h5>
-                        <p class="text-muted">Izaberite jednog ili više auditora koji su odgovorni za sertifikaciju ovog standarda.</p>
+                <div class="card card-info mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-users"></i> Auditori za standard</h3>
                     </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-12">
+                    <div class="card-body">
+                        <p class="text-muted">Izaberite jednog ili više auditora koji su odgovorni za sertifikaciju ovog standarda.</p>
+                        
                         <div class="form-group">
-                            <label for="auditors">Auditori</label>
-                            <select id="auditors" name="auditors[]" class="form-control select2" multiple>
+                            <label for="auditors"><i class="fas fa-user-tie"></i> Auditori</label>
+                            <select id="auditors" name="auditors[]" class="form-control select2" multiple data-placeholder="Izaberite auditore">
                                 {% for auditor in all_auditors %}
                                     <option value="{{ auditor.id }}" {% if auditor.id in selected_auditors %}selected{% endif %}>
                                         {{ auditor.ime_prezime }} {% if auditor.kategorija %}({{ auditor.get_kategorija_display }}){% endif %}
                                     </option>
                                 {% endfor %}
                             </select>
-                            <small class="form-text text-muted">Možete izabrati više auditora držeći CTRL ili CMD taster prilikom klika.</small>
+                            <small class="form-text text-muted"><i class="fas fa-info-circle"></i> Možete izabrati više auditora držeći CTRL ili CMD taster prilikom klika.</small>
                         </div>
                     </div>
                 </div>
                 
-                <hr>
-                
-                <div class="form-group text-right">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Sačuvaj promene
-                    </button>
-                    <a href="{% url 'company:update' pk=company.id %}" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Odustani
-                    </a>
+                <div class="card-footer mt-4">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'company:detail' pk=company.id %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Odustani
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Sačuvaj promene
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
 
@@ -104,11 +134,53 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('.select2').select2({
+        // Inicijalizacija Select2 za standard
+        $('#standard_definition').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Izaberite standard',
+            allowClear: true,
+            width: '100%'
+        });
+        
+        // Inicijalizacija Select2 za auditore
+        $('#auditors').select2({
             theme: 'bootstrap4',
             placeholder: 'Izaberite auditore',
-            allowClear: true
+            allowClear: true,
+            width: '100%',
+            closeOnSelect: false
         });
+        
+        // Napomena: Automatsko izračunavanje datuma isteka se sada vrši na backend strani
+        // u metodi save() modela CompanyStandard
+        
+        // Dodajemo animaciju na dugme za čuvanje
+        $('button[type="submit"]').hover(
+            function() {
+                $(this).addClass('pulse-animation');
+            },
+            function() {
+                $(this).removeClass('pulse-animation');
+            }
+        );
     });
 </script>
+
+<style>
+    .pulse-animation {
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+</style>
 {% endblock %}

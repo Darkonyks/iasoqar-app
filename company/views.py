@@ -1289,6 +1289,17 @@ def company_standard_create(request, company_id):
             messages.error(request, "Kompanija već ima dodeljen ovaj standard.")
             return redirect('company:update', pk=company_id)
             
+        # Napomena: Automatsko izračunavanje datuma isteka se vrši u metodi save() modela CompanyStandard
+        
+        # Konverzija string datuma u date objekte ako su stringovi
+        if issue_date and isinstance(issue_date, str):
+            from datetime import datetime
+            issue_date = datetime.strptime(issue_date, '%Y-%m-%d').date()
+        
+        if expiry_date and isinstance(expiry_date, str):
+            from datetime import datetime
+            expiry_date = datetime.strptime(expiry_date, '%Y-%m-%d').date()
+        
         # Kreiranje standarda
         company_standard = CompanyStandard.objects.create(
             company=company,
@@ -1345,6 +1356,17 @@ def company_standard_update(request, company_id, pk):
             messages.error(request, "Morate izabrati standard.")
             return redirect('company:update', pk=company_id)
             
+        # Napomena: Automatsko izračunavanje datuma isteka se vrši na backend strani
+        
+        # Konverzija string datuma u date objekte ako su stringovi
+        if issue_date and isinstance(issue_date, str):
+            from datetime import datetime
+            issue_date = datetime.strptime(issue_date, '%Y-%m-%d').date()
+        
+        if expiry_date and isinstance(expiry_date, str):
+            from datetime import datetime
+            expiry_date = datetime.strptime(expiry_date, '%Y-%m-%d').date()
+        
         # Ažuriranje standarda
         standard.standard_definition_id = standard_id
         standard.issue_date = issue_date
@@ -1431,3 +1453,33 @@ def company_standard_delete(request, company_id, pk):
         messages.error(request, "Nije moguće obrisati standard. Potreban je POST zahtev.")
         
     return redirect('company:update', pk=company_id)
+
+
+def company_standard_detail(request, company_id, pk):
+    """
+    View za pregled detalja standarda kompanije
+    """
+    company = get_object_or_404(Company, pk=company_id)
+    standard = get_object_or_404(CompanyStandard, pk=pk, company=company)
+    
+    # Dobavljamo auditore za ovaj standard
+    standard_def_id = standard.standard_definition_id
+    auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
+    auditors = [as_obj.auditor for as_obj in auditor_standards]
+    
+    # Dobavljamo IAF/EAC kodove za ovaj standard (ako postoje)
+    iaf_eac_codes = []
+    try:
+        from company.iaf_eac_models import CompanyStandardIafEac
+        iaf_eac_codes = CompanyStandardIafEac.objects.filter(company_standard=standard)
+    except ImportError:
+        pass
+    
+    context = {
+        'company': company,
+        'standard': standard,
+        'auditors': auditors,
+        'iaf_eac_codes': iaf_eac_codes
+    }
+    
+    return render(request, 'company/standard-detail.html', context)

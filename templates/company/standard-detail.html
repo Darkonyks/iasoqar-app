@@ -1,0 +1,237 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ standard.standard_definition.standard }} - Detalji{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Detalji standarda</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:standard_update' company_id=company.id pk=standard.id %}" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Izmeni
+            </a>
+            <button type="button" class="btn btn-danger delete-standard" data-standard-id="{{ standard.id }}" data-standard-name="{{ standard.standard_definition.standard }}">
+              <i class="fas fa-trash"></i> Obriši
+            </button>
+            <a href="{% url 'company:detail' pk=company.id %}" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad na kompaniju
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Osnovne informacije o standardu -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Informacije o standardu</h3>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th style="width: 30%">Standard:</th>
+                    <td>{{ standard.standard_definition.standard }}</td>
+                  </tr>
+                  <tr>
+                    <th>Kod:</th>
+                    <td>{{ standard.standard_definition.code }}</td>
+                  </tr>
+                  <tr>
+                    <th>Kompanija:</th>
+                    <td><a href="{% url 'company:detail' pk=company.id %}">{{ company.name }}</a></td>
+                  </tr>
+                  <tr>
+                    <th>Datum izdavanja:</th>
+                    <td>{% if standard.issue_date %}{{ standard.issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">Nije unet</span>{% endif %}</td>
+                  </tr>
+                  <tr>
+                    <th>Datum isteka:</th>
+                    <td>{% if standard.expiry_date %}{{ standard.expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">Nije unet</span>{% endif %}</td>
+                  </tr>
+                  <tr>
+                    <th>Status:</th>
+                    <td>
+                      {% if standard.expiry_date %}
+                        {% now "Y-m-d" as today %}
+                        {% if standard.expiry_date|date:"Y-m-d" < today %}
+                          <span class="badge badge-danger">Istekao</span>
+                        {% else %}
+                          <span class="badge badge-success">Aktivan</span>
+                        {% endif %}
+                      {% else %}
+                        <span class="badge badge-warning">Nema datuma isteka</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Napomene:</th>
+                    <td>{% if standard.notes %}{{ standard.notes|linebreaks }}{% else %}<span class="text-muted">Nema napomena</span>{% endif %}</td>
+                  </tr>
+                  <tr>
+                    <th>Kreirano:</th>
+                    <td>{{ standard.created_at|date:"d.m.Y H:i" }}</td>
+                  </tr>
+                  <tr>
+                    <th>Ažurirano:</th>
+                    <td>{{ standard.updated_at|date:"d.m.Y H:i" }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Auditori -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Auditori</h3>
+            </div>
+            <div class="card-body">
+              {% if auditors %}
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Ime i prezime</th>
+                        <th>Kategorija</th>
+                        <th>Akcije</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for auditor in auditors %}
+                        <tr>
+                          <td>{{ auditor.ime_prezime }}</td>
+                          <td>
+                            {% if auditor.kategorija == 'lead_auditor' %}
+                              <span class="badge badge-success">{{ auditor.get_kategorija_display }}</span>
+                            {% elif auditor.kategorija == 'auditor' %}
+                              <span class="badge badge-primary">{{ auditor.get_kategorija_display }}</span>
+                            {% elif auditor.kategorija == 'technical_expert' %}
+                              <span class="badge badge-secondary">{{ auditor.get_kategorija_display }}</span>
+                            {% elif auditor.kategorija == 'trainer' %}
+                              <span class="badge badge-info">{{ auditor.get_kategorija_display }}</span>
+                            {% else %}
+                              <span class="badge badge-light">{{ auditor.get_kategorija_display }}</span>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <a href="{% url 'company:auditor_detail' pk=auditor.id %}" class="btn btn-info btn-sm">
+                              <i class="fas fa-eye"></i> Detalji
+                            </a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="text-muted">Nema dodeljenih auditora za ovaj standard.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- IAF/EAC kodovi -->
+      {% if iaf_eac_codes %}
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">IAF/EAC kodovi</h3>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>IAF/EAC kod</th>
+                      <th>Opis</th>
+                      <th>Status</th>
+                      <th>Napomena</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for code in iaf_eac_codes %}
+                      <tr>
+                        <td>{{ code.iaf_eac_code.iaf_code }}</td>
+                        <td>{{ code.iaf_eac_code.description }}</td>
+                        <td>
+                          {% if code.is_primary %}
+                            <span class="badge badge-primary">Primarni</span>
+                          {% else %}
+                            <span class="badge badge-secondary">Sekundarni</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ code.notes|default:"-" }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standard-name-to-delete"></strong>?</p>
+        <p class="text-danger">Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
+        <form id="delete-standard-form" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  $(document).ready(function() {
+    // Funkcionalnost za dugme za brisanje standarda
+    $('.delete-standard').on('click', function() {
+      const standardId = $(this).data('standard-id');
+      const standardName = $(this).data('standard-name');
+      
+      // Postavljanje podataka u modal
+      $('#standard-name-to-delete').text(standardName);
+      $('#delete-standard-form').attr('action', '{% url "company:standard_delete" company_id=company.id pk=standard.id %}');
+      
+      // Prikazivanje modala
+      $('#deleteStandardModal').modal('show');
+    });
+  });
+</script>
+{% endblock %}

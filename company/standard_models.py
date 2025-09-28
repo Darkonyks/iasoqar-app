@@ -146,6 +146,16 @@ class CompanyStandard(models.Model):
     def __str__(self):
         standard_name = self.standard_definition.name if self.standard_definition else self.standard
         return f"{self.company.name} - {standard_name}"
+    
+    def save(self, *args, **kwargs):
+        # Automatski izračunaj datum isteka ako je datum izdavanja postavljen
+        # Uvek ažuriramo datum isteka kada se promeni datum izdavanja
+        if self.issue_date:
+            # Dodaj tačno 3 godine na datum izdavanja (isti dan i mesec, samo 3 godine kasnije)
+            from dateutil.relativedelta import relativedelta
+            self.expiry_date = self.issue_date + relativedelta(years=3)
+        
+        super().save(*args, **kwargs)
 
 
 # Alias za kompatibilnost sa postojećim kodom
