@@ -59,17 +59,27 @@ def add_iaf_eac_code(request, company_id):
     Prima company_id kao parametar u URL-u i podatke kao POST parametre.
     Vraća JSON odgovor o statusu operacije.
     """
+    import logging
+    logger = logging.getLogger(__name__)
+    
     try:
+        logger.info(f"Pokušaj dodavanja IAF/EAC koda za kompaniju {company_id}")
+        logger.info(f"POST podaci: {request.POST}")
+        
         # Dohvati kompaniju
         company = get_object_or_404(Company, id=company_id)
+        logger.info(f"Kompanija pronađena: {company.name}")
         
         # Dohvati podatke iz POST zahteva
         iaf_eac_code_id = request.POST.get('iaf_eac_code')
         is_primary = request.POST.get('is_primary') == 'true'
         notes = request.POST.get('notes', '')
         
+        logger.info(f"IAF/EAC kod ID: {iaf_eac_code_id}, is_primary: {is_primary}, notes: {notes}")
+        
         # Validacija podataka
         if not iaf_eac_code_id:
+            logger.warning("IAF/EAC kod ID nije prosleđen")
             return JsonResponse({
                 'success': False,
                 'error': 'Morate izabrati IAF/EAC kod.'
@@ -77,23 +87,27 @@ def add_iaf_eac_code(request, company_id):
         
         # Dohvati IAF/EAC kod
         iaf_eac_code = get_object_or_404(IAFEACCode, id=iaf_eac_code_id)
+        logger.info(f"IAF/EAC kod pronađen: {iaf_eac_code}")
         
         # Proveri da li veza već postoji
         if CompanyIAFEACCode.objects.filter(company=company, iaf_eac_code=iaf_eac_code).exists():
+            logger.warning(f"Veza već postoji između {company.name} i {iaf_eac_code}")
             return JsonResponse({
                 'success': False,
                 'error': f'Kompanija već ima dodeljen ovaj IAF/EAC kod ({iaf_eac_code}).'
             }, status=400)
         
         # Kreiraj novu vezu između kompanije i IAF/EAC koda
+        logger.info("Kreiranje nove veze...")
         company_iaf_eac = CompanyIAFEACCode.objects.create(
             company=company,
             iaf_eac_code=iaf_eac_code,
             is_primary=is_primary,
             notes=notes
         )
+        logger.info(f"Veza uspešno kreirana: {company_iaf_eac}")
         
-        return JsonResponse({
+        response_data = {
             'success': True,
             'message': f'IAF/EAC kod {iaf_eac_code} je uspešno dodat kompaniji {company.name}.',
             'id': company_iaf_eac.id,
@@ -101,9 +115,12 @@ def add_iaf_eac_code(request, company_id):
             'description': iaf_eac_code.description,
             'is_primary': company_iaf_eac.is_primary,
             'notes': company_iaf_eac.notes
-        })
+        }
+        logger.info(f"Vraćam uspešan odgovor: {response_data}")
+        return JsonResponse(response_data)
         
     except Exception as e:
+        logger.error(f"Greška pri dodavanju IAF/EAC koda: {str(e)}", exc_info=True)
         return JsonResponse({
             'success': False,
             'error': f'Greška pri dodavanju IAF/EAC koda: {str(e)}'

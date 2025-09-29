@@ -7,6 +7,8 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap4-theme@1.0.0/dist/select2-bootstrap4.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="{% static 'css/company/company-detail.css' %}">
+<!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -1372,16 +1374,10 @@
     function initAddButton() {
         console.log('Inicijalizacija dugmeta za dodavanje IAF/EAC koda...');
         
-        // Direktno dodavanje event listenera umesto jQuery metode
-        var addButton = document.getElementById('addIafEacButton');
-        if (addButton) {
-            console.log('Dodavanje click event listenera na dugme...');
-            addButton.addEventListener('click', handleAddButtonClick);
-        } else {
-            console.error('Dugme za dodavanje IAF/EAC koda nije pronađeno u DOM-u!');
-        }
+        // Ukloni postojeće event listener-e da izbegnemo duplikate
+        $('#addIafEacButton').off('click');
         
-        // Dodavanje i putem jQuery za svaki slučaj
+        // Dodaj samo jedan event listener putem jQuery
         $('#addIafEacButton').on('click', function(e) {
             console.log('jQuery onClick handler za addIafEacButton aktiviran!');
             e.preventDefault();
@@ -1389,13 +1385,23 @@
         });
     }
     
+    // Flag za sprečavanje duplog izvršavanja
+    var isAddingIafEacCode = false;
+    
     // Handler funkcija za klik na dugme za dodavanje
     function handleAddButtonClick(e) {
         console.log('Kliknuto je dugme za dodavanje IAF/EAC koda!', e);
         if (e && e.preventDefault) e.preventDefault();
         
+        // Sprečavanje duplog izvršavanja
+        if (isAddingIafEacCode) {
+            console.log('AJAX poziv je već u toku, ignoriram klik');
+            return;
+        }
+        
         var $btn = $('#addIafEacButton');
         var companyId = $btn.data('company-id');
+        
         console.log('ID kompanije:', companyId);
         
         // Validacija
@@ -1412,6 +1418,9 @@
             showMessage('Greška', 'ID kompanije nije validan. Ne možemo dodati IAF/EAC kod.', 'error');
             return;
         }
+        
+        // Postavi flag da je AJAX u toku
+        isAddingIafEacCode = true;
         
         console.log('ID kompanije je validan:', companyId);
         
@@ -1438,9 +1447,8 @@
         
         // Isprobajmo više URL-ova dok ne pronađemo ispravan
         var urls = [
-            '/companies/' + companyId + '/iaf-eac/add/',
             '/company/companies/' + companyId + '/iaf-eac/add/',
-            '/company/api/iaf-eac/add/' // Dodatni URL za testiranje
+            '/companies/' + companyId + '/iaf-eac/add/'
         ];
         
         // Podaci koji se šalju
@@ -1452,10 +1460,14 @@
         };
         console.log('Podaci koji se šalju:', data);
         
-        // Funkcija za izvršavanje AJAX poziva sa sledećim URL-om ako trenutni ne uspe
+        // Funkcija za izvršavanje AJAX poziva - pokušava samo jedan URL
         function tryAjaxWithUrl(urlIndex) {
             if (urlIndex >= urls.length) {
                 console.error('Svi URL-ovi su isprobani i nijedan nije uspeo');
+                
+                // Resetuj flag
+                isAddingIafEacCode = false;
+                
                 $btn.html(originalBtnText);
                 $btn.prop('disabled', false);
                 showMessage('Greška pri dodavanju IAF/EAC koda', 'Nijedan URL nije pronađen. Kontaktirajte administratora.', 'error');
@@ -1473,42 +1485,80 @@
                 success: function(response) {
                     console.log('AJAX poziv uspešan!', response);
                     
+                    // Resetuj flag
+                    isAddingIafEacCode = false;
+                    
+                    // Resetovanje dugmeta
+                    $btn.html(originalBtnText);
+                    $btn.prop('disabled', false);
+                    
+                    // Sačuvaj naziv koda PRE čišćenja forme
+                    var codeName = $('#iaf_eac_code_select option:selected').text() || 'Odabrani kod';
+                    var fullCodeName = codeName;
+                    
+                    // Ako server vraća informacije o kodu, koristi ih za pun naziv
+                    if (response.iaf_code && response.description) {
+                        fullCodeName = response.iaf_code + ' - ' + response.description;
+                    } else if (response.iaf_code) {
+                        fullCodeName = response.iaf_code;
+                    }
+                    
                     // Čišćenje forme
                     $('#iaf_eac_code_select').val('');
                     $('#iaf_eac_code_notes').val('');
                     $('#iaf_eac_is_primary').prop('checked', false);
                     
-                    // Poruka o uspehu
-                    var codeName = $('#iaf_eac_code_select option:selected').text() || 'Odabrani kod';
+                    // Poruka o uspehu sa punim nazivom koda
                     showMessage('IAF/EAC kod uspešno dodat', 
-                                'IAF/EAC kod "' + codeName + '" je uspešno dodat kompaniji!', 
+                                'IAF/EAC kod "' + fullCodeName + '" je uspešno dodat kompaniji!', 
                                 'success');
                     
                     // Osvežavanje stranice
                     setTimeout(function() {
                         window.location.reload();
-                    }, 1500);
+                    }, 2500);
+                    
+                    // VAŽNO: Ne pokušavaj sa drugim URL-ovima jer je ovaj uspeo!
+                    return;
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX greška za URL ' + currentUrl + ':', status, error);
                     console.log('Status kod:', xhr.status);
+                    console.log('Response text:', xhr.responseText);
+                    
+                    // Pokušaj da parsiraš JSON odgovor za detaljniju grešku
+                    var errorMessage = 'Došlo je do greške pri dodavanju IAF/EAC koda.';
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {
+                        console.log('Nije moguće parsirati JSON odgovor');
+                    }
                     
                     // Ako je 404, probaj sledeći URL
                     if (xhr.status === 404) {
-                        console.log('Probavam sledeći URL...');
+                        console.log('URL ' + currentUrl + ' ne postoji (404), probavam sledeći URL...');
+                        // Ne resetuj flag ovde jer ćemo pokušati sa sledećim URL-om
                         tryAjaxWithUrl(urlIndex + 1);
                     } else {
+                        // Za sve ostale greške (400, 500, itd.) ne pokušavaj sa drugim URL-ovima
+                        console.log('Greška nije 404, prekidam pokušaje sa ostalim URL-ovima');
+                        
+                        // Resetuj flag
+                        isAddingIafEacCode = false;
+                        
                         // Resetovanje dugmeta
                         $btn.html(originalBtnText);
                         $btn.prop('disabled', false);
                         
                         // Poruka o grešci
-                        var errorMsg = 'Došlo je do greške pri dodavanju IAF/EAC koda.';
                         if (xhr.status) {
-                            errorMsg += ' (Status kod: ' + xhr.status + ')';
+                            errorMessage += ' (Status kod: ' + xhr.status + ')';
                         }
                         
-                        showMessage('Greška pri dodavanju IAF/EAC koda', errorMsg, 'error');
+                        showMessage('Greška pri dodavanju IAF/EAC koda', errorMessage, 'error');
                     }
                 }
             });
@@ -1702,23 +1752,36 @@
         });
     }
     
-    // Pomoćna funkcija za prikazivanje poruka
+    // Pomoćna funkcija za prikazivanje poruka sa SweetAlert
     function showMessage(title, message, type) {
         console.log('Pozivanje showMessage funkcije:', title, message, type);
-        console.log('showDirectModal funkcija dostupna:', typeof window.showDirectModal === 'function');
         
-        if (typeof window.showDirectModal === 'function') {
-            console.log('Pokušaj prikazivanja direktnog modala...');
-            try {
-                window.showDirectModal(title, message, type);
-                console.log('Direktni modal uspešno prikazan');
-            } catch (error) {
-                console.error('Greška pri prikazivanju direktnog modala:', error);
-                alert(title + '\n\n' + message);
-            }
+        // Mapiranje tipova na SweetAlert ikone
+        var iconMap = {
+            'success': 'success',
+            'error': 'error',
+            'warning': 'warning',
+            'info': 'info'
+        };
+        
+        var icon = iconMap[type] || 'info';
+        
+        // Proverava da li je SweetAlert dostupan
+        if (typeof Swal !== 'undefined') {
+            console.log('Prikazivanje SweetAlert poruke...');
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: icon,
+                timer: 3000, // Automatski nestaje za 3 sekunde
+                timerProgressBar: true,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
         } else {
-            console.log('Prikazivanje alert poruke umesto modala');
-            alert(message);
+            console.log('SweetAlert nije dostupan, koristim običan alert');
+            alert(title + '\n\n' + message);
         }
     }
     
@@ -2137,6 +2200,9 @@
     
 })(jQuery);
 </script>
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
 <!-- IAF/EAC kodovi JavaScript -->
 <script src="{% static 'js/company/company-iaf-eac.js' %}"></script>
