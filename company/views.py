@@ -1,16 +1,18 @@
 import json
 import logging
 from datetime import datetime
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-from django.db.models import Q, Count
-from django.utils.translation import gettext as _
+from django.http import HttpResponseRedirect, JsonResponse
+from django.db.models import Q
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 from django.utils.text import slugify
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -288,9 +290,10 @@ class AuditListView(LoginRequiredMixin, ListView):
                 # Mapiranje starih statusa na nove
                 status_mapping = {
                     'active': 'planned',
-                    'pending': 'in_progress',
+                    'pending': 'scheduled',  # Ažurirano: in_progress -> scheduled
                     'completed': 'completed',
-                    'cancelled': 'cancelled'
+                    'cancelled': 'cancelled',
+                    'postponed': 'postponed'
                 }
                 mapped_status = status_mapping.get(status, status)
                 cycle_audits = cycle_audits.filter(audit_status=mapped_status)
@@ -965,31 +968,42 @@ def appointment_calendar_json(request):
     audit_type_mapping = {
         'surveillance_1': {
             'name': 'Prva nadzorna provera',
-            'color_planned': '#FF9800',
-            'color_completed': '#4CAF50'
+            'color_planned': '#FF9800',      # Narandžasta - planirano
+            'color_scheduled': '#F44336',    # Crvena - zakazano
+            'color_postponed': '#9E9E9E',    # Siva - odloženo
+            'color_completed': '#4CAF50',    # Zelena - završeno
+            'color_cancelled': '#424242'     # Tamno siva - otkazano
         },
         'surveillance_2': {
             'name': 'Druga nadzorna provera',
-            'color_planned': '#FF9800',
-            'color_completed': '#4CAF50'
+            'color_planned': '#FF9800',      # Narandžasta - planirano
+            'color_scheduled': '#F44336',    # Crvena - zakazano
+            'color_postponed': '#9E9E9E',    # Siva - odloženo
+            'color_completed': '#4CAF50',    # Zelena - završeno
+            'color_cancelled': '#424242'     # Tamno siva - otkazano
         },
         'recertification': {
             'name': 'Resertifikacija',
-            'color_planned': '#E91E63',
-            'color_completed': '#4CAF50'
+            'color_planned': '#E91E63',      # Roza - planirano
+            'color_scheduled': '#F44336',    # Crvena - zakazano
+            'color_postponed': '#9E9E9E',    # Siva - odloženo
+            'color_completed': '#4CAF50',    # Zelena - završeno
+            'color_cancelled': '#424242'     # Tamno siva - otkazano
         },
         'initial': {
             'name': 'Inicijalni audit',
-            'color_planned': '#3788d8',
-            'color_completed': '#4CAF50'
+            'color_planned': '#3788d8',      # Plava - planirano
+            'color_scheduled': '#F44336',    # Crvena - zakazano
+            'color_postponed': '#9E9E9E',    # Siva - odloženo
+            'color_completed': '#4CAF50',    # Zelena - završeno
+            'color_cancelled': '#424242'     # Tamno siva - otkazano
         }
     }
     
-    # Get all audit days EXCEPT those belonging to completed audits with an actual_date.
-    # Zahtev: kada je Status: Završen i Stvarni datum postavljen, ne prikazivati povezane dane audita.
+    # Get all audit days - prikazuj sve dane bez obzira na status audita
+    # Boja će se odrediti na osnovu statusa audita
     audit_days = (
         AuditDay.objects
-        .exclude(audit__audit_status='completed', audit__actual_date__isnull=False)
         .select_related('audit__certification_cycle__company')
     )
     
@@ -1010,23 +1024,44 @@ def appointment_calendar_json(request):
             if audit.actual_date and audit_day.date == audit.actual_date:
                 pass
             else:
+                # Određuj boju na osnovu statusa audita
+                if audit.audit_status == 'completed':
+                    color = audit_type_info.get('color_completed', '#4CAF50')
+                    status_text = 'završen'
+                elif audit.audit_status == 'scheduled':
+                    color = audit_type_info.get('color_scheduled', '#F44336')
+                    status_text = 'zakazan'
+                elif audit.audit_status == 'postponed':
+                    color = audit_type_info.get('color_postponed', '#9E9E9E')
+                    status_text = 'odložen'
+                elif audit.audit_status == 'cancelled':
+                    color = audit_type_info.get('color_cancelled', '#424242')
+                    status_text = 'otkazan'
+                else:  # planned
+                    color = audit_type_info.get('color_planned', '#3788d8')
+                    status_text = 'planiran'
+                
+                # Override boju ako je poslat izveštaj - tamno zelena
+                if audit.poslat_izvestaj:
+                    color = '#1B5E20'  # Tamno zelena
+                
                 # Add actual audit day
                 events.append({
                 'id': f'audit_day_actual_{audit_day.id}',
-                'title': f'{company_name} - {audit_name} (održani dan)',
+                'title': f'{company_name} - {audit_name} ({status_text})',
                 'start': audit_day.date.isoformat(),
                 'allDay': True,
-                'color': audit_type_info.get('color_completed', '#4CAF50'),
+                'color': color,
                 # Uklonjen URL da bi se omogućilo otvaranje modala
                 # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
                     'company': company_name,
                     'type': f'{audit_name} - Dan audita',
                     'audit_type': audit.audit_type,
-                    'status': 'Održano',
+                    'status': dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Održano'),
                     'cycle_id': audit.certification_cycle.id,
                     'eventType': 'audit_day',
-                    'auditStatus': 'completed',
+                    'auditStatus': 'completed' if audit.audit_status == 'completed' else 'actual',
                     'modelType': 'audit_day',
                     'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
                     'audit_day_id': audit_day.id,
@@ -1038,23 +1073,44 @@ def appointment_calendar_json(request):
             if audit.planned_date and audit_day.date == audit.planned_date:
                 pass
             else:
+                # Određuj boju na osnovu statusa audita
+                if audit.audit_status == 'completed':
+                    color = audit_type_info.get('color_completed', '#4CAF50')
+                    status_text = 'završen'
+                elif audit.audit_status == 'scheduled':
+                    color = audit_type_info.get('color_scheduled', '#F44336')
+                    status_text = 'zakazan'
+                elif audit.audit_status == 'postponed':
+                    color = audit_type_info.get('color_postponed', '#9E9E9E')
+                    status_text = 'odložen'
+                elif audit.audit_status == 'cancelled':
+                    color = audit_type_info.get('color_cancelled', '#424242')
+                    status_text = 'otkazan'
+                else:  # planned
+                    color = audit_type_info.get('color_planned', '#3788d8')
+                    status_text = 'planiran'
+                
+                # Override boju ako je poslat izveštaj - tamno zelena
+                if audit.poslat_izvestaj:
+                    color = '#1B5E20'  # Tamno zelena
+                
                 # Add planned audit day
                 events.append({
                 'id': f'audit_day_planned_{audit_day.id}',
-                'title': f'{company_name} - {audit_name} (planirani dan)',
+                'title': f'{company_name} - {audit_name} ({status_text})',
                 'start': audit_day.date.isoformat(),
                 'allDay': True,
-                'color': audit_type_info.get('color_planned', '#3788d8'),
+                'color': color,
                 # Uklonjen URL da bi se omogućilo otvaranje modala
                 # 'url': f'/company/audits/{audit.id}/update/',
                 'extendedProps': {
                     'company': company_name,
                     'type': f'{audit_name} - Dan audita',
                     'audit_type': audit.audit_type,
-                    'status': 'Planirano',
+                    'status': dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Planirano'),
                     'cycle_id': audit.certification_cycle.id,
                     'eventType': 'audit_day',
-                    'auditStatus': 'planned',
+                    'auditStatus': 'completed' if audit.audit_status == 'completed' else 'planned',
                     'modelType': 'audit_day',
                     'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
                     'audit_day_id': audit_day.id,
@@ -1071,13 +1127,36 @@ def appointment_calendar_json(request):
         
         # Determine audit status and color
         is_completed = audit.audit_status in ['completed']
-        status_text = '(održana)' if is_completed else '(planirana)'
-        # Boje: osnovne i override ako je poslat izveštaj
-        dark_green = '#1B5E20'  # Tamno zelena
-        base_planned_color = audit_type_info.get('color_planned', '#3788d8')
-        base_completed_color = audit_type_info.get('color_completed', '#4CAF50')
-        planned_color = dark_green if audit.poslat_izvestaj else base_planned_color
-        actual_color = dark_green if audit.poslat_izvestaj else base_completed_color
+        
+        # Određuj boju na osnovu statusa audita
+        dark_green = '#1B5E20'  # Tamno zelena za poslat izveštaj
+        
+        if audit.audit_status == 'completed':
+            base_color = audit_type_info.get('color_completed', '#4CAF50')
+        elif audit.audit_status == 'scheduled':
+            base_color = audit_type_info.get('color_scheduled', '#F44336')
+        elif audit.audit_status == 'postponed':
+            base_color = audit_type_info.get('color_postponed', '#9E9E9E')
+        elif audit.audit_status == 'cancelled':
+            base_color = audit_type_info.get('color_cancelled', '#424242')
+        else:  # planned
+            base_color = audit_type_info.get('color_planned', '#3788d8')
+        
+        # Override boju ako je poslat izveštaj
+        planned_color = dark_green if audit.poslat_izvestaj else base_color
+        actual_color = dark_green if audit.poslat_izvestaj else base_color
+        
+        # Određuj status tekst za naslov
+        if audit.audit_status == 'completed':
+            status_text = 'završen'
+        elif audit.audit_status == 'scheduled':
+            status_text = 'zakazan'
+        elif audit.audit_status == 'postponed':
+            status_text = 'odložen'
+        elif audit.audit_status == 'cancelled':
+            status_text = 'otkazan'
+        else:  # planned
+            status_text = 'planiran'
 
         # Izbegni dupliranje: ako postoje AuditDay zapisi za isti datum, ne prikazuj glavni audit događaj
         try:
@@ -1094,7 +1173,7 @@ def appointment_calendar_json(request):
         if audit.planned_date and not (is_completed and audit.actual_date):
             events.append({
                 'id': f'cycle_audit_planned_{audit.id}',
-                'title': f'{audit_name} - {company_name} (planiran)',
+                'title': f'{audit_name} - {company_name} ({status_text})',
                 'start': audit.planned_date.isoformat(),
                 'allDay': True,
                 'color': planned_color,
@@ -1119,7 +1198,7 @@ def appointment_calendar_json(request):
         if audit.actual_date:
             events.append({
                 'id': f'cycle_audit_actual_{audit.id}',
-                'title': f'{company_name} - {audit_name} (održana)',
+                'title': f'{company_name} - {audit_name} ({status_text})',
                 'start': audit.actual_date.isoformat(),
                 'allDay': True,
                 'color': actual_color,
@@ -1273,11 +1352,14 @@ def get_companies(request):
 
 def company_standard_create(request, company_id):
     """
-    View za kreiranje novog standarda za kompaniju
+    View za kreiranje novog standarda za kompaniju - AJAX endpoint
     """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Samo POST zahtevi su dozvoljeni.'}, status=405)
+    
     company = get_object_or_404(Company, pk=company_id)
     
-    if request.method == 'POST':
+    try:
         standard_id = request.POST.get('standard_definition')
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
@@ -1286,13 +1368,11 @@ def company_standard_create(request, company_id):
         
         # Validacija
         if not standard_id:
-            messages.error(request, "Morate izabrati standard.")
-            return redirect('company:update', pk=company_id)
+            return JsonResponse({'success': False, 'error': 'Morate izabrati standard.'}, status=400)
         
         # Provera da li standard već postoji za kompaniju
         if CompanyStandard.objects.filter(company=company, standard_definition_id=standard_id).exists():
-            messages.error(request, "Kompanija već ima dodeljen ovaj standard.")
-            return redirect('company:update', pk=company_id)
+            return JsonResponse({'success': False, 'error': 'Kompanija već ima dodeljen ovaj standard.'}, status=400)
             
         # Napomena: Automatsko izračunavanje datuma isteka se vrši u metodi save() modela CompanyStandard
         
@@ -1317,6 +1397,7 @@ def company_standard_create(request, company_id):
         # Dodavanje auditora za standard
         # Konvertujemo auditor_ids u listu integera za lakše poređenje
         auditor_ids_int = [int(aid) for aid in auditor_ids if aid]
+        added_auditors = 0
         
         # Dodajemo veze za izabrane auditore
         for auditor_id in auditor_ids_int:
@@ -1329,17 +1410,25 @@ def company_standard_create(request, company_id):
                     datum_potpisivanja=datetime.now().date(),
                     napomena=f"Dodeljen za kompaniju {company.name}"
                 )
+                added_auditors += 1
             except Exception as e:
-                messages.warning(request, f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
+                print(f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
         
-        if auditor_ids:
-            messages.success(request, f"Standard je uspešno dodat sa {len(auditor_ids)} auditora.")
-        else:
-            messages.success(request, "Standard je uspešno dodat.")
-        return redirect('company:update', pk=company_id)
-    
-    # GET zahtev (opciono, ako želite zasebnu stranicu za dodavanje standarda)
-    return redirect('company:update', pk=company_id)
+        # Pripremi odgovor
+        message = f"Standard je uspešno dodat"
+        if added_auditors > 0:
+            message += f" sa {added_auditors} auditora"
+        message += "."
+        
+        return JsonResponse({
+            'success': True, 
+            'message': message,
+            'standard_id': company_standard.id,
+            'standard_name': company_standard.standard_definition.standard
+        })
+        
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Greška pri dodavanju standarda: {str(e)}'}, status=500)
 
 
 def company_standard_update(request, company_id, pk):

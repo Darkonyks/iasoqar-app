@@ -412,10 +412,11 @@ class CycleAudit(models.Model):
 
     AUDIT_STATUS_CHOICES = [
         ('planned', _('Planirano')),
-        ('in_progress', _('U toku')),
+        ('postponed', _('Odloženo')),
+        ('scheduled', _('Zakazano')),
         ('completed', _('Završeno')),
         ('cancelled', _('Otkazano')),
-        ('postponed', _('Odloženo')),
+  
     ]
 
     certification_cycle = models.ForeignKey(

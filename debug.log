@@ -608,3 +608,354 @@ INFO 2025-07-16 14:10:49,588 views 48116 9616 Pristup audit_detail_json za audit
 INFO 2025-07-16 14:11:26,785 views 48116 9616 Pristup audit_detail_json za audit ID: 166
 INFO 2025-07-16 14:11:30,340 views 48116 9616 Pristup audit_detail_json za audit ID: 65
 ERROR 2025-07-16 14:11:30,343 views 48116 9616 Greška prilikom dohvatanja broja dana audita: 'CycleAudit' object has no attribute 'get_audit_days_count'
+INFO 2025-09-29 20:28:55,482 views_ajax 58780 3224 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:28:55,484 views_ajax 58780 27124 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:28:55,484 views_ajax 58780 3224 POST podaci: <QueryDict: {'iaf_eac_code': ['4'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['OokpxIUGyNO1MRT9iHmVDJKGCXDxYPZIV0usirxDU7Kfvbl5zp4Mc18QeoXXT8h8']}>
+INFO 2025-09-29 20:28:55,484 views_ajax 58780 27124 POST podaci: <QueryDict: {'iaf_eac_code': ['4'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['OokpxIUGyNO1MRT9iHmVDJKGCXDxYPZIV0usirxDU7Kfvbl5zp4Mc18QeoXXT8h8']}>
+INFO 2025-09-29 20:28:55,528 views_ajax 58780 3224 IAF/EAC kod ID: 4, is_primary: False, notes: 
+INFO 2025-09-29 20:28:55,534 views_ajax 58780 27124 IAF/EAC kod ID: 4, is_primary: False, notes: 
+INFO 2025-09-29 20:28:55,541 views_ajax 58780 3224 Kreiranje nove veze...
+INFO 2025-09-29 20:28:55,548 views_ajax 58780 27124 Kreiranje nove veze...
+INFO 2025-09-29 20:28:55,555 views_ajax 58780 3224 Veza uspešno kreirana: GeoBiz123 - 01d - Plant Propagation
+ERROR 2025-09-29 20:28:55,557 views_ajax 58780 27124 Greška pri dodavanju IAF/EAC koda: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\views_ajax.py", line 102, in add_iaf_eac_code
+    company_iaf_eac = CompanyIAFEACCode.objects.create(
+        company=company,
+    ...<2 lines>...
+        notes=notes
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\iaf_models.py", line 97, in save
+    super().save(*args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 892, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 998, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1161, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1202, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+INFO 2025-09-29 20:29:22,290 views_ajax 58780 3224 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:29:22,290 views_ajax 58780 3224 POST podaci: <QueryDict: {'iaf_eac_code': ['2'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['9IT4ZfWgSJ3QRHt05aGrr4iGMZa0DBkNgk37KYzde3Z4A1VWmSoi0mGQoquqyUCd']}>
+INFO 2025-09-29 20:29:22,291 views_ajax 58780 27124 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:29:22,291 views_ajax 58780 27124 POST podaci: <QueryDict: {'iaf_eac_code': ['2'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['9IT4ZfWgSJ3QRHt05aGrr4iGMZa0DBkNgk37KYzde3Z4A1VWmSoi0mGQoquqyUCd']}>
+INFO 2025-09-29 20:29:22,300 views_ajax 58780 3224 IAF/EAC kod ID: 2, is_primary: False, notes: 
+INFO 2025-09-29 20:29:22,306 views_ajax 58780 27124 IAF/EAC kod ID: 2, is_primary: False, notes: 
+INFO 2025-09-29 20:29:22,315 views_ajax 58780 27124 Kreiranje nove veze...
+INFO 2025-09-29 20:29:22,326 views_ajax 58780 3224 Kreiranje nove veze...
+INFO 2025-09-29 20:29:22,331 views_ajax 58780 27124 Veza uspešno kreirana: GeoBiz123 - 01b - Animal production
+ERROR 2025-09-29 20:29:22,334 views_ajax 58780 3224 Greška pri dodavanju IAF/EAC koda: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\views_ajax.py", line 102, in add_iaf_eac_code
+    company_iaf_eac = CompanyIAFEACCode.objects.create(
+        company=company,
+    ...<2 lines>...
+        notes=notes
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\iaf_models.py", line 97, in save
+    super().save(*args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 892, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 998, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1161, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1202, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+INFO 2025-09-29 20:31:48,308 views_ajax 58780 3224 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:31:48,308 views_ajax 58780 27124 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:31:48,309 views_ajax 58780 3224 POST podaci: <QueryDict: {'iaf_eac_code': ['3'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['C4HCuyIMwprvSVC6ep3ubv4rjKN41DL0JGRFfhlJSJnJBf42v7LlKNsBVb7uWW3q']}>
+INFO 2025-09-29 20:31:48,309 views_ajax 58780 27124 POST podaci: <QueryDict: {'iaf_eac_code': ['3'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['C4HCuyIMwprvSVC6ep3ubv4rjKN41DL0JGRFfhlJSJnJBf42v7LlKNsBVb7uWW3q']}>
+INFO 2025-09-29 20:31:48,316 views_ajax 58780 3224 IAF/EAC kod ID: 3, is_primary: False, notes: 
+INFO 2025-09-29 20:31:48,322 views_ajax 58780 27124 IAF/EAC kod ID: 3, is_primary: False, notes: 
+INFO 2025-09-29 20:31:48,330 views_ajax 58780 27124 Kreiranje nove veze...
+INFO 2025-09-29 20:31:48,337 views_ajax 58780 3224 Kreiranje nove veze...
+INFO 2025-09-29 20:31:48,345 views_ajax 58780 27124 Veza uspešno kreirana: GeoBiz123 - 01c - Mixed farming
+ERROR 2025-09-29 20:31:48,348 views_ajax 58780 3224 Greška pri dodavanju IAF/EAC koda: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\views_ajax.py", line 102, in add_iaf_eac_code
+    company_iaf_eac = CompanyIAFEACCode.objects.create(
+        company=company,
+    ...<2 lines>...
+        notes=notes
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\company\iaf_models.py", line 97, in save
+    super().save(*args, **kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 892, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 998, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1161, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\base.py", line 1202, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\DEVELOPER\ISOQAR\isoqar-app\venv_new\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.IntegrityError: UNIQUE constraint failed: company_companyiafeaccode.company_id, company_companyiafeaccode.iaf_eac_code_id
+INFO 2025-09-29 20:55:41,555 views_ajax 58780 51156 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 20:55:41,555 views_ajax 58780 51156 POST podaci: <QueryDict: {'iaf_eac_code': ['4'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['uf6PC6ShCzRFk9nqS41WEoCcdqz1r2OiBRgSnPveYTNT3tPm9MJNdG0mPRTrml6I']}>
+INFO 2025-09-29 20:55:41,565 views_ajax 58780 51156 IAF/EAC kod ID: 4, is_primary: False, notes: 
+INFO 2025-09-29 20:55:41,574 views_ajax 58780 51156 Kreiranje nove veze...
+INFO 2025-09-29 20:55:41,581 views_ajax 58780 51156 Veza uspešno kreirana: GeoBiz123 - 01d - Plant Propagation
+INFO 2025-09-29 21:01:41,697 views_ajax 58780 62176 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:01:41,697 views_ajax 58780 62176 POST podaci: <QueryDict: {'iaf_eac_code': ['1'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['8oIYEPt3sG05T7bq9oS08LyHzHACGOdif0S1py60O0WjCrDmq6ARH3WRb8U2B7vI']}>
+INFO 2025-09-29 21:01:41,708 views_ajax 58780 62176 IAF/EAC kod ID: 1, is_primary: False, notes: 
+INFO 2025-09-29 21:01:41,717 views_ajax 58780 62176 Kreiranje nove veze...
+INFO 2025-09-29 21:01:41,723 views_ajax 58780 62176 Veza uspešno kreirana: GeoBiz123 - 01a - Growing of crops
+INFO 2025-09-29 21:02:20,253 views_ajax 58780 62176 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:02:20,254 views_ajax 58780 62176 POST podaci: <QueryDict: {'iaf_eac_code': ['5'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['3JVtVpRtCcSo2Bc8JO8xHxUfGxPFx5IJal5wG8uqYwOCLVE40wQogPipiY95so09']}>
+INFO 2025-09-29 21:02:20,262 views_ajax 58780 62176 IAF/EAC kod ID: 5, is_primary: False, notes: 
+INFO 2025-09-29 21:02:27,394 views_ajax 58780 62176 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:02:27,394 views_ajax 58780 62176 POST podaci: <QueryDict: {'iaf_eac_code': ['4'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['3JVtVpRtCcSo2Bc8JO8xHxUfGxPFx5IJal5wG8uqYwOCLVE40wQogPipiY95so09']}>
+INFO 2025-09-29 21:02:27,400 views_ajax 58780 62176 IAF/EAC kod ID: 4, is_primary: False, notes: 
+INFO 2025-09-29 21:02:27,411 views_ajax 58780 62176 Kreiranje nove veze...
+INFO 2025-09-29 21:02:27,417 views_ajax 58780 62176 Veza uspešno kreirana: GeoBiz123 - 01d - Plant Propagation
+INFO 2025-09-29 21:02:43,668 views_ajax 58780 56044 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:02:43,669 views_ajax 58780 56044 POST podaci: <QueryDict: {'iaf_eac_code': ['3'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['r7RomzcpOStbjylzl6F4oFmjEeu42J85yJ1r7iPmacpp2SNvCOnVXXKtgFOuX2qv']}>
+INFO 2025-09-29 21:02:43,682 views_ajax 58780 56044 IAF/EAC kod ID: 3, is_primary: False, notes: 
+INFO 2025-09-29 21:02:43,695 views_ajax 58780 56044 Kreiranje nove veze...
+INFO 2025-09-29 21:02:43,703 views_ajax 58780 56044 Veza uspešno kreirana: GeoBiz123 - 01c - Mixed farming
+INFO 2025-09-29 21:03:02,148 views_ajax 58780 56044 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:03:02,149 views_ajax 58780 56044 POST podaci: <QueryDict: {'iaf_eac_code': ['4'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['eMF04H3cMUzs4HX5bOcMfBfBUmfGFFRrloP3PqG98evGN1p1swUDOTDLwNz6AY9R']}>
+INFO 2025-09-29 21:03:02,156 views_ajax 58780 56044 IAF/EAC kod ID: 4, is_primary: False, notes: 
+INFO 2025-09-29 21:03:02,164 views_ajax 58780 56044 Kreiranje nove veze...
+INFO 2025-09-29 21:03:02,170 views_ajax 58780 56044 Veza uspešno kreirana: GeoBiz123 - 01d - Plant Propagation
+INFO 2025-09-29 21:03:15,173 views_ajax 58780 56044 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:03:15,173 views_ajax 58780 56044 POST podaci: <QueryDict: {'iaf_eac_code': ['2'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['II9KT1ERIQdJhj8MdqunsTEA4hOLSZ8APkjNEKhO4a9X0DAIu8ce1b2KGI8bNiq0']}>
+INFO 2025-09-29 21:03:15,181 views_ajax 58780 56044 IAF/EAC kod ID: 2, is_primary: False, notes: 
+INFO 2025-09-29 21:03:15,190 views_ajax 58780 56044 Kreiranje nove veze...
+INFO 2025-09-29 21:03:15,196 views_ajax 58780 56044 Veza uspešno kreirana: GeoBiz123 - 01b - Animal production
+INFO 2025-09-29 21:08:33,549 views_ajax 58780 63372 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:08:33,550 views_ajax 58780 63372 POST podaci: <QueryDict: {'iaf_eac_code': ['5'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['f7va0YC4pnhVQIIeZCz3eAF8CjfGtnl2mJFdLHf1LHd9z2aagkhUNS3ieKz6oGDs']}>
+INFO 2025-09-29 21:08:33,559 views_ajax 58780 63372 IAF/EAC kod ID: 5, is_primary: False, notes: 
+INFO 2025-09-29 21:08:43,575 views_ajax 58780 63372 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:08:43,575 views_ajax 58780 63372 POST podaci: <QueryDict: {'iaf_eac_code': ['3'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['f7va0YC4pnhVQIIeZCz3eAF8CjfGtnl2mJFdLHf1LHd9z2aagkhUNS3ieKz6oGDs']}>
+INFO 2025-09-29 21:08:43,584 views_ajax 58780 63372 IAF/EAC kod ID: 3, is_primary: False, notes: 
+INFO 2025-09-29 21:08:43,592 views_ajax 58780 63372 Kreiranje nove veze...
+INFO 2025-09-29 21:08:43,598 views_ajax 58780 63372 Veza uspešno kreirana: GeoBiz123 - 01c - Mixed farming
+INFO 2025-09-29 21:14:09,362 views_ajax 58780 47324 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:14:09,362 views_ajax 58780 47324 POST podaci: <QueryDict: {'iaf_eac_code': ['1'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['gofqeA5t9qcdXTEyIazh1X7cfgaKz9Tvn0ptZjIqvK8rGd6uZSh8AfvmRHuausbV']}>
+INFO 2025-09-29 21:14:09,371 views_ajax 58780 47324 IAF/EAC kod ID: 1, is_primary: False, notes: 
+INFO 2025-09-29 21:14:09,384 views_ajax 58780 47324 Kreiranje nove veze...
+INFO 2025-09-29 21:14:09,391 views_ajax 58780 47324 Veza uspešno kreirana: GeoBiz123 - 01a - Growing of crops
+INFO 2025-09-29 21:17:05,815 views_ajax 58780 47324 Pokušaj dodavanja IAF/EAC koda za kompaniju 2
+INFO 2025-09-29 21:17:05,816 views_ajax 58780 47324 POST podaci: <QueryDict: {'iaf_eac_code': ['1'], 'notes': [''], 'is_primary': ['false'], 'csrfmiddlewaretoken': ['8ZnPZ6vZUnZ8ThpIYrdg1knSaXUt2tcgfBxSKP8WgHVmCBREf9V7ACL2MoeTXMuG']}>
+INFO 2025-09-29 21:17:05,828 views_ajax 58780 47324 IAF/EAC kod ID: 1, is_primary: False, notes: 
+INFO 2025-09-29 21:17:05,840 views_ajax 58780 47324 Kreiranje nove veze...
+INFO 2025-09-29 21:17:05,848 views_ajax 58780 47324 Veza uspešno kreirana: GeoBiz123 - 01a - Growing of crops

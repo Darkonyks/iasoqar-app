@@ -334,8 +334,7 @@
                     </div>
 
                     <!-- Forma za dodavanje novog standarda -->
-                    <form method="post" action="{% url 'company:standard_create' company_id=object.id|default:0 %}" class="mt-4" id="standardAddForm">
-                      {% csrf_token %}
+                    <div class="mt-4" id="standardAddForm">
                       <h6 class="font-weight-bold mb-3">Dodaj novi standard</h6>
                       
                       <div class="row">
@@ -354,20 +353,20 @@
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
-                            <label for="issue_date">Datum izdavanja</label>
-                            <input type="date" id="issue_date" name="issue_date" class="form-control issue-date-input" placeholder="Datum izdavanja">
+                            <label for="standard_issue_date">Datum izdavanja</label>
+                            <input type="date" id="standard_issue_date" name="issue_date" class="form-control issue-date-input" placeholder="Datum izdavanja">
                           </div>
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
-                            <label for="expiry_date">Datum isteka</label>
-                            <input type="date" id="expiry_date" name="expiry_date" class="form-control expiry-date-input" placeholder="Datum isteka">
+                            <label for="standard_expiry_date">Datum isteka</label>
+                            <input type="date" id="standard_expiry_date" name="expiry_date" class="form-control expiry-date-input" placeholder="Datum isteka">
                           </div>
                         </div>
                         <div class="col-md-4">
                           <div class="form-group">
-                            <label for="notes">Napomena</label>
-                            <input type="text" id="notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
+                            <label for="standard_notes">Napomena</label>
+                            <input type="text" id="standard_notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
                           </div>
                         </div>
                       </div>
@@ -376,8 +375,8 @@
                       <div class="row mb-3">
                         <div class="col-12">
                           <div class="form-group">
-                            <label for="auditors">Auditori za standard</label>
-                            <select id="auditors" name="auditors[]" class="form-control select2" multiple>
+                            <label for="standard_auditors">Auditori za standard</label>
+                            <select id="standard_auditors" name="auditors[]" class="form-control select2" multiple>
                               {% for auditor in all_auditors %}
                                 <option value="{{ auditor.id }}">
                                   {{ auditor.ime_prezime }} {% if auditor.kategorija %}({{ auditor.get_kategorija_display }}){% endif %}
@@ -388,7 +387,15 @@
                           </div>
                         </div>
                       </div>
-                    </form>
+                      
+                      <div class="row">
+                        <div class="col-12">
+                          <button type="button" class="btn btn-success" id="addStandardButton" data-company-id="{{ object.id|default:0 }}">
+                            <i class="fas fa-plus"></i> Dodaj standard
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1107,12 +1114,18 @@
 <!-- Inicijalizacija modalnih dijaloga i Select2 komponente -->
 <script>
   $(document).ready(function() {
-    // Inicijalizacija Select2 komponente za izbor auditora
+    // Inicijalizacija Select2 za auditors polje
     $('#auditors').select2({
-      theme: 'bootstrap4',
-      placeholder: 'Izaberite auditore...',
-      allowClear: true,
-      width: '100%'
+        placeholder: "Izaberite auditore...",
+        allowClear: true,
+        width: '100%'
+    });
+    
+    // Inicijalizacija Select2 za standard auditors polje
+    $('#standard_auditors').select2({
+        placeholder: "Izaberite auditore za standard...",
+        allowClear: true,
+        width: '100%'
     });
     
     // Osiguraj da modalni dijalozi budu pravilno inicijalzovani
@@ -1376,6 +1389,95 @@
         
         // Ukloni postojeće event listener-e da izbegnemo duplikate
         $('#addIafEacButton').off('click');
+        $('#addStandardButton').off('click');
+        
+        // Dodaj event listener za dodavanje standarda
+        $('#addStandardButton').on('click', function(e) {
+            console.log('jQuery onClick handler za addStandardButton aktiviran!');
+            e.preventDefault();
+            
+            // Validacija polja
+            var standardId = $('#standard_definition').val();
+            var issueDate = $('#standard_issue_date').val();
+            var expiryDate = $('#standard_expiry_date').val();
+            var notes = $('#standard_notes').val();
+            var auditorIds = $('#standard_auditors').val() || [];
+            
+            if (!standardId) {
+                showMessage('Greška', 'Morate izabrati standard.', 'error');
+                return;
+            }
+            
+            var companyId = $(this).data('company-id');
+            if (!companyId || companyId === 0) {
+                showMessage('Greška', 'Morate prvo sačuvati kompaniju.', 'error');
+                return;
+            }
+            
+            // UI ažuriranje
+            var $btn = $(this);
+            var originalBtnText = $btn.html();
+            $btn.html('<i class="fas fa-spinner fa-spin"></i> Dodajem...');
+            $btn.prop('disabled', true);
+            
+            // AJAX poziv
+            $.ajax({
+                url: '/company/companies/' + companyId + '/standards/add/',
+                type: 'POST',
+                data: {
+                    'standard_definition': standardId,
+                    'issue_date': issueDate,
+                    'expiry_date': expiryDate,
+                    'notes': notes,
+                    'auditors[]': auditorIds,
+                    'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    console.log('Standard uspešno dodat!', response);
+                    
+                    // Resetuj dugme
+                    $btn.html(originalBtnText);
+                    $btn.prop('disabled', false);
+                    
+                    // Očisti formu
+                    $('#standard_definition').val('');
+                    $('#standard_issue_date').val('');
+                    $('#standard_expiry_date').val('');
+                    $('#standard_notes').val('');
+                    $('#standard_auditors').val(null).trigger('change');
+                    
+                    // Prikaži poruku sa nazivom standarda
+                    var standardName = $('#standard_definition option:selected').text();
+                    showMessage('Standard uspešno dodat', 'Standard "' + standardName + '" je uspešno dodat kompaniji!', 'success');
+                    
+                    // Osvežavanje stranice nakon kratke pauze
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Greška pri dodavanju standarda:', status, error);
+                    console.log('Response text:', xhr.responseText);
+                    
+                    // Resetuj dugme
+                    $btn.html(originalBtnText);
+                    $btn.prop('disabled', false);
+                    
+                    // Prikaži grešku
+                    var errorMessage = 'Došlo je do greške pri dodavanju standarda.';
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {
+                        // Ignoriši parse grešku
+                    }
+                    
+                    showMessage('Greška pri dodavanju standarda', errorMessage, 'error');
+                }
+            });
+        });
         
         // Dodaj samo jedan event listener putem jQuery
         $('#addIafEacButton').on('click', function(e) {
