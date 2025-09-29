@@ -73,7 +73,7 @@
                                         </tr>
                                         <tr>
                                             <th>Država</th>
-                                            <td>{{ location.country }}</td>
+                                            <td>{{ location.get_country_display|default:"Nije uneto" }}</td>
                                         </tr>
                                     </table>
                                 </div>

@@ -140,7 +140,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
             </div>
-            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po nazivu, PIB-u ili MB-u">
+            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po nazivu, PIB-u, MB-u ili IAF/EAC kodu">
             {% if search_query %}
             <div class="input-group-append">
               <a href="{% url 'company:list' %}" class="btn btn-secondary">
@@ -157,12 +157,12 @@
           <table id="companiesTable" class="table table-bordered table-striped">
             <thead>
               <tr>
+                <th>Broj sertifikata</th>
                 <th>Naziv</th>
-                <th>PIB</th>
+                <th>IAF/EAC kodovi</th>
                 <th>Grad</th>
-                <th>Industrija</th>
+                <th>Država</th>
                 <th>Standardi</th>
-                <th>Ostale lokacije</th>
                 <th>Status sertifikata</th>
                 <th>Akcije</th>
               </tr>
@@ -170,10 +170,26 @@
             <tbody>
               {% for company in companies %}
               <tr>
+                <td>{{ company.certificate_number|default:"Nije dodeljen" }}</td>
                 <td>{{ company.name }}</td>
-                <td>{{ company.pib }}</td>
-                <td>{{ company.city }}</td>
-                <td>{{ company.get_industry_display }}</td>
+                <td>
+                  {% if company.iaf_eac_codes.all %}
+                    <ul class="list-unstyled mb-0">
+                      {% for company_iaf in company.iaf_eac_codes.all %}
+                        <li class="mb-1">
+                          <span class="badge {% if company_iaf.is_primary %}badge-primary{% else %}badge-secondary{% endif %} p-2">
+                            {{ company_iaf.iaf_eac_code.iaf_code }}
+                            {% if company_iaf.is_primary %}<i class="fas fa-star ml-1" title="Primarni kod"></i>{% endif %}
+                          </span>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <span class="text-muted">Nema kodova</span>
+                  {% endif %}
+                </td>
+                <td>{{ company.get_city_display|default:"Nije uneto" }}</td>
+                <td>{{ company.get_country_display|default:"Nije uneto" }}</td>
                 <td>
                   {% if company.company_standards.all %}
                     <ul class="list-unstyled mb-0">
@@ -217,13 +233,6 @@
                     </ul>
                   {% else %}
                     <span class="text-muted">Nema standarda</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if company.ostalalokacija_set.all %}
-                    <span class="badge badge-info">{{ company.ostalalokacija_set.count }}</span>
-                  {% else %}
-                    <span class="text-muted">0</span>
                   {% endif %}
                 </td>
                 <td>

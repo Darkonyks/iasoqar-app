@@ -41,10 +41,15 @@ class CompanyListView(ListView):
             queryset = queryset.filter(
                 Q(name__icontains=search_query) | 
                 Q(pib__icontains=search_query) | 
-                Q(mb__icontains=search_query)
-            )
+                Q(mb__icontains=search_query) |
+                Q(iaf_eac_codes__iaf_eac_code__iaf_code__icontains=search_query)
+            ).distinct()
         
-        return queryset.order_by('name')
+        # Prefetch related data for better performance
+        return queryset.prefetch_related(
+            'iaf_eac_codes__iaf_eac_code',
+            'company_standards__standard_definition'
+        ).order_by('name')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

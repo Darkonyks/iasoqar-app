@@ -104,7 +104,7 @@ class CompanyForm(forms.ModelForm):
             'visits_per_year', 'audit_days_each', 'oblast_registracije',
             
             # Adresa
-            'street', 'street_number', 'city', 'postal_code',
+            'street', 'street_number', 'city', 'postal_code', 'country',
             
             # Kontakt informacije
             'phone', 'email', 'website',

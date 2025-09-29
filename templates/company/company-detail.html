@@ -439,7 +439,7 @@
                       </tr>
                       <tr>
                         <td>Država:</td>
-                        <td>{{ company.country|default:"Srbija" }}</td>
+                        <td>{{ company.get_country_display|default:"Srbija" }}</td>
                       </tr>
                     </tbody>
                   </table>

@@ -1,10 +1,28 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from .data.serbia_cities import SERBIA_CITY_CHOICES
 from .data.industries import INDUSTRY_CHOICES
+from .data.european_countries import EUROPEAN_COUNTRY_CHOICES
 from datetime import date, timedelta
+
+
+def validate_pib_optional(value):
+    """Validator za PIB koji dozvoljava prazno polje ili tačno 9 cifara"""
+    if value and not value.isdigit():
+        raise ValidationError(_('PIB mora sadržati samo cifre'))
+    if value and len(value) != 9:
+        raise ValidationError(_('PIB mora sadržati tačno 9 cifara'))
+
+
+def validate_mb_optional(value):
+    """Validator za matični broj koji dozvoljava prazno polje ili tačno 8 cifara"""
+    if value and not value.isdigit():
+        raise ValidationError(_('Matični broj mora sadržati samo cifre'))
+    if value and len(value) != 8:
+        raise ValidationError(_('Matični broj mora sadržati tačno 8 cifara'))
 
 class Company(models.Model):
     # Status choices
@@ -26,12 +44,8 @@ class Company(models.Model):
 
     # Basic Information
     name = models.CharField(_("Naziv kompanije"), max_length=200)
-    pib = models.CharField(_("PIB"), max_length=9, blank=True, null=True, validators=[
-        RegexValidator(r'^\d{9}$', _('PIB mora sadržati tačno 9 cifara'))
-    ])
-    mb = models.CharField(_("Matični broj"), max_length=8, blank=True, null=True, validators=[
-        RegexValidator(r'^\d{8}$', _('Matični broj mora sadržati tačno 8 cifara'))
-    ])
+    pib = models.CharField(_("PIB"), max_length=9, blank=True, null=True, validators=[validate_pib_optional])
+    mb = models.CharField(_("Matični broj"), max_length=8, blank=True, null=True, validators=[validate_mb_optional])
     
     # Main Office Address
     street = models.CharField(_("Ulica"), max_length=200, blank=True, null=True)
@@ -45,7 +59,13 @@ class Company(models.Model):
         null=True
     )
     postal_code = models.CharField(_("Poštanski broj"), max_length=10, blank=True, null=True)
-    country = models.CharField(_("Država"), max_length=100, default="Srbija")
+    country = models.CharField(
+        _("Država"),
+        max_length=2,
+        choices=EUROPEAN_COUNTRY_CHOICES,
+        default="RS",
+        help_text=_("Izaberite državu")
+    )
     
     # Contact Information
     phone = models.CharField(_("Telefon"), max_length=50, blank=True, null=True)
@@ -164,7 +184,13 @@ class OstalaLokacija(models.Model):
         null=True
     )
     postal_code = models.CharField(_("Poštanski broj"), max_length=10, blank=True, null=True)
-    country = models.CharField(_("Država"), max_length=100, default="Srbija")
+    country = models.CharField(
+        _("Država"),
+        max_length=2,
+        choices=EUROPEAN_COUNTRY_CHOICES,
+        default="RS",
+        help_text=_("Izaberite državu")
+    )
     notes = models.TextField(_("Napomene"), blank=True, null=True)
     created_at = models.DateTimeField(_("Kreirano"), default=timezone.now)
     updated_at = models.DateTimeField(_("Ažurirano"), auto_now=True)
