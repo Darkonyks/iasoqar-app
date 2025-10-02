@@ -24,7 +24,7 @@ class AuditorListView(LoginRequiredMixin, ListView):
     model = Auditor
     template_name = 'auditor/auditor_list.html'
     context_object_name = 'auditors'
-    paginate_by = 20
+    paginate_by = None  # Onemogući paginaciju za live search
     
     def get_queryset(self):
         queryset = Auditor.objects.all().prefetch_related(

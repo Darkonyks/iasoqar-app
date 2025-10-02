@@ -4,14 +4,12 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block extra_css %}
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.bootstrap4.min.css">
 <style>
-    .filter-card {
-        margin-bottom: 20px;
-    }
-    .table-responsive {
-        margin-top: 20px;
-    }
     .badge-category {
         font-size: 85%;
     }
@@ -27,98 +25,113 @@
     .badge-trainer {
         background-color: #17a2b8;
     }
-    
-    /* Live search styles */
-    .auditor-row.hidden {
-        display: none;
+    .action-buttons {
+        white-space: nowrap;
     }
-    .auditor-row {
-        transition: background-color 0.2s ease;
+    .card {
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.12), 0 1.5px 4px rgba(44, 62, 80, 0.10);
+        border-radius: 1rem;
+        border: none;
+        background: #f8f9fa;
     }
-    .auditor-row.highlight {
-        background-color: #fff3cd !important;
+    .card-body {
+        border-radius: 1rem;
     }
-    #liveSearchInput:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    .table {
+        background: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 8px rgba(44,62,80,0.06);
     }
-    .search-match {
-        background-color: #ffeb3b;
-        font-weight: bold;
-        padding: 0 2px;
+    .table thead th {
+        background: #e9ecef;
+        border: none;
+        font-weight: 600;
+        color: #495057;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f4f8fb;
+    }
+    .btn {
+        border-radius: 0.5rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 6px rgba(44,62,80,0.07);
+    }
+    .btn-info {
+        background: #4fd1c5;
+        border: none;
+        color: white;
+    }
+    .btn-info:hover {
+        background: #38b2ac;
+        color: white;
+    }
+    .btn-primary {
+        background: #6366f1;
+        border: none;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #4338ca;
+        color: white;
+    }
+    .btn-danger {
+        background: #ef4444;
+        border: none;
+        color: white;
+    }
+    .btn-danger:hover {
+        background: #b91c1c;
+        color: white;
+    }
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(99,102,241,0.15);
+    }
+    /* Hover effect for table rows */
+    .table tbody tr:hover {
+        background: #e0e7ff;
+        transition: background 0.2s;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- CSRF Token za JavaScript -->
-{% csrf_token %}
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">{{ title }}</h1>
-                </div>
-            </div>
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
         </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:auditor_create' %}" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Novi auditor
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- /.content-header -->
+  </div>
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ title }}</h3>
-                    <div class="card-tools">
-                        <a href="{% url 'company:auditor_create' %}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Novi auditor
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- Live Search Filter -->
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="form-group mb-0">
-                                        <div class="input-group input-group-lg">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="fas fa-search"></i>
-                                                </span>
-                                            </div>
-                                            <input 
-                                                type="text" 
-                                                id="liveSearchInput" 
-                                                class="form-control form-control-lg" 
-                                                placeholder="Pretraži auditore po imenu, email-u, kategoriji, standardima, IAF/EAC kodovima..."
-                                                autocomplete="off"
-                                            >
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <small class="form-text text-muted mt-2">
-                                            <span id="searchResultsCount"></span>
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Lista auditora -->
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+  <div class="content">
+    <div class="container-fluid">
+      <!-- Search form -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="input-group w-100">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po imenu, email-u, telefonu, kategoriji, standardima ili IAF/EAC kodovima">
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 bg-light rounded-4">
+          <table id="auditorsTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>Ime i prezime</th>
@@ -130,15 +143,9 @@
                                     <th>Akcije</th>
                                 </tr>
                             </thead>
-                            <tbody id="auditorsTableBody">
+                            <tbody>
                                 {% for auditor in auditors %}
-                                <tr class="auditor-row" 
-                                    data-name="{{ auditor.ime_prezime|lower }}"
-                                    data-email="{{ auditor.email|lower }}"
-                                    data-phone="{{ auditor.telefon|lower }}"
-                                    data-category="{{ auditor.get_kategorija_display|lower }}"
-                                    data-standards="{% for standard in auditor.auditor_standardi.all %}{{ standard.standard.code|lower }} {% endfor %}"
-                                    data-iaf-codes="{% for code in auditor.all_iaf_codes %}{{ code|lower }} {% endfor %}">
+                                <tr>
                                     <td>{{ auditor.ime_prezime }}</td>
                                     <td>
                                         {% if auditor.kategorija == 'lead_auditor' %}
@@ -211,18 +218,16 @@
                                         <span class="text-muted">Nema IAF/EAC kodova</span>
                                         {% endif %}
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{% url 'company:auditor_update' auditor.id %}" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'company:auditor_delete' auditor.id %}" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
+                                    <td class="action-buttons">
+                                        <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info" title="Detalji">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'company:auditor_update' auditor.id %}" class="btn btn-sm btn-primary" title="Izmeni">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'company:auditor_delete' auditor.id %}" class="btn btn-sm btn-danger" title="Obriši">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -230,158 +235,65 @@
                                     <td colspan="7" class="text-center">Nema pronađenih auditora</td>
                                 </tr>
                                 {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Paginacija -->
-                    {% if is_paginated %}
-                    <div class="pagination justify-content-center mt-4">
-                        <ul class="pagination">
-                            {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
-                                    <i class="fas fa-angle-double-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
-                                    <i class="fas fa-angle-left"></i>
-                                </a>
-                            </li>
-                            {% endif %}
-                            
-                            {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">{{ num }}</a>
-                            </li>
-                            {% endif %}
-                            {% endfor %}
-                            
-                            {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
-                                    <i class="fas fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.standard %}&standard={{ request.GET.standard }}{% endif %}{% if request.GET.iaf_code %}&iaf_code={{ request.GET.iaf_code }}{% endif %}">
-                                    <i class="fas fa-angle-double-right"></i>
-                                </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+          </tbody>
+          </table>
         </div>
-        
-        <!-- Ovde je bio modal za brisanje auditora, ali sada koristimo redirekciju na stranicu za brisanje -->
-    </section>
-    <!-- /.content -->
+      </div>
+    </div>
+  </div>
 </div>
-<!-- /.content-wrapper -->
 {% endblock %}
 
-{% block extra_js %}
+{% block extra_scripts %}
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
 <script>
-    $(document).ready(function() {
-        'use strict';
-        
-        // Live Search Functionality
-        const searchInput = $('#liveSearchInput');
-        const clearButton = $('#clearSearch');
-        const resultsCount = $('#searchResultsCount');
-        const auditorRows = $('.auditor-row');
-        const totalAuditors = auditorRows.length;
-        
-        // Funkcija za normalizaciju teksta (uklanjanje dijakritika)
-        function normalizeText(text) {
-            return text.toLowerCase()
-                .replace(/č/g, 'c')
-                .replace(/ć/g, 'c')
-                .replace(/š/g, 's')
-                .replace(/ž/g, 'z')
-                .replace(/đ/g, 'd');
-        }
-        
-        // Funkcija za filtriranje auditora
-        function filterAuditors() {
-            const searchTerm = normalizeText(searchInput.val().trim());
-            let visibleCount = 0;
-            
-            if (searchTerm === '') {
-                // Prikaži sve redove
-                auditorRows.removeClass('hidden highlight');
-                resultsCount.text('');
-                return;
-            }
-            
-            auditorRows.each(function() {
-                const $row = $(this);
-                const name = normalizeText($row.data('name') || '');
-                const email = normalizeText($row.data('email') || '');
-                const phone = normalizeText($row.data('phone') || '');
-                const category = normalizeText($row.data('category') || '');
-                const standards = normalizeText($row.data('standards') || '');
-                const iafCodes = normalizeText($row.data('iaf-codes') || '');
-                
-                // Kombinuj sve podatke za pretragu
-                const searchableText = `${name} ${email} ${phone} ${category} ${standards} ${iafCodes}`;
-                
-                // Proveri da li searchTerm postoji u searchableText
-                if (searchableText.includes(searchTerm)) {
-                    $row.removeClass('hidden').addClass('highlight');
-                    visibleCount++;
-                } else {
-                    $row.addClass('hidden').removeClass('highlight');
-                }
-            });
-            
-            // Ažuriraj broj rezultata
-            if (visibleCount === 0) {
-                resultsCount.html('<i class="fas fa-info-circle text-warning"></i> Nema rezultata za "' + searchInput.val() + '"');
-            } else if (visibleCount === totalAuditors) {
-                resultsCount.html('<i class="fas fa-check-circle text-success"></i> Prikazano svih ' + totalAuditors + ' auditora');
-            } else {
-                resultsCount.html('<i class="fas fa-filter text-info"></i> Pronađeno ' + visibleCount + ' od ' + totalAuditors + ' auditora');
-            }
-        }
-        
-        // Event listener za input (live search)
-        searchInput.on('input', function() {
-            filterAuditors();
-        });
-        
-        // Event listener za clear dugme
-        clearButton.on('click', function() {
-            searchInput.val('');
-            filterAuditors();
-            searchInput.focus();
-        });
-        
-        // Keyboard shortcut: Ctrl+F ili Cmd+F za fokusiranje search polja
-        $(document).on('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            
-            // ESC za brisanje pretrage
-            if (e.key === 'Escape' && searchInput.is(':focus')) {
-                searchInput.val('');
-                filterAuditors();
-            }
-        });
-        
-        // Inicijalni prikaz broja auditora
-        resultsCount.html('<i class="fas fa-users text-muted"></i> Ukupno ' + totalAuditors + ' auditora');
+$(function () {
+    // Inicijalizacija DataTable
+    var table = $("#auditorsTable").DataTable({
+      "responsive": true, 
+      "lengthChange": true, 
+      "autoWidth": false,
+      "language": {
+        "search": "Pretraži:",
+        "lengthMenu": "Prikaži _MENU_ redova po stranici",
+        "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ redova",
+        "infoEmpty": "Nema podataka za prikaz",
+        "infoFiltered": "(filtrirano od ukupno _MAX_ redova)",
+        "paginate": {
+          "first": "Prva",
+          "last": "Poslednja",
+          "next": "Sledeća",
+          "previous": "Prethodna"
+        },
+        "zeroRecords": "Nema pronađenih rezultata"
+      },
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      // Sakrivanje podrazumevanog polja za pretragu
+      "searching": true,
+      "dom": '<"row"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"l><"col-md-6"p>>'
     });
+    
+    // Povezivanje našeg polja za pretragu sa DataTable pretragom
+    $('#tableSearch').keyup(function() {
+        table.search($(this).val()).draw();
+    });
+    
+    // Dodavanje dugmadi za export
+    table.buttons().container().appendTo('#auditorsTable_wrapper .col-md-6:eq(0)');
+    
+    // Sakrivanje podrazumevanog polja za pretragu
+    $('#auditorsTable_filter').hide();
+});
 </script>
 {% endblock %}
