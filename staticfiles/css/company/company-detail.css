@@ -94,3 +94,137 @@
   padding-left: 0;
   padding-right: 0;
 }
+
+/* Glavna lokacija styling */
+.card-primary.card-outline {
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card-primary.card-outline:hover {
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.card-primary .card-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-bottom: none;
+  padding: 15px 20px;
+}
+
+.card-primary .card-header .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.card-primary .card-header .card-title i {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.card-primary .card-body {
+  padding: 25px;
+  background-color: #fafbfc;
+}
+
+.card-primary .card-body h5 {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.card-primary .card-body h5 i {
+  margin-right: 10px;
+  color: #007bff;
+  font-size: 1.1rem;
+}
+
+/* Input group styling za glavnu lokaciju */
+.card-primary .input-group {
+  margin-bottom: 0;
+}
+
+.card-primary .input-group-text {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-right: none;
+  color: #495057;
+  font-weight: 500;
+}
+
+.card-primary .input-group .form-control {
+  border-left: none;
+  transition: all 0.3s ease;
+}
+
+.card-primary .input-group .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.card-primary .input-group .form-control:focus + .input-group-append .input-group-text,
+.card-primary .input-group .form-control:focus ~ .input-group-prepend .input-group-text {
+  border-color: #007bff;
+}
+
+/* Label styling */
+.card-primary .form-group label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.card-primary .form-group label i {
+  margin-right: 6px;
+  color: #007bff;
+  width: 16px;
+  text-align: center;
+}
+
+/* Form control styling */
+.card-primary .form-control {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: all 0.3s ease;
+}
+
+.card-primary .form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Select styling */
+.card-primary select.form-control {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding-right: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-primary .card-body {
+    padding: 20px 15px;
+  }
+  
+  .card-primary .card-header {
+    padding: 12px 15px;
+  }
+  
+  .card-primary .card-header .card-title {
+    font-size: 1rem;
+  }
+}

@@ -27,6 +27,26 @@
     .badge-trainer {
         background-color: #17a2b8;
     }
+    
+    /* Live search styles */
+    .auditor-row.hidden {
+        display: none;
+    }
+    .auditor-row {
+        transition: background-color 0.2s ease;
+    }
+    .auditor-row.highlight {
+        background-color: #fff3cd !important;
+    }
+    #liveSearchInput:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    .search-match {
+        background-color: #ffeb3b;
+        font-weight: bold;
+        padding: 0 2px;
+    }
 </style>
 {% endblock %}
 
@@ -62,66 +82,35 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- Filteri -->
-                    <div class="row">
+                    <!-- Live Search Filter -->
+                    <div class="row mb-3">
                         <div class="col-md-12">
-                            <div class="card filter-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">Filteri</h3>
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="card">
                                 <div class="card-body">
-                                    <form method="get" action="{% url 'company:auditor_list' %}">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Kategorija</label>
-                                                    <select name="category" class="form-control">
-                                                        <option value="">-- Sve kategorije --</option>
-                                                        {% for value, label in category_choices %}
-                                                        <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
+                                    <div class="form-group mb-0">
+                                        <div class="input-group input-group-lg">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="fas fa-search"></i>
+                                                </span>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Standard</label>
-                                                    <select name="standard" class="form-control">
-                                                        <option value="">-- Svi standardi --</option>
-                                                        {% for standard in standards %}
-                                                        <option value="{{ standard.id }}" {% if selected_standard == standard.id|stringformat:"i" %}selected{% endif %}>{{ standard.code }} - {{ standard.standard }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>IAF/EAC kod</label>
-                                                    <select name="iaf_code" class="form-control">
-                                                        <option value="">-- Svi IAF/EAC kodovi --</option>
-                                                        {% for code in iaf_codes %}
-                                                        <option value="{{ code.iaf_code }}" {% if selected_iaf_code == code.iaf_code %}selected{% endif %}>{{ code.iaf_code }} - {{ code.title }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 text-right">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-filter"></i> Filtriraj
+                                            <input 
+                                                type="text" 
+                                                id="liveSearchInput" 
+                                                class="form-control form-control-lg" 
+                                                placeholder="Pretraži auditore po imenu, email-u, kategoriji, standardima, IAF/EAC kodovima..."
+                                                autocomplete="off"
+                                            >
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                                    <i class="fas fa-times"></i>
                                                 </button>
-                                                <a href="{% url 'company:auditor_list' %}" class="btn btn-default">
-                                                    <i class="fas fa-times"></i> Poništi filtere
-                                                </a>
                                             </div>
                                         </div>
-                                    </form>
+                                        <small class="form-text text-muted mt-2">
+                                            <span id="searchResultsCount"></span>
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -137,12 +126,19 @@
                                     <th>Email</th>
                                     <th>Telefon</th>
                                     <th>Standardi</th>
+                                    <th>IAF/EAC codes</th>
                                     <th>Akcije</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="auditorsTableBody">
                                 {% for auditor in auditors %}
-                                <tr>
+                                <tr class="auditor-row" 
+                                    data-name="{{ auditor.ime_prezime|lower }}"
+                                    data-email="{{ auditor.email|lower }}"
+                                    data-phone="{{ auditor.telefon|lower }}"
+                                    data-category="{{ auditor.get_kategorija_display|lower }}"
+                                    data-standards="{% for standard in auditor.auditor_standardi.all %}{{ standard.standard.code|lower }} {% endfor %}"
+                                    data-iaf-codes="{% for code in auditor.all_iaf_codes %}{{ code|lower }} {% endfor %}">
                                     <td>{{ auditor.ime_prezime }}</td>
                                     <td>
                                         {% if auditor.kategorija == 'lead_auditor' %}
@@ -203,6 +199,19 @@
                                         {% endif %}
                                     </td>
                                     <td>
+                                        {% if auditor.all_iaf_codes %}
+                                        <ul class="list-unstyled mb-0">
+                                            {% for iaf_code in auditor.all_iaf_codes %}
+                                            <li class="mb-1">
+                                                <span class="badge badge-secondary p-1" style="font-size: 90%;">{{ iaf_code }}</span>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% else %}
+                                        <span class="text-muted">Nema IAF/EAC kodova</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
                                         <div class="btn-group">
                                             <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
@@ -218,7 +227,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="6" class="text-center">Nema pronađenih auditora</td>
+                                    <td colspan="7" class="text-center">Nema pronađenih auditora</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -285,22 +294,94 @@
     $(document).ready(function() {
         'use strict';
         
-        // Globalne varijable
-        var auditorIdToDelete = null;
+        // Live Search Functionality
+        const searchInput = $('#liveSearchInput');
+        const clearButton = $('#clearSearch');
+        const resultsCount = $('#searchResultsCount');
+        const auditorRows = $('.auditor-row');
+        const totalAuditors = auditorRows.length;
         
-        // Inicijalizacija collapse funkcionalnosti za filtere
-        $('.card-header [data-card-widget="collapse"]').click(function() {
-            var $cardBody = $(this).closest('.card').find('.card-body');
-            if ($cardBody.is(':visible')) {
-                $cardBody.slideUp();
-                $(this).find('i').removeClass('fa-minus').addClass('fa-plus');
+        // Funkcija za normalizaciju teksta (uklanjanje dijakritika)
+        function normalizeText(text) {
+            return text.toLowerCase()
+                .replace(/č/g, 'c')
+                .replace(/ć/g, 'c')
+                .replace(/š/g, 's')
+                .replace(/ž/g, 'z')
+                .replace(/đ/g, 'd');
+        }
+        
+        // Funkcija za filtriranje auditora
+        function filterAuditors() {
+            const searchTerm = normalizeText(searchInput.val().trim());
+            let visibleCount = 0;
+            
+            if (searchTerm === '') {
+                // Prikaži sve redove
+                auditorRows.removeClass('hidden highlight');
+                resultsCount.text('');
+                return;
+            }
+            
+            auditorRows.each(function() {
+                const $row = $(this);
+                const name = normalizeText($row.data('name') || '');
+                const email = normalizeText($row.data('email') || '');
+                const phone = normalizeText($row.data('phone') || '');
+                const category = normalizeText($row.data('category') || '');
+                const standards = normalizeText($row.data('standards') || '');
+                const iafCodes = normalizeText($row.data('iaf-codes') || '');
+                
+                // Kombinuj sve podatke za pretragu
+                const searchableText = `${name} ${email} ${phone} ${category} ${standards} ${iafCodes}`;
+                
+                // Proveri da li searchTerm postoji u searchableText
+                if (searchableText.includes(searchTerm)) {
+                    $row.removeClass('hidden').addClass('highlight');
+                    visibleCount++;
+                } else {
+                    $row.addClass('hidden').removeClass('highlight');
+                }
+            });
+            
+            // Ažuriraj broj rezultata
+            if (visibleCount === 0) {
+                resultsCount.html('<i class="fas fa-info-circle text-warning"></i> Nema rezultata za "' + searchInput.val() + '"');
+            } else if (visibleCount === totalAuditors) {
+                resultsCount.html('<i class="fas fa-check-circle text-success"></i> Prikazano svih ' + totalAuditors + ' auditora');
             } else {
-                $cardBody.slideDown();
-                $(this).find('i').removeClass('fa-plus').addClass('fa-minus');
+                resultsCount.html('<i class="fas fa-filter text-info"></i> Pronađeno ' + visibleCount + ' od ' + totalAuditors + ' auditora');
+            }
+        }
+        
+        // Event listener za input (live search)
+        searchInput.on('input', function() {
+            filterAuditors();
+        });
+        
+        // Event listener za clear dugme
+        clearButton.on('click', function() {
+            searchInput.val('');
+            filterAuditors();
+            searchInput.focus();
+        });
+        
+        // Keyboard shortcut: Ctrl+F ili Cmd+F za fokusiranje search polja
+        $(document).on('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            // ESC za brisanje pretrage
+            if (e.key === 'Escape' && searchInput.is(':focus')) {
+                searchInput.val('');
+                filterAuditors();
             }
         });
         
-        // Ovde možete dodati dodatni JavaScript kod po potrebi
+        // Inicijalni prikaz broja auditora
+        resultsCount.html('<i class="fas fa-users text-muted"></i> Ukupno ' + totalAuditors + ' auditora');
     });
 </script>
 {% endblock %}

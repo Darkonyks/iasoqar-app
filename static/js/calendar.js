@@ -3125,7 +3125,9 @@ function initializeCalendar() {
   
   // Initialize FullCalendar
   var calendarEl = document.getElementById('calendar');
-  var calendar = new FullCalendar.Calendar(calendarEl, {
+  
+  // Pripremi opcije za kalendar
+  var calendarOptions = {
     locale: 'sr',
     initialView: 'dayGridMonth',
     height: 'auto',
@@ -3436,12 +3438,41 @@ function initializeCalendar() {
         container: 'body'
       });
     }
-  });
+  };
+  
+  // Dodaj initialDate ako je postavljen window.initialCalendarDate
+  if (typeof window.initialCalendarDate !== 'undefined' && window.initialCalendarDate) {
+    console.log('Postavljanje početnog datuma kalendara:', window.initialCalendarDate);
+    calendarOptions.initialDate = window.initialCalendarDate;
+  }
+  
+  // Kreiraj kalendar sa opcijama
+  var calendar = new FullCalendar.Calendar(calendarEl, calendarOptions);
+  
+  // Učini kalendar dostupnim globalno
+  window.calendar = calendar;
   
   // Render the calendar
   try {
     calendar.render();
     console.log('Calendar rendered successfully');
+    
+    // Nakon renderovanja, navigiraj na početni datum ako je postavljen
+    if (typeof window.initialCalendarDate !== 'undefined' && window.initialCalendarDate) {
+      setTimeout(function() {
+        try {
+          console.log('Navigacija na početni datum:', window.initialCalendarDate);
+          calendar.gotoDate(window.initialCalendarDate);
+          console.log('Uspešno navigiran kalendar na datum:', window.initialCalendarDate);
+          
+          // Osveži događaje nakon navigacije na datum
+          calendar.refetchEvents();
+          console.log('Osvežavanje događaja kalendara...');
+        } catch (e) {
+          console.warn('Greška pri navigaciji na početni datum:', e);
+        }
+      }, 100);
+    }
   } catch (e) {
     console.error('Error rendering calendar:', e);
   }

@@ -29,7 +29,8 @@ class AuditorListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Auditor.objects.all().prefetch_related(
             'auditor_standardi__standard',
-            'auditor_standardi__iaf_eac_links__iaf_eac_code'
+            'auditor_standardi__iaf_eac_links__iaf_eac_code',
+            'direct_iaf_links__iaf_eac_code'  # Za tehničke eksperte - ispravan related_name
         )
         
         # Filtriranje po kategoriji ako je zahtevano
@@ -62,6 +63,24 @@ class AuditorListView(LoginRequiredMixin, ListView):
         context['selected_category'] = self.request.GET.get('category', '')
         context['selected_standard'] = self.request.GET.get('standard', '')
         context['selected_iaf_code'] = self.request.GET.get('iaf_code', '')
+        
+        # Dodaj sve IAF/EAC kodove za svakog auditora
+        for auditor in context['auditors']:
+            iaf_codes_set = set()
+            
+            # 1. Prikupi IAF/EAC kodove iz standarda
+            for auditor_standard in auditor.auditor_standardi.all():
+                for iaf_link in auditor_standard.iaf_eac_links.all():
+                    iaf_codes_set.add(iaf_link.iaf_eac_code.iaf_code)
+            
+            # 2. Prikupi direktno dodeljene IAF/EAC kodove (za tehničke eksperte)
+            # Ispravan related_name je 'direct_iaf_links'
+            if hasattr(auditor, 'direct_iaf_links'):
+                for direct_link in auditor.direct_iaf_links.all():
+                    iaf_codes_set.add(direct_link.iaf_eac_code.iaf_code)
+            
+            # Sortiraj i dodaj kao listu
+            auditor.all_iaf_codes = sorted(list(iaf_codes_set))
         
         return context
 

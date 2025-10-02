@@ -620,6 +620,11 @@ class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za t
         context = super().get_context_data(**kwargs)
         # Add companies for the appointment form
         context['companies'] = Company.objects.all().order_by('name')
+        
+        # Dodaj parametre za početni prikaz kalendara
+        context['initial_month'] = self.request.GET.get('month')
+        context['initial_year'] = self.request.GET.get('year')
+        
         return context
 
 class CalendarEventsView(LoginRequiredMixin, TemplateView):

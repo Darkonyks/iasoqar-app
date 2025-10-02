@@ -362,19 +362,34 @@
       // Za certification_cycle_json je potreban ID parametar koji ćemo prosleđivati dinamički
       // Bazni URL bez ID-a, koji će se formirati dinamički u JS kodu kada dobijemo cycle_id
       window.certificationCycleJsonBaseUrl = '/company/api/cycles/';
+      
+      // Početni datum kalendara će biti postavljen u posebnom script tagu
 
       // Legacy varijabla za kompatibilnost sa starijim kodom
       window.certificationCycleJsonUrl = '/company/api/cycles/0/json/';
     </script>
 
+    <!-- Početni datum kalendara -->
+    <script>
+      {% if initial_month and initial_year %}
+      window.initialCalendarDate = '{{ initial_year }}-{{ initial_month|stringformat:"02d" }}-01';
+      console.log('Postavljen početni datum kalendara iz URL parametara:', window.initialCalendarDate);
+      console.log('URL parametri - mesec: {{ initial_month }}, godina: {{ initial_year }}');
+      {% else %}
+      window.initialCalendarDate = null;
+      console.log('Nema URL parametara za početni datum kalendara');
+      {% endif %}
+    </script>
+
     <!-- Calendar initialization and event handlers -->
-    <script src="{% static 'js/calendar.js' %}?v=2.1"></script>
+    <script src="{% static 'js/calendar.js' %}?v=2.3"></script>
 
     <!-- Inicijalizacija kalendara kada se dokument učita -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        // Inicijalizacija kalendara
-        initializeCalendar();
+        // Inicijalizacija kalendara se vrši direktno u template-u ispod
+        // initializeCalendar() iz calendar.js se ne poziva jer je window.__calendar_prevalidation_active = true
+        console.log('DOMContentLoaded - kalendar će biti inicijalizovan iz template-a');
       });
     </script>
 
@@ -1199,15 +1214,18 @@
           // Dugme: pregled ciklusa
           $('#viewCycleBtn').off('click').on('click', function () {
             const cycleUrl = `/company/cycles/${cycleId}/`;
-            console.log('Navigating to cycle URL:', cycleUrl);
-            window.location.href = cycleUrl;
           });
 
           // Dugme: izmena audita u okviru ciklusa
           $('#editCycleAuditBtn').off('click').on('click', function () {
             if (auditId) {
-              const auditUrl = `/company/audits/${auditId}/update/`;
-              console.log('Navigating to audit update URL:', auditUrl);
+              // Dobijamo trenutni prikaz kalendara
+              const currentDate = calendar.getDate();
+              const currentMonth = currentDate.getMonth() + 1; // getMonth() vraća 0-11
+              const currentYear = currentDate.getFullYear();
+              
+              const auditUrl = `/company/audits/${auditId}/update/?calendar_month=${currentMonth}&calendar_year=${currentYear}`;
+              console.log('Navigating to audit update URL with calendar params:', auditUrl);
               window.location.href = auditUrl;
             } else {
               showErrorModal('Nedostaje ID audita', 'ID audita nije dostupan za ovaj događaj.');
@@ -1473,7 +1491,8 @@
 
         // Inicijalizacija kalendara - za verziju 6.1.18
         try {
-          var calendar = new FullCalendar.Calendar(calendarEl, {
+          // Pripremi kalendar konfiguraciju
+          var calendarConfig = {
             locale: 'sr',
             initialView: 'dayGridMonth',
             height: 'auto',
@@ -1936,15 +1955,80 @@
                 });
               }
             }
-          });
+          };
+
+          // Dodaj initialDate ako je dostupan
+          if (window.initialCalendarDate) {
+            console.log('Dodajem initialDate u kalendar konfiguraciju:', window.initialCalendarDate);
+            calendarConfig.initialDate = window.initialCalendarDate;
+          }
+
+          // Kreiraj kalendar sa konfigurацијом
+          var calendar = new FullCalendar.Calendar(calendarEl, calendarConfig);
 
           // Učini FullCalendar instancu dostupnom globalno da refreshCalendar() ne radi full reload
           window.calendar = calendar;
+          
+          // Renderuj kalendar
           calendar.render();
           console.log('Kalendar je uspešno inicijalizovan!');
-
-          // Globalni stub kako bi izbegli ReferenceError pre inicijalizacije
-          window.addMonthTitleClickListeners = window.addMonthTitleClickListeners || function(){};
+          
+          // Proveri da li postoji success poruka (korisnik se vratio sa stranice za izmenu)
+          const hasSuccessMessage = document.querySelector('.alert-success');
+          
+          // Nakon renderovanja, navigiraj na početni datum ako je postavljen
+          if (window.initialCalendarDate) {
+            setTimeout(function() {
+              try {
+                console.log('Navigacija na početni datum nakon renderovanja:', window.initialCalendarDate);
+                calendar.gotoDate(window.initialCalendarDate);
+                console.log('Uspešno navigiran kalendar na datum:', window.initialCalendarDate);
+                
+                // UVEK osveži događaje nakon navigacije (posebno ako postoji success poruka)
+                setTimeout(function() {
+                  console.log('Osvežavanje događaja kalendara nakon navigacije...');
+                  
+                  // Ako postoji success poruka, dodaj cache busting parametar
+                  if (hasSuccessMessage) {
+                    console.log('Detektovana success poruka - forsiram osvežavanje sa cache buster-om');
+                    const originalEventsUrl = eventsApiUrl; // Koristi originalnu URL varijablu
+                    const cacheBuster = '?_=' + new Date().getTime();
+                    const newEventsUrl = originalEventsUrl + cacheBuster;
+                    
+                    console.log('Postavljanje novog events URL-a:', newEventsUrl);
+                    calendar.setOption('events', newEventsUrl);
+                  }
+                  
+                  calendar.refetchEvents();
+                  console.log('Događaji osveženi');
+                }, 400);
+              } catch (e) {
+                console.warn('Greška pri navigaciji na početni datum:', e);
+              }
+            }, 100);
+          } else if (hasSuccessMessage) {
+            // Ako nema URL parametara, ali postoji success poruka
+            setTimeout(function() {
+              try {
+                console.log('Detektovana success poruka bez URL parametara, osvežavam kalendar...');
+                // Dodaj cache busting parametar
+                const originalEventsUrl = eventsApiUrl;
+                const cacheBuster = '?_=' + new Date().getTime();
+                const newEventsUrl = originalEventsUrl + cacheBuster;
+                
+                console.log('Postavljanje novog events URL-a sa cache buster-om:', newEventsUrl);
+                calendar.setOption('events', newEventsUrl);
+                
+                // Osveži događaje
+                setTimeout(function() {
+                  calendar.refetchEvents();
+                  console.log('Događaji osveženi sa novim URL-om');
+                }, 200);
+              } catch (e) {
+                console.warn('Greška pri osvežavanju kalendara:', e);
+              }
+            }, 300);
+          }
 
           // Delegirani klik handler: radi i posle rerendera, bez potrebe za re-bind
           try {

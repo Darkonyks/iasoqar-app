@@ -346,7 +346,16 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_invalid(form)
     
     def get_success_url(self):
-        return reverse('company:calendar')
+        # Proveravamo da li su prosleđeni parametri za kalendar prikaz
+        calendar_month = self.request.GET.get('calendar_month')
+        calendar_year = self.request.GET.get('calendar_year')
+        
+        if calendar_month and calendar_year:
+            # Vraćamo korisnika na isti mesec i godinu u kalendaru
+            return f"{reverse('company:calendar')}?month={calendar_month}&year={calendar_year}"
+        else:
+            # Fallback na standardni kalendar
+            return reverse('company:calendar')
 
 
 class CycleAuditDeleteView(LoginRequiredMixin, DeleteView):
