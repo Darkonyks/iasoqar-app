@@ -8,6 +8,7 @@ from .standard_models import StandardDefinition, StandardIAFScopeReference, Comp
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from .calendar_models import CalendarEvent, Appointment
 from .cycle_models import CertificationCycle, CycleAudit, CycleStandard
+from .srbija_tim_models import SrbijaTim
 
 # Inline klase za model Company
 class KontaktOsobaInline(admin.TabularInline):
@@ -153,3 +154,46 @@ admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)
 admin.site.register(CycleStandard)
 admin.site.register(CycleAudit)
+
+# Srbija Tim Admin
+@admin.register(SrbijaTim)
+class SrbijaTimAdmin(admin.ModelAdmin):
+    list_display = ['certificate_number', 'company_name', 'visit_date', 'report_sent', 'get_standards_list', 'get_auditors_list']
+    list_filter = ['report_sent', 'visit_date', 'certificate_expiry_date']
+    search_fields = ['certificate_number', 'company_name', 'notes']
+    date_hierarchy = 'visit_date'
+    filter_horizontal = ['standards', 'auditors']
+    readonly_fields = ['created_at', 'updated_at', 'created_by']
+    
+    fieldsets = [
+        ('Osnovne informacije', {
+            'fields': ['certificate_number', 'company_name', 'company']
+        }),
+        ('Standardi i datum isticanja', {
+            'fields': ['standards', 'certificate_expiry_date']
+        }),
+        ('Poseta', {
+            'fields': ['visit_date', 'auditors', 'report_sent']
+        }),
+        ('Dodatne informacije', {
+            'fields': ['notes'],
+            'classes': ['collapse']
+        }),
+        ('Sistemske informacije', {
+            'fields': ['created_at', 'updated_at', 'created_by'],
+            'classes': ['collapse']
+        }),
+    ]
+    
+    def get_standards_list(self, obj):
+        return obj.get_standards_display()
+    get_standards_list.short_description = 'Standardi'
+    
+    def get_auditors_list(self, obj):
+        return obj.get_auditors_display()
+    get_auditors_list.short_description = 'Auditori'
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Ako je novi objekat
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)

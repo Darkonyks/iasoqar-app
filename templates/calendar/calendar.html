@@ -10,6 +10,23 @@
 
 <!-- Modalni stilovi - pojednostavljeni pristup -->
 <style>
+  /* Calendar visibility fix */
+  #calendar {
+    min-height: 600px;
+    height: auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    background: white;
+    padding: 20px;
+  }
+  .fc {
+    width: 100%;
+  }
+  .fc-view-harness {
+    height: 600px !important;
+  }
+  
   /* Standardni stilovi - ne koristimo agresivan override */
   .modal-backdrop.show {
     opacity: 0.5;
@@ -1496,6 +1513,7 @@
             locale: 'sr',
             initialView: 'dayGridMonth',
             height: 'auto',
+            contentHeight: 600,
             headerToolbar: {
               left: 'prev,next today',
               center: 'title',
@@ -1964,14 +1982,37 @@
           }
 
           // Kreiraj kalendar sa konfigurацијом
+          console.log('Kreiranje FullCalendar instance...');
           var calendar = new FullCalendar.Calendar(calendarEl, calendarConfig);
+          console.log('FullCalendar instance kreirana:', calendar);
 
           // Učini FullCalendar instancu dostupnom globalno da refreshCalendar() ne radi full reload
           window.calendar = calendar;
           
           // Renderuj kalendar
-          calendar.render();
-          console.log('Kalendar je uspešno inicijalizovan!');
+          console.log('Pozivanje calendar.render()...');
+          try {
+            calendar.render();
+            console.log('Kalendar je uspešno renderovan!');
+            
+            // Proveri dimenzije nakon renderovanja
+            setTimeout(function() {
+              var calendarHeight = calendarEl.offsetHeight;
+              var calendarWidth = calendarEl.offsetWidth;
+              console.log('Calendar dimensions:', {
+                height: calendarHeight,
+                width: calendarWidth,
+                visible: calendarHeight > 0 && calendarWidth > 0
+              });
+              
+              if (calendarHeight === 0 || calendarWidth === 0) {
+                console.error('KALENDAR NIJE VIDLJIV! Proverite CSS stilove.');
+              }
+            }, 500);
+          } catch (renderError) {
+            console.error('GREŠKA PRI RENDEROVANJU KALENDARA:', renderError);
+            alert('Greška pri renderovanju kalendara: ' + renderError.message);
+          }
           
           // Proveri da li postoji success poruka (korisnik se vratio sa stranice za izmenu)
           const hasSuccessMessage = document.querySelector('.alert-success');
@@ -2435,6 +2476,15 @@
           console.error('Greška prilikom inicijalizacije kalendara:', error);
         }
       }
+      
+      // POZIV INICIJALIZACIJE KALENDARA - mora biti nakon definicije funkcije
+      console.log('Pozivanje initializeCalendar() funkcije...');
+      if (typeof initializeCalendar === 'function') {
+        initializeCalendar();
+      } else {
+        console.error('initializeCalendar funkcija nije definisana!');
+      }
+      
       // Druga verzija openAppointmentModal funkcije je uklonjena jer je duplirana
 
       // Funkcija za ažuriranje svih Bootstrap 4 modalnih kontrola na Bootstrap 5

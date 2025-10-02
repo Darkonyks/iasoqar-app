@@ -1,0 +1,62 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4><i class="icon fas fa-exclamation-triangle"></i> Upozorenje!</h4>
+                        Da li ste sigurni da želite da obrišete ovu posetu?
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Broj sertifikata:</strong> {{ object.certificate_number }}</p>
+                            <p><strong>Naziv firme:</strong> {{ object.company_name }}</p>
+                            <p><strong>Datum posete:</strong> {{ object.visit_date|date:"d.m.Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Standardi:</strong> {{ object.get_standards_display|default:"Nema standarda" }}</p>
+                            <p><strong>Auditori:</strong> {{ object.get_auditors_display|default:"Nema auditora" }}</p>
+                            <p><strong>Status:</strong> 
+                                {% if object.report_sent %}
+                                    <span class="badge badge-success">Poslat izveštaj</span>
+                                {% else %}
+                                    <span class="badge badge-danger">Nije poslat izveštaj</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Da, obriši
+                        </button>
+                        <a href="{% url 'company:srbija_tim_calendar' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Otkaži
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

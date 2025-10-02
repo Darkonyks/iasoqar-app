@@ -42,3 +42,8 @@ from .cycle_models import (
     CycleAudit,
     AuditorReservation,
 )
+
+# Import Srbija Tim models
+from .srbija_tim_models import (
+    SrbijaTim,
+)

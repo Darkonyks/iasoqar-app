@@ -1,0 +1,369 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .fc-event {
+        cursor: pointer;
+    }
+    .legend {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+    }
+    .card {
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.12);
+        border-radius: 1rem;
+        border: none;
+    }
+    #calendar {
+        min-height: 600px;
+        height: auto;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        background: white;
+        padding: 20px;
+    }
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+    .btn {
+        position: relative;
+        z-index: 10;
+    }
+    .fc {
+        width: 100%;
+    }
+    .fc-view-harness {
+        height: 600px !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right">
+                        <a href="{% url 'company:srbija_tim_create' %}" class="btn btn-primary" onclick="console.log('Nova Poseta clicked');">
+                            <i class="fas fa-plus"></i> Nova Poseta
+                        </a>
+                        <a href="{% url 'company:srbija_tim_list' %}" class="btn btn-info" onclick="console.log('Lista Poseta clicked');">
+                            <i class="fas fa-list"></i> Lista Poseta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <!-- Legenda -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #28a745;"></div>
+                    <span>Poslat izveštaj</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #dc3545;"></div>
+                    <span>Nije poslat izveštaj</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #6c757d;"></div>
+                    <span>Istekao sertifikat</span>
+                </div>
+            </div>
+
+            <!-- Kalendar -->
+            <div class="card">
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal za detalje posete -->
+<div class="modal fade" id="visitDetailModal" tabindex="-1" aria-labelledby="visitDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="visitDetailModalLabel">Detalji Posete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Broj sertifikata:</strong> <span id="modal-certificate-number"></span></p>
+                        <p><strong>Naziv firme:</strong> <span id="modal-company-name"></span></p>
+                        <p><strong>Standardi:</strong> <span id="modal-standards"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Datum posete:</strong> <span id="modal-visit-date"></span></p>
+                        <p><strong>Auditori:</strong> <span id="modal-auditors"></span></p>
+                        <p><strong>Status:</strong> <span id="modal-report-status"></span></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p><strong>Datum isticanja sertifikata:</strong> <span id="modal-expiry-date"></span></p>
+                        <p><strong>Napomene:</strong></p>
+                        <p id="modal-notes" class="text-muted"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+                <a href="#" id="modal-edit-btn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Izmeni
+                </a>
+                <a href="#" id="modal-delete-btn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Obriši
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Srbija Tim Calendar - Inicijalizacija...');
+    
+    var calendarEl = document.getElementById('calendar');
+    
+    if (!calendarEl) {
+        console.error('Calendar element not found!');
+        return;
+    }
+    
+    console.log('Calendar element found:', calendarEl);
+    
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        contentHeight: 600,
+        firstDay: 1,  // Ponedeljak kao prvi dan
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'multiMonthYear,dayGridMonth,dayGridWeek,listMonth'
+        },
+        buttonText: {
+            today: 'Danas',
+            year: 'Godina',
+            month: 'Mesec',
+            week: 'Nedelja',
+            list: 'Lista',
+            day: 'Dan'
+        },
+        dayHeaderFormat: { weekday: 'short' },
+        locale: {
+            code: 'sr',
+            week: {
+                dow: 1, // Ponedeljak
+                doy: 4
+            },
+            buttonText: {
+                prev: 'Prethodni',
+                next: 'Sledeći',
+                today: 'Danas',
+                month: 'Mesec',
+                week: 'Nedelja',
+                day: 'Dan',
+                list: 'Lista'
+            },
+            weekText: 'Ned',
+            allDayText: 'Ceo dan',
+            moreLinkText: function(n) {
+                return '+ još ' + n;
+            },
+            noEventsText: 'Nema događaja'
+        },
+        events: {
+            url: '{% url "company:srbija_tim_calendar_json" %}',
+            failure: function(error) {
+                console.error('Error loading events:', error);
+                alert('Greška pri učitavanju događaja: ' + error.message);
+            }
+        },
+        loading: function(isLoading) {
+            console.log('Calendar loading:', isLoading);
+        },
+        eventClick: function(info) {
+            // Popuni modal sa podacima
+            var props = info.event.extendedProps;
+            
+            document.getElementById('modal-certificate-number').textContent = props.certificate_number;
+            document.getElementById('modal-company-name').textContent = props.company_name;
+            document.getElementById('modal-standards').textContent = props.standards || 'Nema standarda';
+            document.getElementById('modal-visit-date').textContent = info.event.start.toLocaleDateString('sr-RS');
+            document.getElementById('modal-auditors').textContent = props.auditors || 'Nema auditora';
+            
+            // Status
+            var statusHtml = props.report_sent 
+                ? '<span class="badge badge-success">Poslat izveštaj</span>' 
+                : '<span class="badge badge-danger">Nije poslat izveštaj</span>';
+            document.getElementById('modal-report-status').innerHTML = statusHtml;
+            
+            // Datum isticanja
+            document.getElementById('modal-expiry-date').textContent = props.certificate_expiry_date 
+                ? new Date(props.certificate_expiry_date).toLocaleDateString('sr-RS')
+                : 'Nije definisan';
+            
+            // Napomene
+            document.getElementById('modal-notes').textContent = props.notes || 'Nema napomena';
+            
+            // Postavi linkove za izmenu i brisanje
+            document.getElementById('modal-edit-btn').href = '/company/srbija-tim/' + info.event.id + '/update/';
+            document.getElementById('modal-delete-btn').href = '/company/srbija-tim/' + info.event.id + '/delete/';
+            
+            // Prikaži modal
+            $('#visitDetailModal').modal('show');
+            
+            // Spreči default akciju
+            info.jsEvent.preventDefault();
+        },
+        eventDidMount: function(info) {
+            // Dodaj tooltip
+            var props = info.event.extendedProps;
+            var tooltipText = props.certificate_number + ' - ' + props.company_name;
+            if (props.report_sent) {
+                tooltipText += ' (Poslat izveštaj)';
+            }
+            info.el.setAttribute('title', tooltipText);
+        }
+    });
+    
+    // Učini kalendar dostupnim globalno
+    window.calendar = calendar;
+    
+    console.log('Rendering calendar...');
+    
+    try {
+        calendar.render();
+        console.log('Calendar rendered successfully!');
+        
+        // Proveri da li je kalendar vidljiv
+        setTimeout(function() {
+            var calendarHeight = calendarEl.offsetHeight;
+            var calendarWidth = calendarEl.offsetWidth;
+            console.log('Calendar dimensions:', {
+                height: calendarHeight,
+                width: calendarWidth,
+                visible: calendarHeight > 0 && calendarWidth > 0
+            });
+            
+            if (calendarHeight === 0 || calendarWidth === 0) {
+                console.error('Calendar is not visible! Check CSS styles.');
+            }
+        }, 500);
+        
+        // Dodaj funkcionalnost za klikabilne naslove meseci u godišnjem prikazu
+        setTimeout(function() {
+            // Delegirani klik handler za naslove meseci
+            try {
+                // Vizuelno: naslov meseca izgleda kao link
+                const styleEl = document.createElement('style');
+                styleEl.textContent = '.fc .fc-multimonth-title{cursor:pointer;color:#0275d8;transition:all 0.2s;} .fc .fc-multimonth-title:hover{text-decoration:underline;background-color:rgba(2,117,216,0.1);}';
+                document.head.appendChild(styleEl);
+
+                document.addEventListener('click', function(ev) {
+                    try {
+                        if (!window.calendar) return;
+                        const view = window.calendar.view;
+                        if (!view || !(view.type === 'multiMonthYear' || (view.type && view.type.includes('multiMonth')))) return;
+
+                        const titleEl = ev.target && ev.target.closest(
+                            '.fc-multimonth-title, .fc-multiMonthYear-header h2, .fc-multimonth-header h2, .fc-multimonth-header'
+                        );
+                        if (!titleEl) return;
+
+                        // Parsiraj mesec iz naslova
+                        const rawText = (titleEl.innerText || titleEl.textContent || '').replace(/\u00A0/g, ' ').trim();
+                        const textParts = rawText.split(' ');
+                        const monthNameCandidate = (textParts[0] || '').trim();
+                        const monthsMap = {
+                            // Latinica
+                            'januar':0,'februar':1,'mart':2,'april':3,'maj':4,'jun':5,'jul':6,'avgust':7,'septembar':8,'oktobar':9,'novembar':10,'decembar':11,
+                            'Januar':0,'Februar':1,'Mart':2,'April':3,'Maj':4,'Jun':5,'Jul':6,'Avgust':7,'Septembar':8,'Oktobar':9,'Novembar':10,'Decembar':11,
+                            // Ćirilica
+                            'јануар':0,'фебруар':1,'март':2,'април':3,'мај':4,'јун':5,'јул':6,'август':7,'септембар':8,'октобар':9,'новембар':10,'децембар':11,
+                            'Јануар':0,'Фебруар':1,'Март':2,'Април':3,'Мај':4,'Јун':5,'Јул':6,'Август':7,'Септембар':8,'Октобар':9,'Новембар':10,'Децембар':11,
+                            // Engleski
+                            'january':0,'february':1,'march':2,'april':3,'may':4,'june':5,'july':6,'august':7,'september':8,'october':9,'november':10,'december':11,
+                            'January':0,'February':1,'March':2,'April':3,'May':4,'June':5,'July':6,'August':7,'September':8,'October':9,'November':10,'December':11
+                        };
+                        let monthIndex = monthsMap[monthNameCandidate];
+                        if (monthIndex === undefined) {
+                            monthIndex = monthsMap[monthNameCandidate.toLowerCase ? monthNameCandidate.toLowerCase() : monthNameCandidate];
+                        }
+                        if (monthIndex !== undefined) {
+                            const year = (view.currentStart || new Date()).getFullYear();
+                            const date = new Date(year, monthIndex, 1);
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            window.calendar.changeView('dayGridMonth', date);
+                            console.log('Prebacivanje na mesečni prikaz:', date);
+                            return;
+                        }
+
+                        // Fallback: pokušaj da dobiješ datum iz DOM-a
+                        let container = titleEl.closest('.fc-multimonth-month, .fc-multiMonthYear-month, .fc-multimonth');
+                        let dateCell = container ? container.querySelector('.fc-daygrid-day[data-date], [data-date]') : null;
+                        const dateStr = dateCell ? dateCell.getAttribute('data-date') : null;
+                        if (dateStr) {
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            window.calendar.changeView('dayGridMonth', dateStr);
+                            console.log('Prebacivanje na mesečni prikaz (fallback):', dateStr);
+                        }
+                    } catch (e) { 
+                        console.error('Greška pri kliku na naslov meseca:', e); 
+                    }
+                }, true);
+                
+                console.log('Delegirani handler za naslove meseci je postavljen');
+            } catch (e) {
+                console.warn('Greška pri postavljanju delegiranog handlera:', e);
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error rendering calendar:', error);
+        alert('Greška pri renderovanju kalendara: ' + error.message);
+    }
+});
+</script>
+{% endblock %}

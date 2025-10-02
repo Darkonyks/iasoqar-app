@@ -1,0 +1,190 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.bootstrap4.min.css">
+<style>
+    .card {
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.12);
+        border-radius: 1rem;
+        border: none;
+        background: #f8f9fa;
+    }
+    .table {
+        background: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    .table thead th {
+        background: #e9ecef;
+        border: none;
+        font-weight: 600;
+        color: #495057;
+    }
+    .table tbody tr:hover {
+        background: #e0e7ff;
+        transition: background 0.2s;
+    }
+    .action-buttons {
+        white-space: nowrap;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right">
+                        <a href="{% url 'company:srbija_tim_calendar' %}" class="btn btn-info">
+                            <i class="fas fa-calendar"></i> Kalendar
+                        </a>
+                        <a href="{% url 'company:srbija_tim_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nova Poseta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            <!-- Search form -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="input-group w-100">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po broju sertifikata, nazivu firme, standardima ili auditorima">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4 bg-light rounded-4">
+                    <table id="visitsTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Broj sertifikata</th>
+                                <th>Naziv firme</th>
+                                <th>Standardi</th>
+                                <th>Datum posete</th>
+                                <th>Auditori</th>
+                                <th>Datum isticanja</th>
+                                <th>Status</th>
+                                <th>Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for visit in visits %}
+                            <tr>
+                                <td>{{ visit.certificate_number }}</td>
+                                <td>{{ visit.company_name }}</td>
+                                <td>{{ visit.get_standards_display|default:"Nema standarda" }}</td>
+                                <td>{{ visit.visit_date|date:"d.m.Y" }}</td>
+                                <td>{{ visit.get_auditors_display|default:"Nema auditora" }}</td>
+                                <td>
+                                    {% if visit.certificate_expiry_date %}
+                                        {{ visit.certificate_expiry_date|date:"d.m.Y" }}
+                                        {% if visit.is_certificate_expired %}
+                                            <span class="badge badge-danger">Istekao</span>
+                                        {% elif visit.days_until_expiry <= 30 %}
+                                            <span class="badge badge-warning">{{ visit.days_until_expiry }} dana</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">Nije definisan</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if visit.report_sent %}
+                                        <span class="badge badge-success">Poslat izveštaj</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Nije poslat</span>
+                                    {% endif %}
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{% url 'company:srbija_tim_detail' visit.id %}" class="btn btn-sm btn-info" title="Detalji">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'company:srbija_tim_update' visit.id %}" class="btn btn-sm btn-primary" title="Izmeni">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'company:srbija_tim_delete' visit.id %}" class="btn btn-sm btn-danger" title="Obriši">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center">Nema pronađenih poseta</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
+<script>
+$(function () {
+    var table = $("#visitsTable").DataTable({
+        "responsive": true, 
+        "lengthChange": true, 
+        "autoWidth": false,
+        "language": {
+            "search": "Pretraži:",
+            "lengthMenu": "Prikaži _MENU_ redova po stranici",
+            "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ poseta",
+            "infoEmpty": "Nema podataka za prikaz",
+            "infoFiltered": "(filtrirano od ukupno _MAX_ poseta)",
+            "paginate": {
+                "first": "Prva",
+                "last": "Poslednja",
+                "next": "Sledeća",
+                "previous": "Prethodna"
+            },
+            "zeroRecords": "Nema pronađenih rezultata"
+        },
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "searching": true,
+        "order": [[3, 'desc']],  // Sortiraj po datumu posete (najnovije prvo)
+        "dom": '<"row"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"l><"col-md-6"p>>'
+    });
+    
+    $('#tableSearch').keyup(function() {
+        table.search($(this).val()).draw();
+    });
+    
+    table.buttons().container().appendTo('#visitsTable_wrapper .col-md-6:eq(0)');
+    $('#visitsTable_filter').hide();
+});
+</script>
+{% endblock %}

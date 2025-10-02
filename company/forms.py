@@ -6,6 +6,7 @@ from .models import Company, IAFEACCode, CompanyIAFEACCode
 from .cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditorReservation, zaokruzi_na_veci_broj
 from .standard_models import StandardDefinition, CompanyStandard
 from .auditor_models import Auditor
+from .srbija_tim_models import SrbijaTim
 from .audit_utils import is_auditor_qualified_for_company, is_auditor_qualified_for_audit
 from datetime import datetime, timedelta, date
 import json
@@ -657,3 +658,97 @@ class CycleAuditForm(forms.ModelForm):
         
         logger.info("CycleAuditForm.save završena")
         return instance
+
+
+class SrbijaTimForm(forms.ModelForm):
+    """
+    Forma za kreiranje i ažuriranje Srbija Tim poseta
+    """
+    
+    class Meta:
+        model = SrbijaTim
+        fields = [
+            'certificate_number',
+            'company_name',
+            'company',
+            'standards',
+            'certificate_expiry_date',
+            'auditors',
+            'visit_date',
+            'report_sent',
+            'notes'
+        ]
+        widgets = {
+            'certificate_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Unesite broj sertifikata'
+            }),
+            'company_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Unesite naziv firme'
+            }),
+            'company': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'standards': forms.SelectMultiple(attrs={
+                'class': 'form-control',
+                'size': '5'
+            }),
+            'certificate_expiry_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'auditors': forms.SelectMultiple(attrs={
+                'class': 'form-control',
+                'size': '5'
+            }),
+            'visit_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'report_sent': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'notes': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Dodatne napomene...'
+            }),
+        }
+        labels = {
+            'certificate_number': _('Broj sertifikata'),
+            'company_name': _('Naziv firme'),
+            'company': _('Kompanija (opciono)'),
+            'standards': _('Standardi'),
+            'certificate_expiry_date': _('Datum isticanja sertifikata'),
+            'auditors': _('Auditori'),
+            'visit_date': _('Datum održanog sastanka'),
+            'report_sent': _('Poslat izveštaj'),
+            'notes': _('Napomene'),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Postavi queryset za auditore
+        self.fields['auditors'].queryset = Auditor.objects.all().order_by('ime_prezime')
+        
+        # Postavi queryset za standarde
+        self.fields['standards'].queryset = StandardDefinition.objects.all().order_by('code')
+        
+        # Postavi queryset za kompanije
+        self.fields['company'].queryset = Company.objects.all().order_by('name')
+        self.fields['company'].required = False
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        
+        # Validacija datuma
+        visit_date = cleaned_data.get('visit_date')
+        certificate_expiry_date = cleaned_data.get('certificate_expiry_date')
+        
+        if visit_date and certificate_expiry_date:
+            if visit_date > certificate_expiry_date:
+                self.add_error('visit_date', 'Datum posete ne može biti nakon isticanja sertifikata')
+        
+        return cleaned_data
