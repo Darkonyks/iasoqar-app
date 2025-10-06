@@ -360,8 +360,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const csrftoken = getCookie('csrftoken');
         
-        // Formatiranje datuma za backend (YYYY-MM-DD)
-        const formattedDate = newDate.toISOString().split('T')[0];
+        // Formatiranje datuma za backend (YYYY-MM-DD) - koristi lokalno vreme, ne UTC
+        const year = newDate.getFullYear();
+        const month = String(newDate.getMonth() + 1).padStart(2, '0');
+        const day = String(newDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
         
         // Ekstraktuj vreme ako postoji (za nedeljni/dnevni prikaz)
         let formattedTime = null;
@@ -371,6 +374,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const minutes = String(newDate.getMinutes()).padStart(2, '0');
             formattedTime = `${hours}:${minutes}:00`;
         }
+        
+        console.log('Originalni datum:', newDate);
+        console.log('Formatirani datum:', formattedDate);
+        console.log('Formatirano vreme:', formattedTime);
         
         const payload = {
             visit_date: formattedDate

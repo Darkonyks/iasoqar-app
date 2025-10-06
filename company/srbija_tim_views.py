@@ -60,15 +60,41 @@ class SrbijaTimAuditorScheduleView(LoginRequiredMixin, ListView):
     context_object_name = 'visits'
     
     def get_queryset(self):
-        return SrbijaTim.objects.all().prefetch_related(
+        queryset = SrbijaTim.objects.all().prefetch_related(
             'standards',
             'auditors',
             'company'
-        ).select_related('created_by').order_by('-visit_date', 'visit_time')
+        ).select_related('created_by')
+        
+        # Filtriranje po datumu
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        
+        if date_from:
+            try:
+                from datetime import datetime
+                date_from_obj = datetime.strptime(date_from, '%Y-%m-%d').date()
+                queryset = queryset.filter(visit_date__gte=date_from_obj)
+            except ValueError:
+                pass
+        
+        if date_to:
+            try:
+                from datetime import datetime
+                date_to_obj = datetime.strptime(date_to, '%Y-%m-%d').date()
+                queryset = queryset.filter(visit_date__lte=date_to_obj)
+            except ValueError:
+                pass
+        
+        return queryset.order_by('-visit_date', 'visit_time')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Srbija Tim - Raspored Auditora'
+        
+        # Prosleđivanje filter parametara u template
+        context['date_from'] = self.request.GET.get('date_from', '')
+        context['date_to'] = self.request.GET.get('date_to', '')
         
         # Grupisanje po auditorima
         from collections import defaultdict

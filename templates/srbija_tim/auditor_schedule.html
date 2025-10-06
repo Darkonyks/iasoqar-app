@@ -31,6 +31,12 @@
         text-align: center;
         color: #6c757d;
     }
+    .form-inline .form-group {
+        margin-bottom: 0;
+    }
+    .form-inline .form-control {
+        margin-right: 10px;
+    }
 </style>
 {% endblock %}
 
@@ -61,6 +67,31 @@
 
     <div class="content">
         <div class="container-fluid">
+            <!-- Filter forma -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter"></i> Filteri</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="form-inline">
+                        <div class="form-group mr-3">
+                            <label for="date_from" class="mr-2">Datum od:</label>
+                            <input type="date" id="date_from" name="date_from" class="form-control" value="{{ date_from }}">
+                        </div>
+                        <div class="form-group mr-3">
+                            <label for="date_to" class="mr-2">Datum do:</label>
+                            <input type="date" id="date_to" name="date_to" class="form-control" value="{{ date_to }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mr-2">
+                            <i class="fas fa-search"></i> Filtriraj
+                        </button>
+                        <a href="{% url 'company:srbija_tim_auditor_schedule' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Resetuj
+                        </a>
+                    </form>
+                </div>
+            </div>
+            
             {% if auditor_visits %}
                 {% for auditor, visits in auditor_visits.items %}
                 <div class="card auditor-card shadow-sm">
