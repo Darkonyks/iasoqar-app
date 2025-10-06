@@ -3,9 +3,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 from .srbija_tim_models import SrbijaTim
 from .forms import SrbijaTimForm
 import logging
+import json
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -135,11 +140,21 @@ def srbija_tim_calendar_json(request):
         if visit.is_certificate_expired():
             color = '#6c757d'  # Siva - istekao sertifikat
         
+        # Ako postoji vreme, kombinuj datum i vreme (proveri da li polje postoji)
+        visit_time = getattr(visit, 'visit_time', None)
+        if visit_time:
+            start_datetime = datetime.combine(visit.visit_date, visit_time)
+            event_start = start_datetime.isoformat()
+            all_day = False
+        else:
+            event_start = visit.visit_date.isoformat()
+            all_day = True
+        
         events.append({
             'id': visit.id,
             'title': f'{visit.certificate_number} - {visit.company_name}',
-            'start': visit.visit_date.isoformat(),
-            'allDay': True,
+            'start': event_start,
+            'allDay': all_day,
             'color': color,
             'extendedProps': {
                 'certificate_number': visit.certificate_number,
@@ -149,7 +164,94 @@ def srbija_tim_calendar_json(request):
                 'report_sent': visit.report_sent,
                 'certificate_expiry_date': visit.certificate_expiry_date.isoformat() if visit.certificate_expiry_date else None,
                 'notes': visit.notes or '',
+                'visit_time': visit_time.isoformat() if visit_time else None,
             }
         })
     
     return JsonResponse(events, safe=False)
+
+
+@login_required
+@require_http_methods(["POST"])
+def srbija_tim_update_date(request, pk):
+    """
+    Ažuriranje datuma i vremena posete preko drag & drop u kalendaru
+    """
+    try:
+        visit = get_object_or_404(SrbijaTim, pk=pk)
+        
+        # Parsiranje JSON podataka iz zahteva
+        data = json.loads(request.body)
+        new_date_str = data.get('visit_date')
+        new_time_str = data.get('visit_time')  # Opciono vreme
+        
+        if not new_date_str:
+            return JsonResponse({
+                'success': False,
+                'message': 'Datum nije prosleđen.'
+            }, status=400)
+        
+        # Parsiranje datuma
+        try:
+            new_date = datetime.strptime(new_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Neispravan format datuma.'
+            }, status=400)
+        
+        # Parsiranje vremena (opciono)
+        new_time = None
+        if new_time_str:
+            try:
+                new_time = datetime.strptime(new_time_str, '%H:%M:%S').time()
+            except ValueError:
+                try:
+                    # Pokušaj sa formatom bez sekundi
+                    new_time = datetime.strptime(new_time_str, '%H:%M').time()
+                except ValueError:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Neispravan format vremena.'
+                    }, status=400)
+        
+        # Ažuriranje datuma i vremena
+        old_date = visit.visit_date
+        old_time = getattr(visit, 'visit_time', None)
+        visit.visit_date = new_date
+        
+        # Postavi visit_time samo ako polje postoji u modelu
+        if hasattr(visit, 'visit_time'):
+            visit.visit_time = new_time
+        
+        visit.save()
+        
+        log_message = f'Srbija Tim poseta {visit.certificate_number} - datum promenjen sa {old_date} na {new_date}'
+        if new_time:
+            log_message += f', vreme: {old_time or "N/A"} -> {new_time}'
+        log_message += f' od strane korisnika {request.user.username}'
+        
+        logger.info(log_message)
+        
+        response_data = {
+            'success': True,
+            'message': 'Datum posete je uspešno ažuriran.',
+            'new_date': new_date.isoformat()
+        }
+        if new_time:
+            response_data['new_time'] = new_time.isoformat()
+            response_data['message'] = 'Datum i vreme posete su uspešno ažurirani.'
+        
+        return JsonResponse(response_data)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'message': 'Neispravan JSON format.'
+        }, status=400)
+    except Exception as e:
+        logger.error(f'Greška pri ažuriranju datuma Srbija Tim posete: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'message': f'Greška pri ažuriranju datuma: {str(e)}'
+        }, status=500)

@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'multiMonthYear,dayGridMonth,dayGridWeek,listMonth'
+            right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay,listMonth'
         },
         buttonText: {
             today: 'Danas',
@@ -263,8 +263,184 @@ document.addEventListener('DOMContentLoaded', function() {
                 tooltipText += ' (Poslat izveštaj)';
             }
             info.el.setAttribute('title', tooltipText);
+        },
+        // Omogući drag & drop
+        editable: true,
+        eventStartEditable: true,
+        eventDurationEditable: false,
+        // Handler za drag-and-drop
+        eventDrop: function(info) {
+            const event = info.event;
+            const visitId = event.id;
+            const newDate = event.start;
+            
+            console.log('Srbija Tim poseta premeštena:', {
+                visitId: visitId,
+                newDate: newDate
+            });
+            
+            // Prikaži SweetAlert2 dijalog za potvrdu
+            if (typeof Swal !== 'undefined') {
+                // Formatiranje datuma i vremena
+                const formattedDate = newDate.toLocaleDateString('sr-RS', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                
+                // Proveri da li ima vreme
+                const hasTime = newDate.getHours() !== 0 || newDate.getMinutes() !== 0;
+                let dateTimeString = formattedDate;
+                
+                if (hasTime) {
+                    const formattedTime = newDate.toLocaleTimeString('sr-RS', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    dateTimeString = `${formattedDate} u ${formattedTime}`;
+                }
+                
+                Swal.fire({
+                    title: hasTime ? 'Promena datuma i vremena posete' : 'Promena datuma posete',
+                    html: `Da li ste sigurni da želite da promenite ${hasTime ? 'datum i vreme' : 'datum'} posete za firmu <strong>${event.extendedProps.company_name}</strong> na <strong>${dateTimeString}</strong>?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Potvrdi',
+                    cancelButtonText: 'Otkaži',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    focusCancel: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Korisnik je potvrdio, ažuriraj datum na serveru
+                        updateSrbijaTimVisitDate(visitId, newDate, info);
+                    } else {
+                        // Korisnik je otkazao, vrati na originalnu poziciju
+                        info.revert();
+                    }
+                });
+            } else {
+                // Fallback na standardni confirm
+                const confirmed = confirm('Da li ste sigurni da želite da promenite datum posete?');
+                if (confirmed) {
+                    updateSrbijaTimVisitDate(visitId, newDate, info);
+                } else {
+                    info.revert();
+                }
+            }
         }
     });
+    
+    // Funkcija za ažuriranje datuma Srbija Tim posete
+    function updateSrbijaTimVisitDate(visitId, newDate, info) {
+        // CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Formatiranje datuma za backend (YYYY-MM-DD)
+        const formattedDate = newDate.toISOString().split('T')[0];
+        
+        // Ekstraktuj vreme ako postoji (za nedeljni/dnevni prikaz)
+        let formattedTime = null;
+        if (newDate.getHours() !== 0 || newDate.getMinutes() !== 0) {
+            // Ima vreme, formatuj ga
+            const hours = String(newDate.getHours()).padStart(2, '0');
+            const minutes = String(newDate.getMinutes()).padStart(2, '0');
+            formattedTime = `${hours}:${minutes}:00`;
+        }
+        
+        const payload = {
+            visit_date: formattedDate
+        };
+        
+        if (formattedTime) {
+            payload.visit_time = formattedTime;
+        }
+        
+        console.log('Slanje podataka:', payload);
+        
+        $.ajax({
+            url: '/company/srbija-tim/' + visitId + '/update-date/',
+            type: 'POST',
+            data: JSON.stringify(payload),
+            contentType: 'application/json',
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                console.log('Datum uspešno ažuriran:', response);
+                if (response.success) {
+                    // Prikaži success poruku
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Uspešno!',
+                            text: response.message || 'Datum posete je uspešno promenjen.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                    // Osveži kalendar
+                    window.calendar.refetchEvents();
+                } else {
+                    // Server vratio success: false
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Greška',
+                            text: response.message || 'Nije moguće promeniti datum posete.',
+                            icon: 'error',
+                            confirmButtonText: 'U redu'
+                        });
+                    } else {
+                        alert('Greška: ' + (response.message || 'Nije moguće promeniti datum posete.'));
+                    }
+                    info.revert();
+                    window.calendar.refetchEvents();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Greška pri ažuriranju datuma:', error);
+                console.error('Response:', xhr.responseText);
+                
+                let errorMessage = 'Došlo je do greške pri ažuriranju datuma posete.';
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.message) {
+                        errorMessage = response.message;
+                    }
+                } catch (e) {
+                    // Nije JSON odgovor
+                }
+                
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Greška',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'U redu'
+                    });
+                } else {
+                    alert('Greška: ' + errorMessage);
+                }
+                info.revert();
+                window.calendar.refetchEvents();
+            }
+        });
+    }
     
     // Učini kalendar dostupnim globalno
     window.calendar = calendar;

@@ -66,6 +66,14 @@ class SrbijaTim(models.Model):
         help_text=_('Datum kada je održan sastanak/poseta')
     )
     
+    # Vreme održanog sastanka (opciono)
+    visit_time = models.TimeField(
+        _('Vreme održanog sastanka'),
+        null=True,
+        blank=True,
+        help_text=_('Vreme kada je održan sastanak/poseta (opciono)')
+    )
+    
     # Status - Poslat izveštaj (checkbox)
     report_sent = models.BooleanField(
         _('Poslat izveštaj'),

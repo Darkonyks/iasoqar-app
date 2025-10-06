@@ -8,7 +8,7 @@ from .views_cycles import (CertificationCycleListView, CertificationCycleDetailV
                          CycleAuditUpdateView, CycleAuditDeleteView)
 from .srbija_tim_views import (SrbijaTimCalendarView, SrbijaTimListView, SrbijaTimCreateView, 
                                SrbijaTimUpdateView, SrbijaTimDeleteView, SrbijaTimDetailView, 
-                               srbija_tim_calendar_json)
+                               srbija_tim_calendar_json, srbija_tim_update_date)
 from .views import (
     CalendarView, 
     CalendarEventsView, 
@@ -179,5 +179,6 @@ urlpatterns = [
     path('srbija-tim/<int:pk>/', SrbijaTimDetailView.as_view(), name='srbija_tim_detail'),
     path('srbija-tim/<int:pk>/update/', SrbijaTimUpdateView.as_view(), name='srbija_tim_update'),
     path('srbija-tim/<int:pk>/delete/', SrbijaTimDeleteView.as_view(), name='srbija_tim_delete'),
+    path('srbija-tim/<int:pk>/update-date/', srbija_tim_update_date, name='srbija_tim_update_date'),
     path('srbija-tim/api/calendar/', srbija_tim_calendar_json, name='srbija_tim_calendar_json'),
 ]

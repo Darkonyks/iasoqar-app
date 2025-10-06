@@ -959,3 +959,7 @@ INFO 2025-09-29 21:17:05,816 views_ajax 58780 47324 POST podaci: <QueryDict: {'i
 INFO 2025-09-29 21:17:05,828 views_ajax 58780 47324 IAF/EAC kod ID: 1, is_primary: False, notes: 
 INFO 2025-09-29 21:17:05,840 views_ajax 58780 47324 Kreiranje nove veze...
 INFO 2025-09-29 21:17:05,848 views_ajax 58780 47324 Veza uspešno kreirana: GeoBiz123 - 01a - Growing of crops
+INFO 2025-10-06 10:24:17,967 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-02 na 2025-10-08 od strane korisnika admin
+INFO 2025-10-06 10:24:23,801 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-08 od strane korisnika admin
+INFO 2025-10-06 10:24:32,139 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-07 od strane korisnika admin
+INFO 2025-10-06 10:24:40,417 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-07 na 2025-10-07 od strane korisnika admin

@@ -1482,6 +1482,83 @@
       }
       // Duplikat openAuditDayModal funkcije je uklonjen
 
+      // Funkcija za osvežavanje kalendara
+      function refreshCalendar() {
+        if (window.calendar) {
+          console.log('Osvežavanje kalendara...');
+          window.calendar.refetchEvents();
+        } else {
+          console.warn('Kalendar nije dostupan za osvežavanje');
+        }
+      }
+
+      // Funkcija za prikazivanje modala za potvrdu promene datuma
+      function showDateChangeConfirmationModal(event, newDate, callback) {
+        // Formatiranje datuma za prikaz
+        const formattedDate = newDate.toLocaleDateString('sr-RS', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        // Priprema teksta za modal u zavisnosti od tipa događaja
+        const eventType = (event.extendedProps && (event.extendedProps.eventType || event.extendedProps.type)) || null;
+        let title, message, eventTitle;
+        
+        // Dobijanje naslova događaja za prikaz u modalu
+        eventTitle = event.title || 'Događaj';
+        
+        if (eventType === 'audit_day') {
+          title = 'Promena datuma audit dana';
+          message = `Da li ste sigurni da želite da promenite datum audit dana na ${formattedDate}?`;
+        } else if (eventType === 'cycle_audit') {
+          title = 'Promena planiranog datuma audita';
+          message = `Da li ste sigurni da želite da promenite datum audita na ${formattedDate}?`;
+        } else if (eventType === 'appointment') {
+          title = 'Promena datuma sastanka';
+          message = `Da li ste sigurni da želite da promenite datum sastanka "${eventTitle}" na ${formattedDate}?`;
+        } else {
+          title = 'Promena datuma događaja';
+          message = `Da li ste sigurni da želite da promenite datum događaja na ${formattedDate}?`;
+        }
+        
+        // Koristi SweetAlert2 za lepši i moderniji prikaz modala
+        if (typeof Swal !== 'undefined') {
+          // Koristi SweetAlert2 ako je dostupan
+          Swal.fire({
+            title: title,
+            html: message,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Potvrdi',
+            cancelButtonText: 'Otkaži',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            focusCancel: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              if (typeof callback === 'function') {
+                callback(true);
+              }
+            } else {
+              if (typeof callback === 'function') {
+                callback(false);
+              }
+            }
+          });
+        } else {
+          // Fallback na standardni confirm dijalog ako SweetAlert2 nije dostupan
+          const confirmed = confirm(title + '\n\n' + message);
+          if (typeof callback === 'function') {
+            callback(confirmed);
+          }
+        }
+      }
+
       function initializeCalendar() {
         console.log('Pokretanje inicijalizacije kalendara (v6.1.18)...');
 
@@ -1518,6 +1595,14 @@
               left: 'prev,next today',
               center: 'title',
               right: 'multiMonthYear,dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+              today: 'Danas',
+              year: 'Godina',
+              month: 'Mesec',
+              week: 'Nedelja',
+              day: 'Dan',
+              list: 'Lista'
             },
             // U bundlovanoj verziji FullCalendar-a, pluginovi su već uključeni
             // Nije potrebno eksplicitno navođenje pluginova
