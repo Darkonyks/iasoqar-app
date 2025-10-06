@@ -226,9 +226,16 @@ document.addEventListener('DOMContentLoaded', function() {
             var props = info.event.extendedProps;
             
             document.getElementById('modal-certificate-number').textContent = props.certificate_number;
-            document.getElementById('modal-company-name').textContent = props.company_name;
+            document.getElementById('modal-company-name').textContent = props.company_name || 'N/A';
             document.getElementById('modal-standards').textContent = props.standards || 'Nema standarda';
-            document.getElementById('modal-visit-date').textContent = info.event.start.toLocaleDateString('sr-RS');
+            
+            // Formatiranje datuma i vremena
+            let visitDateText = info.event.start.toLocaleDateString('sr-RS');
+            if (props.visit_time) {
+                visitDateText += ' u ' + props.visit_time.substring(0, 5); // HH:MM
+            }
+            document.getElementById('modal-visit-date').textContent = visitDateText;
+            
             document.getElementById('modal-auditors').textContent = props.auditors || 'Nema auditora';
             
             // Status

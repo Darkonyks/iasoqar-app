@@ -6,9 +6,9 @@ from .location_views import LocationListView, LocationDetailView, LocationCreate
 from .views_cycles import (CertificationCycleListView, CertificationCycleDetailView, CertificationCycleCreateView, 
                          CertificationCycleUpdateView, CertificationCycleDeleteView, CycleAuditCreateView, 
                          CycleAuditUpdateView, CycleAuditDeleteView)
-from .srbija_tim_views import (SrbijaTimCalendarView, SrbijaTimListView, SrbijaTimCreateView, 
-                               SrbijaTimUpdateView, SrbijaTimDeleteView, SrbijaTimDetailView, 
-                               srbija_tim_calendar_json, srbija_tim_update_date)
+from .srbija_tim_views import (SrbijaTimCalendarView, SrbijaTimListView, SrbijaTimAuditorScheduleView,
+                               SrbijaTimCreateView, SrbijaTimUpdateView, SrbijaTimDeleteView, 
+                               SrbijaTimDetailView, srbija_tim_calendar_json, srbija_tim_update_date)
 from .views import (
     CalendarView, 
     CalendarEventsView, 
@@ -175,6 +175,7 @@ urlpatterns = [
     # Srbija Tim URLs
     path('srbija-tim/', SrbijaTimCalendarView.as_view(), name='srbija_tim_calendar'),
     path('srbija-tim/list/', SrbijaTimListView.as_view(), name='srbija_tim_list'),
+    path('srbija-tim/auditor-schedule/', SrbijaTimAuditorScheduleView.as_view(), name='srbija_tim_auditor_schedule'),
     path('srbija-tim/create/', SrbijaTimCreateView.as_view(), name='srbija_tim_create'),
     path('srbija-tim/<int:pk>/', SrbijaTimDetailView.as_view(), name='srbija_tim_detail'),
     path('srbija-tim/<int:pk>/update/', SrbijaTimUpdateView.as_view(), name='srbija_tim_update'),

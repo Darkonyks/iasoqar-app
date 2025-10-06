@@ -19,21 +19,14 @@ class SrbijaTim(models.Model):
         max_length=100,
         help_text=_('Broj sertifikata kompanije')
     )
-    company_name = models.CharField(
-        _('Naziv firme'),
-        max_length=255,
-        help_text=_('Naziv kompanije')
-    )
     
-    # Veza sa Company modelom (opciono, za povezivanje sa postojećim kompanijama)
+    # Veza sa Company modelom (obavezno)
     company = models.ForeignKey(
         Company,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.CASCADE,
         related_name='srbija_tim_visits',
         verbose_name=_('Kompanija'),
-        help_text=_('Povezana kompanija iz baze (opciono)')
+        help_text=_('Kompanija iz baze')
     )
     
     # Standardi - Many-to-Many veza
@@ -112,7 +105,7 @@ class SrbijaTim(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.certificate_number} - {self.company_name} ({self.visit_date})"
+        return f"{self.certificate_number} - {self.company.name} ({self.visit_date})"
     
     def clean(self):
         """Validacija podataka"""

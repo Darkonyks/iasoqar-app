@@ -91,9 +91,16 @@
                             {% for visit in visits %}
                             <tr>
                                 <td>{{ visit.certificate_number }}</td>
-                                <td>{{ visit.company_name }}</td>
+                                <td>
+                                    <a href="{% url 'company:detail' visit.company.id %}">{{ visit.company.name }}</a>
+                                </td>
                                 <td>{{ visit.get_standards_display|default:"Nema standarda" }}</td>
-                                <td>{{ visit.visit_date|date:"d.m.Y" }}</td>
+                                <td>
+                                    {{ visit.visit_date|date:"d.m.Y" }}
+                                    {% if visit.visit_time %}
+                                        <br><small class="text-muted">{{ visit.visit_time|time:"H:i" }}</small>
+                                    {% endif %}
+                                </td>
                                 <td>{{ visit.get_auditors_display|default:"Nema auditora" }}</td>
                                 <td>
                                     {% if visit.certificate_expiry_date %}

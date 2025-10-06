@@ -963,3 +963,18 @@ INFO 2025-10-06 10:24:17,967 srbija_tim_views 43788 46816 Srbija Tim poseta 123 
 INFO 2025-10-06 10:24:23,801 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-08 od strane korisnika admin
 INFO 2025-10-06 10:24:32,139 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-07 od strane korisnika admin
 INFO 2025-10-06 10:24:40,417 srbija_tim_views 43788 46816 Srbija Tim poseta 123 - datum promenjen sa 2025-10-07 na 2025-10-07 od strane korisnika admin
+INFO 2025-10-06 12:49:55,490 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-07 na 2025-10-06 od strane korisnika admin
+INFO 2025-10-06 12:50:00,547 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-06 na 2025-10-07, vreme: N/A -> 03:00:00 od strane korisnika admin
+INFO 2025-10-06 12:50:06,671 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-07 na 2025-10-09, vreme: 03:00:00 -> 03:00:00 od strane korisnika admin
+INFO 2025-10-06 12:50:14,431 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-09 na 2025-10-09, vreme: 03:00:00 -> 01:00:00 od strane korisnika admin
+INFO 2025-10-06 12:50:19,244 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-09 na 2025-10-09, vreme: 01:00:00 -> 01:30:00 od strane korisnika admin
+INFO 2025-10-06 12:50:23,553 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-09 na 2025-10-09, vreme: 01:30:00 -> 03:00:00 od strane korisnika admin
+INFO 2025-10-06 12:50:28,057 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-09 na 2025-10-10, vreme: 03:00:00 -> 04:00:00 od strane korisnika admin
+INFO 2025-10-06 12:50:32,673 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-10 na 2025-10-11, vreme: 04:00:00 -> 08:00:00 od strane korisnika admin
+INFO 2025-10-06 12:51:10,086 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-11 na 2025-10-11, vreme: 08:00:00 -> 07:00:00 od strane korisnika admin
+INFO 2025-10-06 12:51:14,260 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-11 na 2025-10-11, vreme: 07:00:00 -> 06:30:00 od strane korisnika admin
+INFO 2025-10-06 12:51:19,592 srbija_tim_views 32220 38428 Srbija Tim poseta 123 - datum promenjen sa 2025-10-11 na 2025-10-08, vreme: 06:30:00 -> 03:00:00 od strane korisnika admin
+INFO 2025-10-06 13:22:22,915 srbija_tim_views 22956 40508 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-08, vreme: 03:00:00 -> 17:00:00 od strane korisnika admin
+INFO 2025-10-06 14:14:59,486 srbija_tim_views 45100 45932 Srbija Tim poseta 123 - datum promenjen sa 2025-10-08 na 2025-10-15, vreme: 17:00:00 -> 17:00:00 od strane korisnika admin
+INFO 2025-10-06 14:15:11,177 srbija_tim_views 45100 45932 Srbija Tim poseta 123 - datum promenjen sa 2025-10-15 na 2025-10-06, vreme: 17:00:00 -> 17:00:00 od strane korisnika admin
+INFO 2025-10-06 14:15:19,714 srbija_tim_views 45100 45932 Srbija Tim poseta 123 - datum promenjen sa 2025-10-06 na 2025-10-07, vreme: 17:00:00 -> 15:00:00 od strane korisnika admin

@@ -3,6 +3,42 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extrastyle %}
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px;
+        padding-left: 12px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+    .select2-container--default .select2-selection--multiple {
+        min-height: 38px;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    .select2-dropdown {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+    .select2-search--dropdown .select2-search__field {
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 6px 12px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="content-wrapper">
     <div class="content-header">
@@ -49,20 +85,12 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label for="{{ form.company_name.id_for_label }}">{{ form.company_name.label }} <span class="text-danger">*</span></label>
-                                    {{ form.company_name }}
-                                    {% if form.company_name.errors %}
-                                    <div class="text-danger">{{ form.company_name.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
+                                    <label for="{{ form.company.id_for_label }}">{{ form.company.label }} <span class="text-danger">*</span></label>
                                     {{ form.company }}
                                     {% if form.company.errors %}
                                     <div class="text-danger">{{ form.company.errors }}</div>
                                     {% endif %}
-                                    <small class="form-text text-muted">Opciono - povezivanje sa postojećom kompanijom</small>
+                                    <small class="form-text text-muted">Izaberite kompaniju iz liste</small>
                                 </div>
                             </div>
                             
@@ -96,12 +124,26 @@
                             <div class="col-md-6">
                                 <h5 class="mb-3">Poseta</h5>
                                 
-                                <div class="form-group">
-                                    <label for="{{ form.visit_date.id_for_label }}">{{ form.visit_date.label }} <span class="text-danger">*</span></label>
-                                    {{ form.visit_date }}
-                                    {% if form.visit_date.errors %}
-                                    <div class="text-danger">{{ form.visit_date.errors }}</div>
-                                    {% endif %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ form.visit_date.id_for_label }}">{{ form.visit_date.label }} <span class="text-danger">*</span></label>
+                                            {{ form.visit_date }}
+                                            {% if form.visit_date.errors %}
+                                            <div class="text-danger">{{ form.visit_date.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ form.visit_time.id_for_label }}">{{ form.visit_time.label }}</label>
+                                            {{ form.visit_time }}
+                                            {% if form.visit_time.errors %}
+                                            <div class="text-danger">{{ form.visit_time.errors }}</div>
+                                            {% endif %}
+                                            <small class="form-text text-muted">Opciono</small>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="form-group">
@@ -158,4 +200,66 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    console.log('Inicijalizacija Select2...');
+    
+    // Inicijalizuj Select2 za kompaniju
+    $('#id_company').select2({
+        placeholder: 'Počnite da kucate naziv kompanije...',
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "Nema rezultata";
+            },
+            searching: function() {
+                return "Pretraga...";
+            },
+            inputTooShort: function() {
+                return "Unesite više karaktera";
+            }
+        },
+        minimumInputLength: 0
+    });
+    
+    // Inicijalizuj Select2 za auditore
+    $('#id_auditors').select2({
+        placeholder: 'Izaberite auditore...',
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "Nema rezultata";
+            },
+            searching: function() {
+                return "Pretraga...";
+            }
+        }
+    });
+    
+    // Inicijalizuj Select2 za standarde
+    $('#id_standards').select2({
+        placeholder: 'Izaberite standarde...',
+        allowClear: true,
+        width: '100%',
+        language: {
+            noResults: function() {
+                return "Nema rezultata";
+            },
+            searching: function() {
+                return "Pretraga...";
+            }
+        }
+    });
+    
+    console.log('Select2 inicijalizovan!');
+});
+</script>
 {% endblock %}

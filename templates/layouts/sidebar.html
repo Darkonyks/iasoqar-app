@@ -43,11 +43,34 @@
               <p>Nadzorne Provere</p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="{% url 'company:srbija_tim_calendar' %}" class="nav-link">
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
               <i class="nav-icon fas fa-calendar-check"></i>
-              <p>Srbija Tim</p>
+              <p>
+                Srbija Tim
+                <i class="right fas fa-angle-left"></i>
+              </p>
             </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'company:srbija_tim_calendar' %}" class="nav-link">
+                  <i class="far fa-calendar nav-icon"></i>
+                  <p>Kalendar</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'company:srbija_tim_auditor_schedule' %}" class="nav-link">
+                  <i class="fas fa-user-clock nav-icon"></i>
+                  <p>Raspored Auditora</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'company:srbija_tim_list' %}" class="nav-link">
+                  <i class="fas fa-list nav-icon"></i>
+                  <p>Lista Poseta</p>
+                </a>
+              </li>
+            </ul>
           </li>
         </ul>
       </nav>

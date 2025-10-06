@@ -51,6 +51,38 @@ class SrbijaTimListView(LoginRequiredMixin, ListView):
         return context
 
 
+class SrbijaTimAuditorScheduleView(LoginRequiredMixin, ListView):
+    """
+    Lista stvarnih sastanaka sa auditorima - raspored auditora
+    """
+    model = SrbijaTim
+    template_name = 'srbija_tim/auditor_schedule.html'
+    context_object_name = 'visits'
+    
+    def get_queryset(self):
+        return SrbijaTim.objects.all().prefetch_related(
+            'standards',
+            'auditors',
+            'company'
+        ).select_related('created_by').order_by('-visit_date', 'visit_time')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Srbija Tim - Raspored Auditora'
+        
+        # Grupisanje po auditorima
+        from collections import defaultdict
+        auditor_visits = defaultdict(list)
+        
+        for visit in self.get_queryset():
+            for auditor in visit.auditors.all():
+                auditor_visits[auditor].append(visit)
+        
+        context['auditor_visits'] = dict(auditor_visits)
+        
+        return context
+
+
 class SrbijaTimCreateView(LoginRequiredMixin, CreateView):
     """
     Kreiranje nove posete
@@ -152,13 +184,13 @@ def srbija_tim_calendar_json(request):
         
         events.append({
             'id': visit.id,
-            'title': f'{visit.certificate_number} - {visit.company_name}',
+            'title': f'{visit.certificate_number} - {visit.company.name}',
             'start': event_start,
             'allDay': all_day,
             'color': color,
             'extendedProps': {
                 'certificate_number': visit.certificate_number,
-                'company_name': visit.company_name,
+                'company_name': visit.company.name,
                 'standards': visit.get_standards_display(),
                 'auditors': visit.get_auditors_display(),
                 'report_sent': visit.report_sent,

@@ -669,12 +669,12 @@ class SrbijaTimForm(forms.ModelForm):
         model = SrbijaTim
         fields = [
             'certificate_number',
-            'company_name',
             'company',
             'standards',
             'certificate_expiry_date',
             'auditors',
             'visit_date',
+            'visit_time',
             'report_sent',
             'notes'
         ]
@@ -683,12 +683,8 @@ class SrbijaTimForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Unesite broj sertifikata'
             }),
-            'company_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Unesite naziv firme'
-            }),
             'company': forms.Select(attrs={
-                'class': 'form-control',
+                'class': 'form-control select2',
             }),
             'standards': forms.SelectMultiple(attrs={
                 'class': 'form-control',
@@ -706,6 +702,10 @@ class SrbijaTimForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date'
             }),
+            'visit_time': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
+            }),
             'report_sent': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
@@ -717,12 +717,12 @@ class SrbijaTimForm(forms.ModelForm):
         }
         labels = {
             'certificate_number': _('Broj sertifikata'),
-            'company_name': _('Naziv firme'),
-            'company': _('Kompanija (opciono)'),
+            'company': _('Kompanija'),
             'standards': _('Standardi'),
             'certificate_expiry_date': _('Datum isticanja sertifikata'),
             'auditors': _('Auditori'),
             'visit_date': _('Datum održanog sastanka'),
+            'visit_time': _('Vreme održanog sastanka'),
             'report_sent': _('Poslat izveštaj'),
             'notes': _('Napomene'),
         }
@@ -738,7 +738,7 @@ class SrbijaTimForm(forms.ModelForm):
         
         # Postavi queryset za kompanije
         self.fields['company'].queryset = Company.objects.all().order_by('name')
-        self.fields['company'].required = False
+        self.fields['company'].required = True
     
     def clean(self):
         cleaned_data = super().clean()

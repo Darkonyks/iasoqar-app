@@ -45,16 +45,8 @@
                                 </tr>
                                 <tr>
                                     <th>Naziv firme:</th>
-                                    <td>{{ visit.company_name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Povezana kompanija:</th>
                                     <td>
-                                        {% if visit.company %}
-                                            <a href="{% url 'company:detail' visit.company.id %}">{{ visit.company.name }}</a>
-                                        {% else %}
-                                            <span class="text-muted">Nije povezana</span>
-                                        {% endif %}
+                                        <a href="{% url 'company:detail' visit.company.id %}">{{ visit.company.name }}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -72,7 +64,16 @@
                             <table class="table table-sm">
                                 <tr>
                                     <th width="40%">Datum posete:</th>
-                                    <td>{{ visit.visit_date|date:"d.m.Y" }}</td>
+                                    <td>
+                                        {{ visit.visit_date|date:"d.m.Y" }}
+                                        {% if visit.visit_time %}
+                                            u {{ visit.visit_time|time:"H:i" }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Auditori:</th>
+                                    <td>{{ visit.get_auditors_display|default:"Nema auditora" }}</td>
                                 </tr>
                                 <tr>
                                     <th>Status izveštaja:</th>

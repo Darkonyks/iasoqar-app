@@ -1,0 +1,170 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .auditor-card {
+        margin-bottom: 30px;
+        border-left: 4px solid #007bff;
+    }
+    .auditor-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px 8px 0 0;
+    }
+    .visit-row {
+        transition: all 0.3s ease;
+    }
+    .visit-row:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+    .badge-time {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
+    .no-visits {
+        padding: 30px;
+        text-align: center;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">{{ title }}</h1>
+                </div>
+                <div class="col-sm-6">
+                    <div class="float-sm-right">
+                        <a href="{% url 'company:srbija_tim_calendar' %}" class="btn btn-secondary">
+                            <i class="fas fa-calendar"></i> Kalendar
+                        </a>
+                        <a href="{% url 'company:srbija_tim_list' %}" class="btn btn-info">
+                            <i class="fas fa-list"></i> Lista Poseta
+                        </a>
+                        <a href="{% url 'company:srbija_tim_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nova Poseta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="container-fluid">
+            {% if auditor_visits %}
+                {% for auditor, visits in auditor_visits.items %}
+                <div class="card auditor-card shadow-sm">
+                    <div class="auditor-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-tie"></i> {{ auditor.ime_prezime }}
+                            <span class="badge badge-light ml-2">{{ visits|length }} poseta</span>
+                        </h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th width="12%">Datum</th>
+                                        <th width="10%">Vreme</th>
+                                        <th width="15%">Broj sertifikata</th>
+                                        <th width="20%">Naziv firme</th>
+                                        <th width="15%">Standardi</th>
+                                        <th width="10%">Status</th>
+                                        <th width="10%">Datum isticanja</th>
+                                        <th width="8%">Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for visit in visits %}
+                                    <tr class="visit-row">
+                                        <td>
+                                            <strong>{{ visit.visit_date|date:"d.m.Y" }}</strong>
+                                        </td>
+                                        <td>
+                                            {% if visit.visit_time %}
+                                                <span class="badge badge-time badge-info">
+                                                    <i class="far fa-clock"></i> {{ visit.visit_time|time:"H:i" }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ visit.certificate_number }}</td>
+                                        <td>
+                                            <strong>
+                                                <a href="{% url 'company:detail' visit.company.id %}">{{ visit.company.name }}</a>
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <small>{{ visit.get_standards_display|default:"Nema standarda" }}</small>
+                                        </td>
+                                        <td>
+                                            {% if visit.report_sent %}
+                                                <span class="badge badge-success">
+                                                    <i class="fas fa-check"></i> Poslat
+                                                </span>
+                                            {% else %}
+                                                <span class="badge badge-danger">
+                                                    <i class="fas fa-times"></i> Nije poslat
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if visit.certificate_expiry_date %}
+                                                {{ visit.certificate_expiry_date|date:"d.m.Y" }}
+                                                {% if visit.is_certificate_expired %}
+                                                    <br><span class="badge badge-danger">Istekao</span>
+                                                {% elif visit.days_until_expiry <= 30 %}
+                                                    <br><span class="badge badge-warning">{{ visit.days_until_expiry }} dana</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{% url 'company:srbija_tim_detail' visit.id %}" 
+                                                   class="btn btn-info" title="Detalji">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'company:srbija_tim_update' visit.id %}" 
+                                                   class="btn btn-primary" title="Izmeni">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="card">
+                    <div class="card-body no-visits">
+                        <i class="fas fa-calendar-times fa-3x mb-3 text-muted"></i>
+                        <h5>Nema zakazanih poseta</h5>
+                        <p class="text-muted">Trenutno nema ni jedne posete dodeljene auditorima.</p>
+                        <a href="{% url 'company:srbija_tim_create' %}" class="btn btn-primary mt-3">
+                            <i class="fas fa-plus"></i> Dodaj prvu posetu
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
