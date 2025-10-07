@@ -80,10 +80,11 @@
                                 <th>Broj sertifikata</th>
                                 <th>Naziv firme</th>
                                 <th>Standardi</th>
-                                <th>Datum posete</th>
+                                <th>Datum planiranog sastanka</th>
                                 <th>Auditori</th>
-                                <th>Datum isticanja</th>
                                 <th>Status</th>
+                                <th>Datum isticanja</th>
+                                <th>Status izveštaja</th>
                                 <th>Akcije</th>
                             </tr>
                         </thead>
@@ -103,6 +104,15 @@
                                 </td>
                                 <td>{{ visit.get_auditors_display|default:"Nema auditora" }}</td>
                                 <td>
+                                    {% if visit.status == 'zakazan' %}
+                                        <span class="badge badge-primary">Zakazan</span>
+                                    {% elif visit.status == 'nije_zakazan' %}
+                                        <span class="badge badge-secondary">Nije zakazan</span>
+                                    {% elif visit.status == 'odradjena' %}
+                                        <span class="badge badge-success">Odrađena</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     {% if visit.certificate_expiry_date %}
                                         {{ visit.certificate_expiry_date|date:"d.m.Y" }}
                                         {% if visit.is_certificate_expired %}
@@ -116,7 +126,7 @@
                                 </td>
                                 <td>
                                     {% if visit.report_sent %}
-                                        <span class="badge badge-success">Poslat izveštaj</span>
+                                        <span class="badge badge-success">Poslat</span>
                                     {% else %}
                                         <span class="badge badge-danger">Nije poslat</span>
                                     {% endif %}

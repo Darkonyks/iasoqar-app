@@ -141,14 +141,12 @@
                                             <small>{{ visit.get_standards_display|default:"Nema standarda" }}</small>
                                         </td>
                                         <td>
-                                            {% if visit.report_sent %}
-                                                <span class="badge badge-success">
-                                                    <i class="fas fa-check"></i> Poslat
-                                                </span>
-                                            {% else %}
-                                                <span class="badge badge-danger">
-                                                    <i class="fas fa-times"></i> Nije poslat
-                                                </span>
+                                            {% if visit.status == 'zakazan' %}
+                                                <span class="badge badge-primary">Zakazan</span>
+                                            {% elif visit.status == 'nije_zakazan' %}
+                                                <span class="badge badge-secondary">Nije zakazan</span>
+                                            {% elif visit.status == 'odradjena' %}
+                                                <span class="badge badge-success">Odrađena</span>
                                             {% endif %}
                                         </td>
                                         <td>

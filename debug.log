@@ -984,3 +984,12 @@ INFO 2025-10-06 14:43:09,225 srbija_tim_views 16364 46788 Srbija Tim poseta 1231
 INFO 2025-10-06 14:43:30,486 srbija_tim_views 16364 46788 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-07 na 2025-10-14 od strane korisnika admin
 INFO 2025-10-06 14:43:33,928 srbija_tim_views 16364 46788 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-14 na 2025-10-15 od strane korisnika admin
 INFO 2025-10-06 15:02:06,642 srbija_tim_views 16364 19136 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-15 na 2025-10-17 od strane korisnika admin
+INFO 2025-10-06 15:17:05,260 srbija_tim_views 44380 25012 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-17 na 2025-10-08 od strane korisnika admin
+INFO 2025-10-06 18:47:56,773 srbija_tim_views 23872 46384 Srbija Tim poseta 4444 - datum promenjen sa 2025-10-13 na 2025-10-14 od strane korisnika admin
+INFO 2025-10-06 18:48:01,964 srbija_tim_views 23872 46384 Srbija Tim poseta 4444 - datum promenjen sa 2025-10-14 na 2025-10-08 od strane korisnika admin
+INFO 2025-10-06 18:48:07,943 srbija_tim_views 23872 46384 Srbija Tim poseta 4444 - datum promenjen sa 2025-10-08 na 2025-10-14 od strane korisnika admin
+ERROR 2025-10-06 18:54:05,196 srbija_tim_views 47828 44960 Greška pri ažuriranju datuma Srbija Tim posete: name 'old_date' is not defined
+ERROR 2025-10-07 08:48:07,127 srbija_tim_views 47828 5204 Greška pri ažuriranju datuma Srbija Tim posete: name 'old_date' is not defined
+ERROR 2025-10-07 08:48:56,254 srbija_tim_views 47828 5204 Greška pri ažuriranju datuma Srbija Tim posete: name 'old_date' is not defined
+INFO 2025-10-07 08:51:13,880 srbija_tim_views 41696 28240 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-16 na 2025-10-17 od strane korisnika admin
+INFO 2025-10-07 09:18:05,699 srbija_tim_views 48912 43252 Srbija Tim poseta 123133131313 - datum promenjen sa 2025-10-16 na 2025-10-22 od strane korisnika admin

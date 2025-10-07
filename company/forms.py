@@ -675,6 +675,7 @@ class SrbijaTimForm(forms.ModelForm):
             'auditors',
             'visit_date',
             'visit_time',
+            'status',
             'report_sent',
             'notes'
         ]
@@ -706,6 +707,9 @@ class SrbijaTimForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'time'
             }),
+            'status': forms.Select(attrs={
+                'class': 'form-control'
+            }),
             'report_sent': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
@@ -721,8 +725,9 @@ class SrbijaTimForm(forms.ModelForm):
             'standards': _('Standardi'),
             'certificate_expiry_date': _('Datum isticanja sertifikata'),
             'auditors': _('Auditori'),
-            'visit_date': _('Datum održanog sastanka'),
-            'visit_time': _('Vreme održanog sastanka'),
+            'visit_date': _('Datum planiranog sastanka'),
+            'visit_time': _('Vreme planiranog sastanka'),
+            'status': _('Status'),
             'report_sent': _('Poslat izveštaj'),
             'notes': _('Napomene'),
         }
@@ -746,9 +751,37 @@ class SrbijaTimForm(forms.ModelForm):
         # Validacija datuma
         visit_date = cleaned_data.get('visit_date')
         certificate_expiry_date = cleaned_data.get('certificate_expiry_date')
+        auditors = cleaned_data.get('auditors')
         
         if visit_date and certificate_expiry_date:
             if visit_date > certificate_expiry_date:
-                self.add_error('visit_date', 'Datum posete ne može biti nakon isticanja sertifikata')
+                raise forms.ValidationError(
+                    'Datum posete ne može biti nakon datuma isticanja sertifikata.'
+                )
+        
+        # Validacija konflikta auditora
+        if visit_date and auditors:
+            conflicts = []
+            for auditor in auditors:
+                # Pronađi sve posete ovog auditora na isti datum
+                conflicting_visits = SrbijaTim.objects.filter(
+                    auditors=auditor,
+                    visit_date=visit_date
+                )
+                
+                # Ako je izmena postojeće posete, isključi je iz provere
+                if self.instance and self.instance.pk:
+                    conflicting_visits = conflicting_visits.exclude(pk=self.instance.pk)
+                
+                if conflicting_visits.exists():
+                    company_names = [v.company.name for v in conflicting_visits]
+                    conflicts.append(
+                        f"{auditor.ime_prezime} već ima zakazan sastanak tog dana sa: {', '.join(company_names)}"
+                    )
+            
+            if conflicts:
+                raise forms.ValidationError({
+                    'auditors': 'Konflikt u rasporedu auditora! ' + ' | '.join(conflicts)
+                })
         
         return cleaned_data

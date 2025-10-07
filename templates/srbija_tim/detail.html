@@ -63,7 +63,7 @@
                         <div class="card-body">
                             <table class="table table-sm">
                                 <tr>
-                                    <th width="40%">Datum posete:</th>
+                                    <th width="40%">Datum planiranog sastanka:</th>
                                     <td>
                                         {{ visit.visit_date|date:"d.m.Y" }}
                                         {% if visit.visit_time %}
@@ -74,6 +74,18 @@
                                 <tr>
                                     <th>Auditori:</th>
                                     <td>{{ visit.get_auditors_display|default:"Nema auditora" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        {% if visit.status == 'zakazan' %}
+                                            <span class="badge badge-primary">Zakazan</span>
+                                        {% elif visit.status == 'nije_zakazan' %}
+                                            <span class="badge badge-secondary">Nije zakazan</span>
+                                        {% elif visit.status == 'odradjena' %}
+                                            <span class="badge badge-success">Odrađena poseta</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Status izveštaja:</th>

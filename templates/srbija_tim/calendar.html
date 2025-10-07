@@ -2,25 +2,25 @@
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
-
 {% block extrastyle %}
 <style>
     .fc-event {
         cursor: pointer;
+    }
+    /* Pointer cursor za datume u kalendaru */
+    .fc-daygrid-day,
+    .fc-timegrid-slot,
+    .fc-col-header-cell {
+        cursor: pointer;
+    }
+    .fc-daygrid-day:hover {
+        background-color: rgba(0, 123, 255, 0.1);
     }
     .legend {
         display: flex;
         gap: 20px;
         margin-bottom: 20px;
         padding: 15px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
     .legend-color {
         width: 20px;
@@ -85,16 +85,20 @@
             <!-- Legenda -->
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background-color: #28a745;"></div>
-                    <span>Poslat izveštaj</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #dc3545;"></div>
-                    <span>Nije poslat izveštaj</span>
+                    <div class="legend-color" style="background-color: #007bff;"></div>
+                    <span>Zakazan</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-color" style="background-color: #6c757d;"></div>
-                    <span>Istekao sertifikat</span>
+                    <span>Nije zakazan</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ffc107;"></div>
+                    <span>Odrađena poseta</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #28a745;"></div>
+                    <span>Poslat izveštaj</span>
                 </div>
             </div>
 
@@ -126,9 +130,10 @@
                         <p><strong>Standardi:</strong> <span id="modal-standards"></span></p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>Datum posete:</strong> <span id="modal-visit-date"></span></p>
+                        <p><strong>Datum planiranog sastanka:</strong> <span id="modal-visit-date"></span></p>
                         <p><strong>Auditori:</strong> <span id="modal-auditors"></span></p>
-                        <p><strong>Status:</strong> <span id="modal-report-status"></span></p>
+                        <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                        <p><strong>Status izveštaja:</strong> <span id="modal-report-status"></span></p>
                     </div>
                 </div>
                 <div class="row">
@@ -221,6 +226,16 @@ document.addEventListener('DOMContentLoaded', function() {
         loading: function(isLoading) {
             console.log('Calendar loading:', isLoading);
         },
+        dateClick: function(info) {
+            // Klik na datum - otvori formu za novu posetu sa predselektovanim datumom
+            console.log('Klik na datum:', info.dateStr);
+            
+            // Formatiraj datum za URL (YYYY-MM-DD)
+            const selectedDate = info.dateStr.split('T')[0]; // Ukloni vreme ako postoji
+            
+            // Preusmeri na stranicu za kreiranje nove posete sa datumom u URL-u
+            window.location.href = '{% url "company:srbija_tim_create" %}?date=' + selectedDate;
+        },
         eventClick: function(info) {
             // Popuni modal sa podacima
             var props = info.event.extendedProps;
@@ -238,11 +253,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             document.getElementById('modal-auditors').textContent = props.auditors || 'Nema auditora';
             
-            // Status
-            var statusHtml = props.report_sent 
+            // Status posete
+            var statusBadge = '';
+            if (props.status === 'zakazan') {
+                statusBadge = '<span class="badge badge-primary">Zakazan</span>';
+            } else if (props.status === 'nije_zakazan') {
+                statusBadge = '<span class="badge badge-secondary">Nije zakazan</span>';
+            } else if (props.status === 'odradjena') {
+                statusBadge = '<span class="badge badge-success">Odrađena poseta</span>';
+            }
+            document.getElementById('modal-status').innerHTML = statusBadge;
+            
+            // Status izveštaja
+            var reportStatusHtml = props.report_sent 
                 ? '<span class="badge badge-success">Poslat izveštaj</span>' 
                 : '<span class="badge badge-danger">Nije poslat izveštaj</span>';
-            document.getElementById('modal-report-status').innerHTML = statusHtml;
+            document.getElementById('modal-report-status').innerHTML = reportStatusHtml;
             
             // Datum isticanja
             document.getElementById('modal-expiry-date').textContent = props.certificate_expiry_date 
@@ -308,8 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 Swal.fire({
-                    title: hasTime ? 'Promena datuma i vremena posete' : 'Promena datuma posete',
-                    html: `Da li ste sigurni da želite da promenite ${hasTime ? 'datum i vreme' : 'datum'} posete za firmu <strong>${event.extendedProps.company_name}</strong> na <strong>${dateTimeString}</strong>?`,
+                    title: hasTime ? 'Promena datuma i vremena planiranog sastanka' : 'Promena datuma planiranog sastanka',
+                    html: `Da li ste sigurni da želite da promenite ${hasTime ? 'datum i vreme' : 'datum'} planiranog sastanka za firmu <strong>${event.extendedProps.company_name}</strong> na <strong>${dateTimeString}</strong>?`,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: 'Potvrdi',
@@ -330,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             } else {
                 // Fallback na standardni confirm
-                const confirmed = confirm('Da li ste sigurni da želite da promenite datum posete?');
+                const confirmed = confirm('Da li ste sigurni da želite da promenite datum planiranog sastanka?');
                 if (confirmed) {
                     updateSrbijaTimVisitDate(visitId, newDate, info);
                 } else {
@@ -412,15 +438,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.calendar.refetchEvents();
                 } else {
                     // Server vratio success: false
+                    let errorMessage = response.message || 'Nije moguće promeniti datum planiranog sastanka.';
+                    
+                    // Ako ima konflikata, prikaži ih
+                    if (response.conflicts && response.conflicts.length > 0) {
+                        errorMessage += '\n\n';
+                        response.conflicts.forEach(function(conflict) {
+                            errorMessage += '• ' + conflict + '\n';
+                        });
+                    }
+                    
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
-                            title: 'Greška',
-                            text: response.message || 'Nije moguće promeniti datum posete.',
+                            title: 'Konflikt u rasporedu!',
+                            html: errorMessage.replace(/\n/g, '<br>'),
                             icon: 'error',
-                            confirmButtonText: 'U redu'
+                            confirmButtonText: 'U redu',
+                            width: '600px'
                         });
                     } else {
-                        alert('Greška: ' + (response.message || 'Nije moguće promeniti datum posete.'));
+                        alert(errorMessage);
                     }
                     info.revert();
                     window.calendar.refetchEvents();
@@ -430,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Greška pri ažuriranju datuma:', error);
                 console.error('Response:', xhr.responseText);
                 
-                let errorMessage = 'Došlo je do greške pri ažuriranju datuma posete.';
+                let errorMessage = 'Došlo je do greške pri ažuriranju datuma planiranog sastanka.';
                 try {
                     const response = JSON.parse(xhr.responseText);
                     if (response.message) {

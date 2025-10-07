@@ -53,18 +53,32 @@ class SrbijaTim(models.Model):
         help_text=_('Auditori koji su učestvovali u poseti')
     )
     
-    # Datum održanog sastanka
+    # Datum planiranog sastanka
     visit_date = models.DateField(
-        _('Datum održanog sastanka'),
-        help_text=_('Datum kada je održan sastanak/poseta')
+        _('Datum planiranog sastanka'),
+        help_text=_('Datum kada je planiran sastanak/poseta')
     )
     
-    # Vreme održanog sastanka (opciono)
+    # Vreme planiranog sastanka (opciono)
     visit_time = models.TimeField(
-        _('Vreme održanog sastanka'),
+        _('Vreme planiranog sastanka'),
         null=True,
         blank=True,
-        help_text=_('Vreme kada je održan sastanak/poseta (opciono)')
+        help_text=_('Vreme kada je planiran sastanak/poseta (opciono)')
+    )
+    
+    # Status posete
+    class VisitStatus(models.TextChoices):
+        SCHEDULED = 'zakazan', _('Zakazan')
+        NOT_SCHEDULED = 'nije_zakazan', _('Nije zakazan')
+        COMPLETED = 'odradjena', _('Odrađena poseta')
+    
+    status = models.CharField(
+        _('Status'),
+        max_length=20,
+        choices=VisitStatus.choices,
+        default=VisitStatus.NOT_SCHEDULED,
+        help_text=_('Status posete')
     )
     
     # Status - Poslat izveštaj (checkbox)

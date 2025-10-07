@@ -118,6 +118,25 @@ class SrbijaTimCreateView(LoginRequiredMixin, CreateView):
     template_name = 'srbija_tim/form.html'
     success_url = reverse_lazy('company:srbija_tim_calendar')
     
+    def get_initial(self):
+        """
+        Postavi inicijalne vrednosti forme - datum iz URL parametra
+        """
+        initial = super().get_initial()
+        
+        # Ako je datum prosleđen kao URL parametar, postavi ga kao inicijalnu vrednost
+        date_param = self.request.GET.get('date')
+        if date_param:
+            try:
+                from datetime import datetime
+                # Parsiranje datuma iz URL-a (format: YYYY-MM-DD)
+                selected_date = datetime.strptime(date_param, '%Y-%m-%d').date()
+                initial['visit_date'] = selected_date
+            except ValueError:
+                pass  # Ako format nije ispravan, ignoriši
+        
+        return initial
+    
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
@@ -188,15 +207,21 @@ def srbija_tim_calendar_json(request):
     
     events = []
     for visit in visits:
-        # Boja na osnovu statusa
+        # Boja na osnovu statusa i izveštaja
+        status = getattr(visit, 'status', 'nije_zakazan')
+        
+        # Ako je izveštaj poslat (može biti samo za odrađenu posetu)
         if visit.report_sent:
             color = '#28a745'  # Zelena - poslat izveštaj
+        # Ako izveštaj nije poslat, boja zavisi od statusa
+        elif status == 'zakazan':
+            color = '#007bff'  # Plava - zakazan
+        elif status == 'nije_zakazan':
+            color = '#6c757d'  # Siva - nije zakazan
+        elif status == 'odradjena':
+            color = '#ffc107'  # Žuta - odrađena poseta (bez izveštaja)
         else:
-            color = '#dc3545'  # Crvena - nije poslat izveštaj
-        
-        # Provera da li je sertifikat istekao
-        if visit.is_certificate_expired():
-            color = '#6c757d'  # Siva - istekao sertifikat
+            color = '#dc3545'  # Crvena - default
         
         # Ako postoji vreme, kombinuj datum i vreme (proveri da li polje postoji)
         visit_time = getattr(visit, 'visit_time', None)
@@ -219,6 +244,7 @@ def srbija_tim_calendar_json(request):
                 'company_name': visit.company.name,
                 'standards': visit.get_standards_display(),
                 'auditors': visit.get_auditors_display(),
+                'status': getattr(visit, 'status', 'nije_zakazan'),
                 'report_sent': visit.report_sent,
                 'certificate_expiry_date': visit.certificate_expiry_date.isoformat() if visit.certificate_expiry_date else None,
                 'notes': visit.notes or '',
@@ -233,30 +259,29 @@ def srbija_tim_calendar_json(request):
 @require_http_methods(["POST"])
 def srbija_tim_update_date(request, pk):
     """
-    Ažuriranje datuma i vremena posete preko drag & drop u kalendaru
+    Ažurira datum i vreme posete preko AJAX-a (za drag & drop)
+    Validira da auditor ne može biti na više sastanaka istog dana
     """
     try:
-        visit = get_object_or_404(SrbijaTim, pk=pk)
-        
-        # Parsiranje JSON podataka iz zahteva
+        visit = SrbijaTim.objects.get(pk=pk)
         data = json.loads(request.body)
+        
         new_date_str = data.get('visit_date')
-        new_time_str = data.get('visit_time')  # Opciono vreme
+        new_time_str = data.get('visit_time')
         
         if not new_date_str:
             return JsonResponse({
                 'success': False,
-                'message': 'Datum nije prosleđen.'
+                'message': 'Datum je obavezan.'
             }, status=400)
         
+        # Sačuvaj stare vrednosti za logging
+        old_date = visit.visit_date
+        old_time = getattr(visit, 'visit_time', None)
+        
         # Parsiranje datuma
-        try:
-            new_date = datetime.strptime(new_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            return JsonResponse({
-                'success': False,
-                'message': 'Neispravan format datuma.'
-            }, status=400)
+        from datetime import datetime
+        new_date = datetime.strptime(new_date_str, '%Y-%m-%d').date()
         
         # Parsiranje vremena (opciono)
         new_time = None
@@ -273,9 +298,41 @@ def srbija_tim_update_date(request, pk):
                         'message': 'Neispravan format vremena.'
                     }, status=400)
         
-        # Ažuriranje datuma i vremena
-        old_date = visit.visit_date
-        old_time = getattr(visit, 'visit_time', None)
+        # VALIDACIJA: Proveri da li neki od auditora već ima sastanak tog dana
+        auditors = visit.auditors.all()
+        conflicts = []
+        
+        for auditor in auditors:
+            # Pronađi sve posete ovog auditora na novi datum (osim trenutne)
+            conflicting_visits = SrbijaTim.objects.filter(
+                auditors=auditor,
+                visit_date=new_date
+            ).exclude(pk=visit.pk)
+            
+            if conflicting_visits.exists():
+                # Napravi listu kompanija sa kojima je konflikt
+                company_names = [v.company.name for v in conflicting_visits]
+                conflicts.append({
+                    'auditor': auditor.ime_prezime,
+                    'companies': company_names
+                })
+        
+        # Ako ima konflikata, vrati grešku
+        if conflicts:
+            conflict_messages = []
+            for conflict in conflicts:
+                companies = ', '.join(conflict['companies'])
+                conflict_messages.append(
+                    f"{conflict['auditor']} već ima zakazan sastanak tog dana sa: {companies}"
+                )
+            
+            return JsonResponse({
+                'success': False,
+                'message': 'Konflikt u rasporedu auditora!',
+                'conflicts': conflict_messages
+            }, status=400)
+        
+        # Ako nema konflikata, ažuriraj
         visit.visit_date = new_date
         
         # Postavi visit_time samo ako polje postoji u modelu
