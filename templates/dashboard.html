@@ -162,22 +162,19 @@
                                                     </thead>
                                                     <tbody>
                                                         {% for cert in expiring_certificates_list %}
-                                                        {% with days_left=cert.certificate_expiry_date|timeuntil %}
                                                         <tr>
                                                             <td><strong>{{ cert.company.name }}</strong></td>
                                                             <td><span class="badge badge-info">{{ cert.standard_definition.code }}</span></td>
-                                                            <td>{{ cert.certificate_number }}</td>
+                                                            <td>{{ cert.standard }}</td>
                                                             <td>
-                                                                <i class="fas fa-calendar"></i> {{ cert.certificate_expiry_date|date:"d.m.Y" }}
+                                                                <i class="fas fa-calendar"></i> {{ cert.expiry_date|date:"d.m.Y" }}
                                                             </td>
                                                             <td>
-                                                                {% with cert.certificate_expiry_date|timeuntil as days_until %}
-                                                                {% if cert.certificate_expiry_date < today %}
+                                                                {% if cert.expiry_date < today %}
                                                                 <span class="badge badge-danger">Istekao</span>
                                                                 {% else %}
-                                                                {{ days_until }}
+                                                                {{ cert.expiry_date|timeuntil }}
                                                                 {% endif %}
-                                                                {% endwith %}
                                                             </td>
                                                             <td>
                                                                 <a href="{% url 'company:detail' cert.company.pk %}" class="btn btn-sm btn-info" title="Detalji kompanije">
@@ -185,7 +182,6 @@
                                                                 </a>
                                                             </td>
                                                         </tr>
-                                                        {% endwith %}
                                                         {% endfor %}
                                                     </tbody>
                                                 </table>
@@ -487,6 +483,60 @@
                     </div>
                 </div>
             </div>
+            <!-- /.row -->
+            
+            <!-- Auditori i Ciklusi -->
+            <div class="row mt-3">
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-box bg-purple">
+                        <span class="info-box-icon"><i class="fas fa-user-tie"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Ukupno Auditora</span>
+                            <span class="info-box-number">{{ total_auditors }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-box bg-success">
+                        <span class="info-box-icon"><i class="fas fa-user-check"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Dostupni Danas</span>
+                            <span class="info-box-number">{{ available_auditors_today }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-box bg-teal">
+                        <span class="info-box-icon"><i class="fas fa-sync-alt"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Aktivni Ciklusi</span>
+                            <span class="info-box-number">{{ active_cycles }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="info-box bg-gradient-orange">
+                        <span class="info-box-icon"><i class="fas fa-layer-group"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Integrisani Sistemi</span>
+                            <span class="info-box-number">{{ integrated_systems }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            
+            <!-- Najzauzetiji auditor -->
+            {% if busiest_auditor %}
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h5><i class="icon fas fa-info-circle"></i> Najzauzetiji Auditor (Ovaj Mesec)</h5>
+                        <strong>{{ busiest_auditor.auditor__ime_prezime }}</strong> - {{ busiest_auditor.reservation_count }} rezervacija
+                    </div>
+                </div>
+            </div>
+            {% endif %}
             <!-- /.row -->
             
             <!-- Tabela predstojećih audita -->
