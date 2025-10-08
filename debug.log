@@ -1281,3 +1281,49 @@ INFO 2025-10-08 12:41:14,139 views 48104 58224 Calendar JSON request - auditor f
 INFO 2025-10-08 12:41:14,140 views 48104 58224 Total appointments before filter: 3
 INFO 2025-10-08 12:41:14,176 views 48104 58224 Total events returned: 17
 INFO 2025-10-08 12:41:14,177 views 48104 58224 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:49:39,527 srbija_tim_views 48892 39432 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 12:49:42,211 srbija_tim_views 48892 39432 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 12:49:56,740 srbija_tim_views 48892 39432 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 12:50:01,566 srbija_tim_views 48892 39432 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 12:50:18,562 views 48892 39432 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:50:18,563 views 48892 39432 Total appointments before filter: 3
+INFO 2025-10-08 12:50:18,588 views 48892 39432 Total events returned: 17
+INFO 2025-10-08 12:50:18,588 views 48892 39432 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:50:21,215 views 48892 39432 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:50:21,216 views 48892 39432 Total appointments before filter: 3
+INFO 2025-10-08 12:50:21,219 views 48892 39432 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:50:21,222 views 48892 39432 Filtered AuditDays count: 3
+INFO 2025-10-08 12:50:21,236 views 48892 39432 Total events returned: 3
+INFO 2025-10-08 12:50:21,236 views 48892 39432 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:50:21,709 views 48892 39432 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:50:21,710 views 48892 39432 Total appointments before filter: 3
+INFO 2025-10-08 12:50:21,713 views 48892 39432 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:50:21,715 views 48892 39432 Filtered AuditDays count: 3
+INFO 2025-10-08 12:50:21,727 views 48892 39432 Total events returned: 3
+INFO 2025-10-08 12:50:21,727 views 48892 39432 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:50:33,650 srbija_tim_views 48892 39432 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:31:57,184 srbija_tim_views 48892 59568 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:32:05,167 srbija_tim_views 48892 46132 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:32:07,140 srbija_tim_views 48892 46132 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:32:09,807 srbija_tim_views 48892 46132 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:35:10,789 srbija_tim_views 48892 50984 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:35:11,625 srbija_tim_views 48892 54516 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:35:24,060 srbija_tim_views 48892 1716 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:35:33,537 srbija_tim_views 48892 1716 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:35:40,610 srbija_tim_views 48892 1716 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:37:58,847 srbija_tim_views 48892 53352 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:38:01,180 srbija_tim_views 48892 56500 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:38:10,406 srbija_tim_views 48892 56500 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:38:21,387 srbija_tim_views 48892 56500 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:38:31,645 srbija_tim_views 48892 56500 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 13:49:30,869 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 13:49:32,582 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 13:49:40,127 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:49:43,424 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:49:47,261 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 1: 2 visits
+INFO 2025-10-08 13:49:54,936 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 13:49:56,743 srbija_tim_views 48892 55088 Srbija Tim - filtered by auditor 6: 3 visits
+INFO 2025-10-08 15:05:05,748 views 56284 44708 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 15:05:05,749 views 56284 44708 Total appointments before filter: 3
+INFO 2025-10-08 15:05:05,772 views 56284 44708 Total events returned: 17
+INFO 2025-10-08 15:05:05,773 views 56284 44708 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10

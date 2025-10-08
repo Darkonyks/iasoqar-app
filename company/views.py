@@ -682,15 +682,41 @@ def dashboard(request):
         certificate_status=Company.STATUS_ACTIVE
     ).count()
     
+    # Statistika kompanija po statusu sertifikata
+    suspended_companies = Company.objects.filter(
+        certificate_status=Company.STATUS_SUSPENDED
+    ).count()
+    
+    expired_companies = Company.objects.filter(
+        certificate_status=Company.STATUS_EXPIRED
+    ).count()
+    
+    pending_companies = Company.objects.filter(
+        certificate_status=Company.STATUS_PENDING
+    ).count()
+    
+    withdrawn_companies = Company.objects.filter(
+        certificate_status=Company.STATUS_WITHDRAWN
+    ).count()
+    
+    cancelled_companies = Company.objects.filter(
+        certificate_status=Company.STATUS_CANCELLED
+    ).count()
+    
+    # Importi za modele
+    from .standard_models import CompanyStandard
+    from .cycle_models import CycleAudit
+    from .srbija_tim_models import SrbijaTim
+    from .auditor_models import Auditor
+    from .cycle_models import AuditorReservation, CertificationCycle
+    
     # Count active certificates (standards associated with active companies)
     active_certificates = CompanyStandard.objects.filter(
         company__certificate_status=Company.STATUS_ACTIVE
     ).count()
     
-    # Calculate expired certificates
-    expired_certificates = Company.objects.filter(
-        certificate_status=Company.STATUS_EXPIRED
-    ).count()
+    # Calculate expired certificates (zadržano zbog kompatibilnosti)
+    expired_certificates = expired_companies
     
     # Get audits scheduled for the current work week
     today = datetime.now().date()
@@ -698,11 +724,172 @@ def dashboard(request):
     end_of_week = start_of_week + timedelta(days=4)  # Friday
     next_month = today + timedelta(days=30)  # Definisanje sledećeg meseca za upite
     
+    # Auditi - Pregled Statusa
+    
+    # Planirani auditi
+    planned_audits_count = CycleAudit.objects.filter(audit_status='planned').count()
+    
+    # Zakazani auditi
+    scheduled_audits_count = CycleAudit.objects.filter(audit_status='scheduled').count()
+    
+    # Završeni auditi (ovaj mesec)
+    current_month_start = today.replace(day=1)
+    if today.month == 12:
+        next_month_start = today.replace(year=today.year + 1, month=1, day=1)
+    else:
+        next_month_start = today.replace(month=today.month + 1, day=1)
+    
+    completed_audits_this_month = CycleAudit.objects.filter(
+        audit_status='completed',
+        actual_date__gte=current_month_start,
+        actual_date__lt=next_month_start
+    ).count()
+    
+    # Odloženi auditi
+    postponed_audits_count = CycleAudit.objects.filter(audit_status='postponed').count()
+    
+    # Auditi u narednih 30 dana
+    thirty_days_from_now = today + timedelta(days=30)
+    upcoming_audits_30_days = CycleAudit.objects.filter(
+        planned_date__gte=today,
+        planned_date__lte=thirty_days_from_now
+    ).exclude(
+        audit_status='cancelled'
+    ).order_by('planned_date').select_related(
+        'certification_cycle__company',
+        'lead_auditor'
+    )
+    
+    # Prosečan broj dana po auditu (iz ciklusa)
+    from django.db.models import Avg
+    from .cycle_models import CertificationCycle
+    
+    avg_audit_days = CertificationCycle.objects.filter(
+        status='active'
+    ).aggregate(
+        avg_initial=Avg('inicijalni_broj_dana'),
+        avg_surveillance=Avg('broj_dana_nadzora'),
+        avg_recert=Avg('broj_dana_resertifikacije')
+    )
+    
+    # Izračunaj ukupan prosek (ako postoje vrednosti)
+    total_avg_days = 0
+    count_avg = 0
+    if avg_audit_days['avg_initial']:
+        total_avg_days += float(avg_audit_days['avg_initial'])
+        count_avg += 1
+    if avg_audit_days['avg_surveillance']:
+        total_avg_days += float(avg_audit_days['avg_surveillance'])
+        count_avg += 1
+    if avg_audit_days['avg_recert']:
+        total_avg_days += float(avg_audit_days['avg_recert'])
+        count_avg += 1
+    
+    average_audit_days = round(total_avg_days / count_avg, 1) if count_avg > 0 else 0
+    
+    # Srbija Tim - Crni Kalendar Statistika
+    # Zakazane posete (ovaj mesec)
+    srbija_tim_scheduled_this_month = SrbijaTim.objects.filter(
+        status='zakazan',
+        visit_date__gte=current_month_start,
+        visit_date__lt=next_month_start
+    ).count()
+    
+    # Odrađene posete (ovaj mesec)
+    srbija_tim_completed_this_month = SrbijaTim.objects.filter(
+        status='odradjena',
+        visit_date__gte=current_month_start,
+        visit_date__lt=next_month_start
+    ).count()
+    
+    # Poslati izveštaji
+    srbija_tim_reports_sent = SrbijaTim.objects.filter(
+        report_sent=True
+    ).count()
+    
+    # Neposlati izveštaji (odrađene posete bez izveštaja)
+    srbija_tim_reports_pending = SrbijaTim.objects.filter(
+        status='odradjena',
+        report_sent=False
+    ).count()
+    
+    # Posete u narednih 7 dana
+    seven_days_from_now = today + timedelta(days=7)
+    srbija_tim_upcoming_7_days = SrbijaTim.objects.filter(
+        visit_date__gte=today,
+        visit_date__lte=seven_days_from_now
+    ).order_by('visit_date').select_related('company').prefetch_related('auditors', 'standards')
+    
+    # Sertifikati - Isticanje
+    # Sertifikati koji ističu u narednih 30 dana
+    expiring_30_days = CompanyStandard.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=30)
+    ).select_related('company', 'standard_definition').count()
+    
+    # Sertifikati koji ističu u narednih 60 dana
+    expiring_60_days = CompanyStandard.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=60)
+    ).select_related('company', 'standard_definition').count()
+    
+    # Sertifikati koji ističu u narednih 90 dana
+    expiring_90_days = CompanyStandard.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=90)
+    ).select_related('company', 'standard_definition').count()
+    
+    # Već istekli sertifikati
+    expired_certificates_count = CompanyStandard.objects.filter(
+        expiry_date__lt=today
+    ).count()
+    
+    # Lista sertifikata koji ističu u narednih 30 dana (za tabelu)
+    expiring_certificates_list = CompanyStandard.objects.filter(
+        expiry_date__gte=today,
+        expiry_date__lte=today + timedelta(days=30)
+    ).select_related('company', 'standard_definition').order_by('expiry_date')[:10]
+    
+    # Auditori - Zauzetost
+    # Ukupan broj auditora
+    total_auditors = Auditor.objects.count()
+    
+    # Najzauzetiji auditor (ovaj mesec) - broj rezervacija
+    from django.db.models import Count
+    busiest_auditor = AuditorReservation.objects.filter(
+        date__gte=current_month_start,
+        date__lt=next_month_start
+    ).values('auditor__ime_prezime').annotate(
+        reservation_count=Count('id')
+    ).order_by('-reservation_count').first()
+    
+    # Dostupni auditori (danas) - auditori bez rezervacija
+    reserved_auditor_ids = AuditorReservation.objects.filter(
+        date=today
+    ).values_list('auditor_id', flat=True).distinct()
+    
+    available_auditors_today = Auditor.objects.exclude(
+        id__in=reserved_auditor_ids
+    ).count()
+    
+    # Aktivni ciklusi
+    active_cycles = CertificationCycle.objects.filter(status='active').count()
+    
+    # Završeni ciklusi (ova godina)
+    year_start = today.replace(month=1, day=1)
+    completed_cycles_this_year = CertificationCycle.objects.filter(
+        status='completed',
+        updated_at__gte=year_start
+    ).count()
+    
+    # Integrisani sistemi
+    integrated_systems = CertificationCycle.objects.filter(
+        is_integrated_system=True,
+        status='active'
+    ).count()
+    
     # Get planned audits for this week
     this_week_audits = []
-    
-    # Auditi koji ističu uskoro - sad koristimo novi model CycleAudit
-    from .cycle_models import CycleAudit
     upcoming_audits = CycleAudit.objects.filter(
         Q(planned_date__gt=today) & 
         Q(planned_date__lt=next_month) &
@@ -808,8 +995,45 @@ def dashboard(request):
     context = {
         'total_companies': total_companies,
         'active_companies': active_companies,
+        'suspended_companies': suspended_companies,
+        'expired_companies': expired_companies,
+        'pending_companies': pending_companies,
+        'withdrawn_companies': withdrawn_companies,
+        'cancelled_companies': cancelled_companies,
         'active_certificates': active_certificates,
         'expired_certificates': expired_certificates,
+        # Auditi statistika
+        'planned_audits_count': planned_audits_count,
+        'scheduled_audits_count': scheduled_audits_count,
+        'completed_audits_this_month': completed_audits_this_month,
+        'postponed_audits_count': postponed_audits_count,
+        'upcoming_audits_30_days': upcoming_audits_30_days,
+        'upcoming_audits_30_days_count': upcoming_audits_30_days.count(),
+        'average_audit_days': average_audit_days,
+        # Srbija Tim statistika
+        'srbija_tim_scheduled_this_month': srbija_tim_scheduled_this_month,
+        'srbija_tim_completed_this_month': srbija_tim_completed_this_month,
+        'srbija_tim_reports_sent': srbija_tim_reports_sent,
+        'srbija_tim_reports_pending': srbija_tim_reports_pending,
+        'srbija_tim_upcoming_7_days': srbija_tim_upcoming_7_days,
+        'srbija_tim_upcoming_7_days_count': srbija_tim_upcoming_7_days.count(),
+        # Sertifikati - Isticanje
+        'expiring_30_days': expiring_30_days,
+        'expiring_60_days': expiring_60_days,
+        'expiring_90_days': expiring_90_days,
+        'expired_certificates_count': expired_certificates_count,
+        'expiring_certificates_list': expiring_certificates_list,
+        # Auditori
+        'total_auditors': total_auditors,
+        'busiest_auditor': busiest_auditor,
+        'available_auditors_today': available_auditors_today,
+        # Ciklusi
+        'active_cycles': active_cycles,
+        'completed_cycles_this_year': completed_cycles_this_year,
+        'integrated_systems': integrated_systems,
+        # Datumi za badge-ove
+        'today': today,
+        'seven_days_from_now': seven_days_from_now,
         'companies': companies,
         'standards_labels': json.dumps(standards_labels),
         'standards_data': json.dumps(standards_data),
