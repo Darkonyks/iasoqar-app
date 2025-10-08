@@ -184,6 +184,33 @@
 
       <div class="content">
         <div class="container-fluid">
+          <!-- Filter za auditore -->
+          <div class="card mb-3">
+            <div class="card-body">
+              <form method="get" class="form-inline">
+                <div class="form-group mr-3">
+                  <label for="auditor_filter" class="mr-2"><i class="fas fa-user-tie"></i> Filter po auditoru:</label>
+                  <select id="auditor_filter" name="auditor" class="form-control" style="min-width: 250px;">
+                    <option value="">Svi auditori</option>
+                    {% for auditor in auditors %}
+                      <option value="{{ auditor.id }}" {% if selected_auditor|stringformat:"s" == auditor.id|stringformat:"s" %}selected{% endif %}>
+                        {{ auditor.ime_prezime }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">
+                  <i class="fas fa-filter"></i> Filtriraj
+                </button>
+                {% if selected_auditor %}
+                <a href="{% url 'company:calendar' %}" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Resetuj
+                </a>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+          
           <div class="card">
             <div class="card-body">
               <div id="calendar-container">
@@ -375,7 +402,27 @@
       // Koristi se da static/js/calendar.js preskoči svoje DnD handlere
       window.__calendar_prevalidation_active = true;
       // Configure calendar URLs
-      window.eventsApiUrl = '{% url "company:appointment_calendar_json" %}';
+      // Dodaj auditor parametar ako je selektovan
+      var selectedAuditor = '{{ selected_auditor }}';
+      console.log('Raw selected_auditor from Django:', '{{ selected_auditor }}');
+      console.log('selectedAuditor variable:', selectedAuditor);
+      console.log('selectedAuditor length:', selectedAuditor.length);
+      console.log('selectedAuditor is truthy?', !!selectedAuditor);
+      
+      var auditorParam = (selectedAuditor && selectedAuditor.trim()) ? '?auditor=' + selectedAuditor : '';
+      var baseUrl = '{% url "company:appointment_calendar_json" %}';
+      
+      // Fix: Remove duplicate 'calendar/' if it exists
+      if (baseUrl.includes('/calendar/calendar/')) {
+        baseUrl = baseUrl.replace('/calendar/calendar/', '/calendar/');
+      }
+      
+      window.eventsApiUrl = baseUrl + auditorParam;
+      
+      console.log('Base URL (original):', '{% url "company:appointment_calendar_json" %}');
+      console.log('Base URL (fixed):', baseUrl);
+      console.log('Auditor param:', auditorParam);
+      console.log('Final Events API URL:', window.eventsApiUrl);
       // Za certification_cycle_json je potreban ID parametar koji ćemo prosleđivati dinamički
       // Bazni URL bez ID-a, koji će se formirati dinamički u JS kodu kada dobijemo cycle_id
       window.certificationCycleJsonBaseUrl = '/company/api/cycles/';
@@ -1607,7 +1654,33 @@
             // U bundlovanoj verziji FullCalendar-a, pluginovi su već uključeni
             // Nije potrebno eksplicitno navođenje pluginova
             themeSystem: 'bootstrap5',
-            events: eventsApiUrl,
+            events: function(info, successCallback, failureCallback) {
+              var url = window.eventsApiUrl || eventsApiUrl;
+              console.log('Fetching events from:', url);
+              console.log('Date range:', info.start, 'to', info.end);
+              
+              $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(data) {
+                  console.log('Events loaded successfully:', data);
+                  console.log('Number of events:', data.length);
+                  successCallback(data);
+                },
+                error: function(xhr, status, error) {
+                  console.error('AJAX Error details:');
+                  console.error('- Status:', status);
+                  console.error('- Error:', error);
+                  console.error('- XHR status:', xhr.status);
+                  console.error('- XHR statusText:', xhr.statusText);
+                  console.error('- Response:', xhr.responseText);
+                  console.error('- Response type:', xhr.getResponseHeader('Content-Type'));
+                  
+                  alert('Greška pri učitavanju događaja:\nStatus: ' + xhr.status + '\nPoruka: ' + error + '\n\nPogledajte konzolu za više detalja.');
+                  failureCallback(error);
+                }
+              });
+            },
             eventClick: function (info) {
               console.log('=== EVENT CLICK HANDLER POKRENUT (v6.1.18) ===');
               console.log('Event clicked:', info.event);

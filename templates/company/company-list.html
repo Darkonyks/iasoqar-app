@@ -136,7 +136,7 @@
       <!-- Search form -->
       <div class="card mb-4">
         <div class="card-body">
-          <div class="input-group w-100">
+          <div class="input-group w-100 mb-3">
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
             </div>
@@ -149,6 +149,26 @@
             </div>
             {% endif %}
           </div>
+          
+          <!-- Date range filter za istek sertifikata -->
+          <form method="get" class="form-inline">
+            <div class="form-group mr-3">
+              <label for="expiry_from" class="mr-2"><i class="fas fa-calendar-alt"></i> Istek sertifikata od:</label>
+              <input type="date" id="expiry_from" name="expiry_from" class="form-control" value="{{ expiry_from }}">
+            </div>
+            <div class="form-group mr-3">
+              <label for="expiry_to" class="mr-2">do:</label>
+              <input type="date" id="expiry_to" name="expiry_to" class="form-control" value="{{ expiry_to }}">
+            </div>
+            <button type="submit" class="btn btn-primary mr-2">
+              <i class="fas fa-filter"></i> Filtriraj
+            </button>
+            {% if expiry_from or expiry_to %}
+            <a href="{% url 'company:list' %}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Resetuj
+            </a>
+            {% endif %}
+          </form>
         </div>
       </div>
 

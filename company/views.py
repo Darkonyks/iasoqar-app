@@ -2,6 +2,9 @@ import json
 import logging
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
+
+# Konfigurisanje logera
+logger = logging.getLogger(__name__)
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -47,6 +50,32 @@ class CompanyListView(ListView):
                 Q(iaf_eac_codes__iaf_eac_code__iaf_code__icontains=search_query)
             ).distinct()
         
+        # Date range filter za istek sertifikata
+        expiry_from = self.request.GET.get('expiry_from')
+        expiry_to = self.request.GET.get('expiry_to')
+        
+        if expiry_from:
+            try:
+                from datetime import datetime
+                expiry_from_date = datetime.strptime(expiry_from, '%Y-%m-%d').date()
+                # Filtriraj kompanije koje imaju bar jedan standard sa datumom isteka >= expiry_from
+                queryset = queryset.filter(
+                    company_standards__expiry_date__gte=expiry_from_date
+                ).distinct()
+            except ValueError:
+                pass
+        
+        if expiry_to:
+            try:
+                from datetime import datetime
+                expiry_to_date = datetime.strptime(expiry_to, '%Y-%m-%d').date()
+                # Filtriraj kompanije koje imaju bar jedan standard sa datumom isteka <= expiry_to
+                queryset = queryset.filter(
+                    company_standards__expiry_date__lte=expiry_to_date
+                ).distinct()
+            except ValueError:
+                pass
+        
         # Prefetch related data for better performance
         return queryset.prefetch_related(
             'iaf_eac_codes__iaf_eac_code',
@@ -56,6 +85,8 @@ class CompanyListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get('search', '')
+        context['expiry_from'] = self.request.GET.get('expiry_from', '')
+        context['expiry_to'] = self.request.GET.get('expiry_to', '')
         return context
 
 
@@ -621,9 +652,16 @@ class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za t
         # Add companies for the appointment form
         context['companies'] = Company.objects.all().order_by('name')
         
+        # Dodaj auditore za filter
+        from .auditor_models import Auditor
+        context['auditors'] = Auditor.objects.all().order_by('ime_prezime')
+        
         # Dodaj parametre za početni prikaz kalendara
         context['initial_month'] = self.request.GET.get('month')
         context['initial_year'] = self.request.GET.get('year')
+        
+        # Dodaj selektovani auditor za filter
+        context['selected_auditor'] = self.request.GET.get('auditor', '')
         
         return context
 
@@ -919,8 +957,25 @@ def audit_detail_json(request, pk):
 @login_required
 def appointment_calendar_json(request):
     """API endpoint for getting appointment data in FullCalendar format"""
+    # Get filter parametar za auditora
+    auditor_id = request.GET.get('auditor')
+    
+    logger.info(f"Calendar JSON request - auditor filter: {auditor_id}")
+    
     # Get all appointments
     appointments = Appointment.objects.all()
+    logger.info(f"Total appointments before filter: {appointments.count()}")
+    
+    # Napomena: Appointment model trenutno nema 'auditors' polje
+    # Ovaj filter neće raditi dok se ne doda to polje u model
+    # if auditor_id:
+    #     appointments = appointments.filter(auditors__id=auditor_id)
+    
+    # Za sada, ako je auditor selektovan, ne prikazuj Appointment objekte
+    # jer ne možemo da ih filtriramo
+    if auditor_id:
+        appointments = appointments.none()
+    
     events = []
     
     # Add appointments to events
@@ -968,7 +1023,17 @@ def appointment_calendar_json(request):
     
     # Get all audit dates from the new model (CycleAudit)
     from .cycle_models import CycleAudit, AuditDay
+    from django.db.models import Q
+    
     cycle_audits = CycleAudit.objects.all().select_related('certification_cycle__company')
+    
+    # Filtriraj CycleAudit po auditoru ako je selektovan
+    # Auditor može biti vodeći auditor ili član tima
+    if auditor_id:
+        cycle_audits = cycle_audits.filter(
+            Q(lead_auditor__id=auditor_id) | Q(audit_team__id=auditor_id)
+        ).distinct()
+        logger.info(f"Filtered CycleAudits count: {cycle_audits.count()}")
     
     audit_type_mapping = {
         'surveillance_1': {
@@ -1009,8 +1074,16 @@ def appointment_calendar_json(request):
     # Boja će se odrediti na osnovu statusa audita
     audit_days = (
         AuditDay.objects
-        .select_related('audit__certification_cycle__company')
+        .select_related('audit__certification_cycle__company', 'audit__lead_auditor')
+        .prefetch_related('audit__audit_team')
     )
+    
+    # Filtriraj AuditDay po auditoru ako je selektovan
+    if auditor_id:
+        audit_days = audit_days.filter(
+            Q(audit__lead_auditor__id=auditor_id) | Q(audit__audit_team__id=auditor_id)
+        ).distinct()
+        logger.info(f"Filtered AuditDays count: {audit_days.count()}")
     
     # Add audit days to events
     for audit_day in audit_days:
@@ -1224,6 +1297,8 @@ def appointment_calendar_json(request):
                 }
             })
     
+    logger.info(f"Total events returned: {len(events)}")
+    logger.info(f"Events summary - Appointments: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'appointment'])}, Audit days: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'audit_day'])}, Cycle audits: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'cycle_audit'])}")
     return JsonResponse(events, safe=False)
 
 def appointment_detail(request, pk):
