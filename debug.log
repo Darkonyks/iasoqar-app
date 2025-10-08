@@ -993,3 +993,291 @@ ERROR 2025-10-07 08:48:07,127 srbija_tim_views 47828 5204 Greška pri ažuriranju 
 ERROR 2025-10-07 08:48:56,254 srbija_tim_views 47828 5204 Greška pri ažuriranju datuma Srbija Tim posete: name 'old_date' is not defined
 INFO 2025-10-07 08:51:13,880 srbija_tim_views 41696 28240 Srbija Tim poseta 333333 - datum promenjen sa 2025-10-16 na 2025-10-17 od strane korisnika admin
 INFO 2025-10-07 09:18:05,699 srbija_tim_views 48912 43252 Srbija Tim poseta 123133131313 - datum promenjen sa 2025-10-16 na 2025-10-22 od strane korisnika admin
+INFO 2025-10-08 09:51:16,996 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:17,000 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:17,054 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:17,054 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:51:29,193 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:29,195 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:29,235 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:29,235 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:51:36,196 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:36,197 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:36,216 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:36,216 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:51:40,793 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:40,794 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:40,816 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:40,816 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:51:44,049 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:44,050 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:44,085 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:44,085 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:51:55,986 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:51:55,987 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:51:56,005 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:51:56,006 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:52:03,956 views 26656 59980 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:52:03,957 views 26656 59980 Total appointments before filter: 3
+INFO 2025-10-08 09:52:03,993 views 26656 59980 Total events returned: 17
+INFO 2025-10-08 09:52:03,993 views 26656 59980 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:52:16,639 views 26656 58028 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:52:16,640 views 26656 58028 Total appointments before filter: 3
+INFO 2025-10-08 09:52:16,689 views 26656 58028 Total events returned: 17
+INFO 2025-10-08 09:52:16,690 views 26656 58028 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:57:32,056 views 26656 9008 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:57:32,058 views 26656 9008 Total appointments before filter: 3
+INFO 2025-10-08 09:57:32,076 views 26656 9008 Total events returned: 17
+INFO 2025-10-08 09:57:32,076 views 26656 9008 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:57:37,865 views 26656 9008 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:57:37,866 views 26656 9008 Total appointments before filter: 3
+INFO 2025-10-08 09:57:37,898 views 26656 9008 Total events returned: 17
+INFO 2025-10-08 09:57:37,899 views 26656 9008 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:57:43,218 views 26656 9008 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:57:43,219 views 26656 9008 Total appointments before filter: 3
+INFO 2025-10-08 09:57:43,246 views 26656 9008 Total events returned: 17
+INFO 2025-10-08 09:57:43,247 views 26656 9008 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:57:44,628 views 26656 33436 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:57:44,629 views 26656 33436 Total appointments before filter: 3
+INFO 2025-10-08 09:57:44,666 views 26656 33436 Total events returned: 17
+INFO 2025-10-08 09:57:44,667 views 26656 33436 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:58:01,498 views 26656 33436 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:58:01,499 views 26656 33436 Total appointments before filter: 3
+INFO 2025-10-08 09:58:01,516 views 26656 33436 Total events returned: 17
+INFO 2025-10-08 09:58:01,517 views 26656 33436 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:58:08,031 views 26656 50360 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:58:08,031 views 26656 50360 Total appointments before filter: 3
+INFO 2025-10-08 09:58:08,047 views 26656 50360 Total events returned: 17
+INFO 2025-10-08 09:58:08,048 views 26656 50360 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:58:13,977 views 26656 50360 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:58:13,979 views 26656 50360 Total appointments before filter: 3
+INFO 2025-10-08 09:58:14,023 views 26656 50360 Total events returned: 17
+INFO 2025-10-08 09:58:14,024 views 26656 50360 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:58:24,535 views 26656 30816 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:58:24,536 views 26656 30816 Total appointments before filter: 3
+INFO 2025-10-08 09:58:24,558 views 26656 30816 Total events returned: 17
+INFO 2025-10-08 09:58:24,558 views 26656 30816 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:58:51,579 views 26656 30816 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:58:51,581 views 26656 30816 Total appointments before filter: 3
+INFO 2025-10-08 09:58:51,614 views 26656 30816 Total events returned: 17
+INFO 2025-10-08 09:58:51,614 views 26656 30816 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:59:16,636 views 26656 30816 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:59:16,637 views 26656 30816 Total appointments before filter: 3
+INFO 2025-10-08 09:59:16,655 views 26656 30816 Total events returned: 17
+INFO 2025-10-08 09:59:16,655 views 26656 30816 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 09:59:56,970 views 26656 30816 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 09:59:56,971 views 26656 30816 Total appointments before filter: 3
+INFO 2025-10-08 09:59:56,994 views 26656 30816 Total events returned: 17
+INFO 2025-10-08 09:59:56,994 views 26656 30816 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:12:25,379 views 26656 58744 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:12:25,382 views 26656 58744 Total appointments before filter: 3
+INFO 2025-10-08 10:12:25,407 views 26656 58744 Total events returned: 17
+INFO 2025-10-08 10:12:25,407 views 26656 58744 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:12:33,095 views 26656 44040 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:12:33,096 views 26656 44040 Total appointments before filter: 3
+INFO 2025-10-08 10:12:33,163 views 26656 44040 Total events returned: 17
+INFO 2025-10-08 10:12:33,163 views 26656 44040 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:13:42,236 views 26656 44040 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:13:42,237 views 26656 44040 Total appointments before filter: 3
+INFO 2025-10-08 10:13:42,269 views 26656 44040 Total events returned: 17
+INFO 2025-10-08 10:13:42,270 views 26656 44040 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:13:44,364 views 26656 44040 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:13:44,365 views 26656 44040 Total appointments before filter: 3
+INFO 2025-10-08 10:13:44,400 views 26656 44040 Total events returned: 17
+INFO 2025-10-08 10:13:44,401 views 26656 44040 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:21:31,552 views 26656 51292 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 10:21:31,556 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:31,565 views 26656 51292 Filtered CycleAudits count: 2
+INFO 2025-10-08 10:21:31,569 views 26656 51292 Filtered AuditDays count: 3
+INFO 2025-10-08 10:21:31,584 views 26656 51292 Total events returned: 3
+INFO 2025-10-08 10:21:31,584 views 26656 51292 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 10:21:34,164 views 26656 51292 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 10:21:34,165 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:34,167 views 26656 51292 Filtered CycleAudits count: 2
+INFO 2025-10-08 10:21:34,168 views 26656 51292 Filtered AuditDays count: 3
+INFO 2025-10-08 10:21:34,176 views 26656 51292 Total events returned: 3
+INFO 2025-10-08 10:21:34,177 views 26656 51292 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 10:21:37,178 views 26656 51292 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 10:21:37,179 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:37,182 views 26656 51292 Filtered CycleAudits count: 5
+INFO 2025-10-08 10:21:37,184 views 26656 51292 Filtered AuditDays count: 7
+INFO 2025-10-08 10:21:37,202 views 26656 51292 Total events returned: 7
+INFO 2025-10-08 10:21:37,203 views 26656 51292 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 10:21:39,931 views 26656 51292 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:21:39,932 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:39,948 views 26656 51292 Total events returned: 17
+INFO 2025-10-08 10:21:39,948 views 26656 51292 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:21:43,387 views 26656 51292 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 10:21:43,388 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:43,422 views 26656 51292 Total events returned: 17
+INFO 2025-10-08 10:21:43,423 views 26656 51292 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 10:21:48,136 views 26656 51292 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 10:21:48,138 views 26656 51292 Total appointments before filter: 3
+INFO 2025-10-08 10:21:48,140 views 26656 51292 Filtered CycleAudits count: 2
+INFO 2025-10-08 10:21:48,142 views 26656 51292 Filtered AuditDays count: 3
+INFO 2025-10-08 10:21:48,156 views 26656 51292 Total events returned: 3
+INFO 2025-10-08 10:21:48,157 views 26656 51292 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:54:32,355 views 26656 58356 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:54:32,357 views 26656 58356 Total appointments before filter: 3
+INFO 2025-10-08 11:54:32,360 views 26656 58356 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:54:32,362 views 26656 58356 Filtered AuditDays count: 3
+INFO 2025-10-08 11:54:32,373 views 26656 58356 Total events returned: 3
+INFO 2025-10-08 11:54:32,373 views 26656 58356 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:54:41,457 views 26656 56384 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 11:54:41,458 views 26656 56384 Total appointments before filter: 3
+INFO 2025-10-08 11:54:41,475 views 26656 56384 Total events returned: 17
+INFO 2025-10-08 11:54:41,475 views 26656 56384 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 11:54:47,406 views 26656 56384 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 11:54:47,407 views 26656 56384 Total appointments before filter: 3
+INFO 2025-10-08 11:54:47,444 views 26656 56384 Total events returned: 17
+INFO 2025-10-08 11:54:47,444 views 26656 56384 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 11:54:48,138 views 26656 56384 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 11:54:48,139 views 26656 56384 Total appointments before filter: 3
+INFO 2025-10-08 11:54:48,156 views 26656 56384 Total events returned: 17
+INFO 2025-10-08 11:54:48,156 views 26656 56384 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 11:55:02,008 views 26656 56384 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:55:02,009 views 26656 56384 Total appointments before filter: 3
+INFO 2025-10-08 11:55:02,012 views 26656 56384 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:55:02,015 views 26656 56384 Filtered AuditDays count: 3
+INFO 2025-10-08 11:55:02,032 views 26656 56384 Total events returned: 3
+INFO 2025-10-08 11:55:02,033 views 26656 56384 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:55:21,144 views 26656 51924 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 11:55:21,145 views 26656 51924 Total appointments before filter: 3
+INFO 2025-10-08 11:55:21,170 views 26656 51924 Total events returned: 17
+INFO 2025-10-08 11:55:21,170 views 26656 51924 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 11:58:32,677 views 26656 49076 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:58:32,678 views 26656 49076 Total appointments before filter: 3
+INFO 2025-10-08 11:58:32,680 views 26656 49076 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:58:32,681 views 26656 49076 Filtered AuditDays count: 3
+INFO 2025-10-08 11:58:32,687 views 26656 49076 Total events returned: 3
+INFO 2025-10-08 11:58:32,687 views 26656 49076 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:58:38,951 views 26656 49076 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:58:38,952 views 26656 49076 Total appointments before filter: 3
+INFO 2025-10-08 11:58:38,956 views 26656 49076 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:58:38,960 views 26656 49076 Filtered AuditDays count: 3
+INFO 2025-10-08 11:58:38,977 views 26656 49076 Total events returned: 3
+INFO 2025-10-08 11:58:38,978 views 26656 49076 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:58:42,177 views 26656 49076 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:58:42,178 views 26656 49076 Total appointments before filter: 3
+INFO 2025-10-08 11:58:42,180 views 26656 49076 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:58:42,182 views 26656 49076 Filtered AuditDays count: 3
+INFO 2025-10-08 11:58:42,191 views 26656 49076 Total events returned: 3
+INFO 2025-10-08 11:58:42,191 views 26656 49076 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 11:58:48,097 views 26656 49076 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 11:58:48,099 views 26656 49076 Total appointments before filter: 3
+INFO 2025-10-08 11:58:48,102 views 26656 49076 Filtered CycleAudits count: 5
+INFO 2025-10-08 11:58:48,104 views 26656 49076 Filtered AuditDays count: 7
+INFO 2025-10-08 11:58:48,119 views 26656 49076 Total events returned: 7
+INFO 2025-10-08 11:58:48,120 views 26656 49076 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 11:58:50,315 views 26656 24388 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 11:58:50,316 views 26656 24388 Total appointments before filter: 3
+INFO 2025-10-08 11:58:50,319 views 26656 24388 Filtered CycleAudits count: 5
+INFO 2025-10-08 11:58:50,322 views 26656 24388 Filtered AuditDays count: 7
+INFO 2025-10-08 11:58:50,340 views 26656 24388 Total events returned: 7
+INFO 2025-10-08 11:58:50,341 views 26656 24388 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 11:58:58,195 views 26656 24388 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 11:58:58,196 views 26656 24388 Total appointments before filter: 3
+INFO 2025-10-08 11:58:58,198 views 26656 24388 Filtered CycleAudits count: 5
+INFO 2025-10-08 11:58:58,200 views 26656 24388 Filtered AuditDays count: 7
+INFO 2025-10-08 11:58:58,215 views 26656 24388 Total events returned: 7
+INFO 2025-10-08 11:58:58,216 views 26656 24388 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 11:59:25,688 views 26656 24388 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 11:59:25,689 views 26656 24388 Total appointments before filter: 3
+INFO 2025-10-08 11:59:25,690 views 26656 24388 Filtered CycleAudits count: 5
+INFO 2025-10-08 11:59:25,691 views 26656 24388 Filtered AuditDays count: 7
+INFO 2025-10-08 11:59:25,697 views 26656 24388 Total events returned: 7
+INFO 2025-10-08 11:59:25,698 views 26656 24388 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 11:59:33,091 views 26656 58916 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 11:59:33,092 views 26656 58916 Total appointments before filter: 3
+INFO 2025-10-08 11:59:33,129 views 26656 58916 Total events returned: 17
+INFO 2025-10-08 11:59:33,130 views 26656 58916 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 11:59:40,100 views 26656 58916 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 11:59:40,102 views 26656 58916 Total appointments before filter: 3
+INFO 2025-10-08 11:59:40,106 views 26656 58916 Filtered CycleAudits count: 2
+INFO 2025-10-08 11:59:40,109 views 26656 58916 Filtered AuditDays count: 3
+INFO 2025-10-08 11:59:40,127 views 26656 58916 Total events returned: 3
+INFO 2025-10-08 11:59:40,128 views 26656 58916 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:30:39,766 views 43572 12924 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:30:39,771 views 43572 12924 Total appointments before filter: 3
+INFO 2025-10-08 12:30:39,780 views 43572 12924 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:30:39,782 views 43572 12924 Filtered AuditDays count: 3
+INFO 2025-10-08 12:30:39,797 views 43572 12924 Total events returned: 3
+INFO 2025-10-08 12:30:39,797 views 43572 12924 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:30:47,327 views 43572 12924 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:30:47,328 views 43572 12924 Total appointments before filter: 3
+INFO 2025-10-08 12:30:47,358 views 43572 12924 Total events returned: 17
+INFO 2025-10-08 12:30:47,359 views 43572 12924 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:30:53,534 views 43572 12924 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:30:53,535 views 43572 12924 Total appointments before filter: 3
+INFO 2025-10-08 12:30:53,550 views 43572 12924 Total events returned: 17
+INFO 2025-10-08 12:30:53,550 views 43572 12924 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:30:57,977 views 43572 12924 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:30:57,978 views 43572 12924 Total appointments before filter: 3
+INFO 2025-10-08 12:30:57,988 views 43572 12924 Total events returned: 17
+INFO 2025-10-08 12:30:57,989 views 43572 12924 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:31:33,084 views 48104 50628 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:31:33,085 views 48104 50628 Total appointments before filter: 3
+INFO 2025-10-08 12:31:33,110 views 48104 50628 Total events returned: 17
+INFO 2025-10-08 12:31:33,111 views 48104 50628 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:31:37,880 views 48104 50628 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:31:37,881 views 48104 50628 Total appointments before filter: 3
+INFO 2025-10-08 12:31:37,898 views 48104 50628 Total events returned: 17
+INFO 2025-10-08 12:31:37,899 views 48104 50628 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-10-08 12:31:43,438 views 48104 50628 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:31:43,439 views 48104 50628 Total appointments before filter: 3
+INFO 2025-10-08 12:31:43,441 views 48104 50628 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:31:43,443 views 48104 50628 Filtered AuditDays count: 3
+INFO 2025-10-08 12:31:43,450 views 48104 50628 Total events returned: 3
+INFO 2025-10-08 12:31:43,451 views 48104 50628 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:31:47,952 views 48104 50628 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 12:31:47,953 views 48104 50628 Total appointments before filter: 3
+INFO 2025-10-08 12:31:47,957 views 48104 50628 Filtered CycleAudits count: 5
+INFO 2025-10-08 12:31:47,959 views 48104 50628 Filtered AuditDays count: 7
+INFO 2025-10-08 12:31:47,976 views 48104 50628 Total events returned: 7
+INFO 2025-10-08 12:31:47,977 views 48104 50628 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 12:31:53,028 views 48104 54752 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 12:31:53,029 views 48104 54752 Total appointments before filter: 3
+INFO 2025-10-08 12:31:53,031 views 48104 54752 Filtered CycleAudits count: 5
+INFO 2025-10-08 12:31:53,033 views 48104 54752 Filtered AuditDays count: 7
+INFO 2025-10-08 12:31:53,044 views 48104 54752 Total events returned: 7
+INFO 2025-10-08 12:31:53,044 views 48104 54752 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 12:40:48,913 views 48104 49216 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 12:40:48,914 views 48104 49216 Total appointments before filter: 3
+INFO 2025-10-08 12:40:48,918 views 48104 49216 Filtered CycleAudits count: 5
+INFO 2025-10-08 12:40:48,920 views 48104 49216 Filtered AuditDays count: 7
+INFO 2025-10-08 12:40:48,941 views 48104 49216 Total events returned: 7
+INFO 2025-10-08 12:40:48,943 views 48104 49216 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 12:40:50,974 views 48104 58224 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 12:40:50,976 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:40:50,979 views 48104 58224 Filtered CycleAudits count: 5
+INFO 2025-10-08 12:40:50,981 views 48104 58224 Filtered AuditDays count: 7
+INFO 2025-10-08 12:40:50,998 views 48104 58224 Total events returned: 7
+INFO 2025-10-08 12:40:50,999 views 48104 58224 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 12:40:54,088 views 48104 58224 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:40:54,089 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:40:54,092 views 48104 58224 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:40:54,094 views 48104 58224 Filtered AuditDays count: 3
+INFO 2025-10-08 12:40:54,107 views 48104 58224 Total events returned: 3
+INFO 2025-10-08 12:40:54,107 views 48104 58224 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:40:56,120 views 48104 58224 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:40:56,121 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:40:56,124 views 48104 58224 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:40:56,127 views 48104 58224 Filtered AuditDays count: 3
+INFO 2025-10-08 12:40:56,137 views 48104 58224 Total events returned: 3
+INFO 2025-10-08 12:40:56,137 views 48104 58224 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:40:58,812 views 48104 58224 Calendar JSON request - auditor filter: 6
+INFO 2025-10-08 12:40:58,813 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:40:58,816 views 48104 58224 Filtered CycleAudits count: 2
+INFO 2025-10-08 12:40:58,820 views 48104 58224 Filtered AuditDays count: 3
+INFO 2025-10-08 12:40:58,833 views 48104 58224 Total events returned: 3
+INFO 2025-10-08 12:40:58,834 views 48104 58224 Events summary - Appointments: 0, Audit days: 1, Cycle audits: 2
+INFO 2025-10-08 12:41:04,767 views 48104 58224 Calendar JSON request - auditor filter: 1
+INFO 2025-10-08 12:41:04,768 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:41:04,769 views 48104 58224 Filtered CycleAudits count: 5
+INFO 2025-10-08 12:41:04,771 views 48104 58224 Filtered AuditDays count: 7
+INFO 2025-10-08 12:41:04,809 views 48104 58224 Total events returned: 7
+INFO 2025-10-08 12:41:04,809 views 48104 58224 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 5
+INFO 2025-10-08 12:41:14,139 views 48104 58224 Calendar JSON request - auditor filter: None
+INFO 2025-10-08 12:41:14,140 views 48104 58224 Total appointments before filter: 3
+INFO 2025-10-08 12:41:14,176 views 48104 58224 Total events returned: 17
+INFO 2025-10-08 12:41:14,177 views 48104 58224 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10

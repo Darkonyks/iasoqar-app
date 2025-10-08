@@ -662,6 +662,10 @@ class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za t
         
         # Dodaj selektovani auditor za filter
         context['selected_auditor'] = self.request.GET.get('auditor', '')
+
+        # Dobij view parametar iz URL-a
+        initial_view = self.request.GET.get('view', 'dayGridMonth')
+        context['initial_view'] = initial_view
         
         return context
 
