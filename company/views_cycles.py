@@ -58,7 +58,7 @@ class CertificationCycleListView(LoginRequiredMixin, ListView):
             context['company'] = get_object_or_404(Company, id=company_id)
         
         # Add status choices for filtering
-        context['status_choices'] = CertificationCycle.STATUS_CHOICES
+        context['status_choices'] = CertificationCycle.CYCLE_STATUS_CHOICES
         
         return context
 
