@@ -26,6 +26,22 @@ class SrbijaTimCalendarView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Srbija Tim - Crni Kalendar'
+        
+        # Dodaj auditore za filter
+        from .auditor_models import Auditor
+        context['auditors'] = Auditor.objects.all().order_by('ime_prezime')
+        
+        # Dodaj parametre za početni prikaz kalendara
+        context['initial_month'] = self.request.GET.get('month')
+        context['initial_year'] = self.request.GET.get('year')
+        
+        # Dodaj selektovani auditor za filter
+        context['selected_auditor'] = self.request.GET.get('auditor', '')
+
+        # Dobij view parametar iz URL-a
+        initial_view = self.request.GET.get('view', 'dayGridMonth')
+        context['initial_view'] = initial_view
+        
         return context
 
 
@@ -203,7 +219,15 @@ def srbija_tim_calendar_json(request):
     """
     JSON endpoint za FullCalendar - vraća sve posete kao događaje
     """
+    # Get filter parametar za auditora
+    auditor_id = request.GET.get('auditor')
+    
     visits = SrbijaTim.objects.all().prefetch_related('standards', 'auditors')
+    
+    # Filtriraj po auditoru ako je selektovan
+    if auditor_id:
+        visits = visits.filter(auditors__id=auditor_id).distinct()
+        logger.info(f"Srbija Tim - filtered by auditor {auditor_id}: {visits.count()} visits")
     
     events = []
     for visit in visits:

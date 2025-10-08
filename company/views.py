@@ -666,7 +666,8 @@ class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za t
         # Dobij view parametar iz URL-a
         initial_view = self.request.GET.get('view', 'dayGridMonth')
         context['initial_view'] = initial_view
-        
+        # Debug log
+        print(f"DEBUG CalendarView: month={context['initial_month']}, year={context['initial_year']}, view={context['initial_view']}")
         return context
 
 class CalendarEventsView(LoginRequiredMixin, TemplateView):

@@ -82,6 +82,29 @@
 
     <div class="content">
         <div class="container-fluid">
+            <!-- Filter za auditore -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form method="get" class="form-inline" id="auditor-filter-form">
+                        <div class="form-group mr-3">
+                            <label for="auditor_filter" class="mr-2"><i class="fas fa-user-tie"></i> Filter po auditoru:</label>
+                            <select id="auditor_filter" name="auditor" class="form-control" style="min-width: 250px;">
+                                <option value="">Svi auditori</option>
+                                {% for auditor in auditors %}
+                                <option value="{{ auditor.id }}" {% if selected_auditor|stringformat:"s" == auditor.id|stringformat:"s" %}selected{% endif %}>{{ auditor.ime_prezime }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="button" id="apply-filter-btn" class="btn btn-primary mr-2">
+                            <i class="fas fa-filter"></i> Filtriraj
+                        </button>
+                        <button type="button" id="reset-filter-btn" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-times"></i> Resetuj
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             <!-- Legenda -->
             <div class="legend">
                 <div class="legend-item">
@@ -163,6 +186,9 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
+// Globalna promenljiva za trenutni filter auditora
+var currentAuditorFilter = '{{ selected_auditor }}';
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Srbija Tim Calendar - Inicijalizacija...');
     
@@ -175,8 +201,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Calendar element found:', calendarEl);
     
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+    // Ako već postoji kalendar, uništi ga pre kreiranja novog
+    if (window.calendar) {
+        console.log('Uništavam stari kalendar...');
+        try {
+            window.calendar.destroy();
+        } catch (e) {
+            console.warn('Greška pri uništavanju starog kalendara:', e);
+        }
+    }
+    
+    // Kreiraj kalendar kao globalni objekat odmah
+    window.calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: '{{ initial_view|default:"dayGridMonth" }}',
         height: 'auto',
         contentHeight: 600,
         firstDay: 1,  // Ponedeljak kao prvi dan
@@ -216,12 +253,25 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             noEventsText: 'Nema događaja'
         },
-        events: {
-            url: '{% url "company:srbija_tim_calendar_json" %}',
-            failure: function(error) {
-                console.error('Error loading events:', error);
-                alert('Greška pri učitavanju događaja: ' + error.message);
-            }
+        events: function(info, successCallback, failureCallback) {
+            var auditorParam = currentAuditorFilter ? '?auditor=' + currentAuditorFilter : '';
+            var url = '{% url "company:srbija_tim_calendar_json" %}' + auditorParam;
+            
+            console.log('Fetching Srbija Tim events from:', url, 'Filter:', currentAuditorFilter);
+            
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(data) {
+                    console.log('Srbija Tim events loaded:', data.length);
+                    successCallback(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading events:', error);
+                    alert('Greška pri učitavanju događaja: ' + error);
+                    failureCallback(error);
+                }
+            });
         },
         loading: function(isLoading) {
             console.log('Calendar loading:', isLoading);
@@ -493,13 +543,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Učini kalendar dostupnim globalno
-    window.calendar = calendar;
-    
     console.log('Rendering calendar...');
     
     try {
-        calendar.render();
+        window.calendar.render();
         console.log('Calendar rendered successfully!');
         
         // Proveri da li je kalendar vidljiv
@@ -587,9 +634,75 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 500);
         
+        // Postavi početni datum ako je prosleđen kroz URL
+        {% if initial_month and initial_year %}
+        setTimeout(function() {
+            try {
+                var initialDate = '{{ initial_year }}-{{ initial_month|stringformat:"02d" }}-01';
+                console.log('Navigacija na početni datum:', initialDate);
+                window.calendar.gotoDate(initialDate);
+            } catch (e) {
+                console.warn('Greška pri postavljanju početnog datuma:', e);
+            }
+        }, 200);
+        {% endif %}
+        
     } catch (error) {
         console.error('Error rendering calendar:', error);
         alert('Greška pri renderovanju kalendara: ' + error.message);
+    }
+    
+    // Handler za dugme "Filtriraj" - primeni filter bez osvežavanja stranice
+    const applyFilterBtn = document.getElementById('apply-filter-btn');
+    const resetFilterBtn = document.getElementById('reset-filter-btn');
+    const auditorSelect = document.getElementById('auditor_filter');
+    
+    if (applyFilterBtn && auditorSelect) {
+        applyFilterBtn.addEventListener('click', function() {
+            const selectedAuditor = auditorSelect.value;
+            console.log('Primenjujem filter za auditora:', selectedAuditor);
+            
+            // Postavi globalni filter
+            currentAuditorFilter = selectedAuditor;
+            
+            // Refetch events sa novim filterom
+            if (window.calendar) {
+                window.calendar.refetchEvents();
+            }
+            
+            // Prikaži/sakrij dugme za resetovanje
+            if (selectedAuditor) {
+                resetFilterBtn.style.display = 'inline-block';
+            } else {
+                resetFilterBtn.style.display = 'none';
+            }
+        });
+    }
+    
+    // Handler za dugme "Resetuj" - ukloni filter
+    if (resetFilterBtn && auditorSelect) {
+        resetFilterBtn.addEventListener('click', function() {
+            console.log('Resetujem filter');
+            
+            // Resetuj dropdown
+            auditorSelect.value = '';
+            
+            // Ukloni filter
+            currentAuditorFilter = '';
+            
+            // Refetch events bez filtera
+            if (window.calendar) {
+                window.calendar.refetchEvents();
+            }
+            
+            // Sakrij dugme za resetovanje
+            resetFilterBtn.style.display = 'none';
+        });
+        
+        // Prikaži dugme ako je filter već aktivan
+        if (currentAuditorFilter) {
+            resetFilterBtn.style.display = 'inline-block';
+        }
     }
 });
 </script>
