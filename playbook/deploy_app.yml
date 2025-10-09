@@ -44,33 +44,55 @@
       when: docker_group_check.rc != 0
       become: yes
       
-    - name: Resetuj Docker sesiju (newgrp docker)
+    - name: Konfiguriši passwordless sudo za docker komande
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/darko-docker
+        line: 'darko ALL=(ALL) NOPASSWD: /usr/bin/docker, /usr/bin/docker-compose, /usr/local/bin/docker-compose'
+        create: yes
+        mode: '0440'
+        validate: 'visudo -cf %s'
+      become: yes
+      
+    - name: Restartuj Docker daemon (rešava permission probleme)
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+      become: yes
+      
+    - name: Sačekaj da Docker daemon bude spreman
+      ansible.builtin.wait_for:
+        path: /var/run/docker.sock
+        state: present
+        timeout: 30
+      become: yes
+      
+    - name: Force kill sve Docker kontejnere (agresivno)
       ansible.builtin.shell: |
-        newgrp docker << END
-        echo "Docker grupa aktivirana"
-        END
+        sudo docker kill $(sudo docker ps -q) 2>/dev/null || true
+        sudo docker rm -f $(sudo docker ps -aq) 2>/dev/null || true
+      args:
+        chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
-      when: docker_group_check.rc != 0
       ignore_errors: yes
       
-    - name: docker compose down
-      ansible.builtin.shell: docker compose down
+    - name: docker compose down (sa sudo)
+      ansible.builtin.shell: sudo docker compose down
       args:
         chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
       ignore_errors: yes  # Ignoriši grešku ako kontejneri nisu pokrenuti
       
-    - name: Pokreni docker compose build u aplikacionom folderu
-      ansible.builtin.shell: docker compose build
+    - name: Pokreni docker compose build u aplikacionom folderu (sa sudo)
+      ansible.builtin.shell: sudo docker compose build
       args:
         chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
       
-    - name: Pokreni docker compose (up -d) u aplikacionom folderu
-      ansible.builtin.shell: docker compose up -d
+    - name: Pokreni docker compose (up -d) u aplikacionom folderu (sa sudo)
+      ansible.builtin.shell: sudo docker compose up -d
       args:
         chdir: /home/darko/iasoqar-app
       become: true

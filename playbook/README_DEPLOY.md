@@ -10,12 +10,13 @@ Korisnik `darko` nema prava da upravlja Docker kontejnerima jer nije član `dock
 
 ## Rešenje
 
-### Opcija 1: Automatski (Playbook)
+### Opcija 1: Automatski (Playbook) ✅ IMPLEMENTIRANO
 Playbook sada automatski:
 1. Proverava da li je korisnik `darko` u `docker` grupi
 2. Dodaje ga u grupu ako nije
-3. Resetuje Docker sesiju
-4. Nastavlja sa deployment-om
+3. **Konfiguriše passwordless sudo za Docker komande** (NOVO!)
+4. Koristi `sudo docker compose` za sve Docker operacije
+5. Nastavlja sa deployment-om
 
 ### Opcija 2: Manuelno (Na serveru)
 Ako i dalje ima problema, izvršite manuelno na serveru:

@@ -5,8 +5,10 @@ services:
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"  # Samo interno za Docker mrežu, ne eksterno
+    # ports:
+    #   - "8000:8000"  # Onemogućeno - Nginx će proxy-ovati
     depends_on:
       - db
     environment:
