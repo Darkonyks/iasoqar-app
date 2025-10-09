@@ -27,7 +27,7 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     ports:
-      - "49152:80"
+      - "80:80"
     depends_on:
       - web
 
