@@ -50,8 +50,15 @@ Ako gore ne radi, možeš koristiti `sudo` direktno:
 ### Dodato:
 1. **Provera Docker grupe** - Proverava da li korisnik ima pristup
 2. **Automatsko dodavanje u grupu** - Dodaje korisnika ako treba
-3. **Reset sesije** - Aktivira novu grupu
-4. **ignore_errors: yes** - Na `docker compose down` da ne puca ako kontejneri nisu pokrenuti
+3. **Passwordless sudo** - Konfiguriše sudo za Docker komande
+4. **Project name (-p iasoqar-app)** - Eksplicitno navođenje projekta za izolaciju
+5. **ignore_errors: yes** - Na `docker compose down` da ne puca ako kontejneri nisu pokrenuti
+6. **Status prikaz** - Prikazuje status kontejnera nakon deployment-a
+
+### Bezbednost:
+- ✅ **NE ubija sve kontejnere** - Samo kontejnere ove aplikacije
+- ✅ **Eksplicitni project name** - `-p iasoqar-app` osigurava izolaciju
+- ✅ **Bezbedno za multi-app server** - Neće uticati na druge Docker aplikacije
 
 ## Pokretanje
 

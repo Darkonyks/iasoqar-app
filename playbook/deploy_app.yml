@@ -53,31 +53,8 @@
         validate: 'visudo -cf %s'
       become: yes
       
-    - name: Restartuj Docker daemon (rešava permission probleme)
-      ansible.builtin.systemd:
-        name: docker
-        state: restarted
-      become: yes
-      
-    - name: Sačekaj da Docker daemon bude spreman
-      ansible.builtin.wait_for:
-        path: /var/run/docker.sock
-        state: present
-        timeout: 30
-      become: yes
-      
-    - name: Force kill sve Docker kontejnere (agresivno)
-      ansible.builtin.shell: |
-        sudo docker kill $(sudo docker ps -q) 2>/dev/null || true
-        sudo docker rm -f $(sudo docker ps -aq) 2>/dev/null || true
-      args:
-        chdir: /home/darko/iasoqar-app
-      become: true
-      become_user: darko
-      ignore_errors: yes
-      
-    - name: docker compose down (sa sudo)
-      ansible.builtin.shell: sudo docker compose down
+    - name: Zaustavi samo kontejnere ove aplikacije (docker compose down)
+      ansible.builtin.shell: sudo docker compose -p iasoqar-app down
       args:
         chdir: /home/darko/iasoqar-app
       become: true
@@ -85,18 +62,30 @@
       ignore_errors: yes  # Ignoriši grešku ako kontejneri nisu pokrenuti
       
     - name: Pokreni docker compose build u aplikacionom folderu (sa sudo)
-      ansible.builtin.shell: sudo docker compose build
+      ansible.builtin.shell: sudo docker compose -p iasoqar-app build
       args:
         chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
       
     - name: Pokreni docker compose (up -d) u aplikacionom folderu (sa sudo)
-      ansible.builtin.shell: sudo docker compose up -d
+      ansible.builtin.shell: sudo docker compose -p iasoqar-app up -d
       args:
         chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
+      
+    - name: Prikaži status kontejnera
+      ansible.builtin.shell: sudo docker compose -p iasoqar-app ps
+      args:
+        chdir: /home/darko/iasoqar-app
+      become: true
+      become_user: darko
+      register: docker_status
+      
+    - name: Prikaži rezultat
+      debug:
+        var: docker_status.stdout_lines
 
 
 
