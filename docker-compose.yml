@@ -28,10 +28,10 @@ services:
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-      - ./nginx/ssl:/etc/nginx/ssl:ro  # SSL certifikati (ako ih imaš)
+      # - ./nginx/ssl:/etc/nginx/ssl:ro  # SSL certifikati (omogući kada dodaš certifikate)
     ports:
       - "80:80"
-      - "443:443"  # HTTPS port
+      # - "443:443"  # HTTPS port (omogući kada dodaš SSL)
     depends_on:
       - web
 
