@@ -31,19 +31,44 @@
       become: true
       become_user: darko
 
+    - name: Proveri da li korisnik darko ima pristup Docker-u
+      ansible.builtin.shell: groups darko | grep docker
+      register: docker_group_check
+      ignore_errors: yes
+      
+    - name: Dodaj korisnika darko u docker grupu ako nije već dodat
+      ansible.builtin.user:
+        name: darko
+        groups: docker
+        append: yes
+      when: docker_group_check.rc != 0
+      become: yes
+      
+    - name: Resetuj Docker sesiju (newgrp docker)
+      ansible.builtin.shell: |
+        newgrp docker << END
+        echo "Docker grupa aktivirana"
+        END
+      become: true
+      become_user: darko
+      when: docker_group_check.rc != 0
+      ignore_errors: yes
+      
     - name: docker compose down
       ansible.builtin.shell: docker compose down
       args:
         chdir: /home/darko/iasoqar-app
       become: true
-      become_user: darko 
+      become_user: darko
+      ignore_errors: yes  # Ignoriši grešku ako kontejneri nisu pokrenuti
       
     - name: Pokreni docker compose build u aplikacionom folderu
       ansible.builtin.shell: docker compose build
       args:
         chdir: /home/darko/iasoqar-app
       become: true
-      become_user: darko  
+      become_user: darko
+      
     - name: Pokreni docker compose (up -d) u aplikacionom folderu
       ansible.builtin.shell: docker compose up -d
       args:
