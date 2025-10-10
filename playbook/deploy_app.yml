@@ -53,13 +53,29 @@
         validate: 'visudo -cf %s'
       become: yes
       
-    - name: Zaustavi samo kontejnere ove aplikacije (docker compose down)
+    - name: Pokušaj zaustaviti kontejnere (docker compose down)
       ansible.builtin.shell: sudo docker compose -p iasoqar-app down
       args:
         chdir: /home/darko/iasoqar-app
       become: true
       become_user: darko
-      ignore_errors: yes  # Ignoriši grešku ako kontejneri nisu pokrenuti
+      register: docker_down_result
+      ignore_errors: yes
+      
+    - name: Restartuj Docker daemon ako down nije uspeo
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
+      become: yes
+      when: docker_down_result.rc != 0
+      
+    - name: Sačekaj da Docker daemon bude spreman nakon restarta
+      ansible.builtin.wait_for:
+        path: /var/run/docker.sock
+        state: present
+        timeout: 30
+      become: yes
+      when: docker_down_result.rc != 0
       
     - name: Pokreni docker compose build u aplikacionom folderu (sa sudo)
       ansible.builtin.shell: sudo docker compose -p iasoqar-app build
