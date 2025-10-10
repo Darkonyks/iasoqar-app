@@ -2,6 +2,7 @@ services:
   # Django aplikacija
   web:
     build: .
+    restart: unless-stopped
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -25,6 +26,7 @@ services:
   # Nginx servis
   nginx:
     build: ./nginx
+    restart: unless-stopped
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -38,6 +40,7 @@ services:
   # PostgreSQL baza
   db:
     image: postgres:14
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
