@@ -44,21 +44,11 @@
       when: docker_group_check.rc != 0
       become: yes
       
-    - name: Konfiguriši passwordless sudo za docker komande
-      ansible.builtin.lineinfile:
-        path: /etc/sudoers.d/darko-docker
-        line: 'darko ALL=(ALL) NOPASSWD: /usr/bin/docker, /usr/bin/docker-compose, /usr/local/bin/docker-compose'
-        create: yes
-        mode: '0440'
-        validate: 'visudo -cf %s'
-      become: yes
-      
     - name: Pokušaj zaustaviti kontejnere (docker compose down)
-      ansible.builtin.shell: sudo docker compose -p iasoqar-app down
+      ansible.builtin.shell: docker compose -p iasoqar-app down
       args:
         chdir: /home/darko/iasoqar-app
-      become: true
-      become_user: darko
+      become: yes
       register: docker_down_result
       ignore_errors: yes
       
@@ -77,26 +67,23 @@
       become: yes
       when: docker_down_result.rc != 0
       
-    - name: Pokreni docker compose build u aplikacionom folderu (sa sudo)
-      ansible.builtin.shell: sudo docker compose -p iasoqar-app build
+    - name: Pokreni docker compose build u aplikacionom folderu
+      ansible.builtin.shell: docker compose -p iasoqar-app build
       args:
         chdir: /home/darko/iasoqar-app
-      become: true
-      become_user: darko
+      become: yes
       
-    - name: Pokreni docker compose (up -d) u aplikacionom folderu (sa sudo)
-      ansible.builtin.shell: sudo docker compose -p iasoqar-app up -d
+    - name: Pokreni docker compose (up -d) u aplikacionom folderu
+      ansible.builtin.shell: docker compose -p iasoqar-app up -d
       args:
         chdir: /home/darko/iasoqar-app
-      become: true
-      become_user: darko
+      become: yes
       
     - name: Prikaži status kontejnera
-      ansible.builtin.shell: sudo docker compose -p iasoqar-app ps
+      ansible.builtin.shell: docker compose -p iasoqar-app ps
       args:
         chdir: /home/darko/iasoqar-app
-      become: true
-      become_user: darko
+      become: yes
       register: docker_status
       
     - name: Prikaži rezultat
