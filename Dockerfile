@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
     libgirepository1.0-dev \
     gir1.2-pango-1.0 \
     shared-mime-info \
+    python3-cairo \
+    python3-cairo-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,6 +33,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 # Upgrade pip i instaliraj wheel pre ostalih paketa
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir --no-build-isolation pycairo && \
     pip install --no-cache-dir -r requirements.txt
 
 # Kopiraj projekat
