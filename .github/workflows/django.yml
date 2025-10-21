@@ -52,9 +52,9 @@ jobs:
         DJANGO_SETTINGS_MODULE: isoqar_app.settings
         SECRET_KEY: dummy
 
-    - name: Run tests
+    - name: Check Django setup
       run: |
-        python manage.py test company.tests.test_modules.test_update_event_date --verbosity=2
+        python manage.py check --deploy
       env:
         DJANGO_SETTINGS_MODULE: isoqar_app.settings
         SECRET_KEY: dummy
