@@ -16,7 +16,8 @@ tzdata==2025.2
 pytz==2025.2
 
 # Export functionality
-xhtml2pdf==0.2.17
+# xhtml2pdf==0.2.17  # Zakomentirano zbog pycairo build problema
+weasyprint==62.3  # Alternativa za PDF export (koristi cairocffi umesto pycairo)
 reportlab==4.4.4
 
 # REST API (if needed for calendar frontend)
