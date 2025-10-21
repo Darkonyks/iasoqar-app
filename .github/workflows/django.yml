@@ -49,12 +49,12 @@ jobs:
     - name: Prep DB (SQLite by default)
       run: python manage.py migrate --noinput
       env:
-        DJANGO_SETTINGS_MODULE: iasoqar_app.settings
+        DJANGO_SETTINGS_MODULE: isoqar_app.settings
         SECRET_KEY: dummy
 
     - name: Run tests
       run: |
         python manage.py test company.tests.test_modules.test_update_event_date --verbosity=2
       env:
-        DJANGO_SETTINGS_MODULE: iasoqar_app.settings
+        DJANGO_SETTINGS_MODULE: isoqar_app.settings
         SECRET_KEY: dummy
