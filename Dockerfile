@@ -32,8 +32,8 @@ RUN apt-get update && apt-get install -y \
 # Instaliraj Python zavisnosti
 COPY requirements.txt .
 # Upgrade pip i instaliraj wheel pre ostalih paketa
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir --no-build-isolation pycairo && \
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel meson ninja && \
+    PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig pip install --no-cache-dir pycairo && \
     pip install --no-cache-dir -r requirements.txt
 
 # Kopiraj projekat
