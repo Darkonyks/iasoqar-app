@@ -21,13 +21,17 @@ RUN apt-get update && apt-get install -y \
     libpangocairo-1.0-0 \
     libgdk-pixbuf-2.0-0 \
     libgdk-pixbuf-2.0-dev \
+    libgirepository1.0-dev \
+    gir1.2-pango-1.0 \
     shared-mime-info \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Instaliraj Python zavisnosti
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Upgrade pip i instaliraj wheel pre ostalih paketa
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Kopiraj projekat
 COPY . .
