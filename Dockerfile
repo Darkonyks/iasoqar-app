@@ -10,14 +10,18 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
     g++ \
-    libcairo2-dev \
     pkg-config \
     python3-dev \
-    libpango1.0-dev \
-    libgdk-pixbuf-2.0-dev \
     libffi-dev \
-    shared-mime-info \
     libpq-dev \
+    libcairo2 \
+    libcairo2-dev \
+    libpango-1.0-0 \
+    libpango1.0-dev \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf-2.0-0 \
+    libgdk-pixbuf-2.0-dev \
+    shared-mime-info \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
