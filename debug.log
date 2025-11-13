@@ -1327,3 +1327,7 @@ INFO 2025-10-08 15:05:05,748 views 56284 44708 Calendar JSON request - auditor f
 INFO 2025-10-08 15:05:05,749 views 56284 44708 Total appointments before filter: 3
 INFO 2025-10-08 15:05:05,772 views 56284 44708 Total events returned: 17
 INFO 2025-10-08 15:05:05,773 views 56284 44708 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-11-13 08:02:35,353 views 36524 40852 Calendar JSON request - auditor filter: None
+INFO 2025-11-13 08:02:35,354 views 36524 40852 Total appointments before filter: 3
+INFO 2025-11-13 08:02:35,385 views 36524 40852 Total events returned: 17
+INFO 2025-11-13 08:02:35,385 views 36524 40852 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10

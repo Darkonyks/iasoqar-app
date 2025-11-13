@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'isoqar_app.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Use PostgreSQL in production, SQLite for development
-if os.environ.get('DATABASE_URL', '') == 'postgres':
+if os.environ.get('DATABASE_URL', '') in ['postgres', 'postgresql']:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

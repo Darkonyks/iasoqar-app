@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Django aplikacija (development verzija)
+  web:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - .:/app  # Mount ceo kod za development
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"  # Direktan pristup za development
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DEBUG=True
+      - DJANGO_SECRET_KEY=dev_secret_key_not_for_production
+      - DATABASE_URL=postgresql
+      - POSTGRES_DB=isoqar_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    entrypoint: ["./entrypoint.sh"]
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  # PostgreSQL baza (development)
+  db:
+    image: postgres:14
+    restart: unless-stopped
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=isoqar_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d isoqar_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"  # Drugačiji port za development
+
+volumes:
+  postgres_dev_data:
+  static_volume:
+  media_volume:

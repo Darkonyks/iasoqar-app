@@ -48,6 +48,21 @@ class Auditor(models.Model):
         blank=True
     )
     
+    # Additional fields for import data
+    technical_area_code = models.CharField(
+        _('TA kod'), 
+        max_length=10, 
+        blank=True, 
+        null=True,
+        help_text=_('Technical Area kod (npr. T09)')
+    )
+    
+    covers_all_standards = models.BooleanField(
+        _('Pokriva sve standarde'),
+        default=False,
+        help_text=_('Označite ako auditor pokriva sve dostupne standarde')
+    )
+    
     # System fields
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)
     updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
@@ -97,6 +112,46 @@ class Auditor(models.Model):
         if self.kategorija == self.CATEGORY_TECHNICAL_EXPERT:
             return IAFEACCode.objects.filter(auditor_direct_links__auditor=self).distinct()
         return IAFEACCode.objects.filter(auditor_standard_links__auditor_standard__auditor=self).distinct()
+
+    def assign_all_standards(self):
+        """
+        Dodeljuje auditoru sve dostupne standarde ako je covers_all_standards=True
+        """
+        if self.covers_all_standards and self.kategorija != self.CATEGORY_TECHNICAL_EXPERT:
+            from .standard_models import StandardDefinition
+            all_standards = StandardDefinition.objects.filter(active=True)
+            
+            for standard in all_standards:
+                AuditorStandard.objects.get_or_create(
+                    auditor=self,
+                    standard=standard,
+                    defaults={'napomena': 'Automatski dodeljen - pokriva sve standarde'}
+                )
+    
+    def assign_multiple_iaf_codes(self, iaf_codes_list, is_primary_first=True):
+        """
+        Dodeljuje više IAF/EAC kodova odjednom
+        
+        Args:
+            iaf_codes_list: Lista IAF kodova (npr. ['28a', '28b', '28c', '28d'])
+            is_primary_first: Da li prvi kod treba biti označen kao primarni
+        """
+        if self.kategorija == self.CATEGORY_TECHNICAL_EXPERT:
+            from .iaf_models import IAFEACCode
+            
+            for i, code in enumerate(iaf_codes_list):
+                try:
+                    iaf_code = IAFEACCode.objects.get(iaf_code=code)
+                    AuditorIAFEACCode.objects.get_or_create(
+                        auditor=self,
+                        iaf_eac_code=iaf_code,
+                        defaults={
+                            'is_primary': is_primary_first and i == 0,
+                            'notes': f'Uvezen iz tabele - TA: {self.technical_area_code}'
+                        }
+                    )
+                except IAFEACCode.DoesNotExist:
+                    print(f"IAF/EAC kod '{code}' ne postoji u bazi")
 
 
 class AuditorStandard(models.Model):

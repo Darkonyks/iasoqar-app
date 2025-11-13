@@ -7,7 +7,7 @@ class IAFScopeReference(models.Model):
     """
     Model za IAF Scope Reference vrednosti koje se koriste za kategorizaciju standarda i IAF/EAC kodova.
     """
-    reference = models.CharField(_('IAF Scope Reference'), max_length=10, unique=True)
+    reference = models.CharField(_('IAF Scope Reference'), max_length=50, unique=True)
     description = models.TextField(_('Description'), blank=True, null=True)
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now)
     updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
@@ -34,8 +34,8 @@ class IAFEACCode(models.Model):
         verbose_name=_("IAF Scope Reference"),
         null=True,  # Dozvoljavamo null zbog migracije postojećih podataka
     )
-    iaf_code = models.CharField(_("IAF/EAC Code"), max_length=10, default="N/A")
-    description = models.TextField(_("Code Description"))
+    iaf_code = models.CharField(_("IAF/EAC Code"), max_length=50, default="N/A")
+    description = models.TextField(_("Code Description"), blank=True, null=True)
     created_at = models.DateTimeField(_('Kreirano'), default=timezone.now, null=True, blank=True)
     updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
 
