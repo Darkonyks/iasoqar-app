@@ -42,7 +42,7 @@ services:
       timeout: 5s
       retries: 5
     ports:
-      - "5433:5432"  # Drugačiji port za development
+      - "5435:5432"  # Promenjen port da izbegne konflikt sa lokalnom PostgreSQL instalacijom
 
 volumes:
   postgres_dev_data:

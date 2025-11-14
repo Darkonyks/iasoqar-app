@@ -1,0 +1,220 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.bootstrap4.min.css">
+<style>
+    .card {
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.12), 0 1.5px 4px rgba(44, 62, 80, 0.10);
+        border-radius: 1rem;
+        border: none;
+        background: #f8f9fa;
+    }
+    .card-body {
+        border-radius: 1rem;
+    }
+    .table {
+        background: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 8px rgba(44,62,80,0.06);
+    }
+    .table thead th {
+        background: #e9ecef;
+        border: none;
+        font-weight: 600;
+        color: #495057;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f4f8fb;
+    }
+    .btn {
+        border-radius: 0.5rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 6px rgba(44,62,80,0.07);
+    }
+    .btn-primary {
+        background: #6366f1;
+        border: none;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #4338ca;
+        color: white;
+    }
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(99,102,241,0.15);
+    }
+    .table tbody tr:hover {
+        background: #e0e7ff;
+        transition: background 0.2s;
+    }
+    .badge-scope {
+        font-size: 90%;
+        padding: 0.4em 0.6em;
+    }
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+    .stats-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <!-- Stats Cards -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="stats-card">
+            <div class="stats-number">{{ total_codes }}</div>
+            <div class="stats-label">Ukupno IAF/EAC kodova</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="stats-number">{{ total_scopes }}</div>
+            <div class="stats-label">IAF Scope Reference-a</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search form -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="input-group w-100">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po IAF kodu, opisu ili IAF Scope Reference">
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 bg-light rounded-4">
+          <table id="iafCodesTable" class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>IAF/EAC Kod</th>
+                <th>Opis</th>
+                <th>IAF Scope Reference</th>
+                <th>Scope Opis</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for code in iaf_codes %}
+              <tr>
+                <td><strong>{{ code.iaf_code }}</strong></td>
+                <td>{{ code.description|default:"N/A" }}</td>
+                <td>
+                  {% if code.iaf_scope_reference %}
+                    <span class="badge badge-primary badge-scope">{{ code.iaf_scope_reference.iaf_code }}</span>
+                  {% else %}
+                    <span class="text-muted">N/A</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if code.iaf_scope_reference %}
+                    {{ code.iaf_scope_reference.description|truncatewords:15 }}
+                  {% else %}
+                    <span class="text-muted">N/A</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center">Nema pronađenih IAF/EAC kodova</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/responsive.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.colVis.min.js"></script>
+<script>
+$(function () {
+    // Inicijalizacija DataTable
+    var table = $("#iafCodesTable").DataTable({
+      "responsive": true, 
+      "lengthChange": true, 
+      "autoWidth": false,
+      "pageLength": 25,
+      "language": {
+        "search": "Pretraži:",
+        "lengthMenu": "Prikaži _MENU_ redova po stranici",
+        "info": "Prikazano _START_ do _END_ od ukupno _TOTAL_ redova",
+        "infoEmpty": "Nema podataka za prikaz",
+        "infoFiltered": "(filtrirano od ukupno _MAX_ redova)",
+        "paginate": {
+          "first": "Prva",
+          "last": "Poslednja",
+          "next": "Sledeća",
+          "previous": "Prethodna"
+        },
+        "zeroRecords": "Nema pronađenih rezultata"
+      },
+      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      "searching": true,
+      "dom": '<"row"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"l><"col-md-6"p>>'
+    });
+    
+    // Povezivanje našeg polja za pretragu sa DataTable pretragom
+    $('#tableSearch').keyup(function() {
+        table.search($(this).val()).draw();
+    });
+    
+    // Dodavanje dugmadi za export
+    table.buttons().container().appendTo('#iafCodesTable_wrapper .col-md-6:eq(0)');
+    
+    // Sakrivanje podrazumevanog polja za pretragu
+    $('#iafCodesTable_filter').hide();
+});
+</script>
+{% endblock %}

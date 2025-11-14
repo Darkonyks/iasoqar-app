@@ -124,7 +124,7 @@
             <div class="input-group-prepend">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
             </div>
-            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po imenu, email-u, telefonu, kategoriji, standardima ili IAF/EAC kodovima">
+            <input type="text" id="tableSearch" class="form-control" placeholder="Pretraži po imenu, email-u, telefonu, kategoriji ili standardima">
           </div>
         </div>
       </div>
@@ -139,7 +139,6 @@
                                     <th>Email</th>
                                     <th>Telefon</th>
                                     <th>Standardi</th>
-                                    <th>IAF/EAC codes</th>
                                     <th>Akcije</th>
                                 </tr>
                             </thead>
@@ -205,19 +204,6 @@
                                         <span class="text-muted">Nema standarda</span>
                                         {% endif %}
                                     </td>
-                                    <td>
-                                        {% if auditor.all_iaf_codes %}
-                                        <ul class="list-unstyled mb-0">
-                                            {% for iaf_code in auditor.all_iaf_codes %}
-                                            <li class="mb-1">
-                                                <span class="badge badge-secondary p-1" style="font-size: 90%;">{{ iaf_code }}</span>
-                                            </li>
-                                            {% endfor %}
-                                        </ul>
-                                        {% else %}
-                                        <span class="text-muted">Nema IAF/EAC kodova</span>
-                                        {% endif %}
-                                    </td>
                                     <td class="action-buttons">
                                         <a href="{% url 'company:auditor_detail' auditor.id %}" class="btn btn-sm btn-info" title="Detalji">
                                             <i class="fas fa-eye"></i>
@@ -232,7 +218,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="7" class="text-center">Nema pronađenih auditora</td>
+                                    <td colspan="6" class="text-center">Nema pronađenih auditora</td>
                                 </tr>
                                 {% endfor %}
           </tbody>

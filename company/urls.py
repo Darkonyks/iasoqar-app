@@ -3,6 +3,7 @@ from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView
 from .auditor_direct_iaf_views import auditor_direct_iaf_eac_create, auditor_direct_iaf_eac_update, auditor_direct_iaf_eac_delete
 from .contact_views import kontakt_osoba_create, kontakt_osoba_update, kontakt_osoba_delete
 from .location_views import LocationListView, LocationDetailView, LocationCreateView, LocationUpdateView, LocationDeleteView
+from .iaf_views import IAFEACCodeListView
 from .views_cycles import (CertificationCycleListView, CertificationCycleDetailView, CertificationCycleCreateView, 
                          CertificationCycleUpdateView, CertificationCycleDeleteView, CycleAuditCreateView, 
                          CycleAuditUpdateView, CycleAuditDeleteView)
@@ -132,6 +133,9 @@ urlpatterns = [
     path('auditors/<int:pk>/', AuditorDetailView.as_view(), name='auditor_detail'),
     path('auditors/<int:pk>/update/', AuditorUpdateView.as_view(), name='auditor_update'),
     path('auditors/<int:pk>/delete/', AuditorDeleteView.as_view(), name='auditor_delete'),
+    
+    # IAF/EAC Codes List
+    path('iaf-codes/', IAFEACCodeListView.as_view(), name='iaf_code_list'),
     path('auditors/<int:auditor_id>/standards/add/', auditor_standard_create, name='auditor_standard_create'),
     path('auditors/<int:auditor_id>/standards/<int:pk>/update/', auditor_standard_update, name='auditor_standard_update'),
     path('auditors/<int:auditor_id>/standards/<int:pk>/delete/', auditor_standard_delete, name='auditor_standard_delete'),
