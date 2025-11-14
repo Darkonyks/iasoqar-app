@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0060_extend_iaf_code_length'),
+        ('company', '0061_extend_iaf_code_length'),
     ]
 
     operations = [

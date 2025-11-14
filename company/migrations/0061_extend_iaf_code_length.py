@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0059_add_auditor_import_fields'),
+        ('company', '0060_add_auditor_import_fields'),
     ]
 
     operations = [

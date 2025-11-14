@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0051_update_location_country_field'),
+        ('company', '0052_update_location_country_field'),
     ]
 
     operations = [

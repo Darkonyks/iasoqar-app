@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0047_backfill_auditorreservation_auditday'),
+        ('company', '0048_backfill_auditorreservation_auditday'),
     ]
 
     operations = [

@@ -25,7 +25,7 @@ def noop_reverse(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0046_add_auditday_to_auditorreservation'),
+        ('company', '0047_add_auditday_to_auditorreservation'),
     ]
 
     operations = [

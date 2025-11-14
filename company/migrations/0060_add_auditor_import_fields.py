@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0058_add_status_to_srbija_tim'),
+        ('company', '0059_add_status_to_srbija_tim'),
     ]
 
     operations = [

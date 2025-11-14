@@ -6,7 +6,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0034_add_audit_dana_fields'),
+        ('company', '0033_certificationcycle_broj_dana_nadzora_and_more'),
+        ('company', '0034_rename_start_date_and_remove_end_date'),
     ]
 
     operations = [

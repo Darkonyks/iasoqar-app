@@ -88,7 +88,7 @@ def reverse_location_country_values(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0050_update_country_field_choices'),
+        ('company', '0051_update_country_field_choices'),
     ]
 
     operations = [

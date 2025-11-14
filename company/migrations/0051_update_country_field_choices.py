@@ -88,7 +88,7 @@ def reverse_country_values(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('company', '0049_add_european_countries_to_company'),
+        ('company', '0050_add_european_countries_to_company'),
     ]
 
     operations = [
