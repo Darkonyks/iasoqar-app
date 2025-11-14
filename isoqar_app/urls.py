@@ -20,6 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic.base import RedirectView, TemplateView
 from company.views import dashboard
+from company.health_views import health_check, readiness_check, liveness_check
 from massadmin import urls as massadmin_urls
 import nested_admin.views
 
@@ -28,6 +29,12 @@ admin.autodiscover()
 
 urlpatterns = [
     path('', dashboard, name='home'),
+    
+    # Health check endpoints (for monitoring and deployment)
+    path('health/', health_check, name='health_check'),
+    path('health/ready/', readiness_check, name='readiness_check'),
+    path('health/live/', liveness_check, name='liveness_check'),
+    
     path('admin/', admin.site.urls),
     # Preusmeravanje za admin/company URL na admin/company/company/
     path('admin/company', RedirectView.as_view(url='/admin/company/company/'), name='admin-company-redirect'),

@@ -1331,3 +1331,11 @@ INFO 2025-11-13 08:02:35,353 views 36524 40852 Calendar JSON request - auditor f
 INFO 2025-11-13 08:02:35,354 views 36524 40852 Total appointments before filter: 3
 INFO 2025-11-13 08:02:35,385 views 36524 40852 Total events returned: 17
 INFO 2025-11-13 08:02:35,385 views 36524 40852 Events summary - Appointments: 3, Audit days: 4, Cycle audits: 10
+INFO 2025-11-14 09:43:23,274 views 10 129075765216960 Calendar JSON request - auditor filter: None
+INFO 2025-11-14 09:43:23,277 views 10 129075765216960 Total appointments before filter: 0
+INFO 2025-11-14 09:43:23,283 views 10 129075765216960 Total events returned: 0
+INFO 2025-11-14 09:43:23,284 views 10 129075765216960 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 0
+INFO 2025-11-14 10:31:15,660 views 10 129075740042944 Calendar JSON request - auditor filter: None
+INFO 2025-11-14 10:31:15,668 views 10 129075740042944 Total appointments before filter: 0
+INFO 2025-11-14 10:31:15,688 views 10 129075740042944 Total events returned: 0
+INFO 2025-11-14 10:31:15,689 views 10 129075740042944 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 0

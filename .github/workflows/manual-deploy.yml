@@ -1,0 +1,98 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+      skip_tests:
+        description: 'Skip tests (not recommended)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: ${{ inputs.environment }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Add server to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+    
+    - name: Deploy to ${{ inputs.environment }}
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        SKIP_TESTS: ${{ inputs.skip_tests }}
+      run: |
+        ssh $SERVER_USER@$SERVER_HOST << 'ENDSSH'
+          set -e
+          
+          echo "🚀 Starting manual deployment to ${{ inputs.environment }}..."
+          
+          cd ${{ secrets.DEPLOY_PATH }}
+          
+          # Pull latest code
+          echo "📥 Pulling latest code..."
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git pull origin ${{ github.ref_name }}
+          
+          # Backup database
+          echo "💾 Creating database backup..."
+          BACKUP_FILE="backup_manual_$(date +%Y%m%d_%H%M%S).sql"
+          docker compose -f docker-compose.dev.yml exec -T db pg_dump -U postgres isoqar_dev > $BACKUP_FILE || true
+          echo "Backup saved to: $BACKUP_FILE"
+          
+          # Build and restart
+          echo "🔨 Building Docker images..."
+          docker compose -f docker-compose.dev.yml build --no-cache
+          
+          echo "🔄 Restarting containers..."
+          docker compose -f docker-compose.dev.yml down
+          docker compose -f docker-compose.dev.yml up -d
+          
+          # Wait for services
+          echo "⏳ Waiting for services..."
+          sleep 15
+          
+          # Run migrations
+          echo "🗄️  Running migrations..."
+          docker compose -f docker-compose.dev.yml exec -T web python manage.py migrate --noinput
+          
+          # Collect static
+          echo "📦 Collecting static files..."
+          docker compose -f docker-compose.dev.yml exec -T web python manage.py collectstatic --noinput
+          
+          # Cleanup
+          echo "🧹 Cleaning up..."
+          docker image prune -f
+          
+          echo "✅ Manual deployment to ${{ inputs.environment }} completed!"
+        ENDSSH
+    
+    - name: Verify deployment
+      run: |
+        echo "🔍 Verifying deployment..."
+        sleep 5
+        curl -f ${{ secrets.APP_URL }}/health/ || echo "⚠️  Health check failed"

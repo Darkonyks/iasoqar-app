@@ -3,7 +3,11 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block extra_css %}
+{% block extrastyle %}
+{{ block.super }}
+<!-- DataTables Bootstrap 4 CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.0/css/responsive.bootstrap4.min.css">
 <style>
     .standard-card {
         margin-bottom: 20px;
@@ -285,6 +289,15 @@
                                     <h3 class="card-title">Svi IAF/EAC kodovi auditora</h3>
                                 </div>
                                 <div class="card-body">
+                                    <!-- Search form iznad tabele -->
+                                    <div class="mb-3">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            </div>
+                                            <input type="text" id="iafCodeSearch" class="form-control" placeholder="Pretraži po kodu, nazivu ili standardu...">
+                                        </div>
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped" id="all-iaf-eac-table">
                                             <thead>
@@ -344,7 +357,11 @@
 <!-- /.content-wrapper -->
 {% endblock %}
 
-{% block extra_js %}
+{% block extra_scripts %}
+<!-- DataTables Bootstrap 4 integration -->
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.0/js/responsive.bootstrap4.min.js"></script>
 <script>
     $(document).ready(function() {
         // Inicijalizacija tooltips-a
@@ -381,67 +398,42 @@
         }
         
         // Inicijalizacija tabele sa svim standardima auditora
-        $('#all-standards-table').DataTable({
-            "language": srLatnLanguage,
-            "pageLength": 10,
-            "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Sve"]],
-            "ordering": true,
-            "responsive": true,
-            "columnDefs": [
-                { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
-            ]
-        });
+        if ($('#all-standards-table').length) {
+            $('#all-standards-table').DataTable({
+                "language": srLatnLanguage,
+                "pageLength": 10,
+                "lengthMenu": [[5, 10, 25, -1], [5, 10, 25, "Sve"]],
+                "ordering": true,
+                "responsive": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
+                ]
+            });
+        }
         
         // Inicijalizacija globalne tabele sa svim IAF/EAC kodovima
-        $('#all-iaf-eac-table').DataTable({
-            "language": srLatnLanguage,
-            "pageLength": 10,
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Sve"]],
-            "ordering": true,
-            "responsive": true,
-            "columnDefs": [
-                { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
-            ],
-            "dom": '<"top"<"row"<"col-md-6"l><"col-md-6"f>>>rt<"bottom"ip><"clear">', // Prilagođeni layout za pretragu i paginaciju
-            "initComplete": function() {
-                // Dodajemo naslov iznad search polja
-                $('.dataTables_filter').prepend('<h5 class="mb-2">Pretraga po kodu ili nazivu:</h5>');
-                
-                // Kreiramo naprednu pretragu koja radi po svim kolonama
-                var api = this.api();
-                
-                // Uklanjamo standardno search polje
-                $('.dataTables_filter input')
-                    .off()
-                    .on('input', function() {
-                        // Primenjujemo pretragu na sve kolone
-                        api
-                            .search(this.value)
-                            .draw();
-                    });
-                
-                // Poboljšavamo stil search polja
-                $('.dataTables_filter input')
-                    .attr('placeholder', 'Unesite kod ili naziv...')
-                    .addClass('form-control')
-                    .css({
-                        'width': '100%',
-                        'margin-left': '0px'
-                    });
-                
-                // Dodajemo ikonu za pretragu
-                $('.dataTables_filter label').html(
-                    $('.dataTables_filter input')
-                        .before('<div class="input-group"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div>')
-                        .after('</div>')
-                );
-            },
-            // Prilagođavamo pretragu da radi po svim kolonama
-            "search": {
-                "smart": true,
-                "caseInsensitive": true
-            }
-        });
+        if ($('#all-iaf-eac-table').length) {
+            var iafTable = $('#all-iaf-eac-table').DataTable({
+                "language": srLatnLanguage,
+                "pageLength": 10,
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Sve"]],
+                "ordering": true,
+                "responsive": true,
+                "columnDefs": [
+                    { "orderable": false, "targets": 4 } // Isključujemo sortiranje za kolonu sa akcijama
+                ],
+                "dom": '<"row"<"col-md-6"l><"col-md-6">>rt<"row"<"col-md-6"i><"col-md-6"p>>', // Uklanjamo default search
+                "search": {
+                    "smart": true,
+                    "caseInsensitive": true
+                }
+            });
+            
+            // Povezivanje custom search polja sa DataTable pretragom
+            $('#iafCodeSearch').on('keyup', function() {
+                iafTable.search(this.value).draw();
+            });
+        }
         
 
     });
