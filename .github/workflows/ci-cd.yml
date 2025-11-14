@@ -132,11 +132,12 @@ jobs:
     
     - name: Run tests
       run: |
-        python manage.py test --noinput
+        python manage.py test company.tests --noinput --verbosity=2
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/isoqar_test
         SECRET_KEY: test-secret-key-for-ci
         DEBUG: "False"
+      continue-on-error: false
     
     - name: Build Docker image
       run: |
