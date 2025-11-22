@@ -1680,3 +1680,7 @@ INFO 2025-11-21 21:49:51,847 views 10 129748168771264 Total events returned: 354
 INFO 2025-11-21 21:49:51,850 views 10 129748168771264 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
 INFO 2025-11-21 22:26:50,813 srbija_tim_views 10 138307488077504 Srbija Tim poseta 17475 - datum promenjen sa 2025-11-06 na 2025-11-05 od strane korisnika admin
 INFO 2025-11-21 22:26:55,810 srbija_tim_views 10 138307488077504 Srbija Tim poseta 17475 - datum promenjen sa 2025-11-07 na 2025-10-31 od strane korisnika admin
+INFO 2025-11-22 10:57:47,690 views 10 124573110499008 Calendar JSON request - auditor filter: None
+INFO 2025-11-22 10:57:47,695 views 10 124573110499008 Total appointments before filter: 0
+INFO 2025-11-22 10:57:52,180 views 10 124573110499008 Total events returned: 3544
+INFO 2025-11-22 10:57:52,182 views 10 124573110499008 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3540
