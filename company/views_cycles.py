@@ -354,8 +354,8 @@ class CycleAuditUpdateView(LoginRequiredMixin, UpdateView):
             # Vraćamo korisnika na isti mesec i godinu u kalendaru
             return f"{reverse('company:calendar')}?month={calendar_month}&year={calendar_year}"
         else:
-            # Fallback na standardni kalendar
-            return reverse('company:calendar')
+            # Vraćamo korisnika na detalje ciklusa sertifikacije
+            return reverse('company:cycle_detail', kwargs={'pk': self.object.certification_cycle.id})
 
 
 class CycleAuditDeleteView(LoginRequiredMixin, DeleteView):

@@ -154,6 +154,7 @@
                     </div>
                     <div class="col-md-6">
                         <p><strong>Datum planiranog sastanka:</strong> <span id="modal-visit-date"></span></p>
+                        <p><strong>Broj dana posete:</strong> <span id="modal-broj-dana"></span></p>
                         <p><strong>Auditori:</strong> <span id="modal-auditors"></span></p>
                         <p><strong>Status:</strong> <span id="modal-status"></span></p>
                         <p><strong>Status izveštaja:</strong> <span id="modal-report-status"></span></p>
@@ -300,6 +301,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 visitDateText += ' u ' + props.visit_time.substring(0, 5); // HH:MM
             }
             document.getElementById('modal-visit-date').textContent = visitDateText;
+            
+            // Broj dana posete
+            document.getElementById('modal-broj-dana').textContent = props.broj_dana_posete 
+                ? props.broj_dana_posete + ' dana' 
+                : 'Nije definisano';
             
             document.getElementById('modal-auditors').textContent = props.auditors || 'Nema auditora';
             

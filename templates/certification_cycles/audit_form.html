@@ -4,12 +4,66 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block extrajs %}
-<script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+<script src="{% static 'vendor/select2/js/select2.min.js' %}"></script>
 <script>
   $(document).ready(function() {
-    // Initialize Select2 Elements
-    $('.select2').select2({
+    console.log('Initializing Select2...');
+    
+    // Wait a bit to ensure DOM is fully loaded and no other scripts interfere
+    setTimeout(function() {
+      console.log('Lead auditor element:', $('#id_lead_auditor').length);
+      console.log('Lead auditor options count:', $('#id_lead_auditor option').length);
+      
+      // Destroy any existing Select2 instance first
+      if ($('#id_lead_auditor').hasClass('select2-hidden-accessible')) {
+        console.log('Destroying existing Select2 instance...');
+        $('#id_lead_auditor').select2('destroy');
+      }
+      
+      // Initialize Select2 for lead_auditor with search enabled
+      $('#id_lead_auditor').select2({
+        theme: 'bootstrap4',
+        allowClear: true,
+        placeholder: 'Izaberite auditora',
+        width: '100%',
+        minimumResultsForSearch: 0,  // Always show search box
+        dropdownAutoWidth: true,
+        matcher: function(params, data) {
+          // If there are no search terms, return all data
+          if ($.trim(params.term) === '') {
+            return data;
+          }
+          
+          // Do not display the item if there is no 'text' property
+          if (typeof data.text === 'undefined') {
+            return null;
+          }
+          
+          // `params.term` is the user's search term
+          // `data.text` is the text that is displayed for the data object
+          if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+            return data;
+          }
+          
+          // Return `null` if the term should not be displayed
+          return null;
+        }
+      });
+      
+      console.log('Select2 initialized for lead_auditor');
+    }, 100);  // Small delay to ensure other scripts finish first
+    
+    // Initialize other single select fields
+    $('.select2').not('#id_audit_team, #id_lead_auditor').select2({
       theme: 'bootstrap4'
+    });
+    
+    // Initialize Select2 for audit_team with deselect capability
+    $('#id_audit_team').select2({
+      theme: 'bootstrap4',
+      allowClear: true,
+      closeOnSelect: false,
+      placeholder: 'Izaberite auditore'
     });
     
     // Date picker initialization

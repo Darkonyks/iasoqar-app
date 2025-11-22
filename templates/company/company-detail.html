@@ -217,18 +217,6 @@
                         <td>{% if company.oblast_registracije %}{{ company.oblast_registracije }}{% else %}<span class="text-muted">Nije uneto</span>{% endif %}</td>
                       </tr>
                       <tr>
-                        <td>Datum inicijalnog audita:</td>
-                        <td>{% if company.initial_audit_conducted_date %}{{ company.initial_audit_conducted_date|date:"d.m.Y" }}{% else %}<span class="text-muted">Nije uneto</span>{% endif %}</td>
-                      </tr>
-                      <tr>
-                        <td>Broj poseta godišnje:</td>
-                        <td>{% if company.visits_per_year %}{{ company.visits_per_year }}{% else %}<span class="text-muted">Nije uneto</span>{% endif %}</td>
-                      </tr>
-                      <tr>
-                        <td>Broj dana po auditu:</td>
-                        <td>{% if company.audit_days_each %}{{ company.audit_days_each }}{% else %}<span class="text-muted">Nije uneto</span>{% endif %}</td>
-                      </tr>
-                      <tr>
                         <td>Napomene:</td>
                         <td>{% if company.notes %}{{ company.notes|linebreaks }}{% else %}<span class="text-muted">Nema napomena</span>{% endif %}</td>
                       </tr>
@@ -265,7 +253,7 @@
                         <tbody>
                           {% for standard_item in standards %}
                             <tr>
-                              <td>{{ standard_item.standard.standard_definition.standard }}</td>
+                              <td>{{ standard_item.standard.standard_definition.code }}</td>
                               <td><span class="status-badge status-active">Aktivan</span></td>
                               <td>{% if standard_item.standard.issue_date %}{{ standard_item.standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                               <td>{% if standard_item.standard.expiry_date %}{{ standard_item.standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
@@ -303,7 +291,7 @@
                                   <a href="{% url 'company:standard_update' company_id=company.id pk=standard_item.standard.id %}" class="btn btn-warning btn-sm" title="Izmeni">
                                     <i class="fas fa-edit"></i>
                                   </a>
-                                  <button type="button" class="btn btn-danger btn-sm delete-standard" title="Obriši" data-standard-id="{{ standard_item.standard.id }}" data-standard-name="{{ standard_item.standard.standard_definition.standard }}">
+                                  <button type="button" class="btn btn-danger btn-sm delete-standard" title="Obriši" data-standard-id="{{ standard_item.standard.id }}" data-standard-name="{{ standard_item.standard.standard_definition.code }}">
                                     <i class="fas fa-trash"></i>
                                   </button>
                                 </div>

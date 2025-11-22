@@ -216,16 +216,6 @@
                                  value="{{ form.certificate_number.value|default:'' }}">
                         </div>
                       </div>
-                      
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.initial_audit_conducted_date.id_for_label }}">Datum inicijalnog audita</label>
-                          {{ form.initial_audit_conducted_date.errors }}
-                          <input type="date" name="{{ form.initial_audit_conducted_date.name }}" id="{{ form.initial_audit_conducted_date.id_for_label }}" 
-                                 class="form-control {% if form.initial_audit_conducted_date.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.initial_audit_conducted_date.value|date:'Y-m-d'|default:'' }}">
-                        </div>
-                      </div>
 
                       <div class="col-md-4">
                         <div class="form-group">
@@ -239,37 +229,7 @@
                     </div>
 
                     <div class="row">
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="{{ form.audit_days.id_for_label }}">Broj dana audita</label>
-                          {{ form.audit_days.errors }}
-                          <input type="number" step="0.1" name="{{ form.audit_days.name }}" id="{{ form.audit_days.id_for_label }}" 
-                                 class="form-control {% if form.audit_days.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.audit_days.value|default:'' }}">
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="{{ form.visits_per_year.id_for_label }}">Poseta godišnje</label>
-                          {{ form.visits_per_year.errors }}
-                          <input type="number" name="{{ form.visits_per_year.name }}" id="{{ form.visits_per_year.id_for_label }}" 
-                                 class="form-control {% if form.visits_per_year.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.visits_per_year.value|default:'' }}">
-                        </div>
-                      </div>
-
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="{{ form.audit_days_each.id_for_label }}">Dana po auditu</label>
-                          {{ form.audit_days_each.errors }}
-                          <input type="number" step="0.1" name="{{ form.audit_days_each.name }}" id="{{ form.audit_days_each.id_for_label }}" 
-                                 class="form-control {% if form.audit_days_each.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.audit_days_each.value|default:'' }}">
-                        </div>
-                      </div>
-
-                      <div class="col-md-3">
+                      <div class="col-md-12">
                         <div class="form-group">
                           <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
                           {{ form.oblast_registracije.errors }}

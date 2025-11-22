@@ -17,15 +17,19 @@ class SrbijaTim(models.Model):
     certificate_number = models.CharField(
         _('Broj sertifikata'),
         max_length=100,
+        blank=True,
+        null=True,
         help_text=_('Broj sertifikata kompanije')
     )
     
-    # Veza sa Company modelom (obavezno)
+    # Veza sa Company modelom
     company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
         related_name='srbija_tim_visits',
         verbose_name=_('Kompanija'),
+        blank=True,
+        null=True,
         help_text=_('Kompanija iz baze')
     )
     
@@ -34,6 +38,7 @@ class SrbijaTim(models.Model):
         StandardDefinition,
         related_name='srbija_tim_visits',
         verbose_name=_('Standardi'),
+        blank=True,
         help_text=_('Standardi za koje se vrši audit')
     )
     
@@ -50,12 +55,15 @@ class SrbijaTim(models.Model):
         Auditor,
         related_name='srbija_tim_visits',
         verbose_name=_('Auditori'),
+        blank=True,
         help_text=_('Auditori koji su učestvovali u poseti')
     )
     
     # Datum planiranog sastanka
     visit_date = models.DateField(
         _('Datum planiranog sastanka'),
+        blank=True,
+        null=True,
         help_text=_('Datum kada je planiran sastanak/poseta')
     )
     
@@ -65,6 +73,25 @@ class SrbijaTim(models.Model):
         null=True,
         blank=True,
         help_text=_('Vreme kada je planiran sastanak/poseta (opciono)')
+    )
+    
+    # Broj dana posete
+    broj_dana_posete = models.DecimalField(
+        _('Broj dana posete'),
+        max_digits=5,
+        decimal_places=1,
+        null=True,
+        blank=True,
+        help_text=_('Broj dana trajanja posete')
+    )
+    
+    # ID grupe za povezivanje višednevnih poseta
+    group_id = models.CharField(
+        _('ID grupe'),
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=_('UUID za grupisanje povezanih poseta')
     )
     
     # Status posete

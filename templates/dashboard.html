@@ -808,7 +808,7 @@
                                                 <tr>
                                                     <td>{{ audit.company }}</td>
                                                     <td>{{ audit.type }}</td>
-                                                    <td>{{ audit.date|date:"d.m.Y H:i" }}</td>
+                                                    <td>{{ audit.date|date:"d.m.Y" }}</td>
                                                     <td>{{ audit.status }}</td>
                                                     <td>
                                                         <a href="{% url 'company:audit_detail' audit.id %}" class="btn btn-sm btn-info">

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Django aplikacija (development verzija)
   web:
@@ -10,7 +8,7 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     ports:
-      - "8000:8000"  # Direktan pristup za development
+      - "3000:8000"  # Direktan pristup za development (3000 na hostu -> 8000 u kontejneru)
     depends_on:
       db:
         condition: service_healthy

@@ -154,8 +154,75 @@ class SrbijaTimCreateView(LoginRequiredMixin, CreateView):
         return initial
     
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        from datetime import timedelta
+        from django.contrib import messages
+        import uuid
+        
+        # Dobij broj dana posete
+        broj_dana = form.cleaned_data.get('broj_dana_posete')
+        
+        # Ako nije unet broj dana ili je manji od 1, kreiraj samo jedan zapis
+        if not broj_dana or broj_dana < 1:
+            form.instance.created_by = self.request.user
+            return super().form_valid(form)
+        
+        # Zaokruži broj dana na ceo broj
+        broj_dana_int = int(broj_dana)
+        
+        # Generiši jedinstveni group_id za ovu grupu poseta
+        group_id = str(uuid.uuid4())
+        
+        # Sačuvaj podatke iz forme
+        visit_date = form.cleaned_data.get('visit_date')
+        certificate_number = form.cleaned_data.get('certificate_number')
+        company = form.cleaned_data.get('company')
+        standards = form.cleaned_data.get('standards')
+        certificate_expiry_date = form.cleaned_data.get('certificate_expiry_date')
+        auditors = form.cleaned_data.get('auditors')
+        visit_time = form.cleaned_data.get('visit_time')
+        status = form.cleaned_data.get('status')
+        report_sent = form.cleaned_data.get('report_sent')
+        notes = form.cleaned_data.get('notes')
+        
+        # Kreiraj zapise za svaki dan
+        created_visits = []
+        for i in range(broj_dana_int):
+            # Izračunaj datum za ovaj dan (prvi dan je visit_date, drugi je visit_date + 1 dan, itd.)
+            current_date = visit_date + timedelta(days=i) if visit_date else None
+            
+            # Kreiraj novi zapis
+            visit = SrbijaTim(
+                certificate_number=certificate_number,
+                company=company,
+                certificate_expiry_date=certificate_expiry_date,
+                visit_date=current_date,
+                visit_time=visit_time,
+                broj_dana_posete=broj_dana,
+                group_id=group_id,
+                status=status,
+                report_sent=report_sent,
+                notes=notes,
+                created_by=self.request.user
+            )
+            visit.save()
+            
+            # Dodaj many-to-many relacije
+            if standards:
+                visit.standards.set(standards)
+            if auditors:
+                visit.auditors.set(auditors)
+            
+            created_visits.append(visit)
+        
+        # Dodaj poruku o uspešnom kreiranju
+        messages.success(
+            self.request, 
+            f'Uspešno kreirano {broj_dana_int} poseta za period od {broj_dana_int} dana.'
+        )
+        
+        # Preusmeri na success_url
+        from django.http import HttpResponseRedirect
+        return HttpResponseRedirect(self.success_url)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -172,6 +239,153 @@ class SrbijaTimUpdateView(LoginRequiredMixin, UpdateView):
     form_class = SrbijaTimForm
     template_name = 'srbija_tim/form.html'
     success_url = reverse_lazy('company:srbija_tim_calendar')
+    
+    def form_valid(self, form):
+        from datetime import timedelta
+        from django.contrib import messages
+        import uuid
+        
+        # Dobij trenutni objekat
+        current_visit = self.object
+        
+        # Dobij novi broj dana
+        novi_broj_dana = form.cleaned_data.get('broj_dana_posete')
+        
+        # Ako nema group_id ili nema broja dana, standardno ažuriranje
+        if not current_visit.group_id or not novi_broj_dana or novi_broj_dana < 1:
+            return super().form_valid(form)
+        
+        # Zaokruži na ceo broj
+        novi_broj_dana_int = int(novi_broj_dana)
+        
+        # Pronađi sve posete u istoj grupi, sortirane po datumu
+        group_visits = SrbijaTim.objects.filter(
+            group_id=current_visit.group_id
+        ).order_by('visit_date')
+        
+        trenutni_broj_zapisa = group_visits.count()
+        
+        # Ako se broj dana nije promenio, samo ažuriraj sve zapise u grupi
+        if novi_broj_dana_int == trenutni_broj_zapisa:
+            # Ažuriraj sve zapise u grupi sa novim podacima
+            for visit in group_visits:
+                visit.certificate_number = form.cleaned_data.get('certificate_number')
+                visit.company = form.cleaned_data.get('company')
+                visit.certificate_expiry_date = form.cleaned_data.get('certificate_expiry_date')
+                visit.visit_time = form.cleaned_data.get('visit_time')
+                visit.broj_dana_posete = novi_broj_dana
+                visit.status = form.cleaned_data.get('status')
+                visit.report_sent = form.cleaned_data.get('report_sent')
+                visit.notes = form.cleaned_data.get('notes')
+                visit.save()
+                
+                # Ažuriraj many-to-many relacije
+                standards = form.cleaned_data.get('standards')
+                auditors = form.cleaned_data.get('auditors')
+                if standards:
+                    visit.standards.set(standards)
+                if auditors:
+                    visit.auditors.set(auditors)
+            
+            messages.success(self.request, f'Uspešno ažurirano {trenutni_broj_zapisa} poseta.')
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(self.success_url)
+        
+        # Ako treba dodati zapise
+        elif novi_broj_dana_int > trenutni_broj_zapisa:
+            broj_za_dodati = novi_broj_dana_int - trenutni_broj_zapisa
+            
+            # Ažuriraj postojeće zapise
+            for visit in group_visits:
+                visit.certificate_number = form.cleaned_data.get('certificate_number')
+                visit.company = form.cleaned_data.get('company')
+                visit.certificate_expiry_date = form.cleaned_data.get('certificate_expiry_date')
+                visit.visit_time = form.cleaned_data.get('visit_time')
+                visit.broj_dana_posete = novi_broj_dana
+                visit.status = form.cleaned_data.get('status')
+                visit.report_sent = form.cleaned_data.get('report_sent')
+                visit.notes = form.cleaned_data.get('notes')
+                visit.save()
+                
+                standards = form.cleaned_data.get('standards')
+                auditors = form.cleaned_data.get('auditors')
+                if standards:
+                    visit.standards.set(standards)
+                if auditors:
+                    visit.auditors.set(auditors)
+            
+            # Dobij poslednji datum iz grupe
+            last_visit = group_visits.last()
+            last_date = last_visit.visit_date
+            
+            # Dodaj nove zapise
+            for i in range(1, broj_za_dodati + 1):
+                new_date = last_date + timedelta(days=i)
+                
+                new_visit = SrbijaTim(
+                    certificate_number=form.cleaned_data.get('certificate_number'),
+                    company=form.cleaned_data.get('company'),
+                    certificate_expiry_date=form.cleaned_data.get('certificate_expiry_date'),
+                    visit_date=new_date,
+                    visit_time=form.cleaned_data.get('visit_time'),
+                    broj_dana_posete=novi_broj_dana,
+                    group_id=current_visit.group_id,
+                    status=form.cleaned_data.get('status'),
+                    report_sent=form.cleaned_data.get('report_sent'),
+                    notes=form.cleaned_data.get('notes'),
+                    created_by=self.request.user
+                )
+                new_visit.save()
+                
+                standards = form.cleaned_data.get('standards')
+                auditors = form.cleaned_data.get('auditors')
+                if standards:
+                    new_visit.standards.set(standards)
+                if auditors:
+                    new_visit.auditors.set(auditors)
+            
+            messages.success(
+                self.request, 
+                f'Uspešno ažurirano {trenutni_broj_zapisa} poseta i dodato {broj_za_dodati} novih.'
+            )
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(self.success_url)
+        
+        # Ako treba ukloniti zapise
+        else:  # novi_broj_dana_int < trenutni_broj_zapisa
+            broj_za_ukloniti = trenutni_broj_zapisa - novi_broj_dana_int
+            
+            # Ažuriraj preostale zapise
+            visits_to_keep = list(group_visits[:novi_broj_dana_int])
+            for visit in visits_to_keep:
+                visit.certificate_number = form.cleaned_data.get('certificate_number')
+                visit.company = form.cleaned_data.get('company')
+                visit.certificate_expiry_date = form.cleaned_data.get('certificate_expiry_date')
+                visit.visit_time = form.cleaned_data.get('visit_time')
+                visit.broj_dana_posete = novi_broj_dana
+                visit.status = form.cleaned_data.get('status')
+                visit.report_sent = form.cleaned_data.get('report_sent')
+                visit.notes = form.cleaned_data.get('notes')
+                visit.save()
+                
+                standards = form.cleaned_data.get('standards')
+                auditors = form.cleaned_data.get('auditors')
+                if standards:
+                    visit.standards.set(standards)
+                if auditors:
+                    visit.auditors.set(auditors)
+            
+            # Obriši poslednje zapise
+            visits_to_delete = group_visits[novi_broj_dana_int:]
+            for visit in visits_to_delete:
+                visit.delete()
+            
+            messages.success(
+                self.request, 
+                f'Uspešno ažurirano {novi_broj_dana_int} poseta i uklonjeno {broj_za_ukloniti}.'
+            )
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(self.success_url)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -273,10 +487,48 @@ def srbija_tim_calendar_json(request):
                 'certificate_expiry_date': visit.certificate_expiry_date.isoformat() if visit.certificate_expiry_date else None,
                 'notes': visit.notes or '',
                 'visit_time': visit_time.isoformat() if visit_time else None,
+                'broj_dana_posete': float(visit.broj_dana_posete) if visit.broj_dana_posete else None,
             }
         })
     
     return JsonResponse(events, safe=False)
+
+
+@login_required
+def get_company_data(request, company_id):
+    """
+    API endpoint koji vraća podatke o kompaniji (broj sertifikata i datum isticanja)
+    """
+    try:
+        from .company_models import Company
+        company = get_object_or_404(Company, pk=company_id)
+        
+        # Pronađi najnoviji aktivni ciklus sertifikacije
+        latest_cycle = company.certification_cycles.filter(
+            status='active'
+        ).order_by('-planirani_datum').first()
+        
+        # Podaci za vraćanje
+        data = {
+            'success': True,
+            'certificate_number': company.certificate_number or '',
+            'certificate_expiry_date': None
+        }
+        
+        # Ako postoji aktivan ciklus, izračunaj datum isticanja (3 godine od planiranog datuma)
+        if latest_cycle and latest_cycle.planirani_datum:
+            from dateutil.relativedelta import relativedelta
+            expiry_date = latest_cycle.planirani_datum + relativedelta(years=3)
+            data['certificate_expiry_date'] = expiry_date.isoformat()
+        
+        return JsonResponse(data)
+        
+    except Exception as e:
+        logger.error(f'Greška pri dobijanju podataka o kompaniji: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'message': f'Greška: {str(e)}'
+        }, status=500)
 
 
 @login_required

@@ -1339,3 +1339,344 @@ INFO 2025-11-14 10:31:15,660 views 10 129075740042944 Calendar JSON request - au
 INFO 2025-11-14 10:31:15,668 views 10 129075740042944 Total appointments before filter: 0
 INFO 2025-11-14 10:31:15,688 views 10 129075740042944 Total events returned: 0
 INFO 2025-11-14 10:31:15,689 views 10 129075740042944 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 0
+INFO 2025-11-14 17:15:45,708 views 10 125117847996096 Calendar JSON request - auditor filter: None
+INFO 2025-11-14 17:15:45,711 views 10 125117847996096 Total appointments before filter: 0
+INFO 2025-11-14 17:15:45,718 views 10 125117847996096 Total events returned: 0
+INFO 2025-11-14 17:15:45,719 views 10 125117847996096 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 0
+INFO 2025-11-15 08:49:29,018 views 10 125117847996096 Calendar JSON request - auditor filter: None
+INFO 2025-11-15 08:49:29,023 views 10 125117847996096 Total appointments before filter: 0
+INFO 2025-11-15 08:49:29,104 views 10 125117847996096 Total events returned: 41
+INFO 2025-11-15 08:49:29,105 views 10 125117847996096 Events summary - Appointments: 0, Audit days: 15, Cycle audits: 26
+INFO 2025-11-16 16:21:59,387 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-16 16:21:59,391 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-16 16:21:59,518 views 10 133571385919168 Total events returned: 130
+INFO 2025-11-16 16:21:59,519 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 35, Cycle audits: 95
+INFO 2025-11-16 16:22:05,141 views 10 133571356546752 Calendar JSON request - auditor filter: None
+INFO 2025-11-16 16:22:05,142 views 10 133571356546752 Total appointments before filter: 0
+INFO 2025-11-16 16:22:05,251 views 10 133571356546752 Total events returned: 130
+INFO 2025-11-16 16:22:05,252 views 10 133571356546752 Events summary - Appointments: 0, Audit days: 35, Cycle audits: 95
+INFO 2025-11-16 16:25:09,374 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-16 16:25:09,376 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-16 16:25:09,500 views 10 133571385919168 Total events returned: 130
+INFO 2025-11-16 16:25:09,500 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 35, Cycle audits: 95
+INFO 2025-11-16 16:26:03,782 views 10 133571364939456 Calendar JSON request - auditor filter: None
+INFO 2025-11-16 16:26:03,784 views 10 133571364939456 Total appointments before filter: 0
+INFO 2025-11-16 16:26:03,982 views 10 133571364939456 Total events returned: 130
+INFO 2025-11-16 16:26:03,983 views 10 133571364939456 Events summary - Appointments: 0, Audit days: 35, Cycle audits: 95
+INFO 2025-11-17 17:42:31,063 views 10 133571364939456 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:31,066 views 10 133571364939456 Total appointments before filter: 0
+INFO 2025-11-17 17:42:32,991 views 10 133571374380736 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:32,994 views 10 133571374380736 Total appointments before filter: 0
+INFO 2025-11-17 17:42:33,558 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:33,560 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-17 17:42:33,835 views 10 133571356546752 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:33,839 views 10 133571356546752 Total appointments before filter: 0
+INFO 2025-11-17 17:42:34,086 views 10 133570868803264 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:34,099 views 10 133570868803264 Total appointments before filter: 0
+INFO 2025-11-17 17:42:34,148 views 10 133570842584768 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:34,153 views 10 133570842584768 Total appointments before filter: 0
+INFO 2025-11-17 17:42:34,375 views 10 133570834192064 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:34,379 views 10 133570834192064 Total appointments before filter: 0
+INFO 2025-11-17 17:42:34,870 views 10 133570815313600 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:34,950 views 10 133570815313600 Total appointments before filter: 0
+INFO 2025-11-17 17:42:35,001 views 10 133570587784896 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:42:35,055 views 10 133570587784896 Total appointments before filter: 0
+INFO 2025-11-17 17:43:54,686 views 10 133571364939456 Total events returned: 8572
+INFO 2025-11-17 17:43:54,706 views 10 133571364939456 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:43:54,918 views 10 133571364939456 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:43:54,930 views 10 133571364939456 Total appointments before filter: 0
+INFO 2025-11-17 17:44:06,475 views 10 133571374380736 Total events returned: 8572
+INFO 2025-11-17 17:44:06,491 views 10 133571374380736 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:06,687 views 10 133571374380736 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:06,697 views 10 133571374380736 Total appointments before filter: 0
+INFO 2025-11-17 17:44:08,774 views 10 133571356546752 Total events returned: 8572
+INFO 2025-11-17 17:44:08,788 views 10 133571356546752 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:08,969 views 10 133571356546752 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:08,976 views 10 133571356546752 Total appointments before filter: 0
+INFO 2025-11-17 17:44:09,342 views 10 133570842584768 Total events returned: 8572
+INFO 2025-11-17 17:44:09,376 views 10 133570842584768 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:09,653 views 10 133570842584768 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:09,660 views 10 133570842584768 Total appointments before filter: 0
+INFO 2025-11-17 17:44:10,152 views 10 133570834192064 Total events returned: 8572
+INFO 2025-11-17 17:44:10,185 views 10 133570834192064 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:10,261 views 10 133570868803264 Total events returned: 8572
+INFO 2025-11-17 17:44:10,308 views 10 133570868803264 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:10,690 views 10 133571385919168 Total events returned: 8572
+INFO 2025-11-17 17:44:10,704 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:11,085 views 10 133570834192064 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:11,131 views 10 133570834192064 Total appointments before filter: 0
+INFO 2025-11-17 17:44:11,142 views 10 133570868803264 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:11,198 views 10 133570868803264 Total appointments before filter: 0
+INFO 2025-11-17 17:44:11,311 views 10 133570587784896 Total events returned: 8572
+INFO 2025-11-17 17:44:11,353 views 10 133570587784896 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:11,418 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:11,477 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-17 17:44:11,557 views 10 133570587784896 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:11,565 views 10 133570587784896 Total appointments before filter: 0
+INFO 2025-11-17 17:44:12,621 views 10 133570815313600 Total events returned: 8572
+INFO 2025-11-17 17:44:12,656 views 10 133570815313600 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:44:13,090 views 10 133570815313600 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:44:13,095 views 10 133570815313600 Total appointments before filter: 0
+INFO 2025-11-17 17:45:30,731 views 10 133571364939456 Total events returned: 8572
+INFO 2025-11-17 17:45:30,757 views 10 133571364939456 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:31,038 views 10 133571364939456 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:31,054 views 10 133571364939456 Total appointments before filter: 0
+INFO 2025-11-17 17:45:41,540 views 10 133571374380736 Total events returned: 8572
+INFO 2025-11-17 17:45:41,555 views 10 133571374380736 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:41,857 views 10 133571374380736 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:41,871 views 10 133571374380736 Total appointments before filter: 0
+INFO 2025-11-17 17:45:45,482 views 10 133571356546752 Total events returned: 8572
+INFO 2025-11-17 17:45:45,500 views 10 133571356546752 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:45,711 views 10 133571356546752 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:45,720 views 10 133571356546752 Total appointments before filter: 0
+INFO 2025-11-17 17:45:46,031 views 10 133570587784896 Total events returned: 8572
+INFO 2025-11-17 17:45:46,047 views 10 133570587784896 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:46,063 views 10 133570842584768 Total events returned: 8572
+INFO 2025-11-17 17:45:46,099 views 10 133570842584768 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:46,305 views 10 133571385919168 Total events returned: 8572
+INFO 2025-11-17 17:45:46,327 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:46,328 views 10 133570587784896 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:46,393 views 10 133570587784896 Total appointments before filter: 0
+INFO 2025-11-17 17:45:46,476 views 10 133570842584768 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:46,488 views 10 133570842584768 Total appointments before filter: 0
+INFO 2025-11-17 17:45:46,534 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:46,542 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-17 17:45:46,621 views 10 133570834192064 Total events returned: 8572
+INFO 2025-11-17 17:45:46,632 views 10 133570834192064 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:46,815 views 10 133570834192064 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:46,818 views 10 133570815313600 Total events returned: 8572
+INFO 2025-11-17 17:45:46,832 views 10 133570815313600 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:46,839 views 10 133570834192064 Total appointments before filter: 0
+INFO 2025-11-17 17:45:47,201 views 10 133570868803264 Total events returned: 8572
+INFO 2025-11-17 17:45:47,215 views 10 133570815313600 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:47,229 views 10 133570868803264 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:45:47,271 views 10 133570815313600 Total appointments before filter: 0
+INFO 2025-11-17 17:45:47,589 views 10 133570868803264 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:45:47,641 views 10 133570868803264 Total appointments before filter: 0
+INFO 2025-11-17 17:47:07,060 views 10 133571364939456 Total events returned: 8572
+INFO 2025-11-17 17:47:07,085 views 10 133571364939456 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:07,285 views 10 133571364939456 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:07,295 views 10 133571364939456 Total appointments before filter: 0
+INFO 2025-11-17 17:47:18,815 views 10 133571374380736 Total events returned: 8572
+INFO 2025-11-17 17:47:18,837 views 10 133571374380736 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:19,065 views 10 133571374380736 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:19,075 views 10 133571374380736 Total appointments before filter: 0
+INFO 2025-11-17 17:47:22,223 views 10 133571356546752 Total events returned: 8572
+INFO 2025-11-17 17:47:22,248 views 10 133571356546752 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:22,251 views 10 133570587784896 Total events returned: 8572
+INFO 2025-11-17 17:47:22,300 views 10 133570587784896 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:22,485 views 10 133571385919168 Total events returned: 8572
+INFO 2025-11-17 17:47:22,518 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:22,631 views 10 133571356546752 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:22,644 views 10 133571356546752 Total appointments before filter: 0
+INFO 2025-11-17 17:47:22,647 views 10 133570587784896 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:22,657 views 10 133570587784896 Total appointments before filter: 0
+INFO 2025-11-17 17:47:22,720 views 10 133571385919168 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:22,729 views 10 133571385919168 Total appointments before filter: 0
+INFO 2025-11-17 17:47:22,798 views 10 133570842584768 Total events returned: 8572
+INFO 2025-11-17 17:47:22,815 views 10 133570842584768 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:22,943 views 10 133570815313600 Total events returned: 8572
+INFO 2025-11-17 17:47:22,965 views 10 133570815313600 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:23,089 views 10 133570842584768 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:23,096 views 10 133570842584768 Total appointments before filter: 0
+INFO 2025-11-17 17:47:23,144 views 10 133570815313600 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:23,152 views 10 133570815313600 Total appointments before filter: 0
+INFO 2025-11-17 17:47:23,304 views 10 133570868803264 Total events returned: 8572
+INFO 2025-11-17 17:47:23,321 views 10 133570868803264 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:23,432 views 10 133570834192064 Total events returned: 8572
+INFO 2025-11-17 17:47:23,450 views 10 133570834192064 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:47:23,570 views 10 133570868803264 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:23,580 views 10 133570868803264 Total appointments before filter: 0
+INFO 2025-11-17 17:47:23,640 views 10 133570834192064 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:23,646 views 10 133570834192064 Total appointments before filter: 0
+INFO 2025-11-17 17:47:49,821 views 10 133569767786176 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:49,829 views 10 133569767786176 Total appointments before filter: 0
+INFO 2025-11-17 17:47:53,986 views 10 133569776178880 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:47:53,997 views 10 133569776178880 Total appointments before filter: 0
+INFO 2025-11-17 17:48:03,456 views 10 133569784571584 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:48:03,480 views 10 133569784571584 Total appointments before filter: 0
+INFO 2025-11-17 17:48:05,751 views 10 133569792964288 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:48:05,810 views 10 133569792964288 Total appointments before filter: 0
+INFO 2025-11-17 17:48:08,704 views 10 133569326347968 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:48:08,797 views 10 133569326347968 Total appointments before filter: 0
+INFO 2025-11-17 17:48:09,726 views 10 133569300129472 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:48:09,751 views 10 133569300129472 Total appointments before filter: 0
+INFO 2025-11-17 17:48:15,182 views 10 133568852391616 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 17:48:15,207 views 10 133568852391616 Total appointments before filter: 0
+INFO 2025-11-17 17:49:48,239 views 10 133571364939456 Total events returned: 8572
+INFO 2025-11-17 17:49:48,273 views 10 133571364939456 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:07,338 views 10 133571374380736 Total events returned: 8572
+INFO 2025-11-17 17:50:07,360 views 10 133571374380736 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:10,609 views 10 133570587784896 Total events returned: 8572
+INFO 2025-11-17 17:50:10,634 views 10 133570587784896 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:11,105 views 10 133571356546752 Total events returned: 8572
+INFO 2025-11-17 17:50:11,127 views 10 133571356546752 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:12,339 views 10 133571385919168 Total events returned: 8572
+INFO 2025-11-17 17:50:12,369 views 10 133571385919168 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:12,741 views 10 133570842584768 Total events returned: 8572
+INFO 2025-11-17 17:50:12,764 views 10 133570842584768 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:12,807 views 10 133570815313600 Total events returned: 8572
+INFO 2025-11-17 17:50:12,896 views 10 133570815313600 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:12,898 views 10 133570868803264 Total events returned: 8572
+INFO 2025-11-17 17:50:12,957 views 10 133570868803264 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:13,861 views 10 133570834192064 Total events returned: 8572
+INFO 2025-11-17 17:50:13,878 views 10 133570834192064 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:30,248 views 10 133569767786176 Total events returned: 8572
+INFO 2025-11-17 17:50:30,267 views 10 133569767786176 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:32,043 views 10 133569776178880 Total events returned: 8572
+INFO 2025-11-17 17:50:32,072 views 10 133569776178880 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:37,557 views 10 133569784571584 Total events returned: 8572
+INFO 2025-11-17 17:50:37,578 views 10 133569784571584 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:38,597 views 10 133569792964288 Total events returned: 8572
+INFO 2025-11-17 17:50:38,615 views 10 133569792964288 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:39,279 views 10 133569300129472 Total events returned: 8572
+INFO 2025-11-17 17:50:39,294 views 10 133569300129472 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:39,401 views 10 133569326347968 Total events returned: 8572
+INFO 2025-11-17 17:50:39,414 views 10 133569326347968 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 17:50:39,614 views 10 133568852391616 Total events returned: 8572
+INFO 2025-11-17 17:50:39,631 views 10 133568852391616 Events summary - Appointments: 0, Audit days: 2415, Cycle audits: 6157
+INFO 2025-11-17 21:37:55,982 views 1234 132236137461440 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 21:37:55,987 views 1234 132236137461440 Total appointments before filter: 0
+INFO 2025-11-17 21:37:57,789 views 1234 132236137461440 Total events returned: 626
+INFO 2025-11-17 21:37:57,790 views 1234 132236137461440 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 626
+INFO 2025-11-17 21:38:38,391 views 1234 132236120676032 Calendar JSON request - auditor filter: 32
+INFO 2025-11-17 21:38:38,393 views 1234 132236120676032 Total appointments before filter: 0
+INFO 2025-11-17 21:38:38,400 views 1234 132236120676032 Filtered CycleAudits count: 0
+INFO 2025-11-17 21:38:38,403 views 1234 132236120676032 Filtered AuditDays count: 0
+INFO 2025-11-17 21:38:38,415 views 1234 132236120676032 Total events returned: 0
+INFO 2025-11-17 21:38:38,416 views 1234 132236120676032 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 0
+INFO 2025-11-17 21:38:46,016 views 1234 132236137461440 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 21:38:46,018 views 1234 132236137461440 Total appointments before filter: 0
+INFO 2025-11-17 21:38:46,847 views 1234 132236137461440 Total events returned: 626
+INFO 2025-11-17 21:38:46,849 views 1234 132236137461440 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 626
+INFO 2025-11-17 21:39:55,470 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-17 21:39:55,473 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-17 21:39:56,385 views 1234 132236129068736 Total events returned: 626
+INFO 2025-11-17 21:39:56,385 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 626
+INFO 2025-11-21 09:13:31,409 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 09:13:31,437 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 09:13:39,807 views 1234 132236129068736 Total events returned: 3537
+INFO 2025-11-21 09:13:39,812 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3537
+INFO 2025-11-21 09:22:55,928 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 09:22:55,994 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 09:23:02,337 views 1234 132236129068736 Total events returned: 3537
+INFO 2025-11-21 09:23:02,340 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3537
+INFO 2025-11-21 09:24:35,579 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 09:24:35,586 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 09:24:42,274 views 1234 132236129068736 Total events returned: 3537
+INFO 2025-11-21 09:24:42,278 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3537
+INFO 2025-11-21 09:24:42,383 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 09:24:42,385 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 09:24:47,173 views 1234 132236129068736 Total events returned: 3537
+INFO 2025-11-21 09:24:47,177 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3537
+INFO 2025-11-21 09:24:50,858 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 09:24:50,859 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 09:24:55,352 views 1234 132236129068736 Total events returned: 3537
+INFO 2025-11-21 09:24:55,355 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3537
+INFO 2025-11-21 13:26:05,094 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 13:26:05,107 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 13:26:17,902 views 1234 132236129068736 Total events returned: 3538
+INFO 2025-11-21 13:26:17,905 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3538
+INFO 2025-11-21 13:31:03,602 views 1234 132236129068736 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 13:31:03,613 views 1234 132236129068736 Total appointments before filter: 0
+INFO 2025-11-21 13:31:18,583 views 1234 132236129068736 Total events returned: 3539
+INFO 2025-11-21 13:31:18,590 views 1234 132236129068736 Events summary - Appointments: 0, Audit days: 0, Cycle audits: 3539
+INFO 2025-11-21 13:43:54,228 views 1234 132235850151616 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 13:43:54,236 views 1234 132235850151616 Total appointments before filter: 0
+INFO 2025-11-21 13:44:05,406 views 1234 132235850151616 Total events returned: 3542
+INFO 2025-11-21 13:44:05,410 views 1234 132235850151616 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3540
+INFO 2025-11-21 14:15:01,245 srbija_tim_views 1234 132236120676032 Srbija Tim poseta 10405 - datum promenjen sa 2025-11-27 na 2025-11-28 od strane korisnika admin
+INFO 2025-11-21 18:49:24,197 views 12 126864207115968 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 18:49:24,199 views 12 126864207115968 Total appointments before filter: 0
+INFO 2025-11-21 18:49:28,490 views 12 126864207115968 Total events returned: 3542
+INFO 2025-11-21 18:49:28,493 views 12 126864207115968 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3540
+INFO 2025-11-21 19:00:23,869 views 10 137878460073664 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:00:23,872 views 10 137878460073664 Total appointments before filter: 0
+INFO 2025-11-21 19:00:27,587 views 10 137878460073664 Total events returned: 3542
+INFO 2025-11-21 19:00:27,590 views 10 137878460073664 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3540
+INFO 2025-11-21 19:00:58,731 views 10 137878460073664 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:00:58,734 views 10 137878460073664 Total appointments before filter: 0
+INFO 2025-11-21 19:01:00,703 views 10 137878324639424 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:01:00,705 views 10 137878324639424 Total appointments before filter: 0
+INFO 2025-11-21 19:01:02,204 views 10 137878167353024 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:01:02,210 views 10 137878167353024 Total appointments before filter: 0
+INFO 2025-11-21 19:01:04,758 views 10 137878460073664 Total events returned: 3542
+INFO 2025-11-21 19:01:04,763 views 10 137878460073664 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3540
+INFO 2025-11-21 19:02:44,799 views 10 125000338278080 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:02:44,800 views 10 125000338278080 Total appointments before filter: 0
+INFO 2025-11-21 19:02:48,500 views 10 125000338278080 Total events returned: 3542
+INFO 2025-11-21 19:02:48,503 views 10 125000338278080 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3540
+INFO 2025-11-21 19:07:19,684 views 10 139539775653568 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:07:19,686 views 10 139539775653568 Total appointments before filter: 0
+INFO 2025-11-21 19:07:24,229 views 10 139539775653568 Total events returned: 3540
+INFO 2025-11-21 19:07:24,231 views 10 139539775653568 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3538
+INFO 2025-11-21 19:15:25,629 views 10 133933139396288 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:15:25,631 views 10 133933139396288 Total appointments before filter: 0
+INFO 2025-11-21 19:15:29,317 views 10 133933139396288 Total events returned: 3541
+INFO 2025-11-21 19:15:29,320 views 10 133933139396288 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 19:16:24,486 views 10 133933139396288 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:16:24,488 views 10 133933139396288 Total appointments before filter: 0
+INFO 2025-11-21 19:16:28,131 views 10 133933139396288 Total events returned: 3541
+INFO 2025-11-21 19:16:28,134 views 10 133933139396288 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 19:41:01,851 views 10 133933139396288 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 19:41:01,853 views 10 133933139396288 Total appointments before filter: 0
+INFO 2025-11-21 19:41:05,719 views 10 133933139396288 Total events returned: 3541
+INFO 2025-11-21 19:41:05,721 views 10 133933139396288 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 21:20:07,171 views 10 135629832713920 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:20:07,174 views 10 135629832713920 Total appointments before filter: 0
+INFO 2025-11-21 21:20:10,880 views 10 135629832713920 Total events returned: 3541
+INFO 2025-11-21 21:20:10,882 views 10 135629832713920 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 21:34:07,107 views 10 129784512247488 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:34:07,109 views 10 129784512247488 Total appointments before filter: 0
+INFO 2025-11-21 21:34:10,920 views 10 129784512247488 Total events returned: 3541
+INFO 2025-11-21 21:34:10,923 views 10 129784512247488 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 21:37:03,391 views 10 129784487073472 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:37:03,393 views 10 129784487073472 Total appointments before filter: 0
+INFO 2025-11-21 21:37:06,915 views 10 129784487073472 Total events returned: 3541
+INFO 2025-11-21 21:37:06,917 views 10 129784487073472 Events summary - Appointments: 0, Audit days: 2, Cycle audits: 3539
+INFO 2025-11-21 21:39:10,793 views 10 129784487073472 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:39:10,794 views 10 129784487073472 Total appointments before filter: 0
+INFO 2025-11-21 21:39:14,600 views 10 129784487073472 Total events returned: 3543
+INFO 2025-11-21 21:39:14,603 views 10 129784487073472 Events summary - Appointments: 0, Audit days: 3, Cycle audits: 3540
+INFO 2025-11-21 21:40:29,484 views 10 129784089671360 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:40:29,485 views 10 129784089671360 Total appointments before filter: 0
+INFO 2025-11-21 21:40:33,267 views 10 129784089671360 Total events returned: 3545
+INFO 2025-11-21 21:40:33,269 views 10 129784089671360 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:41:03,797 views 10 129784487073472 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:41:03,799 views 10 129784487073472 Total appointments before filter: 0
+INFO 2025-11-21 21:41:07,531 views 10 129784487073472 Total events returned: 3545
+INFO 2025-11-21 21:41:07,534 views 10 129784487073472 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:43:50,048 views 10 123802320271040 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:43:50,050 views 10 123802320271040 Total appointments before filter: 0
+INFO 2025-11-21 21:43:53,814 views 10 123802320271040 Total events returned: 3545
+INFO 2025-11-21 21:43:53,816 views 10 123802320271040 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:45:20,517 views 10 123802328663744 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:45:20,519 views 10 123802328663744 Total appointments before filter: 0
+INFO 2025-11-21 21:45:24,210 views 10 123802328663744 Total events returned: 3545
+INFO 2025-11-21 21:45:24,212 views 10 123802328663744 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:46:12,705 views 10 127342106281664 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:46:12,707 views 10 127342106281664 Total appointments before filter: 0
+INFO 2025-11-21 21:46:16,355 views 10 127342106281664 Total events returned: 3545
+INFO 2025-11-21 21:46:16,358 views 10 127342106281664 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:49:11,247 views 10 129748160378560 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:49:11,249 views 10 129748160378560 Total appointments before filter: 0
+INFO 2025-11-21 21:49:14,872 views 10 129748160378560 Total events returned: 3545
+INFO 2025-11-21 21:49:14,875 views 10 129748160378560 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:49:25,547 views 10 129748168771264 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:49:25,549 views 10 129748168771264 Total appointments before filter: 0
+INFO 2025-11-21 21:49:29,229 views 10 129748168771264 Total events returned: 3545
+INFO 2025-11-21 21:49:29,232 views 10 129748168771264 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:49:40,696 views 10 129747933718208 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:49:40,698 views 10 129747933718208 Total appointments before filter: 0
+INFO 2025-11-21 21:49:42,218 views 10 129747916932800 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:49:42,221 views 10 129747916932800 Total appointments before filter: 0
+INFO 2025-11-21 21:49:44,323 views 10 129748168771264 Calendar JSON request - auditor filter: None
+INFO 2025-11-21 21:49:44,326 views 10 129748168771264 Total appointments before filter: 0
+INFO 2025-11-21 21:49:49,472 views 10 129747933718208 Total events returned: 3545
+INFO 2025-11-21 21:49:49,477 views 10 129747933718208 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:49:51,055 views 10 129747916932800 Total events returned: 3545
+INFO 2025-11-21 21:49:51,060 views 10 129747916932800 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 21:49:51,847 views 10 129748168771264 Total events returned: 3545
+INFO 2025-11-21 21:49:51,850 views 10 129748168771264 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3541
+INFO 2025-11-21 22:26:50,813 srbija_tim_views 10 138307488077504 Srbija Tim poseta 17475 - datum promenjen sa 2025-11-06 na 2025-11-05 od strane korisnika admin
+INFO 2025-11-21 22:26:55,810 srbija_tim_views 10 138307488077504 Srbija Tim poseta 17475 - datum promenjen sa 2025-11-07 na 2025-10-31 od strane korisnika admin

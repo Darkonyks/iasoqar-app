@@ -101,8 +101,8 @@ class CompanyForm(forms.ModelForm):
             'certificate_status', 'certificate_number',
             
             # Informacije o sertifikatu
-            'suspension_until_date', 'audit_days', 'initial_audit_conducted_date',
-            'visits_per_year', 'audit_days_each', 'oblast_registracije',
+            'suspension_until_date',
+            'oblast_registracije',
             
             # Adresa
             'street', 'street_number', 'city', 'postal_code', 'country',
@@ -115,13 +115,9 @@ class CompanyForm(forms.ModelForm):
         ]
         widgets = {
             # Datumska polja
-            'initial_audit_conducted_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'suspension_until_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             
             # Numerička polja
-            'audit_days': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
-            'visits_per_year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'audit_days_each': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
             'number_of_employees': forms.NumberInput(attrs={'class': 'form-control'}),
             
             # Tekstualna polja
@@ -419,7 +415,7 @@ class CycleAuditForm(forms.ModelForm):
             'audit_status': forms.Select(attrs={'class': 'form-control'}),
             'planned_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'actual_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'lead_auditor': forms.Select(attrs={'class': 'form-control'}),
+            'lead_auditor': forms.Select(attrs={'class': 'form-control', 'id': 'id_lead_auditor'}),
             'report_number': forms.TextInput(attrs={'class': 'form-control'}),
             'findings': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'recommendations': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -675,6 +671,7 @@ class SrbijaTimForm(forms.ModelForm):
             'auditors',
             'visit_date',
             'visit_time',
+            'broj_dana_posete',
             'status',
             'report_sent',
             'notes'
@@ -707,6 +704,11 @@ class SrbijaTimForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'time'
             }),
+            'broj_dana_posete': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.5',
+                'placeholder': 'Npr. 1, 1.5, 2'
+            }),
             'status': forms.Select(attrs={
                 'class': 'form-control'
             }),
@@ -727,6 +729,7 @@ class SrbijaTimForm(forms.ModelForm):
             'auditors': _('Auditori'),
             'visit_date': _('Datum planiranog sastanka'),
             'visit_time': _('Vreme planiranog sastanka'),
+            'broj_dana_posete': _('Broj dana posete'),
             'status': _('Status'),
             'report_sent': _('Poslat izveštaj'),
             'notes': _('Napomene'),
@@ -743,7 +746,10 @@ class SrbijaTimForm(forms.ModelForm):
         
         # Postavi queryset za kompanije
         self.fields['company'].queryset = Company.objects.all().order_by('name')
-        self.fields['company'].required = True
+        
+        # Sva polja su opciona
+        for field_name in self.fields:
+            self.fields[field_name].required = False
     
     def clean(self):
         cleaned_data = super().clean()

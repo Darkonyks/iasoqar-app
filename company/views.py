@@ -120,13 +120,11 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
         standards_with_auditors = []
         
         for standard in standards:
-            standard_def_id = standard.standard_definition_id
-            # Get auditors assigned to this standard
-            auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
-            auditors = [as_obj.auditor for as_obj in auditor_standards]
+            # Ne prikazujemo auditore na nivou standarda kompanije
+            # Auditori se dodeljuju na nivou audita u ciklusu, ne na nivou standarda kompanije
             standards_with_auditors.append({
                 'standard': standard,
-                'auditors': auditors
+                'auditors': []  # Prazna lista - auditori se dodeljuju na nivou audita
             })
         
         context['standards'] = standards_with_auditors

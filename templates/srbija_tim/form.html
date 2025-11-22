@@ -77,20 +77,20 @@
                                 <h5 class="mb-3">Osnovne informacije</h5>
                                 
                                 <div class="form-group">
-                                    <label for="{{ form.certificate_number.id_for_label }}">{{ form.certificate_number.label }} <span class="text-danger">*</span></label>
-                                    {{ form.certificate_number }}
-                                    {% if form.certificate_number.errors %}
-                                    <div class="text-danger">{{ form.certificate_number.errors }}</div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="{{ form.company.id_for_label }}">{{ form.company.label }} <span class="text-danger">*</span></label>
+                                    <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
                                     {{ form.company }}
                                     {% if form.company.errors %}
                                     <div class="text-danger">{{ form.company.errors }}</div>
                                     {% endif %}
                                     <small class="form-text text-muted">Izaberite kompaniju iz liste</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="{{ form.certificate_number.id_for_label }}">{{ form.certificate_number.label }}</label>
+                                    {{ form.certificate_number }}
+                                    {% if form.certificate_number.errors %}
+                                    <div class="text-danger">{{ form.certificate_number.errors }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
                             
@@ -99,7 +99,7 @@
                                 <h5 class="mb-3">Standardi i datumi</h5>
                                 
                                 <div class="form-group">
-                                    <label for="{{ form.standards.id_for_label }}">{{ form.standards.label }} <span class="text-danger">*</span></label>
+                                    <label for="{{ form.standards.id_for_label }}">{{ form.standards.label }}</label>
                                     {{ form.standards }}
                                     {% if form.standards.errors %}
                                     <div class="text-danger">{{ form.standards.errors }}</div>
@@ -127,7 +127,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="{{ form.visit_date.id_for_label }}">{{ form.visit_date.label }} <span class="text-danger">*</span></label>
+                                            <label for="{{ form.visit_date.id_for_label }}">{{ form.visit_date.label }}</label>
                                             {{ form.visit_date }}
                                             {% if form.visit_date.errors %}
                                             <div class="text-danger">{{ form.visit_date.errors }}</div>
@@ -147,7 +147,16 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label for="{{ form.auditors.id_for_label }}">{{ form.auditors.label }} <span class="text-danger">*</span></label>
+                                    <label for="{{ form.broj_dana_posete.id_for_label }}">{{ form.broj_dana_posete.label }}</label>
+                                    {{ form.broj_dana_posete }}
+                                    {% if form.broj_dana_posete.errors %}
+                                    <div class="text-danger">{{ form.broj_dana_posete.errors }}</div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Unesite broj dana (npr. 1, 1.5, 2)</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="{{ form.auditors.id_for_label }}">{{ form.auditors.label }}</label>
                                     {{ form.auditors }}
                                     {% if form.auditors.errors %}
                                     <div class="text-danger">{{ form.auditors.errors }}</div>
@@ -156,7 +165,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }} <span class="text-danger">*</span></label>
+                                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
                                     {{ form.status }}
                                     {% if form.status.errors %}
                                     <div class="text-danger">{{ form.status.errors }}</div>
@@ -268,6 +277,43 @@ $(document).ready(function() {
     });
     
     console.log('Select2 inicijalizovan!');
+    
+    // Automatsko popunjavanje polja kada se odabere kompanija
+    $('#id_company').on('change', function() {
+        const companyId = $(this).val();
+        
+        if (companyId) {
+            console.log('Odabrana kompanija:', companyId);
+            
+            // Pozovi API da dobije podatke o kompaniji
+            $.ajax({
+                url: `/company/api/company/${companyId}/data/`,
+                method: 'GET',
+                success: function(data) {
+                    console.log('Podaci o kompaniji:', data);
+                    
+                    if (data.success) {
+                        // Popuni broj sertifikata
+                        if (data.certificate_number) {
+                            $('#id_certificate_number').val(data.certificate_number);
+                        }
+                        
+                        // Popuni datum isticanja sertifikata
+                        if (data.certificate_expiry_date) {
+                            $('#id_certificate_expiry_date').val(data.certificate_expiry_date);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Greška pri dobijanju podataka o kompaniji:', error);
+                }
+            });
+        } else {
+            // Ako nije odabrana kompanija, očisti polja
+            $('#id_certificate_number').val('');
+            $('#id_certificate_expiry_date').val('');
+        }
+    });
 });
 </script>
 {% endblock %}

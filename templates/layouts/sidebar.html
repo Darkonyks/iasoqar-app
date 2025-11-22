@@ -49,15 +49,17 @@
               <p>Nadzorne Provere</p>
             </a>
           </li>
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
+          
+          <!-- Separator -->
+          <li class="nav-header" style="margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"></li>
+          
+          <!-- Srbija Tim - na dnu sidebar-a -->
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link" style="pointer-events: none;">
               <i class="nav-icon fas fa-calendar-check"></i>
-              <p>
-                Srbija Tim
-                <i class="right fas fa-angle-left"></i>
-              </p>
+              <p>Srbija Tim</p>
             </a>
-            <ul class="nav nav-treeview">
+            <ul class="nav nav-treeview" style="display: block;">
               <li class="nav-item">
                 <a href="{% url 'company:srbija_tim_calendar' %}" class="nav-link">
                   <i class="far fa-calendar nav-icon"></i>

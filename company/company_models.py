@@ -92,10 +92,6 @@ class Company(models.Model):
     )
     certificate_number = models.CharField(_("Broj sertifikata"), max_length=100, blank=True, null=True)
     suspension_until_date = models.DateField(_("Suspenzija do datuma"), blank=True, null=True)
-    audit_days = models.DecimalField(_("Broj dana audita"), max_digits=18, decimal_places=1, blank=True, null=True)
-    initial_audit_conducted_date = models.DateField(_("Datum inicijalnog audita"), blank=True, null=True)
-    visits_per_year = models.DecimalField(_("Poseta godišnje"), max_digits=18, decimal_places=0, blank=True, null=True)
-    audit_days_each = models.DecimalField(_("Dana po auditu"), max_digits=18, decimal_places=1, blank=True, null=True)
 
     # Registration Area
     oblast_registracije = models.TextField(_("Oblast registracije"), blank=True, null=True, help_text=_("Unesite oblast registracije kompanije"))

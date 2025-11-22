@@ -157,6 +157,10 @@ class CertificationCycle(models.Model):
                     'audit_status': 'planned'
                 }
             )
+            # Kreiraj dane audita da bi se prikazao u kalendaru
+            if created or not initial_audit.audit_days.exists():
+                initial_audit.create_audit_days()
+            
             # Ako je već unet stvarni datum, odmah zakazujemo prvi nadzor
             if self.datum_sprovodjenja_inicijalne:
                 self.ensure_first_surveillance_scheduled()
@@ -637,13 +641,16 @@ class CycleAudit(models.Model):
         # Ako je resertifikacioni audit završen i postoji stvarni datum,
         # kreiramo (idempotentno) novi ciklus sertifikacije u skladu sa formulom
         # Trigerujemo ako je došlo do prelaza u 'completed' ili je promenjen actual_date dok je status već 'completed'.
-        if is_recertification and self.actual_date and self.audit_status == 'completed' and (is_status_completed or is_actual_date_changed):
+        # Proveravamo da li je postavljen flag _skip_cycle_creation (koristi se tokom importa)
+        skip_cycle_creation = getattr(self, '_skip_cycle_creation', False)
+        if is_recertification and self.actual_date and self.audit_status == 'completed' and (is_status_completed or is_actual_date_changed) and not skip_cycle_creation:
             # Umesto kreiranja novog ciklusa sertifikacije, dodajemo nove audite u postojeći ciklus
             self.certification_cycle.extend_with_new_audits(recertification_audit=self)
         
         # Ako je prvi nadzorni audit označen kao završen, kreiramo drugi nadzorni audit
         # Drugi nadzorni audit se kreira tek nakon što se sprovede stvarni datum prvog nadzornog audita
-        elif is_status_completed and is_surveillance_1 and self.actual_date:
+        # Proveravamo da li je postavljen flag _skip_cycle_creation (koristi se tokom importa)
+        elif is_status_completed and is_surveillance_1 and self.actual_date and not skip_cycle_creation:
             # Formula: Drugi nadzor = Prvi nadzorni audit (stvarni datum) + 1 godina - Broj dana nadzora
             from datetime import timedelta
             cycle = self.certification_cycle
@@ -667,8 +674,9 @@ class CycleAudit(models.Model):
         
         # Ako je drugi nadzorni audit označen kao završen ILI je upravo unet/izmenjen stvarni datum,
         # kreiramo ili ažuriramo planirani resertifikacioni audit
-        elif is_surveillance_2 and self.actual_date and (is_status_completed or is_actual_date_changed):
-            # Resertifikacija = Drugi nadzorni audit Stvarni datum - Broj dana resertifikacije + 1 godina
+        # Proveravamo da li je postavljen flag _skip_cycle_creation (koristi se tokom importa)
+        elif is_surveillance_2 and self.actual_date and (is_status_completed or is_actual_date_changed) and not skip_cycle_creation:
+            # Resertifikacija = Drugi nadzorni audit Stvarni datum + 1 godina (- Broj dana resertifikacije ako je unet)
             from datetime import timedelta
             cycle = self.certification_cycle
             
@@ -677,7 +685,8 @@ class CycleAudit(models.Model):
                 broj_dana = zaokruzi_na_veci_broj(cycle.broj_dana_resertifikacije)
                 recertification_date = self.actual_date + timedelta(days=365) - timedelta(days=broj_dana)
             else:
-                recertification_date = self.actual_date + timedelta(days=365) - timedelta(days=30)  # 30 dana pre isteka ako nemamo broj dana
+                # Ako nije unet broj dana resertifikacije: Drugi nadzor Stvarni datum + 1 godina
+                recertification_date = self.actual_date + timedelta(days=365)
             
             recert_audit, created = CycleAudit.objects.get_or_create(
                 certification_cycle=cycle,

@@ -379,27 +379,30 @@
     <style>
       /* Z-index popravka za modalne dijaloge - ekstremne vrednosti */
       .modal {
-        z-index: 2060 !important;
-        position: relative;
+        z-index: 9999 !important;
+        position: fixed !important;
       }
 
       .modal-dialog {
-        z-index: 2070 !important;
+        z-index: 10000 !important;
         position: relative;
+        margin: 1.75rem auto;
       }
 
       .modal-content {
-        z-index: 2080 !important;
+        z-index: 10001 !important;
         position: relative;
       }
 
       .modal-backdrop {
-        z-index: 1050 !important;
+        z-index: 9998 !important;
+        position: fixed !important;
       }
 
       /* Modal visible override */
       .modal.show {
-        display: block;
+        display: flex !important;
+        align-items: center;
         opacity: 1;
       }
 
@@ -411,8 +414,18 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1040;
+        z-index: 9997;
         display: none;
+      }
+
+      /* Kalendar z-index */
+      #calendar {
+        z-index: 1 !important;
+        position: relative;
+      }
+
+      .fc {
+        z-index: 1 !important;
       }
     </style>
 
@@ -746,11 +759,15 @@
                             <td id="cycle-status"></td>
                           </tr>
                           <tr>
-                            <th>Planirani datum:</th>
+                            <th>Planirani datum ciklusa:</th>
+                            <td id="cycle-start-date"></td>
+                          </tr>
+                          <tr>
+                            <th>Planirani datum audita:</th>
                             <td id="cycle-planned-date"></td>
                           </tr>
                           <tr>
-                            <th>Stvarni datum:</th>
+                            <th>Stvarni datum audita:</th>
                             <td id="cycle-actual-date"></td>
                           </tr>
                         </tbody>
@@ -1307,6 +1324,14 @@
           // Dugme: pregled ciklusa
           $('#viewCycleBtn').off('click').on('click', function () {
             const cycleUrl = `/company/cycles/${cycleId}/`;
+            // Potpuno zatvori modal pre navigacije
+            $('#cycleAuditModal').modal('hide');
+            // Ukloni backdrop i modal-open klasu
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            // Navigacija na stranicu sa detaljima ciklusa
+            window.location.href = cycleUrl;
           });
 
           // Dugme: izmena audita u okviru ciklusa
@@ -1319,6 +1344,14 @@
 
               const auditUrl = `/company/audits/${auditId}/update/?calendar_month=${currentMonth}&calendar_year=${currentYear}`;
               console.log('Navigating to audit update URL with calendar params:', auditUrl);
+              
+              // Potpuno zatvori modal pre navigacije
+              $('#cycleAuditModal').modal('hide');
+              // Ukloni backdrop i modal-open klasu
+              $('.modal-backdrop').remove();
+              $('body').removeClass('modal-open');
+              $('body').css('padding-right', '');
+              
               window.location.href = auditUrl;
             } else {
               showErrorModal('Nedostaje ID audita', 'ID audita nije dostupan za ovaj događaj.');
