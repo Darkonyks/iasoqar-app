@@ -1,0 +1,623 @@
+================================================================================
+IASOQAR APLIKACIJA - DETALJNI PREGLED KORISNIČKIH FUNKCIONALNOSTI
+================================================================================
+Analiza Datum: 2025-01-15
+Verzija Dokumenta: 1.0
+Nivo Detaljnosti: VERY THOROUGH
+
+================================================================================
+1. DASHBOARD I NAVIGACIJA
+================================================================================
+
+DASHBOARD STRUKTURA:
+- URL: /dashboard/ i /company/dashboard/
+- 4 glavne kartice sa statističkim pregledom
+- Prikazuje brze metrike, statuse, trendove
+- Sadrži grafike za vizuelizaciju podataka
+
+NAVIGACIJSKA STRUKTURA:
+┌─ Navbar (Gornja Traka)
+│  ├─ Hamburger menu za toggle sidebar-a
+│  ├─ Quick links: Dashboard, Kompanije, Kalendar
+│  └─ User menu (Profil, Odjava)
+│
+├─ Sidebar (Levi Meni)
+│  ├─ Dashboard - /dashboard/
+│  ├─ Kalendar Sastanaka - /calendar/ (NEW)
+│  ├─ Company List - /companies/
+│  ├─ Auditori - /auditors/
+│  ├─ IAF/EAC Kodovi - /iaf-codes/
+│  ├─ Nadzorne Provere - /audits/
+│  └─ Srbija Tim (Submeni)
+│     ├─ Kalendar
+│     ├─ Raspored Auditora
+│     └─ Lista Poseta
+│
+└─ Content Area
+   └─ Dinamički sadržaj zavisno od sekcije
+
+================================================================================
+2. KOMPANIJE - UPRAVLJANJE
+================================================================================
+
+PREGLED LISTE KOMPANIJA: /companies/
+- Prikaz svih registrovanih kompanija u tabelarnoj formi
+- Pretraga: Po imenu, PIB-u, matičnom broju, IAF/EAC kodovima
+- Filtri: Po statusu sertifikata, datumima isteka
+- Sortiranje: Moguće sortiranje po različitim poljima
+- Akcije: Pregled, Izmena, Brisanje
+- Prikaz Status Boja:
+  * Zelena (active) - Aktivni sertifikati
+  * Žuta (pending/suspended) - Čekanje/Suspenzija
+  * Crvena (expired/cancelled) - Istekli/Otkazani
+  * Siva (withdrawn) - Deregistrovani
+
+KREIRANJE KOMPANIJE: /companies/create/
+Obavezna Polja (označena sa *):
+  1. Naziv kompanije (tekst)
+  2. Matični broj (8 cifara)
+  3. Industrija (dropdown izbor)
+  4. Status sertifikata (dropdown izbor)
+
+Opciona Polja:
+  - PIB (poreski ID broj)
+  - Broj zaposlenih
+  - Telefon, Email, Website
+  - Adresa (ulica, broj, grad, poštanski kod)
+  - Napomene
+
+TABOVI PRI KREIRANJU/IZMENI:
+  TAB 1: Osnovni Podaci
+    - Naziv, PIB, MB, Industrija, Status, Zaposleni
+    
+  TAB 2: Standardi i Sertifikati
+    - Broj sertifikata
+    - Datum inicijalnog audita
+    - Suspenzija do datuma
+    - Broj dana audita / Poseta godišnje / Dana po auditu
+    - Oblast registracije
+    - TABELA STANDARDA (dodaj, izmeni, obriši)
+    
+  TAB 3: IAF/EAC Kodovi
+    - Dodaj IAF/EAC kod
+    - Primarni kod (samo jedan)
+    - Napomene za svaki kod
+    
+  TAB 4: Kontakti
+    - Dodaj kontakt osobe
+    - Ime, pozicija, email, telefon
+    - Primarna osoba (checkbox)
+    
+  TAB 5: Lokacije
+    - Dodaj dodatne lokacije
+    - Naziv, adresa, grad, poštanski kod
+    - Kontakt osoba na lokaciji
+    
+  TAB 6: Provere i Auditi
+    - Pregled svih audita za kompaniju
+    
+  TAB 7: Sastanci
+    - Zakazani sastanci
+
+PREGLED DETALJA KOMPANIJE: /companies/<id>/
+- 7 tabova sa kompletan informacijama
+- INFO TABELE - Lepo formatiranog prikaza svih podataka
+- AKCIJE: Izmeni, Obriši, Nazad na listu
+- STATISTIKA - Broj standarda, lokacija, audita, itd.
+
+AUTOMATSKE FUNKCIONALNOSTI:
+- Automatski proračun datuma isteka (3 godine od izdavanja)
+- Validacija obaveznih polja
+- Prikazivanje modala sa nedostajućim poljima
+- Filtriranje po statusima i datumima
+- Drag-and-drop u tabelama (gde je primenjivo)
+
+================================================================================
+3. AUDITORI - UPRAVLJANJE
+================================================================================
+
+PREGLED LISTE AUDITORA: /auditors/
+- Tabela sa svim auditorima u sistemu
+- Kolone: Ime, Email, Telefon, Kategorija, Standardi, Akcije
+- Filtri: Po kategoriji, standardima
+- Pretraga: Po imenu, emailu
+
+KATEGORIJE AUDITORA:
+  1. Lead Auditor (Zelena boja)
+     - Vodi audite, odgovoran je za procedure
+     - Mora biti prisutan na svakom auditu
+     
+  2. Auditor (Plava boja)
+     - Izvršava audit pod vođstvom Lead Auditora
+     - Obučen za specifičan standard
+     
+  3. Technical Expert (Siva boja)
+     - Daje stručnu ocenu specifičnih delova
+     - Može imati direktne IAF/EAC kodove
+     
+  4. Trainer (Svetloplava boja)
+     - Obučava kompanije
+     - Ne učestvuje direktno u auditima
+
+KREIRANJE AUDITORA: /auditors/create/
+Obavezna Polja:
+  - Ime i prezime *
+  - Email *
+  - Kategorija * (dropdown)
+
+Opciona Polja:
+  - Telefon
+
+DODELA STANDARDA:
+  - Nakon kreiranja, dodaj standarde koje može auditirati
+  - Za svaki standard, može imati IAF/EAC kodove
+
+DIREKTNI IAF/EAC KODOVI:
+  - Samo za Tehničke Eksperte
+  - Kodovi bez vezanog standarda
+  - Omogućava fleksibilniju dodelu
+
+RASPOLOŽIVOST AUDITORA:
+  - Sistem prati zakazane audite
+  - Sprečava dvostruke rezervacije
+  - Prikazuje dostupne auditory po datumu
+  - Na dashboard-u: "Dostupni Danas" metrika
+
+================================================================================
+4. SERTIFIKACIJSKI CIKLUSI
+================================================================================
+
+PREGLED LISTE CIKLUSA: /cycles/
+- Pretraga po nazivu kompanije
+- Filtri: Po statusu, datumima
+- Sortiranje: Po datumu, statusu
+- Akcije: Pregled, Izmena, Brisanje
+
+TIPOVI CIKLUSA:
+  1. Initial Audit (Inicijalni)
+     - Prvi audit kompanije
+     - Obavezno
+     - Trajanje: 3-5 dana
+     - Rezultat: Sertifikat
+     
+  2. Surveillance Audit (Nadzorna Provera)
+     - Godišnja provera
+     - Obavezna
+     - Trajanje: 1-2 dana
+     - Rezultat: Potvrda validnosti
+     
+  3. Recertification (Revalidacija)
+     - Svake 3 godine
+     - Obavezna pre isteka
+     - Trajanje: 2-3 dana
+     - Rezultat: Novi sertifikat
+
+KREIRANJE CIKLUSA: /cycles/create/
+Obavezna Polja:
+  - Kompanija * (dropdown)
+  - Tip ciklusa * (Initial, Surveillance, Recertification)
+  - Planirani datum * (datum početka)
+  - Broj dana audita * (ukupan broj dana)
+
+Opciona Polja:
+  - Status, Napomene
+
+STRUKTURA CIKLUSA:
+  ├─ Osnovni Podaci
+  ├─ Standardi (jedan ili više)
+  └─ Auditi
+     ├─ Redni broj
+     ├─ Tip audita
+     ├─ Planirani datum
+     ├─ Vodeći auditor
+     ├─ Dodatni auditori
+     ├─ Broj dana
+     └─ Status
+
+INTEGRISAN AUDIT:
+  - Kada kompanija ima više standarda
+  - Mogu se auditirati simultano
+  - Ista auditora, isti period
+  - Manje dana potrebnih nego suma pojedinačnih
+  - Sistem automatski detektuje
+
+================================================================================
+5. KALENDAR I ZAKAZIVANJE
+================================================================================
+
+KALENDAR SASTANAKA: /calendar/
+- FullCalendar biblioteka
+- Interaktivni prikaz sa mogućnostima
+- 3 prikaza: Mesečni, Nedeljni, Dnevni
+
+MOGUĆNOSTI:
+  - Pregled svih zakazanih audita
+  - Drag-and-drop premještanje (sa validacijom)
+  - Dodavanje novih audita
+  - Pregled detalja događaja
+  - Brisanje događaja
+  - Filtriranje po auditorima, kompanijama, statusu
+
+DRAG-AND-DROP:
+  1. Kliknite i držite na događaj
+  2. Povucite na novi dan
+  3. Otpustite
+  4. Sistem proverava dostupnost auditora
+  5. Ažurira datum u bazi
+  6. Prikazuje potvrdu
+
+KREIRANJE IZ KALENDARA:
+  1. Kliknite na slobodan dan
+  2. Otvorit će se forma
+  3. Odaberite ciklus
+  4. Odaberite vodeći auditor
+  5. Dodajte dodatne auditory
+  6. Unesite broj dana
+  7. Sačuvajte
+
+BOJE DOGAĐAJA:
+  - Plava - Planirani auditi
+  - Zelena - Zakazani auditi
+  - Crvena - Otkazani/Odloženi
+
+================================================================================
+6. IAF/EAC KODOVI
+================================================================================
+
+PREGLED KODOVA: /iaf-codes/
+- Tabela sa svim dostupnim kodovima
+- Kolone: Kod, Opis, Kategorija, Status, Broj Kompanija, Broj Auditora
+- Pretraga po kodu
+- Filtri: Po kategoriji, statusu
+
+STRUKTURA KODOVA:
+Format: A01, A01.01, B02, B02.01, itd.
+
+Kategorije:
+  A - Management Systems (ISO 9001, ISO 14001, itd.)
+    - A01 - All activities
+    - A01.01 - Design, development
+    - A01.02 - Production/delivery
+    - A01.03 - Distribution/supply
+    
+  B - Test and Calibration Laboratories
+    - B01, B02, B03, itd.
+    
+  C - Inspection Bodies
+    - C01, C02, C03, itd.
+
+UPOTREBA KODOVA:
+  - Kompanije imaju jedan primarni kod
+  - Auditori moraju biti kvalifikovani za kod
+  - Sistem filtrira dostupne auditory po kodu
+  - Kod se dodeljuje kroz stranicu kompanije
+
+DODAVANJE KODA KOMPANIJI:
+  1. Kompanija → TAB "IAF/EAC Kodovi"
+  2. Kliknite "+ Dodaj IAF/EAC kod"
+  3. Izaberite kod
+  4. Opciono: Označite kao Primarni
+  5. Dodajte napomenu
+  6. Sačuvajte
+
+POSTAVLJANJE PRIMARNOG KODA:
+  - Samo jedan kod može biti primarni
+  - Prikazuje se sa žutom bojom
+  - Kliknite na zvezdicu pored koda
+
+================================================================================
+7. SRBIJA TIM - CRNI KALENDAR
+================================================================================
+
+ŠEST JE CRNI KALENDAR?
+- Modul za lokalni tim iz Srbije
+- Upravljanje godišnjim nadzornim provera
+- Evidentiranje poseta klijentima
+- Lokalni auditi i održavanje kontakta
+
+KOMPONENTE:
+
+1. KALENDAR SRBIJA TIM-A: /srbija-tim/
+   - Interaktivni kalendar sa posjetama
+   - Legenda: Zakazan (plavo), Odrađen (zeleno), Otkazan (sivo)
+   - Mogućnost drag-and-drop (gde je primenjivo)
+   - Pregled detalja klikom
+
+2. LISTA POSETA: /srbija-tim/list/
+   - Tabela svih poseta
+   - Kolone: Broj sertifikata, Kompanija, Datum, Vreme, Auditori, Standardi, Status, Izveštaj
+   - Pretraga: Po broju sertifikata, nazivu, standardima, auditorima
+   - Akcije: Pregled, Izmena, Brisanje
+
+3. RASPORED AUDITORA: /srbija-tim/auditor-schedule/
+   - Pregled rasporeda svakog auditora
+   - Broj zakazanih, završenih, pendinga
+   - Slobodnih dana za nove posete
+
+KREIRANJE NOVE POSETE: /srbija-tim/create/
+Obavezna Polja:
+  - Broj sertifikata * (Unique ID)
+  - Datum posete * (Datum)
+  - Kompanija * (Automatski preuzeto)
+
+Opciona Polja:
+  - Vreme posete
+  - Auditori (jedan ili više)
+  - Standardi (jedan ili više)
+  - Status (Zakazan, Odrađen, Otkazan)
+  - Napomene
+  - Izveštaj poslat (checkbox)
+
+STATUSI POSETA:
+  - Zakazan - Zakazana, ali još nije odrađena
+  - Odrađena - Izvršena
+  - Otkazana - Otkazana
+  - Na čekanju - Čeka potvrdu
+
+================================================================================
+8. LOKACIJE
+================================================================================
+
+PREGLED LOKACIJA: /locations/
+- Tabela svih lokacija
+- Kolone: Naziv, Kompanija, Adresa, Grad, Poštanski kod, Akcije
+- Pretraga i filtriranje
+
+TIPOVI LOKACIJA:
+  - Glavna lokacija (gde je administracija)
+  - Proizvodne hale
+  - Skladišta
+  - Distributivni centri
+  - Kancelarije/filijale
+
+KREIRANJE LOKACIJE: /locations/create/
+Obavezna Polja:
+  - Kompanija * (Dropdown)
+  - Naziv lokacije * (Naziv)
+  - Adresa * (Ulica i broj)
+  - Grad * (Naziv grada)
+  - Poštanski kod * (Poštanski kod)
+
+Opciona Polja:
+  - Kontakt osoba
+  - Telefon
+  - Email
+  - Napomene
+
+UKLJUČIVANJE U AUDIT:
+  - Pri planiranju audita, bira se koje lokacije će biti auditovane
+  - Dodeljuje se vreme za svaku lokaciju
+  - Auditor putuje između lokacija
+
+================================================================================
+9. KONTAKT OSOBE
+================================================================================
+
+UPRAVLJANJE: Kroz stranicu kompanije u TAB-u "Kontakti"
+- Dodaj kontakt osobe
+- Izmeni podatke
+- Obriši osobe
+- Označi kao primarnu
+
+OBAVEZNA POLJA:
+  - Ime i prezime *
+  - Pozicija * (Direktor, Manager, itd.)
+  - Email * (Validan email)
+  - Telefon * (Telefon osobe)
+
+PRIMARNA KONTAKT OSOBA:
+  - Označava se sa zvezdikom (*)
+  - Samo jedna osoba može biti primarni kontakt
+  - Koristi se za prvi kontakt
+  - Obavezna (najmanje jedna)
+
+TIPIČNE POZICIJE:
+  - Direktor - Opšta odgovornost
+  - Manager Kvalitete - QMS sistem
+  - Manager Okoline - Zaštita okoline
+  - Manager Sigurnosti - Sigurnost na radu
+  - Tehnički Direktor - Tehnički aspekti
+  - Predstavnik Uprave - Predstavnik u sistemu
+  - Interni Auditor - Sprovođenje internih audita
+
+================================================================================
+10. DODATNE FUNKCIONALNOSTI
+================================================================================
+
+PRIJAVA U SISTEM: /accounts/login/
+  1. Unesite korisničko ime
+  2. Unesite lozinku
+  3. Opciono: "Zapamti me"
+  4. Kliknite Prijava
+
+PRETRAGA I FILTRIRANJE:
+  - Dostupne na većini lista
+  - Po imenu, broju, statusu
+  - Kombinovani filtri
+  - Real-time pretraga
+
+OBAVEŠTENJA:
+  - Zelena - Uspešna akcija
+  - Crvena - Greška
+  - Žuta - Upozorenje
+  - Plava - Informacija
+
+DRAG-AND-DROP PREMJEŠTANJE:
+  - U kalendaru - Premještanje audita
+  - Validacija dostupnosti
+  - Sprečavanje konflika
+  - Automatske obaveze
+
+AUTOMATSKE AKCIJE:
+  - Isticanje sertifikata (30, 60, 90 dana)
+  - Validacija auditora (dostupnost)
+  - Proračun datuma (3 godine)
+  - Detekcija integrisan audita
+
+================================================================================
+11. STATISTIKE I METRIKE
+================================================================================
+
+DASHBOARD KARTICE:
+
+TAB 1: PREGLED
+  - Ukupno Kompanija
+  - Aktivni Sertifikati
+  - Auditi (30 Dana)
+  - Neposlati Izveštaji
+  - Sertifikati Ističu (30d)
+  - Ukupno Auditora
+  - Aktivni Ciklusi
+  - Integrisani Sistemi
+  - Tabela sertifikata koji ističu
+
+TAB 2: KOMPANIJE
+  - Ukupan Broj Kompanija
+  - Aktivni Sertifikati
+  - Suspendovani
+  - Istekli
+  - Na Čekanju
+  - Deregistrovani
+  - Otkazani
+  - Aktivni Standardi
+  - Isticanje (30, 60, 90 dana, već istekli)
+
+TAB 3: AUDITI
+  - Planirani Auditi
+  - Zakazani Auditi
+  - Završeni (Ovaj Mesec)
+  - Odloženi Auditi
+  - Auditi u Narednih 30 Dana
+  - Prosečan Broj Dana po Auditu
+  - Ukupno Auditora
+  - Dostupni Danas
+  - Aktivni Ciklusi
+  - Integrisani Sistemi
+  - Najzauzetiji Auditor
+  - Tabela Predstojeći Audita
+
+TAB 4: SRBIJA TIM
+  - Zakazane (Ovaj Mesec)
+  - Odrađene (Ovaj Mesec)
+  - Poslati Izveštaji
+  - Neposlati Izveštaji
+  - Tabela Predstojeće Posete (7 Dana)
+
+================================================================================
+12. TIPSKE RADNE PROCEDURE
+================================================================================
+
+ONBOARDING NOVE KOMPANIJE:
+  1. Kreiraj kompaniju sa osnovnim podacima
+  2. Dodaj standarde koje ima
+  3. Dodaj IAF/EAC kodove
+  4. Dodaj kontakt osobe
+  5. Dodaj lokacije (ako trebaju)
+  6. Kreiraj inicijalni ciklus
+  7. Zakaži inicijalni audit
+  8. Dodeli auditory
+
+GODIŠNJA NADZORNA PROVERA:
+  1. Kreiraj novi ciklus (Surveillance)
+  2. Odaberi iste standarde
+  3. Dodaj audit za svaki standard
+  4. Zakaži u kalendaru
+  5. Audit se odradi
+  6. Generiše izveštaj
+
+REVALIDACIJA (3 GODINE):
+  1. Kreiraj novi ciklus (Recertification)
+  2. Odaberi standarde
+  3. Dodaj audite
+  4. Zakaži
+  5. Nakon audita, sertifikat se obradi
+  6. Datum isteka se ažurira
+
+ZAKAZIVANJE AUDITA IZ KALENDARA:
+  1. Otvori kalendar
+  2. Kliknite na dan
+  3. Odaberite ciklus
+  4. Odaberite vodeći auditor
+  5. Dodajte dodatne auditory
+  6. Sačuvajte
+
+================================================================================
+13. ČESTI PROBLEMI I REŠENJA
+================================================================================
+
+Greška: "Obavezna polja nisu popunjena"
+Rešenje: Popunite sva polja sa * - Sistem će prikazati modalni sa listom
+
+Greška: "Auditor se ne može dodeliti"
+Rešenje: Auditor nema potrebnu kvalifikaciju - Dodajte standard/kod auditori
+
+Greška: "Kod nije pronađen"
+Rešenje: Kreirajte kod prvo ili odaberite od postojećih
+
+Greška: "Pretraga ne pronalazi kompaniju"
+Rešenje: Proverite pisanje, resetujte filtere, pokušajte samo delom imena
+
+Greška: "Auditor je zauzet taj dan"
+Rešenje: Odaberite drugi auditor, drugi datum ili dodajte dodatnog auditora
+
+================================================================================
+TEHNIČKI DETALJI BACKEND-a
+================================================================================
+
+GLAVNE APLIKACIJE:
+  - company - Upravljanje kompanijama, auditorima, ciklusa
+  - accounts - Prijava i autentifikacija
+  - isoqar_app - Glavne konfiguracije
+
+KLJUČNI MODELI:
+  - Company - Kompanije (sa svim polјima)
+  - Auditor - Auditori (sa kategorijom)
+  - CertificationCycle - Sertifikacijski ciklusi
+  - CycleAudit - Auditi u ciklusa
+  - Appointment - Kalendar događaji
+  - SrbijaTim - Srbija Tim posete
+  - StandardDefinition - Dostupni standardi
+  - IAFEACCode - Dostupni IAF/EAC kodovi
+  - OstalaLokacija - Dodatne lokacije
+  - KontaktOsoba - Kontakt osobe
+
+API ENDPOINTI:
+  - /api/company-contacts/ - Preuzimanje kontakt osoba
+  - /api/companies/ - Preuzimanje liste kompanija
+  - /api/iaf-eac/* - Upravljanje IAF/EAC kodovima
+  - /api/cycles/<id>/json/ - Detalji ciklusa
+  - /api/audit-days/by-audit/ - Broj dana po auditu
+  - /api/events/update-date/ - Ažuriranje datuma događaja
+  - /api/validate-auditor-reservation/ - Validacija rezervacije
+
+JAVASCRIPT KOMPONENTE:
+  - calendar.js - FullCalendar integracija
+  - standards-add.js - Dodavanje standarda
+  - iaf-eac-add.js - Dodavanje IAF/EAC kodova
+  - company-detail.js - Interakcije na stranici kompanije
+  - company-form-submit.js - Obrada forme kompanije
+
+================================================================================
+ZAKLJUČAK
+================================================================================
+
+IASOQAR je kompleksna Django web aplikacija za upravljanje sertifikacijskim 
+ciklusa i auditi. Ima sledeće ključne karakteristike:
+
+✓ Upravljanje kompanijama sa multi-tab interfejsom
+✓ Upravljanje auditorima sa kategorizacijom
+✓ Sertifikacijski ciklusi sa tri tipa
+✓ Interaktivni kalendar sa drag-and-drop
+✓ IAF/EAC kodovi za specifikaciju domene
+✓ Lokalani modul (Srbija Tim)
+✓ Integrisan audit support
+✓ Real-time pretraga i filtriranje
+✓ Dashboard sa kompletnim statistikama
+✓ Kompleksne validacije podataka
+
+Aplikacija je dostupna na:
+- URL: [domen]/companies/, /auditors/, /calendar/, /cycles/, itd.
+- Django Admin: [domen]/admin/
+- Prijava: [domen]/accounts/login/
+
+================================================================================
