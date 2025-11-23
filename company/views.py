@@ -929,27 +929,8 @@ def dashboard(request):
     # Sort audits by date
     this_week_audits.sort(key=lambda x: x['date'])
     
-    # Get standards distribution
-    standards_distribution = CompanyStandard.objects.values('standard_definition__standard').annotate(
-        total=Count('standard_definition')
-    ).order_by('-total')
-    
-    # Prepare chart data
-    standards_labels = [item['standard_definition__standard'] for item in standards_distribution]
-    standards_data = [item['total'] for item in standards_distribution]
-    
     # Get all companies for the list
     companies = Company.objects.all().order_by('name')
-    
-    # Calculate certificate status distribution
-    certificate_status = Company.objects.values('certificate_status').annotate(
-        total=Count('certificate_status')
-    )
-    
-    # Prepare certificate chart data
-    certificate_labels = [str(dict(Company.CERTIFICATE_STATUS_CHOICES).get(status['certificate_status']))
-                        for status in certificate_status]
-    certificate_data = [status['total'] for status in certificate_status]
 
     # Statistika za audite po statusu - sad koristimo novi model
     from .cycle_models import CycleAudit
@@ -962,33 +943,6 @@ def dashboard(request):
     audit_labels = [str(dict(CycleAudit.AUDIT_STATUS_CHOICES).get(status['audit_status'], 'Nepoznato')) 
                    for status in audit_status]
     audit_data = [status['count'] for status in audit_status]
-    
-    # Prepare standards distribution for pie chart
-    standards_distribution = CompanyStandard.objects.values('standard_definition__standard').annotate(
-        total=Count('standard_definition')
-    ).order_by('-total')
-    
-    # Handle null standards and format for Chart.js
-    standards_labels = [item['standard_definition__standard'] or 'No Standard' for item in standards_distribution]
-    standards_data = [item['total'] for item in standards_distribution]
-    
-    # Generate random colors for each standard
-    standards_colors = [
-        f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 0.7)"
-        for _ in standards_labels
-    ]
-    
-    # Debug logging
-    print("Standards Distribution Data:")
-    print(list(zip(standards_labels, standards_data)))
-    
-    print("Certificate Status Data:")
-    print("Labels:", certificate_labels)
-    print("Data:", certificate_data)
-    
-    print("Audit Status Data:")
-    print("Labels:", audit_labels)
-    print("Data:", audit_data)
     
     context = {
         'total_companies': total_companies,
@@ -1033,12 +987,6 @@ def dashboard(request):
         'today': today,
         'seven_days_from_now': seven_days_from_now,
         'companies': companies,
-        'standards_labels': json.dumps(standards_labels),
-        'standards_data': json.dumps(standards_data),
-        'certificate_labels': json.dumps(certificate_labels),
-        'certificate_data': json.dumps(certificate_data),
-        'standards_distribution_labels': json.dumps(standards_labels),
-        'standards_distribution_data': json.dumps(standards_data),
         'audit_status_labels': json.dumps(audit_labels),
         'audit_status_data': json.dumps(audit_data),
         'this_week_audits': this_week_audits,
@@ -1189,8 +1137,8 @@ def appointment_calendar_json(request):
     
     logger.info(f"Calendar JSON request - auditor filter: {auditor_id}")
     
-    # Get all appointments
-    appointments = Appointment.objects.all()
+    # Get all appointments with optimized queries
+    appointments = Appointment.objects.select_related('company').all()
     logger.info(f"Total appointments before filter: {appointments.count()}")
     
     # Napomena: Appointment model trenutno nema 'auditors' polje
@@ -1205,23 +1153,45 @@ def appointment_calendar_json(request):
     
     events = []
     
-    # Add appointments to events
-    for appointment in appointments:
-        # Pokušaj da povežeš termin sa Danom audita istog klijenta na isti lokalni datum
-        try:
-            from django.utils import timezone as dj_tz
-            appt_dt = appointment.start_datetime
+    # Bulk load related audit days to avoid N+1 queries
+    from django.utils import timezone as dj_tz
+    from .cycle_models import AuditDay as _AuditDay
+    
+    # Kreiraj mapu appointment_id -> related_day_id za brže lookup
+    appointment_related_days = {}
+    if appointments.exists():
+        appointment_dates = {}
+        for appt in appointments:
+            appt_dt = appt.start_datetime
             if dj_tz.is_naive(appt_dt):
                 appt_dt = dj_tz.make_aware(appt_dt, dj_tz.get_current_timezone())
             local_date = dj_tz.localtime(appt_dt, dj_tz.get_current_timezone()).date()
-            # Lokalni import da izbegnemo cirkularne zavisnosti pri uvozu modula
-            from .cycle_models import AuditDay as _AuditDay
-            related_day = _AuditDay.objects.filter(
-                audit__certification_cycle__company=appointment.company,
-                date=local_date
-            ).select_related('audit').first()
-        except Exception:
-            related_day = None
+            appointment_dates[appt.id] = (local_date, appt.company_id)
+        
+        # Bulk query za sve related days
+        if appointment_dates:
+            date_company_pairs = list(set(appointment_dates.values()))
+            related_days_qs = _AuditDay.objects.filter(
+                date__in=[d for d, c in date_company_pairs],
+                audit__certification_cycle__company_id__in=[c for d, c in date_company_pairs]
+            ).select_related('audit')
+            
+            # Kreiraj mapu (date, company_id) -> audit_day
+            related_days_map = {}
+            for rd in related_days_qs:
+                key = (rd.date, rd.audit.certification_cycle.company_id)
+                if key not in related_days_map:
+                    related_days_map[key] = rd
+            
+            # Mapiranje appointment_id -> related_day
+            for appt_id, (date, company_id) in appointment_dates.items():
+                key = (date, company_id)
+                if key in related_days_map:
+                    appointment_related_days[appt_id] = related_days_map[key]
+    
+    # Add appointments to events
+    for appointment in appointments:
+        related_day = appointment_related_days.get(appointment.id)
 
         events.append({
             'id': appointment.id,
@@ -1252,7 +1222,10 @@ def appointment_calendar_json(request):
     from .cycle_models import CycleAudit, AuditDay
     from django.db.models import Q
     
-    cycle_audits = CycleAudit.objects.all().select_related('certification_cycle__company')
+    cycle_audits = CycleAudit.objects.select_related(
+        'certification_cycle__company',
+        'lead_auditor'
+    ).prefetch_related('audit_team').all()
     
     # Filtriraj CycleAudit po auditoru ako je selektovan
     # Auditor može biti vodeći auditor ili član tima
@@ -1297,6 +1270,21 @@ def appointment_calendar_json(request):
         }
     }
     
+    # Helper funkcija za određivanje boje i statusa (izbegavanje duplikacije)
+    def get_audit_color_and_status(audit, audit_type_info):
+        if audit.poslat_izvestaj:
+            return '#1B5E20', 'završen'  # Tamno zelena
+        elif audit.audit_status == 'completed':
+            return audit_type_info.get('color_completed', '#4CAF50'), 'završen'
+        elif audit.audit_status == 'scheduled':
+            return audit_type_info.get('color_scheduled', '#F44336'), 'zakazan'
+        elif audit.audit_status == 'postponed':
+            return audit_type_info.get('color_postponed', '#9E9E9E'), 'odložen'
+        elif audit.audit_status == 'cancelled':
+            return audit_type_info.get('color_cancelled', '#424242'), 'otkazan'
+        else:  # planned
+            return audit_type_info.get('color_planned', '#3788d8'), 'planiran'
+    
     # Get all audit days - prikazuj sve dane bez obzira na status audita
     # Boja će se odrediti na osnovu statusa audita
     audit_days = (
@@ -1324,104 +1312,47 @@ def appointment_calendar_json(request):
         is_actual = audit_day.is_actual
         
         # Preferiramo "stvarni" dan nad "planiranim" ako su oba označena
+        # Preskoči ako je glavni datum (da ne dupliramo cycle event)
+        skip_actual = is_actual and audit.actual_date and audit_day.date == audit.actual_date
+        skip_planned = is_planned and audit.planned_date and audit_day.date == audit.planned_date
+        
+        if skip_actual or skip_planned:
+            continue
+        
+        # Koristi helper funkciju za boju i status
+        color, status_text = get_audit_color_and_status(audit, audit_type_info)
+        
+        # Odredi tip dana
         if is_actual:
-            # Ako je isti datum kao glavni actual_date ciklusa, preskoči (da ne dupliramo cycle event)
-            if audit.actual_date and audit_day.date == audit.actual_date:
-                pass
-            else:
-                # Određuj boju na osnovu statusa audita
-                if audit.audit_status == 'completed':
-                    color = audit_type_info.get('color_completed', '#4CAF50')
-                    status_text = 'završen'
-                elif audit.audit_status == 'scheduled':
-                    color = audit_type_info.get('color_scheduled', '#F44336')
-                    status_text = 'zakazan'
-                elif audit.audit_status == 'postponed':
-                    color = audit_type_info.get('color_postponed', '#9E9E9E')
-                    status_text = 'odložen'
-                elif audit.audit_status == 'cancelled':
-                    color = audit_type_info.get('color_cancelled', '#424242')
-                    status_text = 'otkazan'
-                else:  # planned
-                    color = audit_type_info.get('color_planned', '#3788d8')
-                    status_text = 'planiran'
-                
-                # Override boju ako je poslat izveštaj - tamno zelena
-                if audit.poslat_izvestaj:
-                    color = '#1B5E20'  # Tamno zelena
-                
-                # Add actual audit day
-                events.append({
-                'id': f'audit_day_actual_{audit_day.id}',
-                'title': f'{company_name} - {audit_name} ({status_text})',
-                'start': audit_day.date.isoformat(),
-                'allDay': True,
-                'color': color,
-                # Uklonjen URL da bi se omogućilo otvaranje modala
-                # 'url': f'/company/audits/{audit.id}/update/',
-                'extendedProps': {
-                    'company': company_name,
-                    'type': f'{audit_name} - Dan audita',
-                    'audit_type': audit.audit_type,
-                    'status': dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Održano'),
-                    'cycle_id': audit.certification_cycle.id,
-                    'eventType': 'audit_day',
-                    'auditStatus': 'completed' if audit.audit_status == 'completed' else 'actual',
-                    'modelType': 'audit_day',
-                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
-                    'audit_day_id': audit_day.id,
-                    'notes': audit_day.notes or audit.notes or 'N/A'
-                }
-            })
-        elif is_planned:
-            # Ako je isti datum kao glavni planned_date ciklusa, preskoči (da ne dupliramo cycle event)
-            if audit.planned_date and audit_day.date == audit.planned_date:
-                pass
-            else:
-                # Određuj boju na osnovu statusa audita
-                if audit.audit_status == 'completed':
-                    color = audit_type_info.get('color_completed', '#4CAF50')
-                    status_text = 'završen'
-                elif audit.audit_status == 'scheduled':
-                    color = audit_type_info.get('color_scheduled', '#F44336')
-                    status_text = 'zakazan'
-                elif audit.audit_status == 'postponed':
-                    color = audit_type_info.get('color_postponed', '#9E9E9E')
-                    status_text = 'odložen'
-                elif audit.audit_status == 'cancelled':
-                    color = audit_type_info.get('color_cancelled', '#424242')
-                    status_text = 'otkazan'
-                else:  # planned
-                    color = audit_type_info.get('color_planned', '#3788d8')
-                    status_text = 'planiran'
-                
-                # Override boju ako je poslat izveštaj - tamno zelena
-                if audit.poslat_izvestaj:
-                    color = '#1B5E20'  # Tamno zelena
-                
-                # Add planned audit day
-                events.append({
-                'id': f'audit_day_planned_{audit_day.id}',
-                'title': f'{company_name} - {audit_name} ({status_text})',
-                'start': audit_day.date.isoformat(),
-                'allDay': True,
-                'color': color,
-                # Uklonjen URL da bi se omogućilo otvaranje modala
-                # 'url': f'/company/audits/{audit.id}/update/',
-                'extendedProps': {
-                    'company': company_name,
-                    'type': f'{audit_name} - Dan audita',
-                    'audit_type': audit.audit_type,
-                    'status': dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Planirano'),
-                    'cycle_id': audit.certification_cycle.id,
-                    'eventType': 'audit_day',
-                    'auditStatus': 'completed' if audit.audit_status == 'completed' else 'planned',
-                    'modelType': 'audit_day',
-                    'audit_id': audit.id,  # Dodato za povezivanje sa modalnim prozorom
-                    'audit_day_id': audit_day.id,
-                    'notes': audit_day.notes or audit.notes or 'N/A'
-                }
-            })
+            event_id = f'audit_day_actual_{audit_day.id}'
+            audit_status_type = 'completed' if audit.audit_status == 'completed' else 'actual'
+            status_display = dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Održano')
+        else:  # is_planned
+            event_id = f'audit_day_planned_{audit_day.id}'
+            audit_status_type = 'completed' if audit.audit_status == 'completed' else 'planned'
+            status_display = dict(audit.AUDIT_STATUS_CHOICES).get(audit.audit_status, 'Planirano')
+        
+        # Add audit day event
+        events.append({
+            'id': event_id,
+            'title': f'{company_name} - {audit_name} ({status_text})',
+            'start': audit_day.date.isoformat(),
+            'allDay': True,
+            'color': color,
+            'extendedProps': {
+                'company': company_name,
+                'type': f'{audit_name} - Dan audita',
+                'audit_type': audit.audit_type,
+                'status': status_display,
+                'cycle_id': audit.certification_cycle.id,
+                'eventType': 'audit_day',
+                'auditStatus': audit_status_type,
+                'modelType': 'audit_day',
+                'audit_id': audit.id,
+                'audit_day_id': audit_day.id,
+                'notes': audit_day.notes or audit.notes or 'N/A'
+            }
+        })
     
     # Add cycle audit dates to events (glavni audit datumi)
     for audit in cycle_audits:

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 from .company_models import Company
 from .auditor_models import Auditor
 from .standard_models import StandardDefinition
@@ -186,3 +187,82 @@ class SrbijaTim(models.Model):
             delta = self.certificate_expiry_date - timezone.now().date()
             return delta.days
         return None
+    
+    def create_visit_days(self):
+        """
+        Kreira pojedinačne dane posete na osnovu broja dana posete.
+        Poziva se nakon čuvanja SrbijaTim objekta.
+        """
+        if not self.broj_dana_posete or self.broj_dana_posete < 1:
+            return
+        
+        # Zaokruži na ceo broj
+        broj_dana_int = int(self.broj_dana_posete)
+        
+        # Obriši postojeće dane za ovu posetu
+        self.visit_days.all().delete()
+        
+        # Kreiraj nove dane
+        visit_days = []
+        for i in range(broj_dana_int):
+            visit_date = self.visit_date + timedelta(days=i) if self.visit_date else None
+            
+            visit_day = SrbijaTimDay(
+                visit=self,
+                date=visit_date,
+                visit_time=self.visit_time,
+                day_number=i + 1  # 1, 2, 3...
+            )
+            visit_days.append(visit_day)
+        
+        # Bulk create za bolje performanse
+        SrbijaTimDay.objects.bulk_create(visit_days)
+
+
+class SrbijaTimDay(models.Model):
+    """
+    Model za pojedinačne dane višednevne posete.
+    Svaki dan posete ima svoj zapis sa datumom.
+    """
+    visit = models.ForeignKey(
+        SrbijaTim,
+        on_delete=models.CASCADE,
+        related_name='visit_days',
+        verbose_name=_('Poseta')
+    )
+    
+    date = models.DateField(
+        _('Datum dana posete'),
+        null=True,
+        blank=True,
+        help_text=_('Datum ovog dana posete')
+    )
+    
+    visit_time = models.TimeField(
+        _('Vreme posete'),
+        null=True,
+        blank=True,
+        help_text=_('Vreme kada počinje poseta ovog dana')
+    )
+    
+    day_number = models.PositiveIntegerField(
+        _('Redni broj dana'),
+        default=1,
+        help_text=_('Redni broj dana u višednevnoj poseti (1, 2, 3...)')
+    )
+    
+    notes = models.TextField(
+        _('Napomene za ovaj dan'),
+        blank=True,
+        null=True,
+        help_text=_('Specifične napomene za ovaj dan posete')
+    )
+    
+    class Meta:
+        verbose_name = _('Dan posete')
+        verbose_name_plural = _('Dani posete')
+        ordering = ['date', 'day_number']
+        unique_together = ['visit', 'day_number']
+    
+    def __str__(self):
+        return f"{self.visit.certificate_number} - Dan {self.day_number} ({self.date})"
