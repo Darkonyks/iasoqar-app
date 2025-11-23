@@ -27,12 +27,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt
 
-# Kopiraj entrypoint skriptu prvo i postavi permisije
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 # Kopiraj projekat
 COPY . .
+
+# Kopiraj entrypoint skriptu i postavi permisije (nakon COPY . .)
+RUN cp /app/entrypoint.sh /entrypoint.sh && \
+    chmod +x /entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
 
 # Kreiraj potrebne direktorijume
 RUN mkdir -p /app/static /app/media

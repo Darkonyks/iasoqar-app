@@ -50,7 +50,6 @@ Thumbs.db
 docker-compose*.yml
 Dockerfile
 .dockerignore
-entrypoint.sh
 
 # Documentation
 *.md
