@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+
+echo "Starting entrypoint script..."
 
 # Funkcija za čekanje baze
 wait_for_db() {
@@ -41,4 +44,5 @@ echo "Prikupljam statičke fajlove..."
 python manage.py collectstatic --noinput
 
 # Nastavi sa izvršavanjem CMD komande
+echo "Starting application..."
 exec "$@"
