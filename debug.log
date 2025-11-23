@@ -1704,3 +1704,7 @@ INFO 2025-11-22 12:06:56,612 views 10 139733464245952 Calendar JSON request - au
 INFO 2025-11-22 12:06:56,613 views 10 139733464245952 Total appointments before filter: 0
 INFO 2025-11-22 12:07:00,574 views 10 139733464245952 Total events returned: 3544
 INFO 2025-11-22 12:07:00,576 views 10 139733464245952 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3540
+INFO 2025-11-23 15:00:11,120 views 57 124553425573568 Calendar JSON request - auditor filter: None
+INFO 2025-11-23 15:00:11,126 views 57 124553425573568 Total appointments before filter: 0
+INFO 2025-11-23 15:00:15,591 views 57 124553425573568 Total events returned: 3544
+INFO 2025-11-23 15:00:15,593 views 57 124553425573568 Events summary - Appointments: 0, Audit days: 4, Cycle audits: 3540

@@ -27,6 +27,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir -r requirements.txt
 
+# Kopiraj entrypoint skriptu prvo i postavi permisije
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Kopiraj projekat
 COPY . .
 
@@ -38,10 +42,6 @@ RUN python manage.py collectstatic --noinput
 
 # Izloži port
 EXPOSE 8000
-
-# Dodavanje entrypoint skripte
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # Entrypoint i komanda za pokretanje
 ENTRYPOINT ["/entrypoint.sh"]
