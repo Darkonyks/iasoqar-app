@@ -1,37 +1,33 @@
 import json
 import logging
-from datetime import datetime
-from django.shortcuts import render, get_object_or_404, redirect
+import random
+from datetime import datetime, timedelta
 
-# Konfigurisanje logera
-logger = logging.getLogger(__name__)
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.contrib import messages
-from django.http import HttpResponseRedirect, JsonResponse
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.template.loader import render_to_string
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
-from django.utils.text import slugify
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.db import transaction
-from django.conf import settings
+from django.db.models import Count, Q
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
+from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
+from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
+from .forms import AuditForm, CompanyForm, CertificationCycleForm, CycleAuditForm
 from .models import Company, Appointment, KontaktOsoba, OstalaLokacija, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
-from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
-from datetime import datetime, timedelta
-from django.db.models import Count
-import random
-from .forms import AuditForm, CompanyForm
-from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
-from .forms import CertificationCycleForm, CycleAuditForm
+
+logger = logging.getLogger(__name__)
 
 class CompanyListView(ListView):
     model = Company
@@ -665,8 +661,6 @@ class CalendarView(TemplateView):  # Privremeno uklonjen LoginRequiredMixin za t
         # Dobij view parametar iz URL-a
         initial_view = self.request.GET.get('view', 'dayGridMonth')
         context['initial_view'] = initial_view
-        # Debug log
-        print(f"DEBUG CalendarView: month={context['initial_month']}, year={context['initial_year']}, view={context['initial_view']}")
         return context
 
 class CalendarEventsView(LoginRequiredMixin, TemplateView):
@@ -1136,11 +1130,8 @@ def appointment_calendar_json(request):
     # Get filter parametar za auditora
     auditor_id = request.GET.get('auditor')
     
-    logger.info(f"Calendar JSON request - auditor filter: {auditor_id}")
-    
     # Get all appointments with optimized queries
     appointments = Appointment.objects.select_related('company').all()
-    logger.info(f"Total appointments before filter: {appointments.count()}")
     
     # Napomena: Appointment model trenutno nema 'auditors' polje
     # Ovaj filter neće raditi dok se ne doda to polje u model
@@ -1234,7 +1225,6 @@ def appointment_calendar_json(request):
         cycle_audits = cycle_audits.filter(
             Q(lead_auditor__id=auditor_id) | Q(audit_team__id=auditor_id)
         ).distinct()
-        logger.info(f"Filtered CycleAudits count: {cycle_audits.count()}")
     
     audit_type_mapping = {
         'surveillance_1': {
@@ -1299,7 +1289,6 @@ def appointment_calendar_json(request):
         audit_days = audit_days.filter(
             Q(audit__lead_auditor__id=auditor_id) | Q(audit__audit_team__id=auditor_id)
         ).distinct()
-        logger.info(f"Filtered AuditDays count: {audit_days.count()}")
     
     # Add audit days to events
     for audit_day in audit_days:
@@ -1461,15 +1450,6 @@ def appointment_calendar_json(request):
                     'poslat_izvestaj': audit.poslat_izvestaj,
                 }
             })
-    
-    logger.info(f"Total events returned: {len(events)}")
-    logger.info(f"Events summary - Appointments: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'appointment'])}, Audit days: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'audit_day'])}, Cycle audits: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'cycle_audit'])}")
-    
-    # Debug: proveri surveillance_2 audite
-    surv2_events = [e for e in events if e.get('extendedProps', {}).get('audit_type') == 'surveillance_2']
-    logger.info(f"DEBUG surveillance_2 events count: {len(surv2_events)}")
-    for e in surv2_events:
-        logger.info(f"DEBUG surveillance_2: {e.get('title')} on {e.get('start')}")
     
     return JsonResponse(events, safe=False)
 

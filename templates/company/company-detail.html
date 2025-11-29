@@ -11,28 +11,16 @@
 <script src="{% static 'js/company/company-detail.js' %}"></script>
 <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
 
-<!-- Globalna funkcija za brisanje standarda - mora biti definisana pre document.ready -->
+<!-- Globalna funkcija za brisanje standarda -->
 <script>
-  // Globalna funkcija za otvaranje modala za brisanje standarda
   function openDeleteModal(standardId, standardName) {
-    console.log('=== BRISANJE STANDARDA ===');
-    console.log('Standard ID:', standardId);
-    console.log('Standard Name:', standardName);
-    
     if (!standardId) {
       alert('Greška: Nedostaje ID standarda!');
       return;
     }
     
-    // Postavljanje podataka u modal
     $('#standard-name-to-delete').text(standardName);
-    
-    // Kreiranje URL-a za brisanje
-    var deleteUrl = '/company/companies/{{ company.id }}/standards/' + standardId + '/delete/';
-    console.log('Delete URL:', deleteUrl);
-    $('#delete-standard-form').attr('action', deleteUrl);
-    
-    // Prikazivanje modala
+    $('#delete-standard-form').attr('action', '/company/companies/{{ company.id }}/standards/' + standardId + '/delete/');
     $('#deleteStandardModal').modal('show');
   }
 </script>
