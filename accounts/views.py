@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
+from .forms import UserForm, UserProfileForm, CustomPasswordChangeForm
+from .models import UserProfile
 
 
 def login_view(request):
@@ -60,4 +63,51 @@ def profile_view(request):
     """
     Pogled za prikaz i ažuriranje korisničkog profila.
     """
-    return render(request, 'accounts/profile.html', {'user': request.user})
+    # Osiguraj da korisnik ima profil
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action', 'update_profile')
+        
+        if action == 'update_profile':
+            user_form = UserForm(request.POST, instance=request.user)
+            profile_form = UserProfileForm(request.POST, instance=profile)
+            
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                messages.success(request, 'Profil je uspešno ažuriran.')
+                return redirect('accounts:profile')
+            else:
+                messages.error(request, 'Molimo ispravite greške u formi.')
+                password_form = CustomPasswordChangeForm(request.user)
+        
+        elif action == 'change_password':
+            password_form = CustomPasswordChangeForm(request.user, request.POST)
+            
+            if password_form.is_valid():
+                user = password_form.save()
+                # Održi korisnika ulogovanog nakon promene lozinke
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Lozinka je uspešno promenjena.')
+                return redirect('accounts:profile')
+            else:
+                # Prikaži sve greške
+                for field, errors in password_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'{error}')
+                user_form = UserForm(instance=request.user)
+                profile_form = UserProfileForm(instance=profile)
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=profile)
+        password_form = CustomPasswordChangeForm(request.user)
+    
+    context = {
+        'user': request.user,
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'password_form': password_form,
+    }
+    
+    return render(request, 'accounts/profile.html', context)
