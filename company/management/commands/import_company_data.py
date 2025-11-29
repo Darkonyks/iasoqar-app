@@ -2,6 +2,7 @@
 Django management command za import podataka kompanija i nadzornih provera iz Excel fajlova
 """
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from django.db import transaction
 from company.models import (
     Company, CertificationCycle, CycleAudit, CycleStandard,
@@ -69,6 +70,15 @@ class Command(BaseCommand):
         # Sačuvaj log funkciju kao atribut
         self.log = log
 
+        # Učitaj standarde ako ne postoje
+        if StandardDefinition.objects.count() == 0:
+            log(self.style.WARNING('⚠️  Nema standarda u bazi, učitavam fixture...'))
+            try:
+                call_command('loaddata', 'standard_definitions', verbosity=0)
+                log(self.style.SUCCESS(f'✅ Učitano {StandardDefinition.objects.count()} standarda'))
+            except Exception as e:
+                log(self.style.ERROR(f'Greška pri učitavanju standarda: {str(e)}'))
+
         try:
             with transaction.atomic():
                 # Prvo importuj kompanije
@@ -123,11 +133,11 @@ class Command(BaseCommand):
         updated_count = 0
         skipped_count = 0
         
-        # Učitaj SAMO iz Sheet1
-        sheet_names = ['Sheet1']  # Importuj samo iz prvog sheet-a
-        self.stdout.write(f'Importovanje samo iz sheet-a: {sheet_names}')
+        # Učitaj iz Sheet1 i dupli
+        sheet_names = ['Sheet1', 'dupli']
+        self.stdout.write(f'Importovanje iz sheet-ova: {sheet_names}')
         
-        # Učitaj kompanije samo iz Sheet1
+        # Učitaj kompanije iz svih sheet-ova
         for sheet_name in sheet_names:
             self.stdout.write(f'\n📄 Učitavanje kompanija iz sheet-a: {sheet_name}')
             
@@ -182,41 +192,58 @@ class Command(BaseCommand):
                     cert_status = status_map.get(str(certificate_status).upper(), 'active')
                     
                     # Kreiraj ili ažuriraj kompaniju
-                    company, created = Company.objects.get_or_create(
-                        name=company_name,
-                        defaults={
-                            'certificate_number': str(certificate_number) if certificate_number else None,
-                            'certificate_status': cert_status,
-                            'suspension_until_date': suspension_until_date,
-                            'audit_days': audit_days,
-                            'visits_per_year': visits_per_year,
-                            'audit_days_each': audit_days_each,
-                            'initial_audit_conducted_date': initial_audit_conducted_date,
-                        }
-                    )
+                    # VAŽNO: Prvo proveravamo da li postoji kompanija sa istim brojem sertifikata
+                    # jer ista kompanija može imati različite nazive u Excel-u
+                    # (npr. "ADAM ŠPED SYSTEM" i "ADAM-ŠPED SYSTEM DOO" su ista kompanija)
+                    company = None
+                    created = False
                     
-                    if not created:
-                        # Ažuriraj postojeću kompaniju samo ako je iz prvog sheet-a
+                    if certificate_number:
+                        # Prvo tražimo po broju sertifikata
+                        company = Company.objects.filter(
+                            certificate_number=str(certificate_number)
+                        ).first()
+                    
+                    if not company:
+                        # Ako nema po broju sertifikata, tražimo po imenu
+                        company = Company.objects.filter(name=company_name).first()
+                    
+                    if company:
+                        # Kompanija već postoji
                         if sheet_name.lower() not in ['dupli', 'duplicate', 'duplicates']:
                             company.certificate_number = str(certificate_number) if certificate_number else company.certificate_number
                             company.certificate_status = cert_status
                             company.suspension_until_date = suspension_until_date or company.suspension_until_date
-                            company.audit_days = audit_days or company.audit_days
-                            company.visits_per_year = visits_per_year or company.visits_per_year
-                            company.audit_days_each = audit_days_each or company.audit_days_each
-                            company.initial_audit_conducted_date = initial_audit_conducted_date or company.initial_audit_conducted_date
                             company.save()
                         sheet_updated += 1
                     else:
+                        # Kreiraj novu kompaniju
+                        company = Company.objects.create(
+                            name=company_name,
+                            certificate_number=str(certificate_number) if certificate_number else None,
+                            certificate_status=cert_status,
+                            suspension_until_date=suspension_until_date,
+                        )
+                        created = True
                         sheet_created += 1
                     
-                    companies_map[company_id] = company
+                    # Čuvamo kompaniju i dodatne podatke za ciklus
+                    # VAŽNO: standard_codes se čuva da bi se znalo koji standardi pripadaju ovom company_id
+                    companies_map[company_id] = {
+                        'company': company,
+                        'audit_days': audit_days,  # inicijalni_broj_dana
+                        'visits_per_year': visits_per_year,  # broj_dana_nadzora
+                        'audit_days_each': audit_days_each,  # broj_dana_resertifikacije
+                        'initial_audit_conducted_date': initial_audit_conducted_date,
+                        'standard_codes': standard_codes,  # standardi specifični za ovaj company_id
+                    }
                     
                     # Dodaj standarde ako su navedeni (mogu biti odvojeni zarezom: '9,14,18')
                     if standard_codes:
                         self.add_standards_to_company(company, standard_codes, init_reg_date)
                     
-                    # NE kreiramo cikluse ovde - ciklusi se kreiraju iz naredne-provere.xlsx
+                    # Za sheet "dupli" - NE kreiramo cikluse ovde jer se oni kreiraju iz naredne-provere.xlsx
+                    # Sheet "dupli" samo dodaje standarde kompaniji i čuva company_id mapiranje
                     
                     if row_idx % 10 == 0:
                         self.stdout.write(f'    Obrađeno {row_idx} redova...')
@@ -312,18 +339,28 @@ class Command(BaseCommand):
             # Pokušaj da pronađeš standard po ID-u ili kodu
             standard_def = None
             
-            # Mapiranje skraćenih kodova na pune ISO standarde
+            # Mapiranje skraćenih kodova na kodove u bazi (sa ISO prefiksom)
             standard_mapping = {
-                '9': '9001',
-                '14': '14001',
-                '18': '18001',  # Stari OHSAS 18001
-                '45': '45001',
-                '22': '22000',
-                '27': '27001',
-                '20': '20000',
-                '50': '50001',
-                '3834': '3834',  # ISO 3834 - Quality requirements for fusion welding
-                '22301': '22301',  # ISO 22301 - Business continuity management
+                '9': 'ISO9001',
+                '9001': 'ISO9001',
+                '14': 'ISO14001',
+                '14001': 'ISO14001',
+                '18': 'ISO45001',  # Stari OHSAS 18001 → mapira na ISO 45001
+                '18001': 'ISO45001',
+                '45': 'ISO45001',
+                '45001': 'ISO45001',
+                '22': 'ISO22000',
+                '22000': 'ISO22000',
+                '27': 'ISO27001',
+                '27001': 'ISO27001',
+                '20': 'ISO20000',
+                '20000': 'ISO20000',
+                '50': 'ISO50001',
+                '50001': 'ISO50001',
+                '22301': 'ISO22301',
+                '37001': 'ISO37001',
+                '13485': 'ISO13485',
+                'HACCP': 'HACCP',
             }
             
             # Konvertuj u string
@@ -378,13 +415,17 @@ class Command(BaseCommand):
                     standard_definition=standard_def,
                     defaults={'issue_date': issue_date}
                 )
+                if created:
+                    self.stdout.write(f'      ✓ Dodat standard {standard_def.code} za {company.name}')
                 # Ako već postoji, ažuriraj issue_date ako je prosleđen
                 if not created and issue_date and not company_standard.issue_date:
                     company_standard.issue_date = issue_date
                     company_standard.save(update_fields=['issue_date'])
+            else:
+                self.stdout.write(self.style.WARNING(f'      ⚠ Standard "{original_code}" → "{std_code}" nije pronađen'))
                 
         except Exception as e:
-            pass  # Tiho ignoriši greške
+            self.stdout.write(self.style.ERROR(f'      ✗ Greška pri dodavanju standarda: {str(e)}'))
 
     def add_iaf_code_to_company(self, company, iaf_kod_id):
         """Dodaje IAF/EAC kod kompaniji"""
@@ -459,21 +500,91 @@ class Command(BaseCommand):
         except Exception as e:
             self.stdout.write(self.style.WARNING(f'    Greška pri kreiranju ciklusa: {str(e)}'))
     
+    def create_cycle_from_company_row(self, company, init_reg_date, standard_codes, 
+                                       audit_days, visits_per_year, audit_days_each,
+                                       initial_audit_conducted_date, cert_status):
+        """
+        Kreira CertificationCycle direktno iz reda u company-list.xlsx (sheet dupli)
+        Ovo se koristi za dodatne sertifikate iste kompanije
+        """
+        from company.models import CertificationCycle, CycleStandard, CompanyStandard
+        
+        try:
+            # Parsiraj standarde
+            standards_list = self.parse_standard_codes(standard_codes) if standard_codes else []
+            
+            # Kreiraj ciklus - koristimo init_reg_date kao planirani_datum
+            # i initial_audit_conducted_date kao datum_sprovodjenja_inicijalne
+            cycle, created = CertificationCycle.objects.get_or_create(
+                company=company,
+                planirani_datum=init_reg_date,
+                defaults={
+                    'status': 'active' if cert_status == 'active' else 'archived',
+                    'inicijalni_broj_dana': audit_days,
+                    'broj_dana_nadzora': visits_per_year,
+                    'broj_dana_resertifikacije': audit_days_each,
+                    'datum_sprovodjenja_inicijalne': initial_audit_conducted_date,
+                }
+            )
+            
+            if created:
+                self.stdout.write(self.style.SUCCESS(
+                    f'    ✅ Kreiran ciklus (dupli) za {company.name}, datum: {init_reg_date}, standardi: {standards_list}'
+                ))
+                
+                # Dodaj standarde u ciklus
+                if standards_list:
+                    self.add_standards_to_cycle(cycle, standards_list)
+                
+                # Detektuj da li je integrisani sistem
+                if len(standards_list) > 1:
+                    cycle.is_integrated_system = True
+                    cycle.save(update_fields=['is_integrated_system'])
+            else:
+                self.stdout.write(f'    ⚠️  Ciklus već postoji za {company.name}, datum: {init_reg_date}')
+                
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(f'    Greška pri kreiranju ciklusa (dupli): {str(e)}'))
+    
+    def parse_standard_codes(self, standard_codes):
+        """Parsira string standarda u listu kodova"""
+        if not standard_codes:
+            return []
+        
+        standard_codes = str(standard_codes)
+        
+        # Razdvoji po zarezima, tačkama, tačka-zarezima ili razmacima
+        import re
+        codes = re.split(r'[,;.\s]+', standard_codes)
+        return [c.strip() for c in codes if c.strip()]
+    
     def add_standards_to_cycle(self, cycle, standards_list):
         """Dodaje standarde u certification cycle"""
         from company.models import CycleStandard
         
         for std_code in standards_list:
-            # Mapiranje skraćenih kodova
+            # Mapiranje skraćenih kodova na kodove u bazi (sa ISO prefiksom)
             standard_mapping = {
-                '9': '9001',
-                '14': '14001',
-                '18': '18001',
-                '45': '45001',
-                '22': '22000',
-                '27': '27001',
-                '20': '20000',
-                '50': '50001',
+                '9': 'ISO9001',
+                '9001': 'ISO9001',
+                '14': 'ISO14001',
+                '14001': 'ISO14001',
+                '18': 'ISO45001',
+                '18001': 'ISO45001',
+                '45': 'ISO45001',
+                '45001': 'ISO45001',
+                '22': 'ISO22000',
+                '22000': 'ISO22000',
+                '27': 'ISO27001',
+                '27001': 'ISO27001',
+                '20': 'ISO20000',
+                '20000': 'ISO20000',
+                '50': 'ISO50001',
+                '50001': 'ISO50001',
+                '22301': 'ISO22301',
+                '37001': 'ISO37001',
+                '13485': 'ISO13485',
+                'HACCP': 'HACCP',
             }
             
             std_code = str(std_code).strip()
@@ -542,14 +653,19 @@ class Command(BaseCommand):
                 trinial_audit_cond = self.parse_date(row[7]) if len(row) > 7 else None
                 status_id = row[8] if len(row) > 8 else None
                 
-                # Pronađi kompaniju
-                company = companies_map.get(company_id)
-                if not company:
+                # Pronađi kompaniju i njene podatke
+                company_data = companies_map.get(company_id)
+                if not company_data:
                     self.stdout.write(self.style.WARNING(
                         f'  Red {row_idx}: Kompanija sa ID {company_id} nije pronađena'
                     ))
                     skipped_count += 1
                     continue
+                
+                company = company_data['company']
+                audit_days = company_data.get('audit_days')
+                visits_per_year = company_data.get('visits_per_year')
+                audit_days_each = company_data.get('audit_days_each')
                 
                 # Svaki red u naredne-provere.xlsx predstavlja JEDAN ciklus sertifikacije
                 # Kreiraj novi cycle za ovaj red (ne tražimo postojeći)
@@ -563,11 +679,36 @@ class Command(BaseCommand):
                     continue
                 
                 # Mapiranje statusa
+                # VAŽNO: Ciklus je archived SAMO ako su SVA TRI datuma završetka uneta
+                # i nisu placeholder vrednosti (0001-01-01)
+                # Placeholder datum 0001-01-01 se koristi za NULL vrednosti u Excel-u
                 status_mapping = {
                     'ACTIVE': 'active',
                     'ARCHIVE': 'archived',
                 }
-                cycle_status = status_mapping.get(str(status_id).upper(), 'active')
+                
+                # Helper funkcija za proveru da li je datum validan (nije NULL i nije placeholder)
+                def is_valid_date(d):
+                    if not d:
+                        return False
+                    # Proveri da li je placeholder datum (0001-01-01)
+                    if hasattr(d, 'year') and d.year == 1:
+                        return False
+                    return True
+                
+                # Ciklus je završen SAMO ako su sva tri datuma završetka validna
+                all_audits_completed = (
+                    is_valid_date(first_surv_cond) and 
+                    is_valid_date(second_surv_cond) and 
+                    is_valid_date(trinial_audit_cond)
+                )
+                
+                if all_audits_completed:
+                    # Svi auditi su sprovedeni - ciklus je završen
+                    cycle_status = 'archived'
+                else:
+                    # Koristi status iz Excel-a
+                    cycle_status = status_mapping.get(str(status_id).upper(), 'active')
                 
                 # Kreiraj ili pronađi cycle za ovaj red
                 # Koristimo get_or_create da izbegnemo duplikate
@@ -575,7 +716,10 @@ class Command(BaseCommand):
                     company=company,
                     planirani_datum=cycle_date,
                     defaults={
-                        'status': cycle_status
+                        'status': cycle_status,
+                        'inicijalni_broj_dana': audit_days,
+                        'broj_dana_nadzora': visits_per_year,
+                        'broj_dana_resertifikacije': audit_days_each,
                     }
                 )
                 
@@ -589,20 +733,20 @@ class Command(BaseCommand):
                     cycle.status = cycle_status
                     cycle.save(update_fields=['status'])
                 
-                # Dodaj standarde kompanije u ciklus (samo ako je ciklus tek kreiran)
+                # Dodaj standarde u ciklus - SAMO standarde specifične za ovaj company_id
+                # (ne sve standarde kompanije, jer kompanija može imati više sertifikata)
                 if created:
-                    from company.models import CompanyStandard, CycleStandard
-                    company_standards = CompanyStandard.objects.filter(company=company)
-                    for comp_std in company_standards:
-                        CycleStandard.objects.get_or_create(
-                            certification_cycle=cycle,
-                            standard_definition=comp_std.standard_definition
-                        )
-                    
-                    # Detektuj da li je integrisani sistem
-                    if company_standards.count() > 1:
-                        cycle.is_integrated_system = True
-                        cycle.save(update_fields=['is_integrated_system'])
+                    from company.models import CycleStandard
+                    standard_codes = company_data.get('standard_codes')
+                    if standard_codes:
+                        # Parsiraj i dodaj standarde specifične za ovaj company_id
+                        standards_list = self.parse_standard_codes(standard_codes)
+                        self.add_standards_to_cycle(cycle, standards_list)
+                        
+                        # Detektuj da li je integrisani sistem
+                        if len(standards_list) > 1:
+                            cycle.is_integrated_system = True
+                            cycle.save(update_fields=['is_integrated_system'])
                 
                 # Kreiraj prvi nadzorni audit
                 # VAŽNO: Onemogućavamo automatsko kreiranje drugog nadzora tokom importa

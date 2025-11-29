@@ -53,7 +53,7 @@
           <!-- Separator -->
           <li class="nav-header" style="margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"></li>
           
-          <!-- Srbija Tim - na dnu sidebar-a -->
+          <!-- Srbija Tim -->
           <li class="nav-item has-treeview menu-open">
             <a href="#" class="nav-link" style="pointer-events: none;">
               <i class="nav-icon fas fa-calendar-check"></i>
@@ -76,6 +76,40 @@
                 <a href="{% url 'company:srbija_tim_list' %}" class="nav-link">
                   <i class="fas fa-list nav-icon"></i>
                   <p>Lista Poseta</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- Separator za Dokumentaciju -->
+          <li class="nav-header" style="margin-top: 80px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;"></li>
+          
+          <!-- Dokumentacija -->
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>
+                Dokumentacija
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="/documents/IASOQAR_Brzi_Vodic.pdf" class="nav-link" target="_blank">
+                  <i class="fas fa-file-pdf nav-icon text-danger"></i>
+                  <p>Brzi Vodič</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/documents/IASOQAR_Korisnicko_Uputstvo.pdf" class="nav-link" target="_blank">
+                  <i class="fas fa-file-pdf nav-icon text-danger"></i>
+                  <p>Korisničko Uputstvo</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="/documents/IASOQAR_Tehnicka_Analiza.pdf" class="nav-link" target="_blank">
+                  <i class="fas fa-file-pdf nav-icon text-danger"></i>
+                  <p>Tehnička Analiza</p>
                 </a>
               </li>
             </ul>

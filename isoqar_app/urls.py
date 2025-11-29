@@ -45,4 +45,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     # Debug stranica za testiranje JavaScript biblioteka
     path('debug/', TemplateView.as_view(template_name='debugging.html'), name='debug'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+  + static(settings.DOCUMENTS_URL, document_root=settings.DOCUMENTS_ROOT)

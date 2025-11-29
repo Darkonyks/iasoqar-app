@@ -163,6 +163,10 @@ mimetypes.add_type("text/css", ".css", True)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Documents files (PDF documentation)
+DOCUMENTS_URL = '/documents/'
+DOCUMENTS_ROOT = os.path.join(BASE_DIR, 'documents')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

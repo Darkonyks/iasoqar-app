@@ -1,0 +1,1649 @@
+  ✅ Kreiran ciklus za FMB D.O.O, datum: 2017-02-19, status: archived
+  ✅ Kreiran ciklus za INOS/ĐOLEX, datum: 2016-10-20, status: archived
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2017-09-21, status: archived
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2018-09-19, status: archived
+  ✅ Kreiran ciklus za NOVOHEM, datum: 2016-11-29, status: archived
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2018-11-07, status: archived
+  ✅ Kreiran ciklus za SONIREX, datum: 2015-08-24, status: archived
+  ✅ Kreiran ciklus za B.M.R. d.o.o, datum: 2018-11-09, status: archived
+  ✅ Kreiran ciklus za COMEX d.o.o, datum: 2019-06-12, status: archived
+  ✅ Kreiran ciklus za Triplex Yu List d.o.o, datum: 2017-06-15, status: archived
+  ✅ Kreiran ciklus za MLIN DJORDJIC, datum: 0001-01-01, status: active
+  ✅ Kreiran ciklus za Metal Hemiko d.o.o, datum: 2009-11-17, status: archived
+  ✅ Kreiran ciklus za Nelli d.o.o, datum: 2017-12-08, status: archived
+  ✅ Kreiran ciklus za MLIN-ZITO MEDIA doo, datum: 0001-01-01, status: active
+  ✅ Kreiran ciklus za Milex D.o.o, datum: 2022-06-02, status: archived
+  ✅ Kreiran ciklus za UMPROM d.o.o, datum: 2016-08-05, status: archived
+  ✅ Kreiran ciklus za MLINTEST A.D, datum: 2016-07-21, status: archived
+  ✅ Kreiran ciklus za INOP D.o.o, datum: 2016-09-25, status: archived
+  ✅ Kreiran ciklus za ENTERIJER JANKOVIC, datum: 2017-05-17, status: archived
+  ✅ Kreiran ciklus za SINS d.o.o., datum: 2017-07-05, status: active
+  ✅ Kreiran ciklus za POLJOPRIVREDNO DRUŠTVO, datum: 0001-01-01, status: active
+  ✅ Kreiran ciklus za BANTSKI KLAS D.O.O., datum: 2017-03-06, status: archived
+  ✅ Kreiran ciklus za ŠKORPION, datum: 2017-08-03, status: archived
+  ✅ Kreiran ciklus za ELEKTROMATERIJAL d.o.o, datum: 2017-02-23, status: archived
+  ✅ Kreiran ciklus za INTERFAST DOO, datum: 2019-08-19, status: archived
+  ✅ Kreiran ciklus za TERMO TIM d.o.o., datum: 2017-12-08, status: archived
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2017-09-02, status: archived
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2018-09-01, status: archived
+  ✅ Kreiran ciklus za KOLUBARA INVEST GRADNJA DOO, datum: 2016-10-29, status: active
+  ✅ Kreiran ciklus za BELINA DOO, datum: 2012-02-25, status: archived
+  ✅ Kreiran ciklus za BELINA DOO, datum: 0001-01-01, status: active
+  ✅ Kreiran ciklus za DPS KLAS GROUP DOO, datum: 2018-07-04, status: archived
+  ✅ Kreiran ciklus za FLORA KOMERC DOO, datum: 2018-04-13, status: archived
+  ✅ Kreiran ciklus za ANLEK DOO, datum: 2017-08-02, status: active
+  ✅ Kreiran ciklus za IZGRADNJA BB-AS Doo, datum: 2015-10-04, status: active
+  ✅ Kreiran ciklus za BRACA ILIC DOO, datum: 2018-07-18, status: archived
+  ✅ Kreiran ciklus za PROFIKO d.o.o., datum: 2018-06-07, status: active
+  ✅ Kreiran ciklus za ASA IBELIK doo, datum: 2018-01-22, status: archived
+  ✅ Kreiran ciklus za Dadex d.o.o, datum: 2018-11-17, status: active
+  ✅ Kreiran ciklus za BEOKRAN, datum: 2018-10-26, status: archived
+  ✅ Kreiran ciklus za CITY ROAD GROUP d.o.o, datum: 2016-01-31, status: active
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2015-12-10, status: archived
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2016-12-08, status: archived
+  ✅ Kreiran ciklus za MS TRANSPORT d.o.o, datum: 2015-12-21, status: archived
+  ✅ Kreiran ciklus za SIGMA PROMET d.o.o, datum: 2015-12-02, status: archived
+  ✅ Kreiran ciklus za ENERGY MOND d.o.o, datum: 2015-12-25, status: active
+  ✅ Kreiran ciklus za BIZNIS CENTAR MOMCILOVIC d.o.o, datum: 2017-12-02, status: archived
+  ✅ Kreiran ciklus za ALEX TRADE d.o.o, datum: 2015-12-19, status: active
+  ✅ Kreiran ciklus za MaRCUS Co d.o.o, datum: 2016-01-26, status: archived
+  ✅ Kreiran ciklus za Quadra Graphiv d.o.o, datum: 2016-02-10, status: active
+  ✅ Kreiran ciklus za ARMONT SP d.o.o., datum: 2016-03-12, status: active
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2016-03-12, status: archived
+  ✅ Kreiran ciklus za FEROMONT OPREMA AD, datum: 2015-08-24, status: archived
+  ✅ Kreiran ciklus za MOND ELEKTRO d.o.o., datum: 2016-03-05, status: active
+  ✅ Kreiran ciklus za EKO MABER INŽENJERING doo, datum: 2016-08-16, status: active
+  ✅ Kreiran ciklus za GRADINA d.o.o., datum: 2017-06-28, status: archived
+  ✅ Kreiran ciklus za BRAĆA FILIPOVIĆ d.o.o., datum: 2013-04-14, status: active
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2016-09-17, status: archived
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2018-10-16, status: archived
+  ✅ Kreiran ciklus za DRAGOVIĆ TRANSPORT & EXPRES, datum: 2017-02-20, status: archived
+  ✅ Kreiran ciklus za DID d.o.o., datum: 2016-09-16, status: active
+  ✅ Kreiran ciklus za REISSWOLF Serbia doo, datum: 2013-06-01, status: archived
+  ✅ Kreiran ciklus za AGROSTEP d.o.o., datum: 2013-06-13, status: active
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2017-09-24, status: archived
+  ✅ Kreiran ciklus za ALUCOMMERCE SYSTEMS d.o.o., datum: 2016-09-23, status: archived
+  ✅ Kreiran ciklus za Rasing d.o.o., datum: 2016-11-20, status: archived
+  ✅ Kreiran ciklus za D.M.B. PROMET d.o.o. / UNL GROUP, datum: 2013-07-11, status: active
+  ✅ Kreiran ciklus za Geosoft D.o.o. Beograd, datum: 2016-12-16, status: archived
+  ✅ Kreiran ciklus za Koving d.o.o, datum: 2016-11-02, status: active
+  ✅ Kreiran ciklus za AB &CO GEOSYSTEMS DOO, datum: 2017-04-06, status: active
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2018-06-01, status: archived
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2017-02-08, status: archived
+  ✅ Kreiran ciklus za Gama Studion d.o.o, datum: 2018-07-07, status: archived
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2017-02-01, status: archived
+  ✅ Kreiran ciklus za ROBER CO d.o.o., datum: 2013-11-08, status: active
+  ✅ Kreiran ciklus za Husky Corporation doo, datum: 2017-05-02, status: archived
+  ✅ Kreiran ciklus za INKOM, datum: 2019-02-26, status: archived
+  ✅ Kreiran ciklus za Model 5 d.o.o., datum: 2014-02-14, status: active
+  ✅ Kreiran ciklus za DINARA ROMANIJA, datum: 2017-06-17, status: archived
+  ✅ Kreiran ciklus za MLIN CEKOVIC, datum: 2017-04-06, status: archived
+  ✅ Kreiran ciklus za ILIJANUM, datum: 2017-10-15, status: archived
+  ✅ Kreiran ciklus za KB ARMATURE, datum: 2017-09-19, status: archived
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2017-10-11, status: archived
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2018-02-16, status: archived
+  ✅ Kreiran ciklus za CENTRO-INVEST, datum: 2014-04-22, status: active
+  ✅ Kreiran ciklus za DUNAVNET, datum: 2017-11-21, status: archived
+  ✅ Kreiran ciklus za SOBEL, datum: 2014-06-15, status: active
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2017-10-26, status: archived
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2018-09-18, status: archived
+  ✅ Kreiran ciklus za KM MONT, datum: 2017-12-29, status: archived
+  ✅ Kreiran ciklus za METAL LOGISTIC, datum: 2014-09-26, status: active
+  ✅ Kreiran ciklus za ITS BALKAN, datum: 2017-12-15, status: archived
+  ✅ Kreiran ciklus za PVF TRADERS, datum: 2017-10-28, status: archived
+  ✅ Kreiran ciklus za SAF METAL, datum: 2018-05-10, status: archived
+  ✅ Kreiran ciklus za PREMIUM CARGO, datum: 2014-11-13, status: archived
+  ✅ Kreiran ciklus za BEOSPED, datum: 2014-11-18, status: archived
+  ✅ Kreiran ciklus za MONTAVAR METALNA LOLA, datum: 2018-05-22, status: archived
+  ✅ Kreiran ciklus za SERVIS ALEKSIC, datum: 2018-04-12, status: active
+  ✅ Kreiran ciklus za STEVAN STILL, datum: 2018-04-13, status: archived
+  ✅ Kreiran ciklus za GOLF SPED, datum: 2017-12-06, status: active
+  ✅ Kreiran ciklus za METALPROM, datum: 2018-03-03, status: archived
+  ✅ Kreiran ciklus za MIDVEJ MGV, datum: 2018-03-22, status: archived
+  ✅ Kreiran ciklus za MILOS TRANS, datum: 2018-07-06, status: archived
+  ✅ Kreiran ciklus za KOLOR PRES, datum: 2018-03-25, status: archived
+  ✅ Kreiran ciklus za BEOGEOAQUA, datum: 2018-05-25, status: archived
+  ✅ Kreiran ciklus za BEOTOK, datum: 0001-01-01, status: active
+  ✅ Kreiran ciklus za SDL GROUP, datum: 2018-06-12, status: archived
+  ✅ Kreiran ciklus za POSITIVE doo, datum: 2017-11-07, status: archived
+  ✅ Kreiran ciklus za NEIMAR PUT, datum: 2018-09-27, status: archived
+  ✅ Kreiran ciklus za KOMPANIJA LEKIC, datum: 2017-02-17, status: active
+  ✅ Kreiran ciklus za VUCCOM, datum: 2018-09-02, status: archived
+  ✅ Kreiran ciklus za MOBILGRADNJA, datum: 2018-09-09, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2015-06-09, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2016-06-06, status: archived
+  ✅ Kreiran ciklus za URBAN ALPINISM, datum: 2018-09-05, status: active
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2017-08-08, status: archived
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2018-12-14, status: archived
+  ✅ Kreiran ciklus za BOSS TRADE, datum: 2018-06-19, status: active
+  ✅ Kreiran ciklus za MIDES SISTEMI, datum: 2017-04-18, status: active
+  ✅ Kreiran ciklus za GRAĐING, datum: 2018-11-22, status: archived
+  ✅ Kreiran ciklus za SPEDICIJA INTERSERVIS 2005, datum: 2019-01-22, status: archived
+  ✅ Kreiran ciklus za STAMPARIJA SVETLOST, datum: 2018-11-08, status: archived
+  ✅ Kreiran ciklus za NET COMPUTER ENGINEERING, datum: 2015-09-16, status: archived
+  ✅ Kreiran ciklus za INVEST INZENJERING, datum: 2015-10-01, status: active
+  ✅ Kreiran ciklus za JAPI COM, datum: 2018-04-28, status: archived
+  ✅ Kreiran ciklus za FENIKS-TRADE, datum: 2019-03-16, status: archived
+  ✅ Kreiran ciklus za TG COMMERCE, datum: 2015-11-23, status: archived
+  ✅ Kreiran ciklus za MARGO MOND, datum: 2015-11-26, status: active
+  ✅ Kreiran ciklus za CETINKA AMBALAZA, datum: 2019-03-12, status: active
+  ✅ Kreiran ciklus za ST PREVOZ, datum: 2018-11-16, status: archived
+  ✅ Kreiran ciklus za CRONY, datum: 2016-01-10, status: active
+  ✅ Kreiran ciklus za B.O.S. KOMPANI, datum: 2016-01-22, status: active
+  ✅ Kreiran ciklus za EVRO-LINE, datum: 2019-04-23, status: archived
+  ✅ Kreiran ciklus za MIK PROJEKT, datum: 2019-05-23, status: archived
+  ✅ Kreiran ciklus za KORKOVADO, datum: 2016-02-25, status: active
+  ✅ Kreiran ciklus za KATAGO CONSTUCTION, datum: 2016-03-16, status: active
+  ✅ Kreiran ciklus za KOMPLUS, datum: 2016-04-25, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2016-03-16, status: archived
+  ✅ Kreiran ciklus za KATIC, datum: 2017-08-12, status: archived
+  ✅ Kreiran ciklus za MIROSS, datum: 2019-04-13, status: archived
+  ✅ Kreiran ciklus za TEL-ING, datum: 2019-06-16, status: archived
+  ✅ Kreiran ciklus za ARIS RESETKE, datum: 2016-05-12, status: active
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2016-06-19, status: archived
+  ✅ Kreiran ciklus za BAMAKO, datum: 2016-07-09, status: active
+  ✅ Kreiran ciklus za IM-INDUSTRIMONTAGE, datum: 2016-06-15, status: active
+  ✅ Kreiran ciklus za OZZ BALKAN, datum: 2016-06-24, status: archived
+  ✅ Kreiran ciklus za DANUBE SERVICES 2010, datum: 2016-07-15, status: active
+  ✅ Kreiran ciklus za MIP GRADING, datum: 2016-06-28, status: active
+  ✅ Kreiran ciklus za PROINTER, datum: 2016-07-25, status: archived
+  ✅ Kreiran ciklus za PROINTER, datum: 2017-07-25, status: archived
+  ✅ Kreiran ciklus za SALI PROM, datum: 2016-07-13, status: active
+  ✅ Kreiran ciklus za ES ENERGO-SERVIS, datum: 2016-08-01, status: active
+  ✅ Kreiran ciklus za ES ENERGO-SERVIS, datum: 2017-04-08, status: active
+  ✅ Kreiran ciklus za VERIDIX, datum: 2016-09-23, status: archived
+  ✅ Kreiran ciklus za ENING ENERGETIKA INZENJERING, datum: 2016-09-09, status: active
+  ✅ Kreiran ciklus za CINCOVIC, datum: 2016-09-28, status: archived
+  ✅ Kreiran ciklus za IDMS COMPANY, datum: 2016-10-12, status: active
+  ✅ Kreiran ciklus za MIKROELEKTRONIKA, datum: 2016-10-26, status: archived
+  ✅ Kreiran ciklus za MIKROELEKTRONIKA, datum: 2017-03-14, status: archived
+  ✅ Kreiran ciklus za NES  COMMUNICATIONS, datum: 2016-11-09, status: archived
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2016-12-04, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2016-12-27, status: archived
+  ✅ Kreiran ciklus za PORTA NOVA, datum: 2017-01-04, status: active
+  ✅ Kreiran ciklus za FELIX TIM, datum: 2017-01-03, status: archived
+  ✅ Kreiran ciklus za COMPREX, datum: 2016-12-26, status: archived
+  ✅ Kreiran ciklus za INT RASTER, datum: 2017-01-19, status: archived
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2017-01-18, status: archived
+  ✅ Kreiran ciklus za PGP GRAĐEVINAC, datum: 2017-01-28, status: active
+  ✅ Kreiran ciklus za ENERGY COMPANY, datum: 2017-01-24, status: archived
+  ✅ Kreiran ciklus za KEEP LIGHT + M.E.P., datum: 2017-02-25, status: active
+  ✅ Kreiran ciklus za FARMALABOR SRB, datum: 2016-03-03, status: archived
+  ✅ Kreiran ciklus za TEHNO SISTEM, datum: 2016-03-03, status: archived
+  ✅ Kreiran ciklus za PROMOBI, datum: 2017-03-23, status: archived
+  ✅ Kreiran ciklus za APIS CENTAR, datum: 2017-03-17, status: archived
+  ✅ Kreiran ciklus za NOVAMAT, datum: 2017-03-17, status: archived
+  ✅ Kreiran ciklus za HIDROMONT, datum: 2017-03-29, status: active
+  ✅ Kreiran ciklus za HIDROMONT, datum: 2017-09-05, status: active
+  ✅ Kreiran ciklus za IMD METAL CO DOO, datum: 2017-05-09, status: archived
+  ✅ Kreiran ciklus za MANES, datum: 2017-05-05, status: archived
+  ✅ Kreiran ciklus za MANES, datum: 2019-01-27, status: archived
+  ✅ Kreiran ciklus za Saturn Electric d.o.o. Beograd, datum: 2017-05-21, status: archived
+  ✅ Kreiran ciklus za TIMOTI, datum: 2017-05-04, status: archived
+  ✅ Kreiran ciklus za STILEX, datum: 2017-05-09, status: archived
+  ✅ Kreiran ciklus za MINE INVEST, datum: 2017-06-11, status: archived
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2017-06-09, status: archived
+  ✅ Kreiran ciklus za OBLAK TEHNOLOGIJE, datum: 2017-06-06, status: archived
+  ✅ Kreiran ciklus za GRAFOKARTONKA, datum: 2017-06-01, status: archived
+  ✅ Kreiran ciklus za MIP INDUSTRIJSKE ARMATURE, datum: 2017-05-26, status: archived
+  ✅ Kreiran ciklus za BRATEL-KRON, datum: 2017-06-03, status: archived
+  ✅ Kreiran ciklus za PERIN, datum: 2017-05-30, status: active
+  ✅ Kreiran ciklus za EMISIA CONSULTING, datum: 2017-07-17, status: active
+  ✅ Kreiran ciklus za ONE WAY CONSULTING, datum: 2017-07-26, status: archived
+  ✅ Kreiran ciklus za NEPO SYSTEM, datum: 2017-09-13, status: archived
+  ✅ Kreiran ciklus za WATER POWER TECHNOLOGY, datum: 2017-08-03, status: archived
+  ✅ Kreiran ciklus za ARES, datum: 2017-08-30, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2017-09-26, status: archived
+  ✅ Kreiran ciklus za COVELS, datum: 2017-09-19, status: archived
+  ✅ Kreiran ciklus za INFORA, datum: 2017-10-05, status: archived
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2017-09-20, status: archived
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2018-09-05, status: archived
+  ✅ Kreiran ciklus za EUROSALON FABRIKA, datum: 2017-10-06, status: archived
+  ✅ Kreiran ciklus za JAKUZA, datum: 2017-10-29, status: archived
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2017-10-18, status: archived
+  ✅ Kreiran ciklus za GRAFOPRODUKT, datum: 2017-11-01, status: active
+  ✅ Kreiran ciklus za LIVE COMPANY SERVIS, datum: 2017-11-17, status: archived
+  ✅ Kreiran ciklus za ŠIPING, datum: 2017-11-19, status: archived
+  ✅ Kreiran ciklus za ALTI LOGISTIKA, datum: 2017-11-30, status: active
+  ✅ Kreiran ciklus za METALOPLAST 021, datum: 2017-11-07, status: active
+  ✅ Kreiran ciklus za PDV, datum: 2017-11-02, status: archived
+  ✅ Kreiran ciklus za GM INZENJERING, datum: 2017-11-14, status: archived
+  ✅ Kreiran ciklus za JOVIŠTE, datum: 2018-01-07, status: active
+  ✅ Kreiran ciklus za PEDALA, datum: 2017-12-04, status: archived
+  ✅ Kreiran ciklus za LOLA MGS, datum: 2017-11-24, status: archived
+  ✅ Kreiran ciklus za SIMS, datum: 2017-12-20, status: archived
+  ✅ Kreiran ciklus za DIGITAZ INFORMATION TECH, datum: 2018-01-01, status: archived
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2018-01-09, status: archived
+  ✅ Kreiran ciklus za BASSILICHI CEE, datum: 2018-04-20, status: active
+  ✅ Kreiran ciklus za SWEET COLLINA, datum: 2018-01-15, status: archived
+  ✅ Kreiran ciklus za SIMEX TAS, datum: 2018-01-31, status: active
+  ✅ Kreiran ciklus za ADAM ŠPED SYSTEM, datum: 2018-02-11, status: archived
+  ✅ Kreiran ciklus za ŠEKOVIĆ, datum: 2018-02-09, status: archived
+  ✅ Kreiran ciklus za MR GROUP, datum: 2018-01-13, status: active
+  ✅ Kreiran ciklus za ELTAS, datum: 2018-01-26, status: archived
+  ✅ Kreiran ciklus za PERIĆ TRANS COMPANY, datum: 2018-01-29, status: archived
+  ✅ Kreiran ciklus za COMALCO, datum: 2018-02-22, status: active
+  ✅ Kreiran ciklus za KOMPANIJA BLAGOJEVIĆ, datum: 2018-03-12, status: archived
+  ✅ Kreiran ciklus za VISOKOGRADNJA INŽENJERING, datum: 2018-03-31, status: active
+  ✅ Kreiran ciklus za METALOKOZMETIKA, datum: 2018-03-21, status: archived
+  ✅ Kreiran ciklus za MEDAN LOA, datum: 2018-03-15, status: archived
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2018-03-06, status: archived
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2018-10-31, status: archived
+  ✅ Kreiran ciklus za PAKO GROUP, datum: 2018-02-28, status: archived
+  ✅ Kreiran ciklus za FLUX, datum: 2018-02-19, status: archived
+  ✅ Kreiran ciklus za BOR PROMET, datum: 2018-04-19, status: archived
+  ✅ Kreiran ciklus za PROFIPLAST, datum: 2018-04-06, status: active
+  ✅ Kreiran ciklus za ZAJAČA ING, datum: 2018-05-18, status: archived
+  ✅ Kreiran ciklus za HIDROVOD, datum: 2018-05-14, status: archived
+  ✅ Kreiran ciklus za SUPER BOX, datum: 2018-05-01, status: archived
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2018-03-19, status: archived
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2019-03-18, status: archived
+  ✅ Kreiran ciklus za AMPHORA, datum: 2018-05-03, status: archived
+  ✅ Kreiran ciklus za VELUZA, datum: 2018-06-20, status: active
+  ✅ Kreiran ciklus za TÜV Rheinland InterCert, datum: 2018-05-11, status: archived
+  ✅ Kreiran ciklus za AGROTEHNA, datum: 2018-06-01, status: archived
+  ✅ Kreiran ciklus za AR GRADNJA, datum: 2018-06-10, status: archived
+  ✅ Kreiran ciklus za TRANS-KOP, datum: 2018-09-15, status: archived
+  ✅ Kreiran ciklus za ELEKTROTIM, datum: 2018-06-30, status: archived
+  ✅ Kreiran ciklus za ELEKTRA M&V, datum: 2018-07-07, status: archived
+  ✅ Kreiran ciklus za ELEKTRO LUMEN, datum: 2018-08-11, status: archived
+  ✅ Kreiran ciklus za HSV, datum: 2018-08-16, status: archived
+  ✅ Kreiran ciklus za ANKER ING, datum: 2018-07-10, status: archived
+  ✅ Kreiran ciklus za MAGAL 02, datum: 2018-07-21, status: archived
+  ✅ Kreiran ciklus za STZR KM, datum: 2018-09-03, status: active
+  ✅ Kreiran ciklus za ANTENALL, datum: 2018-10-06, status: archived
+  ✅ Kreiran ciklus za LIGHT SYSTEMS DESIGN, datum: 2018-10-14, status: active
+  ✅ Kreiran ciklus za PRODRIVE 016 LESKOVAC, datum: 2018-09-26, status: archived
+  ✅ Kreiran ciklus za SOF ELEKTRO 2009, datum: 2018-10-19, status: archived
+  ✅ Kreiran ciklus za MONT, datum: 2018-11-03, status: active
+  ✅ Kreiran ciklus za NORIS INZINJERING, datum: 2018-11-09, status: active
+  ✅ Kreiran ciklus za IRISS STUDIO, datum: 2018-11-26, status: active
+  ✅ Kreiran ciklus za ARENA, datum: 2018-11-09, status: archived
+  ✅ Kreiran ciklus za JKP INFOSTAN Tehnologije, datum: 2019-01-10, status: active
+  ✅ Kreiran ciklus za MIKRO PRINC, datum: 2018-11-14, status: archived
+  ✅ Kreiran ciklus za EX BC, datum: 2018-11-15, status: archived
+  ✅ Kreiran ciklus za MM KOMERC, datum: 2018-12-01, status: active
+  ✅ Kreiran ciklus za TIGOR TRADE, datum: 2018-12-05, status: archived
+  ✅ Kreiran ciklus za ABA PROFESSIONAL, datum: 2019-03-20, status: archived
+  ✅ Kreiran ciklus za IZOTEKS, datum: 2019-01-28, status: active
+  ✅ Kreiran ciklus za PD CEVAS CO, datum: 2019-01-01, status: active
+  ✅ Kreiran ciklus za RINOL, datum: 2019-01-10, status: archived
+  ✅ Kreiran ciklus za EUROFORM TECH, datum: 2019-01-08, status: archived
+  ✅ Kreiran ciklus za STARTING, datum: 2019-02-09, status: archived
+  ✅ Kreiran ciklus za ELEKTROMONT-ILT, datum: 2019-01-23, status: archived
+  ✅ Kreiran ciklus za BG PLAST, datum: 2019-01-19, status: archived
+  ✅ Kreiran ciklus za STEEL-IMPEX d.o.o., datum: 2019-02-06, status: archived
+  ✅ Kreiran ciklus za BOSKOVIC, datum: 2019-02-14, status: active
+  ✅ Kreiran ciklus za AGRORIT, datum: 2019-02-22, status: archived
+  ✅ Kreiran ciklus za KGB SYSTEM PLUS, datum: 2019-02-20, status: active
+  ✅ Kreiran ciklus za TEHNOPLAN 014, datum: 2019-02-18, status: active
+  ✅ Kreiran ciklus za OMNI-PROMET, datum: 2019-03-03, status: archived
+  ✅ Kreiran ciklus za METALCOOP PRODUKT, datum: 2019-03-16, status: archived
+  ✅ Kreiran ciklus za MB TEHNIKA, datum: 2019-03-02, status: archived
+  ✅ Kreiran ciklus za DATABOX, datum: 2019-02-24, status: active
+  ✅ Kreiran ciklus za LUNA, datum: 2019-03-29, status: archived
+  ✅ Kreiran ciklus za SR KONTROLMATIK, datum: 2019-03-30, status: active
+  ✅ Kreiran ciklus za PROFISTIL, datum: 2019-04-04, status: active
+  ✅ Kreiran ciklus za MARJANOVIC TRANS, datum: 2019-04-11, status: archived
+  ✅ Kreiran ciklus za TRANS TRADE KOSTIĆ DOO, datum: 2019-04-15, status: archived
+  ✅ Kreiran ciklus za STANKOVIĆ - INŽENJERING doo, datum: 2019-04-14, status: archived
+  ✅ Kreiran ciklus za DIS PROTEKTIRNICA ZVTR, datum: 2019-04-24, status: active
+  ✅ Kreiran ciklus za ZAVOD ZA VREDNOVANJE KVALITETA OBRAZOVANJA I VASPITANJA, datum: 2019-04-26, status: archived
+  ✅ Kreiran ciklus za AIR PRESS ENGINEERING, datum: 2019-04-22, status: archived
+  ✅ Kreiran ciklus za FRIGO SOPRING, datum: 2019-05-02, status: archived
+  ✅ Kreiran ciklus za DFC, datum: 2019-05-04, status: active
+  ✅ Kreiran ciklus za BNT, datum: 2019-04-28, status: archived
+  ✅ Kreiran ciklus za MOHAČI, datum: 2019-04-01, status: active
+  ✅ Kreiran ciklus za HAP FLUID, datum: 2019-05-17, status: archived
+  ✅ Kreiran ciklus za Univerzitet u Beogradu, Elektrotehnički fakultet, datum: 2019-05-16, status: archived
+  ✅ Kreiran ciklus za MS ČIN KOMERC doo, datum: 2019-06-08, status: archived
+  ✅ Kreiran ciklus za ALFAMEHANIK, datum: 2019-05-29, status: archived
+  ✅ Kreiran ciklus za ITECH CORP, datum: 2019-06-03, status: archived
+  ✅ Kreiran ciklus za ZAJEDNIČKA ADVOKATSKA KANCELARIJA ALEKSIĆ  SA SARADNICIMA, datum: 2019-06-16, status: archived
+  ✅ Kreiran ciklus za BSTORM, datum: 2019-07-10, status: archived
+  ✅ Kreiran ciklus za Metal Hemiko d.o.o, datum: 2012-11-28, status: active
+  ✅ Kreiran ciklus za BELINA DOO, datum: 2015-02-24, status: active
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2018-09-01, status: archived
+  ✅ Kreiran ciklus za MS TRANSPORT d.o.o, datum: 2018-12-24, status: active
+  ✅ Kreiran ciklus za SIGMA PROMET d.o.o, datum: 2018-11-12, status: archived
+  ✅ Kreiran ciklus za MaRCUS Co d.o.o, datum: 2018-12-26, status: archived
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2019-02-25, status: archived
+  ✅ Kreiran ciklus za FEROMONT OPREMA AD, datum: 2018-08-26, status: archived
+  ✅ Kreiran ciklus za REISSWOLF Serbia doo, datum: 2016-07-05, status: archived
+  ✅ Kreiran ciklus za PREMIUM CARGO, datum: 2017-11-15, status: archived
+  ✅ Kreiran ciklus za BEOSPED, datum: 2017-11-29, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2018-07-18, status: archived
+  ✅ Kreiran ciklus za NET COMPUTER ENGINEERING, datum: 2018-09-12, status: archived
+  ✅ Kreiran ciklus za TG COMMERCE, datum: 2018-11-18, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2019-01-14, status: archived
+  ✅ Kreiran ciklus za OZZ BALKAN, datum: 2019-05-24, status: archived
+  ✅ Kreiran ciklus za REISSWOLF Serbia doo, datum: 2019-06-13, status: archived
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2019-07-05, status: archived
+  ✅ Kreiran ciklus za SUMADIJA PUT, datum: 2019-07-28, status: archived
+  ✅ Kreiran ciklus za TELEMIX, datum: 2019-07-26, status: archived
+  ✅ Kreiran ciklus za PENTAKS TT, datum: 2019-07-31, status: archived
+  ✅ Kreiran ciklus za ŠOLE, datum: 2019-07-22, status: archived
+  ✅ Kreiran ciklus za ŠEJN, datum: 2019-08-29, status: active
+  ✅ Kreiran ciklus za K-INEL, datum: 2019-08-28, status: archived
+  ✅ Kreiran ciklus za PROINTER, datum: 2019-07-31, status: archived
+  ✅ Kreiran ciklus za MLINTEST A.D, datum: 2019-08-14, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2019-07-13, status: archived
+  ✅ Kreiran ciklus za ZAVOD ZA VREDNOVANJE KVALITETA OBRAZOVANJA I VASPITANJA, datum: 2019-08-09, status: archived
+  ✅ Kreiran ciklus za ALUCOMMERCE SYSTEMS d.o.o., datum: 2019-08-15, status: archived
+  ✅ Kreiran ciklus za UMPROM d.o.o, datum: 2019-08-17, status: archived
+  ✅ Kreiran ciklus za WATCHOUT SECURITY DOO, datum: 2019-09-05, status: active
+  ✅ Kreiran ciklus za MAGENA, datum: 2019-09-13, status: archived
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2019-08-20, status: archived
+  ✅ Kreiran ciklus za SHOP INVEST, datum: 2019-09-28, status: archived
+  ✅ Kreiran ciklus za JP Vodovod Ruma, datum: 2019-09-26, status: active
+  ✅ Kreiran ciklus za T3SOFT doo, datum: 2019-09-19, status: archived
+  ✅ Kreiran ciklus za VERIDIX, datum: 2019-09-17, status: archived
+  ✅ Kreiran ciklus za TIMCO, datum: 2019-10-07, status: archived
+  ✅ Kreiran ciklus za EL BORN, datum: 2019-08-29, status: archived
+  ✅ Kreiran ciklus za BS TELECOM SOLUTIONS, datum: 2019-10-05, status: active
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2019-09-30, status: archived
+  ✅ Kreiran ciklus za PROKOMSOFT, datum: 2019-10-08, status: active
+  ✅ Kreiran ciklus za INOP D.o.o, datum: 2019-08-25, status: archived
+  ✅ Kreiran ciklus za MIKROELEKTRONIKA, datum: 2019-08-12, status: archived
+  ⚠️  Ciklus već postoji za MIKROELEKTRONIKA, datum: 2019-08-12
+  ✅ Kreiran ciklus za SPORTIMPEX, datum: 2019-10-23, status: archived
+  ✅ Kreiran ciklus za MP-Interconsulting, datum: 2019-10-29, status: archived
+  ✅ Kreiran ciklus za PROMOBI, datum: 2019-10-14, status: archived
+  ✅ Kreiran ciklus za HIDROTERMING, datum: 2019-10-30, status: active
+  ✅ Kreiran ciklus za KAR-MOD INTERNACIONAL, datum: 2019-11-02, status: active
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2019-11-02, status: archived
+  ✅ Kreiran ciklus za MERIDIJAN ŠPED, datum: 2019-10-26, status: archived
+  ✅ Kreiran ciklus za GEOGIS KONSULTANTI, datum: 2019-11-03, status: archived
+  ✅ Kreiran ciklus za INOS/ĐOLEX, datum: 2019-10-25, status: archived
+  ✅ Kreiran ciklus za FLUX PRO, datum: 2019-11-13, status: archived
+  ✅ Kreiran ciklus za RE3 PRODUCT, datum: 2019-11-14, status: archived
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2019-09-04, status: archived
+  ✅ Kreiran ciklus za ART LIFT, datum: 2019-10-06, status: archived
+  ✅ Kreiran ciklus za FOTON GMB, datum: 2019-11-19, status: archived
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2019-11-27, status: archived
+  ✅ Kreiran ciklus za ORNAMENT-INVESTINŽENJERING, datum: 2019-11-23, status: archived
+  ✅ Kreiran ciklus za DENTAL EXPRESS, datum: 2019-11-29, status: archived
+  ✅ Kreiran ciklus za DataDEW services doo Novi Sad, datum: 2019-11-28, status: archived
+  ✅ Kreiran ciklus za Nacionalna služba za zapošljavanje, datum: 2019-12-04, status: archived
+  ✅ Kreiran ciklus za NES  COMMUNICATIONS, datum: 2019-09-23, status: archived
+  ✅ Kreiran ciklus za NOVOHEM, datum: 2019-12-11, status: archived
+  ✅ Kreiran ciklus za SINGI INŽENJERING doo Beograd, datum: 2020-01-01, status: archived
+  ✅ Kreiran ciklus za SIMEN, datum: 2020-01-01, status: archived
+  ✅ Kreiran ciklus za Eurosecurity doo Beograd, datum: 2019-12-16, status: active
+  ✅ Kreiran ciklus za MS SECURITY SYSTEM doo / VIDEOMONT doo, datum: 2019-12-23, status: archived
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2020-01-02, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2019-12-16, status: archived
+  ✅ Kreiran ciklus za AIRPOP, datum: 2020-01-17, status: active
+  ✅ Kreiran ciklus za ALFANOVA, datum: 2020-01-16, status: archived
+  ✅ Kreiran ciklus za ELEKTROMATERIJAL d.o.o, datum: 2019-12-11, status: archived
+  ✅ Kreiran ciklus za Geosoft D.o.o. Beograd, datum: 2019-12-11, status: archived
+  ✅ Kreiran ciklus za TERMO UNIVERZAL, datum: 2020-01-22, status: archived
+  ✅ Kreiran ciklus za SMART Construction, datum: 2020-01-28, status: archived
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2020-01-30, status: archived
+  ✅ Kreiran ciklus za TEHNICOM, datum: 2020-02-01, status: active
+  ✅ Kreiran ciklus za MINI INŽENJERING DOO Inđija, datum: 2020-02-06, status: archived
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2020-02-13, status: archived
+  ✅ Kreiran ciklus za FELIX TIM, datum: 2019-12-29, status: archived
+  ✅ Kreiran ciklus za FMB D.O.O, datum: 2020-01-04, status: archived
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2020-01-26, status: archived
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2019-12-07, status: archived
+  ✅ Kreiran ciklus za TEHNO SISTEM, datum: 2020-01-26, status: archived
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2019-12-03, status: archived
+  ✅ Kreiran ciklus za DIM ENERGY d.o.o., datum: 2020-02-22, status: archived
+  ✅ Kreiran ciklus za INT RASTER, datum: 2020-01-06, status: archived
+  ✅ Kreiran ciklus za GALVANOPLAST, datum: 2020-03-02, status: archived
+  ✅ Kreiran ciklus za ĐUROVIĆ OBEZBEĐENJE DOO LESKOVAC, datum: 2020-02-27, status: archived
+  ✅ Kreiran ciklus za GRAFOPRODUKT, datum: 2020-02-26, status: active
+  ✅ Kreiran ciklus za PAN LIFT, datum: 2020-03-03, status: archived
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2020-02-17, status: archived
+  ✅ Kreiran ciklus za JU NARODNI UNIVERZITET VRANJE, datum: 2020-03-15, status: active
+  ✅ Kreiran ciklus za DC GRAFIČKI CENTAR doo, datum: 2020-03-17, status: active
+  ✅ Kreiran ciklus za MOBITELMONT, datum: 2020-03-11, status: archived
+  ✅ Kreiran ciklus za PDV, datum: 2020-03-14, status: archived
+  ✅ Kreiran ciklus za STUDIO BERAR, datum: 2020-03-17, status: archived
+  ✅ Kreiran ciklus za FARMALABOR SRB, datum: 2020-03-02, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2020-01-08, status: archived
+  ✅ Kreiran ciklus za STANDARD EXPERT STEEL, datum: 2020-03-26, status: active
+  ✅ Kreiran ciklus za BANTSKI KLAS D.O.O., datum: 2020-03-10, status: archived
+  ✅ Kreiran ciklus za MLIN CEKOVIC, datum: 2020-03-24, status: archived
+  ✅ Kreiran ciklus za DRAGOVIĆ TRANSPORT & EXPRES, datum: 2020-02-15, status: archived
+  ✅ Kreiran ciklus za SPEKTAR INVEST, datum: 2020-03-29, status: archived
+  ✅ Kreiran ciklus za KODAR ENERGOMONTAŽA, datum: 2020-03-29, status: archived
+  ✅ Kreiran ciklus za APIS CENTAR, datum: 2020-03-27, status: archived
+  ✅ Kreiran ciklus za NOVAMAT, datum: 2020-03-04, status: archived
+  ✅ Kreiran ciklus za RESALTA, datum: 2020-04-13, status: archived
+  ✅ Kreiran ciklus za CINCOVIC, datum: 2020-03-22, status: archived
+  ✅ Kreiran ciklus za TEHNOPLAST, datum: 2020-04-14, status: archived
+  ✅ Kreiran ciklus za SONIREX, datum: 2020-04-21, status: archived
+  ✅ Kreiran ciklus za ABA GROUP, datum: 2020-04-26, status: archived
+  ✅ Kreiran ciklus za GEOMAG DOO, datum: 2020-04-29, status: archived
+  ✅ Kreiran ciklus za COMPREX, datum: 2020-01-13, status: archived
+  ✅ Kreiran ciklus za Rasing d.o.o., datum: 2020-05-03, status: archived
+  ✅ Kreiran ciklus za CE-HID DOO, datum: 2020-05-02, status: active
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2020-05-08, status: archived
+  ✅ Kreiran ciklus za IMD METAL CO DOO, datum: 2020-05-13, status: archived
+  ✅ Kreiran ciklus za STILEX, datum: 2020-05-09, status: archived
+  ✅ Kreiran ciklus za STILEX, datum: 2019-07-24, status: archived
+  ✅ Kreiran ciklus za MANES, datum: 2020-04-26, status: archived
+  ✅ Kreiran ciklus za Husky Corporation doo, datum: 2020-05-13, status: archived
+  ✅ Kreiran ciklus za KORALŠPED, datum: 2020-05-16, status: archived
+  ✅ Kreiran ciklus za MAJOR ENTERIJER, datum: 2020-05-19, status: active
+  ✅ Kreiran ciklus za GPP SPEKTAR INŽENJERING, datum: 2020-05-23, status: archived
+  ✅ Kreiran ciklus za SZTR "Ljuba Invest"- Paraćin, datum: 2020-05-17, status: archived
+  ✅ Kreiran ciklus za Saturn Electric d.o.o. Beograd, datum: 2020-05-27, status: archived
+  ✅ Kreiran ciklus za PROMOBI, datum: 2020-03-26, status: archived
+  ✅ Kreiran ciklus za AGROTEHNIX, datum: 2020-05-27, status: active
+  ✅ Kreiran ciklus za BRATEL-KRON, datum: 2020-06-06, status: archived
+  ✅ Kreiran ciklus za OBLAK TEHNOLOGIJE, datum: 2020-06-08, status: archived
+  ✅ Kreiran ciklus za VIR SISTEM, datum: 2020-06-13, status: archived
+  ✅ Kreiran ciklus za MAKER IVANJICA, datum: 2020-06-17, status: archived
+  ✅ Kreiran ciklus za GRAFOKARTONKA, datum: 2020-05-23, status: archived
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2020-05-20, status: archived
+  ✅ Kreiran ciklus za INFO SPACE, datum: 2020-06-19, status: archived
+  ✅ Kreiran ciklus za SMELTING, datum: 2020-06-21, status: active
+  ✅ Kreiran ciklus za DINARA ROMANIJA, datum: 2020-06-12, status: archived
+  ✅ Kreiran ciklus za Euroteamlogist doo /  Međunarodna špedicija ZR Agent doo, datum: 2020-07-07, status: archived
+  ✅ Kreiran ciklus za ZORKA KERAMIKA, datum: 2020-07-12, status: active
+  ✅ Kreiran ciklus za ENTERIJER JANKOVIC, datum: 2020-05-28, status: archived
+  ✅ Kreiran ciklus za MOBEZA, datum: 2020-08-01, status: archived
+  ✅ Kreiran ciklus za GRADINA d.o.o., datum: 2020-07-02, status: archived
+  ✅ Kreiran ciklus za WATER POWER TECHNOLOGY, datum: 2020-08-01, status: archived
+  ✅ Kreiran ciklus za Triplex Yu List d.o.o, datum: 2020-06-08, status: archived
+  ✅ Kreiran ciklus za TIMOTI, datum: 2020-04-26, status: archived
+  ✅ Kreiran ciklus za MINE INVEST, datum: 2020-04-11, status: archived
+  ✅ Kreiran ciklus za MIP INDUSTRIJSKE ARMATURE, datum: 2020-05-19, status: active
+  ✅ Kreiran ciklus za BEOHIDRO, datum: 2020-08-31, status: archived
+  ✅ Kreiran ciklus za LUXOL SINCE 1884 doo, datum: 2020-08-26, status: archived
+  ✅ Kreiran ciklus za ENERGY COMPANY, datum: 2019-11-30, status: archived
+  ✅ Kreiran ciklus za USPON, datum: 2020-09-07, status: archived
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2020-07-28, status: archived
+  ✅ Kreiran ciklus za D.C. ENERGOCOOP DOO, datum: 2020-09-09, status: archived
+  ✅ Kreiran ciklus za SVETIGORA, datum: 2020-09-16, status: archived
+  ✅ Kreiran ciklus za AM TRADE, datum: 2020-09-15, status: active
+  ✅ Kreiran ciklus za ONE WAY CONSULTING, datum: 2020-07-24, status: active
+  ✅ Kreiran ciklus za GEACHEM, datum: 2020-09-19, status: archived
+  ✅ Kreiran ciklus za KB ARMATURE, datum: 2020-08-23, status: archived
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2020-08-22, status: archived
+  ✅ Kreiran ciklus za BAJIĆI KOP, datum: 2020-10-02, status: archived
+  ✅ Kreiran ciklus za PUTEVI UŽICE, datum: 2020-10-05, status: archived
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2020-08-25, status: archived
+  ✅ Kreiran ciklus za ŠKORPION, datum: 2020-07-30, status: archived
+  ✅ Kreiran ciklus za EUROSALON FABRIKA, datum: 2020-09-23, status: archived
+  ✅ Kreiran ciklus za JAKUZA, datum: 2020-10-11, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2020-10-06, status: archived
+  ✅ Kreiran ciklus za NEPO SYSTEM, datum: 2020-09-26, status: archived
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2020-08-16, status: archived
+  ✅ Kreiran ciklus za ILIJANUM, datum: 2020-09-07, status: archived
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2020-09-08, status: archived
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2020-08-22, status: archived
+  ✅ Kreiran ciklus za 4m Specijalni Alati, datum: 2020-11-06, status: archived
+  ✅ Kreiran ciklus za PDV, datum: 2020-10-31, status: archived
+  ✅ Kreiran ciklus za FORM INŽINJERING, datum: 2020-11-06, status: archived
+  ✅ Kreiran ciklus za MG MOLD 84, datum: 2020-11-15, status: archived
+  ✅ Kreiran ciklus za TERMOMED, datum: 2020-11-14, status: active
+  ✅ Kreiran ciklus za ISTER-INŽENJERING DOO Valjevo, datum: 2020-11-11, status: archived
+  ✅ Kreiran ciklus za EDISON ELEKTROTEHNIČKO PREDUZEĆE D.O.O., datum: 2020-11-13, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2020-09-20, status: archived
+  ✅ Kreiran ciklus za POSITIVE doo, datum: 2020-10-21, status: archived
+  ✅ Kreiran ciklus za COVELS, datum: 2020-09-06, status: archived
+  ✅ Kreiran ciklus za BIZNIS CENTAR MOMCILOVIC d.o.o, datum: 2020-11-26, status: archived
+  ✅ Kreiran ciklus za PROINTER, datum: 2020-06-23, status: archived
+  ✅ Kreiran ciklus za LIVE COMPANY SERVIS, datum: 2020-11-25, status: archived
+  ✅ Kreiran ciklus za LIVE COMPANY SERVIS, datum: 2020-11-29, status: archived
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2020-09-23, status: archived
+  ⚠️  Ciklus već postoji za SIS SOFTWARE, datum: 2020-09-23
+  ✅ Kreiran ciklus za TRANSLOG SISTEM DOO, datum: 2020-12-09, status: archived
+  ✅ Kreiran ciklus za PEDALA, datum: 2020-11-24, status: archived
+  ✅ Kreiran ciklus za GM INZENJERING, datum: 2020-10-11, status: archived
+  ✅ Kreiran ciklus za LOLA MGS, datum: 2020-11-19, status: archived
+  ✅ Kreiran ciklus za PREMIUM CARGO, datum: 2020-10-20, status: archived
+  ✅ Kreiran ciklus za BEOSPED, datum: 2020-10-27, status: archived
+  ✅ Kreiran ciklus za MARATON LDN, datum: 2020-12-09, status: active
+  ✅ Kreiran ciklus za PRENA-M INŽINJERING d.o.o., datum: 2020-09-15, status: archived
+  ✅ Kreiran ciklus za TERMO TIM d.o.o., datum: 2020-11-08, status: archived
+  ✅ Kreiran ciklus za ETER SOLUTIONS d.o.o., datum: 2021-01-17, status: archived
+  ✅ Kreiran ciklus za SMART ENERGY SAVING DOO, datum: 2021-01-30, status: archived
+  ✅ Kreiran ciklus za KM MONT, datum: 2020-12-04, status: archived
+  ✅ Kreiran ciklus za PEKARA FILIP, datum: 2021-02-02, status: archived
+  ✅ Kreiran ciklus za LABORATORIJSKI INFORMACIONI SISTEMI DOO / LIS RS doo, datum: 2021-02-05, status: archived
+  ✅ Kreiran ciklus za JKP VODOVOD SABAC, datum: 2021-02-05, status: archived
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2020-12-02, status: archived
+  ✅ Kreiran ciklus za PERIĆ TRANS COMPANY, datum: 2021-01-22, status: archived
+  ✅ Kreiran ciklus za G&S POWER SYSTEMS, datum: 2020-12-29, status: active
+  ✅ Kreiran ciklus za AGENCIJA SVETI SAVA, datum: 2020-12-30, status: active
+  ✅ Kreiran ciklus za ADVOKATSKO ORTAČKO DRUŠTVO ŽIVKOVIĆ SAMARDŽIĆ, datum: 2020-12-23, status: archived
+  ✅ Kreiran ciklus za Nelli d.o.o, datum: 2020-10-19, status: archived
+  ✅ Kreiran ciklus za TELEDIREKT, datum: 2020-12-30, status: archived
+  ✅ Kreiran ciklus za ENVIROSERV, datum: 2021-01-05, status: active
+  ✅ Kreiran ciklus za PVF TRADERS, datum: 2020-10-25, status: archived
+  ✅ Kreiran ciklus za TO-MA PALETE PLUS, datum: 2021-01-14, status: archived
+  ✅ Kreiran ciklus za SZTR ĐURĐEVIĆ, datum: 2021-01-14, status: archived
+  ✅ Kreiran ciklus za NOVOTERM-PLUS doo Aranđelovac, datum: 2021-02-13, status: archived
+  ✅ Kreiran ciklus za ANDRIANA ŠPED DOO/ SIMŠPED, datum: 2021-02-13, status: active
+  ✅ Kreiran ciklus za ŠIPING, datum: 2020-11-30, status: archived
+  ✅ Kreiran ciklus za ITS BALKAN, datum: 2020-12-07, status: archived
+  ✅ Kreiran ciklus za DUNAVNET, datum: 2020-11-03, status: archived
+  ✅ Kreiran ciklus za KPM Kompresori, datum: 2021-02-19, status: archived
+  ✅ Kreiran ciklus za MERIDIJAN ŠPED, datum: 2021-02-20, status: archived
+  ✅ Kreiran ciklus za ŠEKOVIĆ, datum: 2021-01-09, status: archived
+  ✅ Kreiran ciklus za SWEET COLLINA, datum: 2020-12-11, status: archived
+  ✅ Kreiran ciklus za IZOPROGRES, datum: 2021-02-17, status: active
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2021-03-16, status: archived
+  ✅ Kreiran ciklus za ADAM ŠPED SYSTEM, datum: 2021-02-06, status: archived
+  ✅ Kreiran ciklus za ASA IBELIK doo, datum: 2021-01-06, status: archived
+  ✅ Kreiran ciklus za INFORA, datum: 2020-10-10, status: archived
+  ✅ Kreiran ciklus za PAKO GROUP, datum: 2021-02-25, status: archived
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2020-09-24, status: archived
+  ✅ Kreiran ciklus za GREEN MILK, datum: 2021-03-25, status: active
+  ✅ Kreiran ciklus za HIDRO-GEA, datum: 2021-03-20, status: archived
+  ✅ Kreiran ciklus za MINI INŽENJERING DOO Inđija, datum: 2021-03-20, status: archived
+  ✅ Kreiran ciklus za SIMS, datum: 2021-01-03, status: archived
+  ✅ Kreiran ciklus za METALPROM, datum: 2021-01-31, status: archived
+  ✅ Kreiran ciklus za NOVOSOFT doo Beograd, datum: 2021-02-27, status: active
+  ✅ Kreiran ciklus za DIGITAZ INFORMATION TECH, datum: 2020-12-14, status: active
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2021-02-15, status: archived
+  ✅ Kreiran ciklus za IBG DOO BEOGRAD, datum: 2021-03-04, status: active
+  ✅ Kreiran ciklus za FLUX, datum: 2021-02-01, status: archived
+  ✅ Kreiran ciklus za METALOKOZMETIKA, datum: 2021-02-22, status: archived
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2021-03-12, status: archived
+  ✅ Kreiran ciklus za DRUMOVI A&D DOO, datum: 2021-03-28, status: archived
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2021-02-22, status: archived
+  ✅ Kreiran ciklus za Tectra doo Beograd, datum: 2021-04-05, status: archived
+  ✅ Kreiran ciklus za ĐUROVIĆ OBEZBEĐENJE DOO LESKOVAC, datum: 2021-04-07, status: active
+  ✅ Kreiran ciklus za ZK MOHAČI, datum: 2021-04-04, status: archived
+  ✅ Kreiran ciklus za FLORA KOMERC DOO, datum: 2021-04-16, status: archived
+  ✅ Kreiran ciklus za SIGURNO-TOTALNO-OBEZBEDJENJE, datum: 2021-04-16, status: active
+  ✅ Kreiran ciklus za SZR MEGA METAL, datum: 2021-04-21, status: active
+  ✅ Kreiran ciklus za MOD ARHITEKT, datum: 2021-04-30, status: active
+  ✅ Kreiran ciklus za STEVAN STILL, datum: 2021-04-14, status: archived
+  ✅ Kreiran ciklus za ELTAS, datum: 2021-01-23, status: archived
+  ✅ Kreiran ciklus za MIDVEJ MGV, datum: 2021-04-11, status: archived
+  ✅ Kreiran ciklus za SUPER BOX, datum: 2021-05-03, status: active
+  ✅ Kreiran ciklus za HIDROVOD, datum: 2021-04-29, status: archived
+  ✅ Kreiran ciklus za BOR PROMET, datum: 2021-02-18, status: archived
+  ✅ Kreiran ciklus za MONTAVAR METALNA LOLA, datum: 2021-05-27, status: archived
+  ✅ Kreiran ciklus za BEOGEOAQUA, datum: 2021-05-29, status: archived
+  ✅ Kreiran ciklus za GRANIT PLUS, datum: 2021-06-03, status: archived
+  ✅ Kreiran ciklus za DR 100 IĆ DOO KLENOVNIK, datum: 2021-06-11, status: active
+  ✅ Kreiran ciklus za SAF METAL, datum: 2021-05-16, status: archived
+  ✅ Kreiran ciklus za TRAG SECURITY d.o.o., Beograd, datum: 2021-06-18, status: active
+  ✅ Kreiran ciklus za JAPI COM, datum: 2021-03-28, status: archived
+  ✅ Kreiran ciklus za KOLOR PRES, datum: 2021-04-01, status: archived
+  ✅ Kreiran ciklus za SDL GROUP, datum: 2021-06-25, status: archived
+  ✅ Kreiran ciklus za TPP KAPEDUNUM DOO, datum: 2021-06-29, status: archived
+  ✅ Kreiran ciklus za AGROTEHNA, datum: 2021-06-12, status: archived
+  ✅ Kreiran ciklus za TÜV Rheinland InterCert, datum: 2021-05-15, status: archived
+  ✅ Kreiran ciklus za AFREI-LIB JOINT COMPANY DOO, datum: 2021-07-11, status: active
+  ✅ Kreiran ciklus za AR GRADNJA, datum: 2021-07-06, status: archived
+  ✅ Kreiran ciklus za Europrojekt Inžinjering DOO, datum: 2021-07-15, status: active
+  ✅ Kreiran ciklus za PYRAMIDING DOO NOVI SAD, datum: 2021-07-21, status: archived
+  ✅ Kreiran ciklus za ANKER ING, datum: 2021-06-25, status: archived
+  ✅ Kreiran ciklus za MILOS TRANS, datum: 2021-06-23, status: archived
+  ✅ Kreiran ciklus za MONTOP PRO DOO, datum: 2021-08-05, status: active
+  ✅ Kreiran ciklus za MAGAL 02, datum: 2021-07-03, status: archived
+  ✅ Kreiran ciklus za JP URBANIZAM - KRAGUJEVAC, datum: 2021-08-02, status: archived
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2021-07-29, status: archived
+  ✅ Kreiran ciklus za DPS KLAS GROUP DOO, datum: 2021-07-02, status: archived
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2021-08-15, status: archived
+  ✅ Kreiran ciklus za KUERK, datum: 2021-08-15, status: archived
+  ✅ Kreiran ciklus za ELEKTRA M&V, datum: 2021-07-27, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2021-07-05, status: archived
+  ✅ Kreiran ciklus za ZAJAČA ING, datum: 2021-05-18, status: archived
+  ✅ Kreiran ciklus za BASAMENT, datum: 2021-09-04, status: archived
+  ✅ Kreiran ciklus za Mlekarska škola sa domom učenika Dr Obren Pejić, datum: 2021-09-05, status: archived
+  ✅ Kreiran ciklus za ELEKTROTIM, datum: 2021-07-16, status: archived
+  ✅ Kreiran ciklus za AMPHORA, datum: 2021-05-09, status: archived
+  ✅ Kreiran ciklus za KOMPANIJA BLAGOJEVIĆ, datum: 2021-03-13, status: archived
+  ✅ Kreiran ciklus za MEDAN LOA, datum: 2021-03-21, status: active
+  ✅ Kreiran ciklus za RASADNIK GREEN IN doo Novi Sad, datum: 2021-09-22, status: active
+  ✅ Kreiran ciklus za BIT PROJEKT, datum: 2021-09-21, status: archived
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2021-08-21, status: archived
+  ✅ Kreiran ciklus za STEF TRANS  DOO, datum: 2021-10-09, status: archived
+  ✅ Kreiran ciklus za ŠTAMPARIJA MATIJA DOO, datum: 2021-10-11, status: archived
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2021-08-19, status: archived
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2021-08-22, status: archived
+  ✅ Kreiran ciklus za ANTENALL, datum: 2021-10-15, status: archived
+  ✅ Kreiran ciklus za NET COMPUTER ENGINEERING, datum: 2021-09-06, status: archived
+  ✅ Kreiran ciklus za PROWOOD d.o.o. Beočin, datum: 2021-10-23, status: archived
+  ✅ Kreiran ciklus za FEROMONT OPREMA AD, datum: 2021-08-27, status: archived
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2021-09-05, status: archived
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2021-09-17, status: archived
+  ✅ Kreiran ciklus za PRODRIVE 016 LESKOVAC, datum: 2021-09-18, status: active
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2021-09-20, status: archived
+  ✅ Kreiran ciklus za MBS doo, datum: 2021-11-01, status: archived
+  ✅ Kreiran ciklus za ELEKTRO LUMEN, datum: 2021-09-24, status: archived
+  ✅ Kreiran ciklus za PETKOVIĆ TIM SECURITY DOO, datum: 2021-11-05, status: archived
+  ✅ Kreiran ciklus za ARENA, datum: 2021-11-05, status: archived
+  ✅ Kreiran ciklus za TRANS-KOP, datum: 2021-10-02, status: archived
+  ✅ Kreiran ciklus za MAPSOFT doo, datum: 2021-11-11, status: archived
+  ✅ Kreiran ciklus za MOBILGRADNJA, datum: 2021-09-23, status: archived
+  ✅ Kreiran ciklus za MONTPROJEKT d.o.o. Beograd, datum: 2021-11-20, status: archived
+  ✅ Kreiran ciklus za SIGMA PROMET d.o.o, datum: 2021-11-06, status: archived
+  ✅ Kreiran ciklus za BRACA ILIC DOO, datum: 2021-07-16, status: archived
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2021-10-17, status: archived
+  ✅ Kreiran ciklus za BSN energy d.o.o., datum: 2021-11-27, status: archived
+  ✅ Kreiran ciklus za GULI GULI, datum: 2021-11-21, status: archived
+  ✅ Kreiran ciklus za ELITE 021 GROUP DOO, datum: 2021-12-07, status: archived
+  ✅ Kreiran ciklus za EX BC, datum: 2021-11-09, status: archived
+  ✅ Kreiran ciklus za DUNAV d.o.o. Vranje, datum: 2021-12-04, status: active
+  ✅ Kreiran ciklus za SOF ELEKTRO 2009, datum: 2021-10-30, status: archived
+  ✅ Kreiran ciklus za Saturn Electric d.o.o. Beograd, datum: 2021-12-05, status: active
+  ✅ Kreiran ciklus za MARKOVIĆ DOO, datum: 2021-12-12, status: active
+  ✅ Kreiran ciklus za MIKRO PRINC, datum: 2021-11-07, status: archived
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2021-08-05, status: archived
+  ✅ Kreiran ciklus za ST PREVOZ, datum: 2021-11-05, status: archived
+  ✅ Kreiran ciklus za PEXIM doo, datum: 2022-01-10, status: active
+  ✅ Kreiran ciklus za EUROFORM TECH, datum: 2022-01-15, status: archived
+  ✅ Kreiran ciklus za STAMPARIJA SVETLOST, datum: 2021-11-03, status: archived
+  ✅ Kreiran ciklus za VUCCOM, datum: 2021-08-28, status: archived
+  ✅ Kreiran ciklus za NEIMAR PUT, datum: 2021-10-13, status: archived
+  ✅ Kreiran ciklus za B.M.R. d.o.o, datum: 2021-11-08, status: archived
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2022-01-30, status: archived
+  ✅ Kreiran ciklus za AVEXCOR DOO INĐIJA, datum: 2022-01-23, status: archived
+  ✅ Kreiran ciklus za SIPAL doo Čurug, datum: 2022-01-22, status: archived
+  ✅ Kreiran ciklus za TIGOR TRADE, datum: 2021-11-27, status: archived
+  ✅ Kreiran ciklus za BEOKRAN, datum: 2021-10-22, status: archived
+  ✅ Kreiran ciklus za PLAZMMETAL doo Čačak, datum: 2022-02-05, status: archived
+  ✅ Kreiran ciklus za POLYMERS GROUP doo, datum: 2022-02-12, status: archived
+  ✅ Kreiran ciklus za DON SPED, datum: 2022-02-10, status: archived
+  ✅ Kreiran ciklus za SZTR AGROMESA, datum: 2022-02-14, status: archived
+  ✅ Kreiran ciklus za REC-EE-O doo Beograd, datum: 2022-02-11, status: archived
+  ✅ Kreiran ciklus za ELEKTROMONT-ILT, datum: 2022-01-22, status: archived
+  ✅ Kreiran ciklus za KTITOR, datum: 2022-02-22, status: archived
+  ✅ Kreiran ciklus za SPEDICIJA INTERSERVIS 2005, datum: 2022-01-16, status: archived
+  ✅ Kreiran ciklus za HSV, datum: 2021-08-27, status: archived
+  ✅ Kreiran ciklus za STEEL-IMPEX d.o.o., datum: 2022-02-16, status: archived
+  ✅ Kreiran ciklus za STRUJA, datum: 2020-06-01, status: archived
+  ✅ Kreiran ciklus za ENERGETIKA JURIĆ doo Lučko, datum: 2022-03-07, status: archived
+  ✅ Kreiran ciklus za BG PLAST, datum: 2022-01-13, status: archived
+  ✅ Kreiran ciklus za MaRCUS Co d.o.o, datum: 2021-12-23, status: archived
+  ✅ Kreiran ciklus za GRADIS doo, datum: 2022-03-19, status: active
+  ✅ Kreiran ciklus za INKOM, datum: 2022-03-06, status: archived
+  ✅ Kreiran ciklus za METALCOOP PRODUKT, datum: 2022-03-05, status: archived
+  ✅ Kreiran ciklus za AGRORIT, datum: 2022-02-22, status: archived
+  ✅ Kreiran ciklus za GEOVIZIJA, datum: 2022-03-25, status: archived
+  ✅ Kreiran ciklus za ASMEC CONSULTANTS DOO, datum: 2022-02-01, status: archived
+  ✅ Kreiran ciklus za INVESTGRADNJA NEDIMOVIĆ, datum: 2021-12-25, status: active
+  ✅ Kreiran ciklus za Gama Studion d.o.o, datum: 2021-07-13, status: archived
+  ✅ Kreiran ciklus za STARTING, datum: 2022-01-26, status: archived
+  ✅ Kreiran ciklus za FENIKS-TRADE, datum: 2022-03-10, status: archived
+  ✅ Kreiran ciklus za TELEMAX, datum: 2022-03-28, status: archived
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2022-01-25, status: archived
+  ✅ Kreiran ciklus za TRANS TRADE KOSTIĆ DOO, datum: 2022-03-14, status: archived
+  ✅ Kreiran ciklus za EVRO-LINE, datum: 2022-04-06, status: archived
+  ✅ Kreiran ciklus za MISTECO doo / JELISAVAC KLIMATIZACIJA COMPANY  doo, datum: 2022-04-05, status: active
+  ✅ Kreiran ciklus za STARTING, datum: 2022-02-12, status: archived
+  ✅ Kreiran ciklus za DRAGAN SREĆKOVIĆ PR  PČELICA SA TARE BAJINA BAŠTA, datum: 2022-04-08, status: archived
+  ✅ Kreiran ciklus za GRAĐING, datum: 2021-11-29, status: archived
+  ✅ Kreiran ciklus za MILOSCH TRANSPORT GmbH, datum: 2022-04-08, status: archived
+  ✅ Kreiran ciklus za Energy Transformation Consulting DOO, datum: 2022-04-11, status: archived
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2022-01-05, status: archived
+  ✅ Kreiran ciklus za NEIMAR PUT, datum: 2022-04-15, status: active
+  ✅ Kreiran ciklus za TELEDIREKT, datum: 2022-04-23, status: archived
+  ✅ Kreiran ciklus za Kosmaj doo, datum: 2022-04-23, status: archived
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2022-02-04, status: archived
+  ✅ Kreiran ciklus za MARJANOVIC TRANS, datum: 2022-04-15, status: archived
+  ✅ Kreiran ciklus za ASCOT, datum: 2022-05-05, status: active
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2022-03-18, status: archived
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2022-04-26, status: archived
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2022-02-22, status: archived
+  ✅ Kreiran ciklus za STANKOVIĆ - INŽENJERING doo, datum: 2022-04-23, status: archived
+  ✅ Kreiran ciklus za IVICA JANKOVIĆ PR RADNJA ZA MONTAŽU IZNAJMLJIVANjE GRAĐEVINSKE OPREME I MEHANIZACIJE KOM JANKOVIĆ, datum: 2022-05-19, status: archived
+  ✅ Kreiran ciklus za LOG DESIGN doo, datum: 2022-05-16, status: archived
+  ✅ Kreiran ciklus za MR ENGINES doo, datum: 2022-05-14, status: archived
+  ✅ Kreiran ciklus za MASTERTEH / ALTECH DOO BEOGRAD, datum: 2022-05-19, status: archived
+  ✅ Kreiran ciklus za Savremena Poslova Obrada d.o.o., datum: 2022-05-22, status: archived
+  ✅ Kreiran ciklus za PROTON MONTAŽA doo, datum: 2022-05-25, status: archived
+  ✅ Kreiran ciklus za MB TEHNIKA, datum: 2022-02-26, status: archived
+  ✅ Kreiran ciklus za STRIX doo, datum: 2022-05-30, status: archived
+  ✅ Kreiran ciklus za MIROSS, datum: 2022-03-13, status: active
+  ✅ Kreiran ciklus za RINOL, datum: 2021-12-03, status: archived
+  ✅ Kreiran ciklus za BINTA, datum: 2022-02-24, status: archived
+  ✅ Kreiran ciklus za ABA PROFESSIONAL, datum: 2022-04-18, status: archived
+  ✅ Kreiran ciklus za PAPIR INVEST doo, datum: 2022-06-08, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2021-12-26, status: archived
+  ✅ Kreiran ciklus za INTERFAST DOO, datum: 2022-06-16, status: archived
+  ✅ Kreiran ciklus za KOSANOVIC GROUP, datum: 2022-06-19, status: archived
+  ✅ Kreiran ciklus za CHW INSTAL, datum: 2022-06-13, status: archived
+  ✅ Kreiran ciklus za HAP FLUID, datum: 2022-05-20, status: archived
+  ✅ Kreiran ciklus za EVOLUTION ONLINE-EON DOO Beograd, datum: 2022-06-22, status: archived
+  ✅ Kreiran ciklus za COMEX d.o.o, datum: 2022-06-20, status: archived
+  ✅ Kreiran ciklus za BERGER GROUP DOO old POTKA doo, datum: 2022-06-23, status: archived
+  ✅ Kreiran ciklus za RSB Anlagenbau GmbH, datum: 2022-07-02, status: archived
+  ✅ Kreiran ciklus za ELEKTROZAPAD DOO, datum: 2022-06-21, status: archived
+  ✅ Kreiran ciklus za TEL-ING, datum: 2022-06-20, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2022-07-03, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2022-03-19, status: archived
+  ✅ Kreiran ciklus za MIK PROJEKT, datum: 2022-05-23, status: archived
+  ✅ Kreiran ciklus za REISSWOLF Serbia doo, datum: 2022-06-16, status: archived
+  ✅ Kreiran ciklus za ERGOPRODUKT doo Čačak, datum: 2022-07-13, status: archived
+  ✅ Kreiran ciklus za INKOM, datum: 2022-07-17, status: archived
+  ✅ Kreiran ciklus za STILEX, datum: 2022-05-02, status: archived
+  ✅ Kreiran ciklus za Nacionalna služba za zapošljavanje, datum: 2022-07-21, status: archived
+  ✅ Kreiran ciklus za SZTUR OROLOGIO I VASILIJEVIĆ NENAD PR Beograd, datum: 2022-07-25, status: archived
+  ✅ Kreiran ciklus za PROINTER, datum: 2022-04-02, status: archived
+  ✅ Kreiran ciklus za GENESEC, datum: 2022-08-06, status: archived
+  ✅ Kreiran ciklus za IBIS-SOLUTIONS d.o.o., datum: 2022-08-01, status: archived
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2022-07-07, status: archived
+  ✅ Kreiran ciklus za SUMADIJA PUT, datum: 2022-07-25, status: archived
+  ✅ Kreiran ciklus za MTC Metals Trading Company doo Beograd-Novi Beograd, datum: 2022-08-04, status: archived
+  ✅ Kreiran ciklus za GRADNJA RADOSAVLJEVIĆ DOO ĆUPRIJA, datum: 2022-08-16, status: archived
+  ✅ Kreiran ciklus za DAHLIA DOO Beograd-Zemun, datum: 2022-08-17, status: archived
+  ✅ Kreiran ciklus za STEVAN STILL, datum: 2022-08-17, status: archived
+  ✅ Kreiran ciklus za GRAĐEVINSKO PREDUZEĆE STILL-NET DOO Pančevo, datum: 2022-08-25, status: archived
+  ✅ Kreiran ciklus za KARANOVIĆ & PARTNERS OAD BEOGRAD, datum: 2022-08-24, status: archived
+  ✅ Kreiran ciklus za LUNA, datum: 2022-03-26, status: archived
+  ✅ Kreiran ciklus za ZAJEDNIČKA ADVOKATSKA KANCELARIJA ALEKSIĆ  SA SARADNICIMA, datum: 2022-05-21, status: archived
+  ✅ Kreiran ciklus za MS ČIN KOMERC doo, datum: 2022-05-15, status: active
+  ✅ Kreiran ciklus za ŠOLE, datum: 2022-05-30, status: archived
+  ✅ Kreiran ciklus za ITECH CORP, datum: 2022-04-22, status: active
+  ✅ Kreiran ciklus za Univerzitet u Beogradu, Elektrotehnički fakultet, datum: 2022-04-14, status: archived
+  ✅ Kreiran ciklus za AIR PRESS ENGINEERING, datum: 2021-11-23, status: archived
+  ✅ Kreiran ciklus za MNO doo Beograd, datum: 2022-06-24, status: archived
+  ✅ Kreiran ciklus za MANES, datum: 2022-01-11, status: active
+  ✅ Kreiran ciklus za TELEMIX, datum: 2022-07-22, status: archived
+  ✅ Kreiran ciklus za MLINTEST A.D, datum: 2022-08-01, status: archived
+  ✅ Kreiran ciklus za LASTVA, datum: 2022-09-19, status: archived
+  ✅ Kreiran ciklus za MAGENA, datum: 2022-08-26, status: archived
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2022-09-15, status: archived
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2022-07-29, status: archived
+  ✅ Kreiran ciklus za K-INEL, datum: 2022-08-24, status: archived
+  ✅ Kreiran ciklus za OZZ BALKAN, datum: 2022-04-12, status: archived
+  ✅ Kreiran ciklus za OMNI-PROMET, datum: 2021-12-15, status: archived
+  ✅ Kreiran ciklus za PENTAKS TT, datum: 2022-07-23, status: active
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2022-09-22, status: archived
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE ČISTOĆA KRALJEVO, datum: 2022-10-06, status: active
+  ✅ Kreiran ciklus za GALFAN doo, datum: 2022-10-07, status: active
+  ✅ Kreiran ciklus za EL BORN, datum: 2022-08-31, status: archived
+  ✅ Kreiran ciklus za UMPROM d.o.o, datum: 2022-08-13, status: archived
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2022-02-25, status: archived
+  ✅ Kreiran ciklus za INTERFAST DOO, datum: 2022-08-17, status: archived
+  ✅ Kreiran ciklus za MIKROELEKTRONIKA, datum: 2022-07-03, status: archived
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2022-10-17, status: archived
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2022-07-29, status: archived
+  ✅ Kreiran ciklus za ALUCOMMERCE SYSTEMS d.o.o., datum: 2022-08-10, status: archived
+  ✅ Kreiran ciklus za ALFAMEHANIK, datum: 2022-05-24, status: archived
+  ✅ Kreiran ciklus za FRIGO SOPRING, datum: 2021-12-22, status: active
+  ✅ Kreiran ciklus za ORIGINAL, datum: 2022-10-28, status: archived
+  ✅ Kreiran ciklus za WORLDWIDE, datum: 2022-10-29, status: archived
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2022-10-24, status: archived
+  ✅ Kreiran ciklus za S PRINT, datum: 2022-10-30, status: archived
+  ✅ Kreiran ciklus za BRAINEERING IT SOLUTIONS doo, datum: 2022-10-25, status: archived
+  ✅ Kreiran ciklus za DAYSPRING DOO, datum: 2022-10-24, status: archived
+  ✅ Kreiran ciklus za VERIDIX, datum: 2022-08-17, status: archived
+  ✅ Kreiran ciklus za SPORTIMPEX, datum: 2022-10-18, status: archived
+  ✅ Kreiran ciklus za GEOGIS KONSULTANTI, datum: 2022-11-04, status: archived
+  ✅ Kreiran ciklus za ELINGZO, datum: 2022-11-05, status: active
+  ✅ Kreiran ciklus za MCR GLOBEX GROUP, datum: 2022-11-09, status: archived
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2022-11-06, status: archived
+  ✅ Kreiran ciklus za KOTUR I OSTALi, datum: 2022-11-09, status: archived
+  ✅ Kreiran ciklus za INOP D.o.o, datum: 2022-07-17, status: archived
+  ✅ Kreiran ciklus za BSTORM, datum: 2022-05-27, status: active
+  ✅ Kreiran ciklus za ZAVOD ZA VREDNOVANJE KVALITETA OBRAZOVANJA I VASPITANJA, datum: 2022-04-11, status: archived
+  ⚠️  Ciklus već postoji za ZAVOD ZA VREDNOVANJE KVALITETA OBRAZOVANJA I VASPITANJA, datum: 2022-04-11
+  ✅ Kreiran ciklus za TIMCO, datum: 2022-10-02, status: archived
+  ✅ Kreiran ciklus za T3SOFT doo, datum: 2022-07-09, status: archived
+  ✅ Kreiran ciklus za BNT, datum: 2022-04-16, status: active
+  ✅ Kreiran ciklus za MELANGE doo, datum: 2022-11-21, status: archived
+  ✅ Kreiran ciklus za VERIDIX, datum: 2022-11-20, status: archived
+  ✅ Kreiran ciklus za Line Oil doo Krupanj, datum: 2022-11-21, status: active
+  ✅ Kreiran ciklus za INOS/ĐOLEX, datum: 2022-09-09, status: archived
+  ✅ Kreiran ciklus za MP-Interconsulting, datum: 2022-10-25, status: archived
+  ✅ Kreiran ciklus za SHOP INVEST, datum: 2022-09-23, status: archived
+  ✅ Kreiran ciklus za DENTAL EXPRESS, datum: 2022-11-25, status: archived
+  ✅ Kreiran ciklus za JAN ANUŠIAK PREDUZETNIK, RADNJA ZA IZNAJMLJIVANJE AUDIO I VIDEO OPREME, JAN AUDIO KISAČ, datum: 2022-12-07, status: archived
+  ✅ Kreiran ciklus za ART LIFT, datum: 2022-09-29, status: archived
+  ✅ Kreiran ciklus za ORNAMENT-INVESTINŽENJERING, datum: 2022-11-21, status: archived
+  ✅ Kreiran ciklus za TICOMPRESSION DOO NOVI SAD, datum: 2022-12-10, status: archived
+  ✅ Kreiran ciklus za NOVOHEM, datum: 2022-12-08, status: archived
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2022-11-20, status: archived
+  ✅ Kreiran ciklus za AGAR CONSTRUCTIONS DOO Belgrado, datum: 2022-12-12, status: active
+  ✅ Kreiran ciklus za SAMOSTALNA ZANATSKA-PROIZVODNA RADNJA DRAŽ PENA DRAŽENKO PREDUZETNIK CRVENKA, datum: 2022-12-14, status: archived
+  ✅ Kreiran ciklus za RE3 PRODUCT, datum: 2022-07-04, status: archived
+  ✅ Kreiran ciklus za L&M&J DOO Sremska Kamenica, datum: 2023-01-08, status: archived
+  ✅ Kreiran ciklus za Agencija za privremeno zapošljavanje TIM POWER PLUS d.o.o. Pirot, datum: 2023-01-10, status: active
+  ✅ Kreiran ciklus za JKP MEDIANA Nis PJ Uređenje i održavanje mobilijara, datum: 2023-01-15, status: archived
+  ✅ Kreiran ciklus za ALFANOVA, datum: 2023-01-10, status: archived
+  ✅ Kreiran ciklus za PROMOBI, datum: 2022-10-12, status: archived
+  ✅ Kreiran ciklus za PDV, datum: 2023-01-15, status: active
+  ✅ Kreiran ciklus za Geosoft D.o.o. Beograd, datum: 2022-12-02, status: archived
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE PARKING SERVIS NOVI SAD, datum: 2023-01-14, status: archived
+  ✅ Kreiran ciklus za COMCEN DOO BEOGRAD-ZEMUN, datum: 2023-01-17, status: archived
+  ✅ Kreiran ciklus za FELIX TIM, datum: 2022-12-23, status: archived
+  ✅ Kreiran ciklus za INDUSTRY GROUP d.o.o., datum: 2023-01-19, status: archived
+  ✅ Kreiran ciklus za TEHNO SISTEM, datum: 2023-01-04, status: archived
+  ✅ Kreiran ciklus za DataDEW services doo Novi Sad, datum: 2022-07-01, status: archived
+  ✅ Kreiran ciklus za SINGI INŽENJERING doo Beograd, datum: 2022-12-26, status: archived
+  ✅ Kreiran ciklus za SIMEN, datum: 2022-12-22, status: archived
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2022-10-30, status: archived
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2022-10-14, status: archived
+  ✅ Kreiran ciklus za ELEKTROMATERIJAL d.o.o, datum: 2022-12-08, status: archived
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2022-11-29, status: archived
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2022-07-05, status: archived
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2022-12-30, status: archived
+  ✅ Kreiran ciklus za MERIDIJAN ŠPED, datum: 2022-10-21, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2022-12-11, status: archived
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2022-12-13, status: archived
+  ✅ Kreiran ciklus za LASTESARO DOO, datum: 2023-02-05, status: archived
+  ✅ Kreiran ciklus za SMART Construction, datum: 2023-01-20, status: active
+  ✅ Kreiran ciklus za FLUX PRO, datum: 2022-10-24, status: archived
+  ✅ Kreiran ciklus za FOTON GMB, datum: 2022-10-07, status: archived
+  ✅ Kreiran ciklus za MINI INŽENJERING DOO Inđija, datum: 2022-12-15, status: archived
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2023-02-12, status: archived
+  ✅ Kreiran ciklus za FMB D.O.O, datum: 2023-01-02, status: archived
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2023-01-07, status: archived
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2023-02-02, status: archived
+  ✅ Kreiran ciklus za TERMO UNIVERZAL, datum: 2022-12-28, status: archived
+  ✅ Kreiran ciklus za MS SECURITY SYSTEM doo / VIDEOMONT doo, datum: 2022-12-28, status: archived
+  ✅ Kreiran ciklus za AN Schweißtechnik Inh. Nikola Arandjelovic, datum: 2023-02-26, status: archived
+  ✅ Kreiran ciklus za DIM ENERGY d.o.o., datum: 2023-01-31, status: archived
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2022-12-05, status: archived
+  ✅ Kreiran ciklus za JELA TRADE, datum: 2023-02-26, status: archived
+  ✅ Kreiran ciklus za INT RASTER, datum: 2023-01-07, status: archived
+  ✅ Kreiran ciklus za ENERGY COMPANY, datum: 2022-11-01, status: archived
+  ✅ Kreiran ciklus za Trefoil inženjering doo Beograd, datum: 2023-03-05, status: active
+  ⚠️  Ciklus već postoji za PDCA KONSALTING DOO NOVI SAD, datum: 2022-11-29
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE KOMUNALIJE, SREMSKA MITROVICA, datum: 2023-03-08, status: archived
+  ✅ Kreiran ciklus za PAN LIFT, datum: 2023-02-28, status: archived
+  ✅ Kreiran ciklus za GALVANOPLAST, datum: 2023-02-24, status: archived
+  ✅ Kreiran ciklus za NOVAMAT, datum: 2023-02-19, status: archived
+  ✅ Kreiran ciklus za BANTSKI KLAS D.O.O., datum: 2023-02-21, status: archived
+  ✅ Kreiran ciklus za STUDIO BERAR, datum: 2023-03-08, status: archived
+  ✅ Kreiran ciklus za Industry Facility Installation, datum: 2023-03-11, status: archived
+  ✅ Kreiran ciklus za MLIN CEKOVIC, datum: 2023-03-20, status: archived
+  ✅ Kreiran ciklus za DRAGOVIĆ TRANSPORT & EXPRES, datum: 2023-02-03, status: archived
+  ✅ Kreiran ciklus za AVIS EXPORT-IMPORT DOO, datum: 2023-03-31, status: archived
+  ✅ Kreiran ciklus za CONCRETE CONSTRUCTION DOO BEOGRAD, datum: 2023-04-06, status: archived
+  ✅ Kreiran ciklus za ELINGZO, datum: 2023-04-07, status: archived
+  ✅ Kreiran ciklus za APIS CENTAR, datum: 2023-03-20, status: archived
+  ✅ Kreiran ciklus za TEHNOPLAST, datum: 2023-03-27, status: archived
+  ✅ Kreiran ciklus za RESALTA, datum: 2023-03-29, status: archived
+  ✅ Kreiran ciklus za Nacionalna služba za zapošljavanje, datum: 2022-11-24, status: archived
+  ✅ Kreiran ciklus za ĐUROVIĆ OBEZBEĐENJE DOO LESKOVAC, datum: 2023-02-05, status: active
+  ✅ Kreiran ciklus za KODAR ENERGOMONTAŽA, datum: 2023-04-04, status: archived
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2023-04-15, status: archived
+  ✅ Kreiran ciklus za KATIC, datum: 2022-12-12, status: archived
+  ✅ Kreiran ciklus za STEF TRANS DOO LJUBLJANA, datum: 2023-04-22, status: archived
+  ✅ Kreiran ciklus za SPEKTAR INVEST, datum: 2023-03-24, status: archived
+  ✅ Kreiran ciklus za SONIREX, datum: 2023-04-15, status: archived
+  ✅ Kreiran ciklus za VIR SISTEM, datum: 2023-05-01, status: archived
+  ✅ Kreiran ciklus za PDV, datum: 2023-02-13, status: archived
+  ✅ Kreiran ciklus za SB MONTING j.d.o.o., datum: 2023-04-24, status: active
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2023-04-22, status: archived
+  ✅ Kreiran ciklus za MINE INVEST, datum: 2023-04-06, status: archived
+  ✅ Kreiran ciklus za JAVOR INŽENJERING PROFESIONAL DOO / JAVOR INŽENJERING DOO, datum: 2023-04-28, status: archived
+  ✅ Kreiran ciklus za INFO SPACE, datum: 2023-05-01, status: archived
+  ✅ Kreiran ciklus za GEOMAG DOO, datum: 2023-04-22, status: archived
+  ✅ Kreiran ciklus za STILEX, datum: 2023-05-05, status: archived
+  ✅ Kreiran ciklus za COMITA RAZVOJ PROJEKTIRANJE PROIZVODNJA IN INZENIRING D.D. MERKEZI SLOVENYA ISTANBUL MERKEZ SUBESI, datum: 2023-05-09, status: archived
+  ✅ Kreiran ciklus za NES  COMMUNICATIONS, datum: 2022-08-19, status: archived
+  ✅ Kreiran ciklus za Rasing d.o.o., datum: 2023-04-26, status: archived
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2023-05-17, status: archived
+  ✅ Kreiran ciklus za MANES, datum: 2023-04-22, status: active
+  ✅ Kreiran ciklus za LUTOVAC & M. COMPANY DOO ČAČAK, datum: 2023-05-21, status: active
+  ✅ Kreiran ciklus za AUTOKRAN, datum: 2023-05-18, status: archived
+  ✅ Kreiran ciklus za MOBITELMONT, datum: 2023-03-08, status: archived
+  ✅ Kreiran ciklus za COMPREX, datum: 2023-01-11, status: active
+  ✅ Kreiran ciklus za BAUEN DOO VRBAS, datum: 2023-05-14, status: archived
+  ✅ Kreiran ciklus za IMD METAL CO DOO, datum: 2023-05-10, status: archived
+  ✅ Kreiran ciklus za Husky Corporation doo, datum: 2023-05-12, status: archived
+  ✅ Kreiran ciklus za FASADA d.o.o., datum: 2023-05-28, status: archived
+  ✅ Kreiran ciklus za Saturn Electric d.o.o. Beograd, datum: 2023-05-27, status: active
+  ✅ Kreiran ciklus za ABA GROUP, datum: 2023-04-20, status: archived
+  ✅ Kreiran ciklus za BRATEL-KRON, datum: 2023-05-29, status: archived
+  ✅ Kreiran ciklus za PROTECH DOO, datum: 2023-05-27, status: active
+  ✅ Kreiran ciklus za DIGITALware DOO NOVI SAD, datum: 2023-05-25, status: archived
+  ✅ Kreiran ciklus za INTERFAST ADVANCED SECURITY SYSTEMS DOO, datum: 2023-05-30, status: archived
+  ✅ Kreiran ciklus za Triplex Yu List d.o.o, datum: 2023-06-02, status: archived
+  ✅ Kreiran ciklus za KORALŠPED, datum: 2023-05-11, status: archived
+  ✅ Kreiran ciklus za SZTR "Ljuba Invest"- Paraćin, datum: 2023-05-20, status: archived
+  ✅ Kreiran ciklus za ENTERIJER JANKOVIC, datum: 2023-05-05, status: archived
+  ✅ Kreiran ciklus za LJUBA-INVEST d.o.o., datum: 2023-06-13, status: archived
+  ✅ Kreiran ciklus za CINCOVIC, datum: 2023-03-16, status: archived
+  ✅ Kreiran ciklus za BrightMarbles Group Holding B.V., datum: 2023-06-04, status: archived
+  ✅ Kreiran ciklus za STRUJA, datum: 2023-06-04, status: archived
+  ✅ Kreiran ciklus za TIMOTI, datum: 2023-04-16, status: archived
+  ✅ Kreiran ciklus za PD INV MITROVIC, datum: 2023-06-19, status: archived
+  ✅ Kreiran ciklus za GPP SPEKTAR INŽENJERING, datum: 2023-05-24, status: archived
+  ✅ Kreiran ciklus za OBLAK TEHNOLOGIJE, datum: 2023-05-15, status: archived
+  ✅ Kreiran ciklus za PROMOBI, datum: 2023-03-20, status: archived
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2023-06-08, status: archived
+  ✅ Kreiran ciklus za HOMNET doo, datum: 2023-06-28, status: archived
+  ✅ Kreiran ciklus za GRADINA d.o.o., datum: 2023-06-01, status: archived
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2023-07-07, status: archived
+  ✅ Kreiran ciklus za Euroteamlogist doo /  Međunarodna špedicija ZR Agent doo, datum: 2023-06-26, status: archived
+  ✅ Kreiran ciklus za Ecomita tehnologije doo, datum: 2023-07-07, status: archived
+  ✅ Kreiran ciklus za WATER POWER TECHNOLOGY, datum: 2023-07-13, status: active
+  ✅ Kreiran ciklus za Teledirekt d.o.o. Banja Luka / Teledirekt dooel Skopje, datum: 2023-07-10, status: active
+  ⚠️  Ciklus već postoji za MIKROELEKTRONIKA, datum: 2022-07-03
+  ✅ Kreiran ciklus za DINARA ROMANIJA, datum: 2023-06-16, status: archived
+  ✅ Kreiran ciklus za INTERCOMO, datum: 2023-07-05, status: archived
+  ✅ Kreiran ciklus za MONTORA SOFTWARE, datum: 2023-07-18, status: archived
+  ✅ Kreiran ciklus za MAKER IVANJICA, datum: 2023-06-10, status: archived
+  ✅ Kreiran ciklus za KB ARMATURE, datum: 2023-07-30, status: archived
+  ✅ Kreiran ciklus za STUDIO A&D ARCHITECTS DOO BEOGRAD-VRAČAR, datum: 2023-07-27, status: archived
+  ✅ Kreiran ciklus za MOBEZA, datum: 2023-07-30, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2023-08-05, status: archived
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2022-10-01, status: archived
+  ✅ Kreiran ciklus za STEF TRANS  DOO, datum: 2023-08-05, status: archived
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2023-07-16, status: archived
+  ✅ Kreiran ciklus za GRAFOKARTONKA, datum: 2023-04-28, status: archived
+  ✅ Kreiran ciklus za NSV DOO NOVI SAD, datum: 2023-08-13, status: archived
+  ✅ Kreiran ciklus za V.I.P. SECURITY DOO BEOGRAD, datum: 2023-08-09, status: archived
+  ✅ Kreiran ciklus za MAROPACK DOO LEDINCI, datum: 2023-08-26, status: archived
+  ✅ Kreiran ciklus za BEOHIDRO, datum: 2023-08-14, status: active
+  ✅ Kreiran ciklus za Aquadyn doo, datum: 2023-08-22, status: archived
+  ✅ Kreiran ciklus za PLAMEX MINERAL INDUSTRY DOO, datum: 2023-08-24, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2023-08-24, status: archived
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2023-08-22, status: archived
+  ✅ Kreiran ciklus za QUANTOX TECHNOLOGY DOO, datum: 2023-08-12, status: active
+  ✅ Kreiran ciklus za DELTA CLEANROOM DOO BEOGRAD, datum: 2023-08-23, status: archived
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2023-08-10, status: archived
+  ✅ Kreiran ciklus za ŠKORPION, datum: 2023-05-01, status: archived
+  ✅ Kreiran ciklus za LUXOL SINCE 1884 doo, datum: 2023-08-27, status: archived
+  ✅ Kreiran ciklus za COVELS, datum: 2023-09-10, status: archived
+  ✅ Kreiran ciklus za CROONUS TECHNOLOGIES DOO ČAČAK, datum: 2023-09-23, status: archived
+  ✅ Kreiran ciklus za NEPO SYSTEM, datum: 2023-03-29, status: archived
+  ✅ Kreiran ciklus za CE-HID DOO, datum: 2023-09-23, status: active
+  ✅ Kreiran ciklus za KP EKO-DIM DOO BEOGRAD, datum: 2023-09-23, status: archived
+  ✅ Kreiran ciklus za 97 ENERGETIKA-TERMOTEHNIKA DOO BEOGRAD, datum: 2023-09-28, status: archived
+  ✅ Kreiran ciklus za USPON, datum: 2023-08-29, status: archived
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2023-07-31, status: archived
+  ✅ Kreiran ciklus za D.C. ENERGOCOOP DOO, datum: 2023-09-01, status: archived
+  ✅ Kreiran ciklus za PREMIUM CARGO, datum: 2023-09-30, status: archived
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2023-09-27, status: archived
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2023-08-18, status: archived
+  ✅ Kreiran ciklus za MAPSOFT doo, datum: 2023-10-09, status: archived
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2023-09-15, status: archived
+  ✅ Kreiran ciklus za PRENA-M INŽINJERING d.o.o., datum: 2023-09-06, status: active
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2023-06-11, status: archived
+  ✅ Kreiran ciklus za SVETIGORA, datum: 2023-08-19, status: active
+  ✅ Kreiran ciklus za GRADCOOP  d.o.o., datum: 2023-10-15, status: archived
+  ✅ Kreiran ciklus za ITERRO INC, datum: 2023-10-15, status: archived
+  ✅ Kreiran ciklus za PUTEVI UŽICE, datum: 2023-10-03, status: archived
+  ✅ Kreiran ciklus za ILIJANUM, datum: 2023-08-04, status: archived
+  ✅ Kreiran ciklus za EUROSALON FABRIKA, datum: 2023-09-08, status: archived
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2023-09-23, status: archived
+  ✅ Kreiran ciklus za W&W INŽENJERING DOO KRAGUJEVAC, datum: 2023-10-25, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2023-09-19, status: archived
+  ✅ Kreiran ciklus za IDEST DOO KRAGUJEVAC, datum: 2023-10-26, status: active
+  ✅ Kreiran ciklus za BAJIĆI KOP, datum: 2023-10-04, status: archived
+  ✅ Kreiran ciklus za FORM INŽINJERING, datum: 2023-10-25, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2023-07-30, status: archived
+  ✅ Kreiran ciklus za PROINTER, datum: 2023-03-29, status: archived
+  ✅ Kreiran ciklus za PDV, datum: 2023-10-13, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE KOMUNALIJE, SREMSKA MITROVICA, datum: 2023-11-11, status: active
+  ✅ Kreiran ciklus za BEOSPED, datum: 2023-10-24, status: active
+  ✅ Kreiran ciklus za PEDALA, datum: 2023-11-11, status: active
+  ✅ Kreiran ciklus za Nelli d.o.o, datum: 2023-09-18, status: active
+  ✅ Kreiran ciklus za 4m Specijalni Alati, datum: 2023-10-01, status: active
+  ✅ Kreiran ciklus za GM INZENJERING, datum: 2023-10-06, status: active
+  ✅ Kreiran ciklus za BIZNIS CENTAR MOMCILOVIC d.o.o, datum: 2023-11-11, status: active
+  ✅ Kreiran ciklus za PATROL PM, datum: 2023-11-23, status: active
+  ✅ Kreiran ciklus za POSITIVE doo, datum: 2023-10-18, status: active
+  ✅ Kreiran ciklus za EKO SERVIS SISTEM DOO ĆUPRIJA, datum: 2023-11-27, status: active
+  ✅ Kreiran ciklus za TERMO TIM d.o.o., datum: 2023-10-28, status: active
+  ✅ Kreiran ciklus za ISTER-INŽENJERING DOO Valjevo, datum: 2023-11-09, status: active
+  ✅ Kreiran ciklus za DUNAVNET, datum: 2023-10-12, status: active
+  ✅ Kreiran ciklus za KOVA-KRAN DOO Pančevo, datum: 2023-12-05, status: active
+  ✅ Kreiran ciklus za OKTA SOLUTIONS DOO ČAČAK, datum: 2023-11-25, status: active
+  ✅ Kreiran ciklus za LOLA MGS, datum: 2023-11-17, status: active
+  ✅ Kreiran ciklus za LIVE COMPANY SERVIS, datum: 2023-09-14, status: active
+  ⚠️  Ciklus već postoji za LIVE COMPANY SERVIS, datum: 2023-09-14
+  ✅ Kreiran ciklus za CONVENTUS CONSULTANTS DOO BEOGRAD, datum: 2023-12-13, status: active
+  ✅ Kreiran ciklus za ITS BALKAN, datum: 2023-12-05, status: active
+  ✅ Kreiran ciklus za ŠIPING, datum: 2023-11-23, status: active
+  ✅ Kreiran ciklus za PVF TRADERS, datum: 2023-10-01, status: active
+  ✅ Kreiran ciklus za KM MONT, datum: 2023-12-05, status: active
+  ✅ Kreiran ciklus za ADVOKATSKO ORTAČKO DRUŠTVO ŽIVKOVIĆ SAMARDŽIĆ, datum: 2023-12-25, status: active
+  ✅ Kreiran ciklus za ČELIČAR DOO Dobanovci, datum: 2024-01-05, status: active
+  ✅ Kreiran ciklus za ELEKTROZAPAD DOO, datum: 2023-12-23, status: active
+  ✅ Kreiran ciklus za GAS INSTALATION DOO, datum: 2024-01-05, status: active
+  ✅ Kreiran ciklus za DENTOSAN DOO NOVI SAD, datum: 2024-01-08, status: active
+  ✅ Kreiran ciklus za Naissus A&S Construction DOO Nis, datum: 2024-01-07, status: active
+  ✅ Kreiran ciklus za GLOBAL INNOVATION PROJECTS DOO, datum: 2023-12-26, status: active
+  ✅ Kreiran ciklus za SZTR ĐURĐEVIĆ, datum: 2024-01-09, status: active
+  ✅ Kreiran ciklus za ŠEKOVIĆ, datum: 2024-01-07, status: active
+  ✅ Kreiran ciklus za MILLENNIUM TEAM DOO BEOGRAD, datum: 2024-01-06, status: active
+  ✅ Kreiran ciklus za GEBERUNG DOO BEOGRAD, datum: 2024-01-07, status: active
+  ✅ Kreiran ciklus za TRANSLOG SISTEM DOO, datum: 2023-12-07, status: active
+  ✅ Kreiran ciklus za DESPOTES DOO BEOGRAD, datum: 2024-01-13, status: active
+  ✅ Kreiran ciklus za SIMS, datum: 2024-01-01, status: active
+  ✅ Kreiran ciklus za TRUST IT DOO BEOGRAD, datum: 2024-01-17, status: active
+  ✅ Kreiran ciklus za TRUST IT DOO BEOGRAD, datum: 2023-08-18, status: active
+  ✅ Kreiran ciklus za MOSTOGRADNJA ING D.O.O., datum: 2023-12-22, status: active
+  ✅ Kreiran ciklus za TO-MA PALETE PLUS, datum: 2024-01-12, status: active
+  ✅ Kreiran ciklus za NEXIA STAR DOO BEOGRAD, datum: 2024-01-21, status: active
+  ✅ Kreiran ciklus za ASA IBELIK doo, datum: 2024-01-15, status: active
+  ✅ Kreiran ciklus za SWEET COLLINA, datum: 2023-12-05, status: active
+  ✅ Kreiran ciklus za PERIĆ TRANS COMPANY, datum: 2024-01-17, status: active
+  ✅ Kreiran ciklus za PEKARA FILIP, datum: 2024-01-27, status: active
+  ✅ Kreiran ciklus za SMART ENERGY SAVING DOO, datum: 2024-01-29, status: active
+  ✅ Kreiran ciklus za LABORATORIJSKI INFORMACIONI SISTEMI DOO / LIS RS doo, datum: 2024-01-31, status: active
+  ✅ Kreiran ciklus za JKP „POGREBNE USLUGE“ - BEOGRAD, datum: 2024-01-31, status: active
+  ✅ Kreiran ciklus za BEŠKA AGRAR, datum: 2024-02-04, status: active
+  ✅ Kreiran ciklus za ELTAS, datum: 2024-01-29, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE PARKING SERVIS NOVI SAD, datum: 2024-02-11, status: active
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2023-11-28, status: active
+  ⚠️  Ciklus već postoji za PDCA KONSALTING DOO NOVI SAD, datum: 2023-11-28
+  ✅ Kreiran ciklus za ZAJEDNIČKA ADVOKATSKA KANCELARIJA ALEKSIĆ  SA SARADNICIMA, datum: 2024-02-12, status: archived
+  ✅ Kreiran ciklus za FLUX, datum: 2024-02-01, status: active
+  ✅ Kreiran ciklus za ETER SOLUTIONS d.o.o., datum: 2024-01-21, status: active
+  ✅ Kreiran ciklus za OBLAK DOCUMENT SOLUTIONS, datum: 2024-02-10, status: active
+  ✅ Kreiran ciklus za NOVOTERM-PLUS doo Aranđelovac, datum: 2024-02-11, status: active
+  ✅ Kreiran ciklus za MERIDIJAN ŠPED, datum: 2024-02-19, status: active
+  ✅ Kreiran ciklus za PWW DOO NIŠ, datum: 2024-02-22, status: active
+  ✅ Kreiran ciklus za METALPROM, datum: 2024-01-29, status: active
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2024-02-11, status: active
+  ✅ Kreiran ciklus za RSBP sp. z.o.o., datum: 2024-03-04, status: active
+  ✅ Kreiran ciklus za PWW JAGODINA d.o.o., datum: 2024-03-04, status: active
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2023-12-31, status: active
+  ✅ Kreiran ciklus za JKP VODOVOD SABAC, datum: 2024-02-05, status: active
+  ✅ Kreiran ciklus za MINI INŽENJERING DOO Inđija, datum: 2024-02-28, status: active
+  ✅ Kreiran ciklus za ZK MOHAČI, datum: 2024-03-08, status: active
+  ✅ Kreiran ciklus za SANDER TK DOO BEOGRAD, datum: 2024-03-11, status: active
+  ✅ Kreiran ciklus za PAKO GROUP, datum: 2024-02-07, status: active
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2024-02-25, status: active
+  ✅ Kreiran ciklus za METALOKOZMETIKA, datum: 2024-02-25, status: active
+  ✅ Kreiran ciklus za KOMPANIJA BLAGOJEVIĆ, datum: 2024-02-28, status: active
+  ✅ Kreiran ciklus za Austrotherm d.o.o., datum: 2024-03-15, status: active
+  ✅ Kreiran ciklus za PWW DEPONIJA d.o.o. JAGODINA, datum: 2024-03-17, status: active
+  ✅ Kreiran ciklus za PDV INŽENJERING KRAPINA DOO, datum: 2024-03-18, status: active
+  ✅ Kreiran ciklus za ADAM ŠPED SYSTEM, datum: 2024-02-14, status: active
+  ✅ Kreiran ciklus za STAR MASTER DOO KULA, datum: 2024-03-23, status: active
+  ✅ Kreiran ciklus za Tectra doo Beograd, datum: 2024-03-25, status: active
+  ✅ Kreiran ciklus za QUANTOX TECHNOLOGY DOO, datum: 2023-08-13, status: active
+  ✅ Kreiran ciklus za KPM Kompresori, datum: 2024-02-17, status: active
+  ✅ Kreiran ciklus za DABSINEL d.o.o. Beograd, datum: 2024-03-29, status: active
+  ✅ Kreiran ciklus za MS PANON APPLE d.o.o., datum: 2024-04-04, status: active
+  ✅ Kreiran ciklus za KOENIG METALL DOO IVANJICA, datum: 2024-04-03, status: active
+  ✅ Kreiran ciklus za MG MOLD 84, datum: 2023-11-13, status: active
+  ✅ Kreiran ciklus za VELETRGOVINA TT DOO ŠABAC, datum: 2024-04-08, status: active
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2024-02-22, status: active
+  ✅ Kreiran ciklus za FLORA KOMERC DOO, datum: 2024-04-11, status: active
+  ✅ Kreiran ciklus za GK, datum: 2024-04-08, status: active
+  ✅ Kreiran ciklus za BOR PROMET, datum: 2024-02-17, status: active
+  ✅ Kreiran ciklus za MIDVEJ MGV, datum: 2024-04-08, status: active
+  ✅ Kreiran ciklus za TELEDIREKT, datum: 2024-01-01, status: active
+  ✅ Kreiran ciklus za KOLOR PRES, datum: 2024-03-25, status: active
+  ✅ Kreiran ciklus za Domar Services d.o.o. Beograd-Zvezdara, datum: 2024-05-02, status: active
+  ✅ Kreiran ciklus za INFORA, datum: 2023-10-03, status: active
+  ✅ Kreiran ciklus za MAYMAR ADVISORY DOO BEOGRAD, datum: 2024-04-30, status: active
+  ✅ Kreiran ciklus za STEVAN STILL, datum: 2024-03-29, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE BIOKTOŠ, Užice, datum: 2024-05-06, status: active
+  ✅ Kreiran ciklus za BTR CO DOO Beograd, datum: 2024-05-03, status: active
+  ✅ Kreiran ciklus za ZAJAČA ING, datum: 2024-04-29, status: active
+  ✅ Kreiran ciklus za SAF METAL, datum: 2024-05-09, status: active
+  ✅ Kreiran ciklus za HIDRO-GEA, datum: 2024-02-09, status: active
+  ✅ Kreiran ciklus za SDL GROUP, datum: 2024-06-10, status: active
+  ✅ Kreiran ciklus za HLAD USLUGE DOO, datum: 2024-06-09, status: active
+  ✅ Kreiran ciklus za BEOGEOAQUA, datum: 2024-05-26, status: active
+  ✅ Kreiran ciklus za MONTAVAR METALNA LOLA, datum: 2024-05-23, status: active
+  ✅ Kreiran ciklus za V.I.P. SECURITY DOO BEOGRAD, datum: 2024-05-15, status: active
+  ✅ Kreiran ciklus za HIDROVOD, datum: 2024-04-28, status: active
+  ✅ Kreiran ciklus za DRUMOVI A&D DOO, datum: 2024-03-31, status: active
+  ✅ Kreiran ciklus za AMPHORA, datum: 2024-03-23, status: active
+  ✅ Kreiran ciklus za BAUER ELEKTRO d.o.o. Beograd, datum: 2024-06-17, status: active
+  ✅ Kreiran ciklus za AGROTEHNA, datum: 2024-06-04, status: active
+  ✅ Kreiran ciklus za TÜV Rheinland InterCert, datum: 2024-04-27, status: active
+  ✅ Kreiran ciklus za MLEKARA SA OVČARA DOO LUČANI, datum: 2024-06-18, status: active
+  ✅ Kreiran ciklus za GRANIT PLUS, datum: 2024-05-17, status: active
+  ✅ Kreiran ciklus za TEMID DOO, datum: 2024-06-26, status: active
+  ✅ Kreiran ciklus za TEMID DOO, datum: 2024-06-27, status: active
+  ✅ Kreiran ciklus za AR GRADNJA, datum: 2024-06-21, status: active
+  ✅ Kreiran ciklus za BRAINEERING IT SOLUTIONS doo, datum: 2024-06-29, status: active
+  ⚠️  Ciklus već postoji za BRAINEERING IT SOLUTIONS doo, datum: 2024-06-29
+  ✅ Kreiran ciklus za FMB D.O.O, datum: 2024-07-02, status: active
+  ✅ Kreiran ciklus za JAPI COM, datum: 2024-03-11, status: active
+  ✅ Kreiran ciklus za MILOS TRANS, datum: 2024-05-31, status: active
+  ✅ Kreiran ciklus za LAVAS DOO ČAČAK, datum: 2024-07-03, status: active
+  ✅ Kreiran ciklus za PRIVREDNO DRUŠTVO METAL GROUP L L C - DOO - PREŠEVO, datum: 2024-07-10, status: active
+  ✅ Kreiran ciklus za DPS KLAS GROUP DOO, datum: 2024-06-28, status: active
+  ✅ Kreiran ciklus za Gama Studion d.o.o, datum: 2024-07-05, status: active
+  ✅ Kreiran ciklus za ELEKTROTIM, datum: 2024-07-12, status: active
+  ✅ Kreiran ciklus za Large Scale Projects Engineering d.o.o., datum: 2024-07-19, status: active
+  ✅ Kreiran ciklus za ELEKTRA M&V, datum: 2024-07-20, status: active
+  ✅ Kreiran ciklus za MAGAL 02, datum: 2024-07-01, status: active
+  ✅ Kreiran ciklus za PYRAMIDING DOO NOVI SAD, datum: 2024-07-21, status: active
+  ✅ Kreiran ciklus za MARINA VASILIJEVIĆ PR OSTALA PRERADA I KONZERVISANjE VOĆA I POVRĆA MEDKOM PLODOVI GORNjI MILANOVAC, datum: 2024-08-01, status: active
+  ✅ Kreiran ciklus za OSTRAL DOO SREMSKI KARLOVCI, datum: 2024-07-25, status: active
+  ✅ Kreiran ciklus za FLEXO STIL DOO ČAČAK, datum: 2024-07-29, status: active
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2024-06-29, status: active
+  ✅ Kreiran ciklus za VUCCOM, datum: 2024-07-18, status: active
+  ✅ Kreiran ciklus za FINNET-INŽENJERING d.o.o. Pančevo, datum: 2024-07-31, status: active
+  ✅ Kreiran ciklus za ANKER ING, datum: 2024-06-22, status: active
+  ✅ Kreiran ciklus za ARHIVIRAJ d.o.o. Beograd, datum: 2024-08-08, status: active
+  ✅ Kreiran ciklus za GVOZDENOVIĆ ENERGETIKA DOO - INĐIJA, datum: 2024-08-14, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2024-08-14, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2024-08-12, status: active
+  ✅ Kreiran ciklus za A.M Montaža, datum: 2024-08-18, status: active
+  ✅ Kreiran ciklus za BRACA ILIC DOO, datum: 2024-07-08, status: active
+  ✅ Kreiran ciklus za FEROMONT OPREMA AD, datum: 2024-08-24, status: active
+  ✅ Kreiran ciklus za KUERK, datum: 2024-06-24, status: active
+  ✅ Kreiran ciklus za HSV, datum: 2024-08-21, status: active
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2024-08-15, status: active
+  ✅ Kreiran ciklus za DRAGAN STOJANOVIĆ PR ZANATSKA RADNJA SVETLO ENERGO VOJKA, datum: 2024-09-09, status: active
+  ✅ Kreiran ciklus za BIT PROJEKT, datum: 2024-09-19, status: active
+  ✅ Kreiran ciklus za CAMELOT CONSTRUCTION DOO, datum: 2024-09-20, status: active
+  ✅ Kreiran ciklus za BASAMENT, datum: 2024-09-01, status: active
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2024-07-24, status: active
+  ✅ Kreiran ciklus za NET COMPUTER ENGINEERING, datum: 2024-09-03, status: active
+  ✅ Kreiran ciklus za MOBILGRADNJA, datum: 2024-09-13, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE KOMUNALIJE, SREMSKA MITROVICA, datum: 2024-09-23, status: active
+  ✅ Kreiran ciklus za RNC doo, datum: 2024-09-26, status: active
+  ✅ Kreiran ciklus za STEF TRANS  DOO, datum: 2024-09-25, status: active
+  ✅ Kreiran ciklus za STEEL-IMPEX d.o.o., datum: 2024-09-30, status: active
+  ✅ Kreiran ciklus za NEIMAR PUT, datum: 2024-09-30, status: active
+  ✅ Kreiran ciklus za SIMON SISTEM DOO, datum: 2024-10-07, status: active
+  ✅ Kreiran ciklus za BREZA-PAK DOO KUPINOVO, datum: 2024-10-09, status: active
+  ✅ Kreiran ciklus za KARANOVIĆ & PARTNERS OAD BEOGRAD, datum: 2024-10-05, status: active
+  ✅ Kreiran ciklus za JP URBANIZAM - KRAGUJEVAC, datum: 2024-07-21, status: active
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2024-09-13, status: active
+  ✅ Kreiran ciklus za PACKSOL DOO PLANDIŠTE, datum: 2024-10-14, status: active
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2024-08-29, status: active
+  ✅ Kreiran ciklus za ŽEKS MONT E.L.B. DOO, datum: 2024-10-14, status: active
+  ✅ Kreiran ciklus za IBIS-SOLUTIONS d.o.o., datum: 2024-10-12, status: active
+  ✅ Kreiran ciklus za IFIS FRANCE, datum: 2024-10-18, status: active
+  ✅ Kreiran ciklus za Studio za arhitekturu umetnost i lepotu "BLAGOVESTI", datum: 2024-10-15, status: active
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2024-10-20, status: active
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2024-09-10, status: active
+  ✅ Kreiran ciklus za ELEKTRO LUMEN, datum: 2024-09-22, status: active
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2024-08-09, status: active
+  ✅ Kreiran ciklus za AGRORIT, datum: 2024-10-30, status: active
+  ✅ Kreiran ciklus za SOF ELEKTRO 2009, datum: 2024-10-26, status: active
+  ✅ Kreiran ciklus za ANTENALL, datum: 2024-10-12, status: active
+  ✅ Kreiran ciklus za TRANS-KOP, datum: 2024-09-29, status: active
+  ✅ Kreiran ciklus za Schneider Electric LLC Novi Sad, datum: 2024-11-06, status: active
+  ✅ Kreiran ciklus za BEOKRAN, datum: 2024-10-18, status: active
+  ✅ Kreiran ciklus za ARENA, datum: 2024-10-17, status: active
+  ✅ Kreiran ciklus za ST PREVOZ, datum: 2024-11-02, status: active
+  ✅ Kreiran ciklus za ALP COMPLETE, datum: 2024-10-06, status: active
+  ✅ Kreiran ciklus za PROWOOD d.o.o. Beočin, datum: 2024-10-18, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE PARKING SERVIS NOVI SAD, datum: 2024-11-16, status: active
+  ✅ Kreiran ciklus za MIKRO PRINC, datum: 2024-11-05, status: active
+  ✅ Kreiran ciklus za TIGOR TRADE, datum: 2024-11-21, status: active
+  ✅ Kreiran ciklus za EX BC, datum: 2024-11-06, status: active
+  ✅ Kreiran ciklus za MAPSOFT doo, datum: 2024-11-01, status: active
+  ✅ Kreiran ciklus za B.M.R. d.o.o, datum: 2024-10-12, status: active
+  ✅ Kreiran ciklus za FYI CONSULT DOO, datum: 2024-11-27, status: active
+  ✅ Kreiran ciklus za PETKOVIĆ TIM SECURITY DOO, datum: 2024-10-07, status: active
+  ✅ Kreiran ciklus za STAMPARIJA SVETLOST, datum: 2024-10-25, status: active
+  ✅ Kreiran ciklus za GRAĐING, datum: 2024-11-11, status: active
+  ✅ Kreiran ciklus za Preduzeće za proizvodnju i promet Frikos d.o.o., datum: 2024-11-25, status: active
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2024-07-22, status: active
+  ✅ Kreiran ciklus za MBS doo, datum: 2024-10-21, status: active
+  ✅ Kreiran ciklus za SIGMA PROMET d.o.o, datum: 2024-10-21, status: active
+  ✅ Kreiran ciklus za S.R. AMBALAŽERKA Stari Banovci, datum: 2024-12-06, status: active
+  ✅ Kreiran ciklus za KORTECHS DOO BEOGRAD, datum: 2024-12-01, status: active
+  ✅ Kreiran ciklus za MONTPROJEKT d.o.o. Beograd, datum: 2024-11-10, status: active
+  ✅ Kreiran ciklus za ELITE 021 GROUP DOO, datum: 2024-12-05, status: active
+  ✅ Kreiran ciklus za CLEAR VIEW CONSULTING d.o.o. Herceg Novi, datum: 2024-12-07, status: active
+  ✅ Kreiran ciklus za NATRON COMPANY DOO, datum: 2024-12-11, status: active
+  ✅ Kreiran ciklus za GULI GULI, datum: 2024-11-15, status: active
+  ✅ Kreiran ciklus za Mlekarska škola sa domom učenika Dr Obren Pejić, datum: 2024-08-21, status: active
+  ✅ Kreiran ciklus za APIS CENTAR, datum: 2024-12-11, status: active
+  ✅ Kreiran ciklus za BSN energy d.o.o., datum: 2024-11-23, status: active
+  ✅ Kreiran ciklus za JAVNO PREDUZEĆE POLET PLANDIŠTE, datum: 2024-12-11, status: active
+  ✅ Kreiran ciklus za AVEXCOR DOO INĐIJA, datum: 2024-12-13, status: active
+  ✅ Kreiran ciklus za Schneider Electric LLC Novi Sad, datum: 2024-11-10, status: active
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2024-06-14, status: active
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2024-07-17, status: active
+  ✅ Kreiran ciklus za ELEKTROTEHNIČKO DRUŠTO MEGA NET DOO BEOGRAD, datum: 2024-12-29, status: active
+  ✅ Kreiran ciklus za ŠTAMPARIJA MATIJA DOO, datum: 2024-10-09, status: active
+  ✅ Kreiran ciklus za ENEL PS DOO NOVI BEOGRAD, datum: 2025-01-11, status: active
+  ✅ Kreiran ciklus za EUROFORM TECH, datum: 2025-01-07, status: active
+  ✅ Kreiran ciklus za TPP KAPEDUNUM DOO, datum: 2024-06-23, status: active
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2024-10-15, status: active
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2025-01-09, status: active
+  ✅ Kreiran ciklus za ELEKTROMONT-ILT, datum: 2025-01-20, status: active
+  ✅ Kreiran ciklus za MaRCUS Co d.o.o, datum: 2024-12-21, status: active
+  ✅ Kreiran ciklus za BG PLAST, datum: 2025-01-11, status: active
+  ✅ Kreiran ciklus za PWW LESKOVAC d.o.o. Leskovac, datum: 2025-01-15, status: active
+  ✅ Kreiran ciklus za RINOL, datum: 2024-11-27, status: active
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2025-01-27, status: active
+  ✅ Kreiran ciklus za Javno komunalno preduzeće Regionalni centar za upravljanje otpadom Duboko Užice, datum: 2025-01-20, status: active
+  ✅ Kreiran ciklus za MILAN NIKOLIĆ PREDUZETNIK INŽENJERSKE DELATNOSTI I TEHNIČKO SAVETOVANJE ATA INZENJERING, datum: 2025-01-21, status: active
+  ✅ Kreiran ciklus za AGAR CONSTRUCTIONS DOO Belgrado, datum: 2025-01-25, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2024-12-11, status: active
+  ✅ Kreiran ciklus za PWW DEPONIJA DVA DOO LESKOVAC, datum: 2025-02-02, status: active
+  ✅ Kreiran ciklus za AVEXCOR DOO INĐIJA, datum: 2025-01-21, status: active
+  ✅ Kreiran ciklus za NEGAWATT SOLUTIONS d.o.o. Beograd, datum: 2025-02-03, status: active
+  ✅ Kreiran ciklus za PWW PROKUPLJE d.o.o. Prokuplje, datum: 2025-02-10, status: active
+  ✅ Kreiran ciklus za TGL d.o.o., datum: 2025-02-16, status: active
+  ✅ Kreiran ciklus za SIPAL doo Čurug, datum: 2025-01-20, status: active
+  ✅ Kreiran ciklus za STARTING, datum: 2024-11-23, status: active
+  ⚠️  Ciklus već postoji za STARTING, datum: 2024-11-23
+  ✅ Kreiran ciklus za NEO AERODROMES ENGINEERING DOO, datum: 2025-02-19, status: active
+  ✅ Kreiran ciklus za DON SPED, datum: 2025-02-02, status: active
+  ✅ Kreiran ciklus za KTITOR, datum: 2025-02-19, status: active
+  ✅ Kreiran ciklus za DELTA EPC DOO BEOGRAD, datum: 2025-02-25, status: active
+  ✅ Kreiran ciklus za AGRORIT, datum: 2025-02-19, status: active
+  ✅ Kreiran ciklus za SZTR AGROMESA, datum: 2025-01-24, status: active
+  ✅ Kreiran ciklus za HIDROKOR GRADNJA DOO, datum: 2025-03-07, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE PARKING SERVIS NOVI SAD, datum: 2025-03-07, status: active
+  ✅ Kreiran ciklus za STEEL-IMPEX d.o.o., datum: 2025-02-04, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2025-02-20, status: active
+  ✅ Kreiran ciklus za SPEDICIJA INTERSERVIS 2005, datum: 2025-01-07, status: active
+  ✅ Kreiran ciklus za METALCOOP PRODUKT, datum: 2025-02-28, status: active
+  ✅ Kreiran ciklus za TRUST IT DOO BEOGRAD, datum: 2025-03-15, status: active
+  ✅ Kreiran ciklus za PLAZMMETAL doo Čačak, datum: 2025-01-22, status: active
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2025-01-29, status: active
+  ✅ Kreiran ciklus za OMNI-PROMET, datum: 2024-12-11, status: active
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2025-03-23, status: active
+  ✅ Kreiran ciklus za INKOM, datum: 2025-02-26, status: active
+  ✅ Kreiran ciklus za GEOVIZIJA, datum: 2025-03-23, status: active
+  ✅ Kreiran ciklus za MB TEHNIKA, datum: 2025-02-01, status: active
+  ✅ Kreiran ciklus za MILOSCH TRANSPORT GmbH, datum: 2025-03-27, status: active
+  ✅ Kreiran ciklus za BRAINEERING IT SOLUTIONS doo, datum: 2025-04-03, status: active
+  ✅ Kreiran ciklus za SABA GROUP SH.P.K, datum: 2025-04-07, status: active
+  ✅ Kreiran ciklus za ASMEC CONSULTANTS DOO, datum: 2025-01-31, status: active
+  ✅ Kreiran ciklus za ELEKTROZAPAD DOO, datum: 2025-04-08, status: active
+  ✅ Kreiran ciklus za REC-EE-O doo Beograd, datum: 2025-01-26, status: active
+  ✅ Kreiran ciklus za LUNA, datum: 2025-03-19, status: active
+  ✅ Kreiran ciklus za WPI DOO, datum: 2025-04-15, status: active
+  ✅ Kreiran ciklus za ABA PROFESSIONAL, datum: 2025-04-12, status: active
+  ✅ Kreiran ciklus za POLYMERS GROUP doo, datum: 2025-02-09, status: active
+  ✅ Kreiran ciklus za Kosmaj doo, datum: 2025-04-19, status: active
+  ✅ Kreiran ciklus za MARJANOVIC TRANS, datum: 2025-04-05, status: active
+  ✅ Kreiran ciklus za KRKE SISTEM, datum: 2025-02-22, status: active
+  ✅ Kreiran ciklus za TELEDIREKT, datum: 2025-04-16, status: active
+  ✅ Kreiran ciklus za FENIKS-TRADE, datum: 2025-03-05, status: active
+  ✅ Kreiran ciklus za Energy Transformation Consulting DOO, datum: 2025-04-07, status: active
+  ✅ Kreiran ciklus za EASY BUILDING DOO Pančevo, datum: 2025-05-05, status: active
+  ✅ Kreiran ciklus za Nacionalna služba za zapošljavanje, datum: 2025-03-22, status: active
+  ✅ Kreiran ciklus za OZZ BALKAN, datum: 2025-04-10, status: active
+  ✅ Kreiran ciklus za TRANS TRADE KOSTIĆ DOO, datum: 2025-03-11, status: active
+  ✅ Kreiran ciklus za InterVenture doo Beograd / InterVenture Sourcing AG, datum: 2025-05-08, status: active
+  ✅ Kreiran ciklus za EVRO-LINE, datum: 2025-04-02, status: active
+  ✅ Kreiran ciklus za ENERGETIKA JURIĆ doo Lučko, datum: 2025-02-28, status: active
+  ✅ Kreiran ciklus za Savremena Poslova Obrada d.o.o., datum: 2025-04-24, status: active
+  ✅ Kreiran ciklus za NIKOLA ZDRAVKOVIĆ PR RADNJA ZA PROJEKTOVANJE I GRAĐEVINARSTVO  MBN-GRADNJA NOZRINA, datum: 2025-05-14, status: active
+  ✅ Kreiran ciklus za AIR PRESS ENGINEERING, datum: 2024-11-21, status: active
+  ✅ Kreiran ciklus za IVICA JANKOVIĆ PR RADNJA ZA MONTAŽU IZNAJMLJIVANjE GRAĐEVINSKE OPREME I MEHANIZACIJE KOM JANKOVIĆ, datum: 2025-05-12, status: active
+  ✅ Kreiran ciklus za TRANSKOP DOO ŽABARI, datum: 2025-05-19, status: active
+  ✅ Kreiran ciklus za MIK PROJEKT, datum: 2025-05-18, status: active
+  ✅ Kreiran ciklus za PRIVREDNO DRUŠTVO METAL GROUP L L C - DOO - PREŠEVO, datum: 2025-05-24, status: active
+  ✅ Kreiran ciklus za Univerzitet u Beogradu, Elektrotehnički fakultet, datum: 2025-02-28, status: active
+  ✅ Kreiran ciklus za MB TEHNIKA, datum: 2025-05-27, status: active
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2025-03-10, status: active
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2025-03-11, status: active
+  ✅ Kreiran ciklus za ADAM ŠPED SYSTEM, datum: 2025-05-31, status: active
+  ✅ Kreiran ciklus za VOLTEC DOO Beograd, datum: 2025-05-24, status: active
+  ✅ Kreiran ciklus za TISTEN GROUP DOO BEOGRAD, datum: 2025-05-21, status: active
+  ✅ Kreiran ciklus za Milex D.o.o, datum: 2025-05-07, status: active
+  ✅ Kreiran ciklus za HAP FLUID, datum: 2025-05-11, status: active
+  ✅ Kreiran ciklus za PROTON MONTAŽA doo, datum: 2025-04-29, status: active
+  ✅ Kreiran ciklus za STRIX doo, datum: 2025-04-29, status: active
+  ✅ Kreiran ciklus za ELEKTROZAPAD DOO, datum: 2025-06-05, status: active
+  ✅ Kreiran ciklus za DRUŠTVO SA OGRANIČENOM ODGOVORNOŠĆU EL-AS 2000 Kraljevo, datum: 2025-06-21, status: active
+  ✅ Kreiran ciklus za HM INŽENIRING d.o.o., datum: 2025-06-20, status: active
+  ✅ Kreiran ciklus za MM KARTON DOO, datum: 2025-06-25, status: active
+  ✅ Kreiran ciklus za TEL-ING, datum: 2025-06-18, status: active
+  ✅ Kreiran ciklus za POPOVSKI STANIŠA PREDUZETNIK GRAĐEVINSKA RADNJA POPOVSKI STANIŠA KOVIN, datum: 2025-06-28, status: active
+  ✅ Kreiran ciklus za COMEX d.o.o, datum: 2025-05-31, status: active
+  ✅ Kreiran ciklus za REISSWOLF Serbia doo, datum: 2025-06-10, status: active
+  ✅ Kreiran ciklus za RSB Anlagenbau GmbH, datum: 2025-06-30, status: active
+  ✅ Kreiran ciklus za MSA IP – MILOJEVIĆ SEKULIĆ AOD ADVOKATI, datum: 2025-07-08, status: active
+  ✅ Kreiran ciklus za PMP-ELEKTRO DOO BEOGRAD-OSTRUŽNICA, datum: 2025-07-07, status: active
+  ✅ Kreiran ciklus za MR ENGINES doo, datum: 2025-04-13, status: active
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2025-02-08, status: active
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2025-01-29, status: active
+  ✅ Kreiran ciklus za ZAVOD ZA VREDNOVANJE KVALITETA OBRAZOVANJA I VASPITANJA, datum: 2025-02-23, status: active
+  ✅ Kreiran ciklus za TELEMAX, datum: 2025-03-20, status: active
+  ✅ Kreiran ciklus za POSITIVE doo, datum: 2025-07-20, status: active
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2025-07-19, status: active
+  ✅ Kreiran ciklus za EVOLUTION ONLINE-EON DOO Beograd, datum: 2025-06-19, status: active
+  ✅ Kreiran ciklus za HEMOTERM SMART SOLUTIONS DOO, datum: 2025-07-19, status: active
+  ✅ Kreiran ciklus za SUMADIJA PUT, datum: 2025-07-22, status: active
+  ✅ Kreiran ciklus za Branimir Plazinić PR PLAZMATEH Čačak, datum: 2025-08-02, status: active
+  ✅ Kreiran ciklus za MLINTEST A.D, datum: 2025-07-04, status: active
+  ✅ Kreiran ciklus za ERGOPRODUKT doo Čačak, datum: 2025-07-08, status: active
+  ✅ Kreiran ciklus za STANKO MLADENOVIĆ Pr Radnja za izradu građevinske konstrukcije PROGRESPROJEKT LM Počekovina, datum: 2025-08-03, status: active
+  ✅ Kreiran ciklus za ŠOLE, datum: 2025-05-15, status: active
+  ✅ Kreiran ciklus za ASMEC CONSULTANTS DOO, datum: 2025-08-02, status: active
+  ✅ Kreiran ciklus za ADRIA PACKING DOO, datum: 2025-08-06, status: active
+  ✅ Kreiran ciklus za DLX DOO BEOGRAD, datum: 2025-08-09, status: active
+  ✅ Kreiran ciklus za TELEMIX, datum: 2025-07-20, status: active
+  ✅ Kreiran ciklus za PROINTER, datum: 2025-03-06, status: active
+  ✅ Kreiran ciklus za ALFAMEHANIK, datum: 2025-05-21, status: active
+  ✅ Kreiran ciklus za INTERFAST DOO, datum: 2025-06-09, status: active
+  ✅ Kreiran ciklus za BERGER GROUP DOO old POTKA doo, datum: 2025-06-01, status: active
+  ✅ Kreiran ciklus za ZAJEDNIČKA ADVOKATSKA KANCELARIJA ALEKSIĆ  SA SARADNICIMA, datum: 2025-05-18, status: active
+  ✅ Kreiran ciklus za ZAJEDNIČKA ADVOKATSKA KANCELARIJA ALEKSIĆ  SA SARADNICIMA, datum: 2025-05-20, status: active
+  ✅ Kreiran ciklus za STILEX, datum: 2025-05-03, status: active
+  ✅ Kreiran ciklus za LOG DESIGN doo, datum: 2025-05-12, status: active
+  ✅ Kreiran ciklus za STEVAN STILL, datum: 2025-08-08, status: active
+  ✅ Kreiran ciklus za DELTA CLEANROOM DOO BEOGRAD, datum: 2025-08-20, status: active
+  ✅ Kreiran ciklus za LURYCOS DOO, datum: 2025-08-30, status: active
+  ✅ Kreiran ciklus za DAHLIA DOO Beograd-Zemun, datum: 2025-08-14, status: active
+  ✅ Kreiran ciklus za K-INEL, datum: 2025-08-22, status: active
+  ✅ Kreiran ciklus za IBIS-SOLUTIONS d.o.o., datum: 2025-07-26, status: active
+  ✅ Kreiran ciklus za KOSANOVIC GROUP, datum: 2025-06-15, status: active
+  ✅ Kreiran ciklus za UMPROM d.o.o, datum: 2025-08-04, status: active
+  ✅ Kreiran ciklus za MAGENA, datum: 2025-08-15, status: active
+  ✅ Kreiran ciklus za GRADNJA RADOSAVLJEVIĆ DOO ĆUPRIJA, datum: 2025-08-08, status: active
+  ✅ Kreiran ciklus za MARJAN RAKO PR MAŠINSKA OBRADA METALA OKAR HIDRAULIK NIŠ, datum: 2025-09-10, status: active
+  ✅ Kreiran ciklus za INKOM, datum: 2025-07-07, status: active
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2025-06-20, status: active
+  ✅ Kreiran ciklus za EL BORN, datum: 2025-08-27, status: active
+  ✅ Kreiran ciklus za TERMOMETAL DOO BEOGRAD, datum: 2025-09-16, status: active
+  ✅ Kreiran ciklus za SHOP INVEST, datum: 2025-09-14, status: active
+  ✅ Kreiran ciklus za VERDIG IC DRUSTVO ZA KONSULTANTSKE DJELATNOSTI U OBLASTI INFORMACIONE TEHNOLOGIJE, Nikšić, datum: 2025-09-24, status: active
+  ✅ Kreiran ciklus za DOO BETONJERKA Čačak, datum: 2025-09-25, status: active
+  ✅ Kreiran ciklus za IMPERIAL ONE DOO, datum: 2025-10-02, status: active
+  ⚠️  Ciklus već postoji za IMPERIAL ONE DOO, datum: 2025-10-02
+  ✅ Kreiran ciklus za SMR MIKRON ĆIROVIĆ SLAVICA PREDUZETNIK, BEOGRAD, datum: 2025-10-05, status: active
+  ✅ Kreiran ciklus za IBIS-INSTRUMENTS d.o.o., datum: 2025-09-08, status: active
+  ✅ Kreiran ciklus za GRAĐEVINSKO PREDUZEĆE STILL-NET DOO Pančevo, datum: 2025-08-20, status: active
+  ✅ Kreiran ciklus za SIBO d.o.o., datum: 2025-10-05, status: active
+  ✅ Kreiran ciklus za ENERGO MONT d.o.o., datum: 2025-10-07, status: active
+  ✅ Kreiran ciklus za LASTVA, datum: 2025-09-16, status: active
+  ✅ Kreiran ciklus za SZTUR OROLOGIO I VASILIJEVIĆ NENAD PR Beograd, datum: 2025-07-11, status: active
+  ✅ Kreiran ciklus za STEFAN ŽIVKOVIĆ PREDUZETNIK STEFAN CNC, datum: 2025-10-09, status: active
+  ✅ Kreiran ciklus za MINEM-CARGO PACK D.O.O. Vranje, datum: 2025-10-09, status: active
+  ✅ Kreiran ciklus za KARANOVIĆ & PARTNERS OAD BEOGRAD, datum: 2025-08-20, status: active
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2025-09-19, status: active
+  ✅ Kreiran ciklus za Ocean Engineering Technology DOO, datum: 2025-10-21, status: active
+  ✅ Kreiran ciklus za SPORTIMPEX, datum: 2025-10-15, status: active
+  ✅ Kreiran ciklus za MTC Metals Trading Company doo Beograd-Novi Beograd, datum: 2025-08-02, status: active
+  ✅ Kreiran ciklus za MP-Interconsulting, datum: 2025-10-21, status: active
+  ✅ Kreiran ciklus za VERIDIX, datum: 2025-08-01, status: active
+  ⚠️  Ciklus već postoji za VERIDIX, datum: 2025-08-01
+  ✅ Kreiran ciklus za INOP D.o.o, datum: 2025-07-14, status: active
+  ✅ Kreiran ciklus za PROMOBI, datum: 2025-10-08, status: active
+  ✅ Kreiran ciklus za SAVABIEN, datum: 2025-07-21, status: active
+  ✅ Kreiran ciklus za DAYSPRING DOO, datum: 2025-10-22, status: active
+  ✅ Kreiran ciklus za ALUCOMMERCE SYSTEMS d.o.o., datum: 2025-07-22, status: active
+  ✅ Kreiran ciklus za RE3 PRODUCT, datum: 2025-06-29, status: active
+  ✅ Kreiran ciklus za INOS/ĐOLEX, datum: 2025-08-03, status: active
+  ✅ Kreiran ciklus za S PRINT, datum: 2025-10-28, status: active
+  ✅ Kreiran ciklus za JKP INFORMATIKA, datum: 2025-06-29, status: active
+  ✅ Kreiran ciklus za BRAINEERING IT SOLUTIONS doo, datum: 2025-08-29, status: active
+  ✅ Kreiran ciklus za KOTUR I OSTALi, datum: 2025-11-06, status: active
+  ✅ Kreiran ciklus za GEOGIS KONSULTANTI, datum: 2025-10-25, status: active
+  ✅ Kreiran ciklus za ENTERPRISE COMMUNICATIONS SOLUTIONS, datum: 2025-09-12, status: active
+  ✅ Kreiran ciklus za SAMOSTALNA ZANATSKO USLUZNO TRGOVINSKA RADNJA STOJANOVIC SINISA STOJANOVIC PR PIROT, datum: 2025-11-16, status: active
+  ✅ Kreiran ciklus za ETON DIGITAL DOO NOVI SAD, datum: 2025-11-07, status: active
+  ✅ Kreiran ciklus za PROJEKTMONT MDP DOO NOVI SAD, datum: 2025-11-18, status: active
+  ✅ Kreiran ciklus za NES  COMMUNICATIONS, datum: 2025-06-15, status: active
+  ✅ Kreiran ciklus za TIMCO, datum: 2025-09-26, status: active
+  ✅ Kreiran ciklus za LURYCOS DOO, datum: 2025-11-24, status: active
+  ✅ Kreiran ciklus za MCR GLOBEX GROUP, datum: 2025-11-07, status: active
+  ✅ Kreiran ciklus za MELANGE doo, datum: 2025-11-09, status: active
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2025-11-14, status: active
+  ✅ Kreiran ciklus za FLUX PRO, datum: 2025-10-21, status: active
+  ✅ Kreiran ciklus za ART LIFT, datum: 2025-09-27, status: active
+  ✅ Kreiran ciklus za SIMŠPED doo, datum: 2025-11-29, status: active
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2025-10-21, status: active
+  ✅ Kreiran ciklus za FOTON GMB, datum: 2025-10-04, status: active
+  ✅ Kreiran ciklus za GENESEC, datum: 2025-07-17, status: active
+  ✅ Kreiran ciklus za DRAGAN SREĆKOVIĆ PR  PČELICA SA TARE BAJINA BAŠTA, datum: 2025-03-30, status: active
+  ✅ Kreiran ciklus za WPI DOO, datum: 2025-12-06, status: active
+  ✅ Kreiran ciklus za SPARK Analytics doo, datum: 2025-12-03, status: active
+  ✅ Kreiran ciklus za T3SOFT doo, datum: 2025-07-05, status: active
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2025-10-11, status: active
+  ✅ Kreiran ciklus za IZOLINVEST, datum: 2025-10-12, status: active
+  ✅ Kreiran ciklus za PROJEKTMONT MDP DOO NOVI SAD, datum: 2025-12-10, status: active
+  ✅ Kreiran ciklus za MASTERTEH / ALTECH DOO BEOGRAD, datum: 2025-05-07, status: active
+  ✅ Kreiran ciklus za CRDC DOO BEOGRAD, datum: 2025-12-07, status: active
+  ✅ Kreiran ciklus za MIKROELEKTRONIKA, datum: 2025-06-04, status: active
+  ⚠️  Ciklus već postoji za MIKROELEKTRONIKA, datum: 2025-06-04
+  ✅ Kreiran ciklus za MERIDIJAN ŠPED, datum: 2025-10-13, status: active
+  ✅ Kreiran ciklus za KONTROL INSPEKT DOO BEOGRAD, datum: 2025-11-26, status: active
+  ✅ Kreiran ciklus za ENERGO-SISTEM DOO NOVI SAD, datum: 2025-12-11, status: active
+  ✅ Kreiran ciklus za POWERGRID ENGINEERING DOO, datum: 2025-12-10, status: active
+  ✅ Kreiran ciklus za DENTAL EXPRESS, datum: 2025-11-20, status: active
+  ✅ Kreiran ciklus za TICOMPRESSION DOO NOVI SAD, datum: 2025-12-08, status: active
+  ✅ Kreiran ciklus za ORNAMENT-INVESTINŽENJERING, datum: 2025-11-19, status: active
+  ✅ Kreiran ciklus za BINTA, datum: 2025-02-06, status: active
+  ✅ Kreiran ciklus za DataDEW services doo Novi Sad, datum: 2025-06-29, status: active
+  ✅ Kreiran ciklus za ICCE d.o.o, datum: 2025-07-13, status: active
+  ✅ Kreiran ciklus za NOVOHEM, datum: 2025-12-05, status: active
+  ✅ Kreiran ciklus za WORLDWIDE, datum: 2025-10-22, status: active
+  ✅ Kreiran ciklus za New Energy Solutions d.o.o. Beograd-Novi Beograd, datum: 2026-01-05, status: active
+  ✅ Kreiran ciklus za MILLENNIUM TEAM DOO BEOGRAD, datum: 2026-01-05, status: active
+  ✅ Kreiran ciklus za INTERFAST DOO, datum: 2025-08-06, status: active
+  ✅ Kreiran ciklus za Compressor & Engine Services DOO Zrenjanin, datum: 2026-01-12, status: active
+  ✅ Kreiran ciklus za MNO doo Beograd, datum: 2025-06-15, status: active
+  ✅ Kreiran ciklus za FELIX TIM, datum: 2025-12-21, status: active
+  ✅ Kreiran ciklus za SAMOSTALNA ZANATSKO USLUZNO TRGOVINSKA RADNJA STOJANOVIC SINISA STOJANOVIC PR PIROT, datum: 2026-01-16, status: active
+  ✅ Kreiran ciklus za SAEC d.o.o. Beograd, datum: 2026-01-19, status: active
+  ✅ Kreiran ciklus za GAJIĆ TEHNIKA DOO, datum: 2026-01-18, status: active
+  ✅ Kreiran ciklus za C.R.A.M. Solutions DOO, datum: 2026-01-10, status: active
+  ✅ Kreiran ciklus za STANKOVIĆ - INŽENJERING doo, datum: 2025-04-21, status: active
+  ✅ Kreiran ciklus za SIMEN, datum: 2025-12-18, status: active
+  ✅ Kreiran ciklus za SAMOSTALNA ZANATSKA-PROIZVODNA RADNJA DRAŽ PENA DRAŽENKO PREDUZETNIK CRVENKA, datum: 2025-12-11, status: active
+  ✅ Kreiran ciklus za RMD Manufaktura DOO BEOGRAD, datum: 2026-01-14, status: active
+  ✅ Kreiran ciklus za COMCEN DOO BEOGRAD-ZEMUN, datum: 2026-01-15, status: active
+  ✅ Kreiran ciklus za TERMO UNIVERZAL, datum: 2025-12-26, status: active
+  ✅ Kreiran ciklus za DELTA INŽENJERING, datum: 2025-12-12, status: active
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2025-11-30, status: active
+  ✅ Kreiran ciklus za INT RASTER, datum: 2026-01-03, status: active
+  ✅ Kreiran ciklus za JAN ANUŠIAK PREDUZETNIK, RADNJA ZA IZNAJMLJIVANJE AUDIO I VIDEO OPREME, JAN AUDIO KISAČ, datum: 2025-12-01, status: active
+  ✅ Kreiran ciklus za L&M&J DOO Sremska Kamenica, datum: 2025-12-29, status: active
+  ✅ Kreiran ciklus za SINGI INŽENJERING doo Beograd, datum: 2025-12-15, status: active
+  ✅ Kreiran ciklus za ALFANOVA, datum: 2026-01-03, status: active
+  ✅ Kreiran ciklus za TEHNO SISTEM, datum: 2026-01-02, status: active
+  ✅ Kreiran ciklus za MONT-R DOO BEOGRAD, datum: 2026-02-10, status: active
+  ✅ Kreiran ciklus za MONT-R DOO BEOGRAD, datum: 2026-01-21, status: active
+  ✅ Kreiran ciklus za FAST PROJEKT DOO, datum: 2026-02-14, status: active
+  ✅ Kreiran ciklus za SAEC d.o.o. Beograd, datum: 2026-02-11, status: active
+  ✅ Kreiran ciklus za Geosoft D.o.o. Beograd, datum: 2025-11-30, status: active
+  ✅ Kreiran ciklus za ORIGINAL, datum: 2025-10-24, status: active
+  ✅ Kreiran ciklus za ENERGO-SISTEM DOO NOVI SAD, datum: 2026-02-15, status: active
+  ✅ Kreiran ciklus za FMB D.O.O, datum: 2025-12-31, status: active
+  ✅ Kreiran ciklus za WELDING-MONT d.o.o. Vranje, datum: 2026-02-17, status: active
+  ✅ Kreiran ciklus za WELDING-MONT d.o.o. Vranje, datum: 2026-02-15, status: active
+  ✅ Kreiran ciklus za EWE COMP doo, datum: 2025-12-10, status: active
+  ⚠️  Ciklus već postoji za EWE COMP doo, datum: 2025-12-10
+  ✅ Kreiran ciklus za LASTESARO DOO, datum: 2026-01-11, status: active
+  ✅ Kreiran ciklus za CALIFORNIA SPED doo, datum: 2026-01-10, status: active
+  ✅ Kreiran ciklus za ITMATHICS DOO, datum: 2026-02-21, status: active
+  ✅ Kreiran ciklus za ITMATHICS DOO, datum: 2026-02-24, status: active
+  ✅ Kreiran ciklus za Tehno S doo, datum: 2025-12-29, status: active
+  ✅ Kreiran ciklus za COMITA D.D. OGRANAK COMITA BEOGRAD, datum: 2025-10-29, status: active
+  ✅ Kreiran ciklus za MINI INŽENJERING DOO Inđija, datum: 2025-12-12, status: active
+  ✅ Kreiran ciklus za GRADINA CINK d.o.o. Nova Pazova, datum: 2026-03-07, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE PARKING SERVIS NOVI SAD, datum: 2026-01-01, status: active
+  ✅ Kreiran ciklus za BANTSKI KLAS D.O.O., datum: 2026-02-18, status: active
+  ✅ Kreiran ciklus za DIM ENERGY d.o.o., datum: 2026-01-29, status: active
+  ✅ Kreiran ciklus za ELEKTROMATERIJAL d.o.o, datum: 2025-12-05, status: active
+  ✅ Kreiran ciklus za ENERGY COMPANY, datum: 2025-10-22, status: active
+  ✅ Kreiran ciklus za INDUSTRY GROUP d.o.o., datum: 2026-01-17, status: active
+  ✅ Kreiran ciklus za DOO VIJATOR ALIĐERCE-PREŠEVO, datum: 2026-03-15, status: active
+  ✅ Kreiran ciklus za PDCA KONSALTING DOO NOVI SAD, datum: 2025-11-02, status: active
+  ✅ Kreiran ciklus za HIS Industrieservice GmbH, datum: 2026-03-21, status: active
+  ✅ Kreiran ciklus za DRAGANA ŠOJIĆ PR, SR GRAFIČKE DELATNOSTI SA TRGOVINOM NA VELIKO SITOPRINT ŽITIŠTE, datum: 2026-03-19, status: active
+  ✅ Kreiran ciklus za PDV, datum: 2026-01-24, status: active
+  ✅ Kreiran ciklus za WELDSYS DOO, datum: 2026-03-26, status: active
+  ✅ Kreiran ciklus za VODOPROVREDNO PRIVREDNO DRUŠTVO SMEDEREVO DOO, datum: 2025-10-23, status: active
+  ✅ Kreiran ciklus za NOVAMAT, datum: 2025-12-26, status: active
+  ✅ Kreiran ciklus za GILBARCO ACIS DOO, datum: 2026-04-05, status: active
+  ✅ Kreiran ciklus za PROMOBI, datum: 2026-02-15, status: active
+  ✅ Kreiran ciklus za MLIN CEKOVIC, datum: 2026-03-17, status: active
+  ✅ Kreiran ciklus za MLIN CEKOVIC, datum: 2026-02-21, status: active
+  ✅ Kreiran ciklus za BLACK SHEEP HOMES DOO, datum: 2026-04-08, status: active
+  ✅ Kreiran ciklus za ECOGLOBAL BTD DOO, datum: 2025-04-06, status: active
+  ✅ Kreiran ciklus za Nacionalna služba za zapošljavanje, datum: 2025-11-08, status: active
+  ✅ Kreiran ciklus za DRAGOVIĆ TRANSPORT & EXPRES, datum: 2026-01-12, status: active
+  ✅ Kreiran ciklus za TRUST IT DOO BEOGRAD, datum: 2025-08-08, status: active
+  ✅ Kreiran ciklus za STUDIO BERAR, datum: 2026-03-04, status: active
+  ✅ Kreiran ciklus za ALEKSANDAR MEDAN PR SERVIS ZA POPRAVKU MAŠINA MEDAN SISTEM NOVI SAD, datum: 2026-04-22, status: active
+  ✅ Kreiran ciklus za JKP MEDIANA Nis PJ Uređenje i održavanje mobilijara, datum: 2026-01-01, status: active
+  ✅ Kreiran ciklus za DOO ELMAMONT INZENJERING ĆUPRIJA, datum: 2026-04-18, status: active
+  ✅ Kreiran ciklus za AVIS EXPORT-IMPORT DOO, datum: 2026-03-28, status: active
+  ✅ Kreiran ciklus za KODAR ENERGOMONTAŽA, datum: 2026-03-24, status: active
+  ✅ Kreiran ciklus za MOBITELMONT, datum: 2026-03-03, status: active
+  ✅ Kreiran ciklus za TEHNOPLAST, datum: 2026-03-23, status: active
+  ✅ Kreiran ciklus za MS SECURITY SYSTEM doo / VIDEOMONT doo, datum: 2025-12-11, status: active
+  ✅ Kreiran ciklus za JKP MEDIANA Nis PJ Uređenje i održavanje mobilijara, datum: 2026-05-06, status: active
+  ✅ Kreiran ciklus za GEOTAUR DOO, datum: 2026-04-23, status: active
+  ✅ Kreiran ciklus za STEF TRANS DOO LJUBLJANA, datum: 2026-04-18, status: active
+  ✅ Kreiran ciklus za STILEX, datum: 2026-04-29, status: active
+  ✅ Kreiran ciklus za APIS CENTAR, datum: 2026-02-22, status: active
+  ✅ Kreiran ciklus za VUKOCHEM DOO ŠABAC, datum: 2026-05-17, status: active
+  ✅ Kreiran ciklus za JELA TRADE, datum: 2026-02-24, status: active
+  ✅ Kreiran ciklus za IMD METAL CO DOO, datum: 2026-05-07, status: active
+  ✅ Kreiran ciklus za Spring Tech d.o.o., datum: 2023-09-28, status: active
+  ✅ Kreiran ciklus za ZDANJE d.o.o. NIŠ-PALILULA, datum: 2026-05-17, status: active
+  ✅ Kreiran ciklus za PERSPEKTA DOO BEOGRAD, datum: 2026-05-20, status: active
+  ✅ Kreiran ciklus za HIDROPUT JUG DOO, datum: 2026-05-25, status: active
+  ✅ Kreiran ciklus za CINCOVIC, datum: 2026-03-14, status: active
+  ✅ Kreiran ciklus za PRIVREDNO DRUŠTVO ZA PROIZVODNJU I PROMET KRUŠEVACPLAST DOO MODRICA, datum: 2026-05-27, status: active
+  ✅ Kreiran ciklus za AN Schweißtechnik Inh. Nikola Arandjelovic, datum: 2026-02-23, status: active
+  ✅ Kreiran ciklus za CONCRETE CONSTRUCTION DOO BEOGRAD, datum: 2026-04-04, status: active
+  ✅ Kreiran ciklus za GENERAL SOLUTIONS SLN doo, datum: 2026-04-12, status: active
+  ✅ Kreiran ciklus za PAN LIFT, datum: 2026-02-21, status: active
+  ✅ Kreiran ciklus za TIMOTI, datum: 2026-04-08, status: active
+  ✅ Kreiran ciklus za LIST SISTEM DOO BEOGRAD, datum: 2026-05-02, status: active
+  ✅ Kreiran ciklus za MILLENNIUM TEAM DOO BEOGRAD, datum: 2026-06-05, status: active
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2025-12-10, status: active
+  ✅ Kreiran ciklus za ENTERIJER JANKOVIC, datum: 2026-04-18, status: active
+  ✅ Kreiran ciklus za BAUEN DOO VRBAS, datum: 2026-05-12, status: active
+  ✅ Kreiran ciklus za VIR SISTEM, datum: 2026-04-24, status: active
+  ✅ Kreiran ciklus za GEOMAG DOO, datum: 2026-04-20, status: active
+  ✅ Kreiran ciklus za Rasing d.o.o., datum: 2026-04-23, status: active
+  ✅ Kreiran ciklus za SPEKTAR INVEST, datum: 2026-02-22, status: active
+  ✅ Kreiran ciklus za AUTOKRAN, datum: 2026-04-27, status: active
+  ✅ Kreiran ciklus za Husky Corporation doo, datum: 2026-05-09, status: active
+  ✅ Kreiran ciklus za FASADA d.o.o., datum: 2026-05-25, status: active
+  ✅ Kreiran ciklus za RESALTA, datum: 2026-02-23, status: active
+  ✅ Kreiran ciklus za BRATEL-KRON, datum: 2026-05-27, status: active
+  ✅ Kreiran ciklus za SZTR "Ljuba Invest"- Paraćin, datum: 2026-05-10, status: active
+  ✅ Kreiran ciklus za DIGITALware DOO NOVI SAD, datum: 2026-05-17, status: active
+  ✅ Kreiran ciklus za GPP SPEKTAR INŽENJERING, datum: 2026-05-21, status: active
+  ✅ Kreiran ciklus za KORALŠPED, datum: 2026-05-08, status: active
+  ✅ Kreiran ciklus za TSL LOGISTICA DOO ČAČAK, datum: 2026-06-22, status: active
+  ✅ Kreiran ciklus za COMITA RAZVOJ PROJEKTIRANJE PROIZVODNJA IN INZENIRING D.D. MERKEZI SLOVENYA ISTANBUL MERKEZ SUBESI, datum: 2026-04-28, status: active
+  ✅ Kreiran ciklus za LaboMed DOO Niš-Medijana, datum: 2026-06-20, status: active
+  ✅ Kreiran ciklus za JAVNO KOMUNALNO PREDUZEĆE KOMUNALIJE, SREMSKA MITROVICA, datum: 2026-01-27, status: active
+  ✅ Kreiran ciklus za ENEL PS DOO NOVI BEOGRAD, datum: 2026-06-27, status: active
+  ✅ Kreiran ciklus za SIDEK INZENJERING d.o.o, datum: 2026-06-05, status: active
+  ✅ Kreiran ciklus za VERITAS d.o.o. Bijeljina, datum: 2026-06-30, status: active
+  ✅ Kreiran ciklus za EUREX DOO, datum: 2026-07-02, status: active
+  ✅ Kreiran ciklus za VERITAS INTEGRITY LLC, datum: 2026-06-29, status: active
+  ✅ Kreiran ciklus za DINARA ROMANIJA, datum: 2026-06-13, status: active
+  ✅ Kreiran ciklus za MINE INVEST, datum: 2026-04-04, status: active
+  ✅ Kreiran ciklus za INFO SPACE, datum: 2026-04-16, status: active
+  ✅ Kreiran ciklus za IMD METAL CO DOO, datum: 2026-07-05, status: active
+  ⚠️  Ciklus već postoji za IMD METAL CO DOO, datum: 2026-07-05
+  ✅ Kreiran ciklus za INTERFAST ADVANCED SECURITY SYSTEMS DOO, datum: 2026-05-27, status: active
+  ✅ Kreiran ciklus za T3SOFT doo, datum: 2026-07-06, status: active
+  ✅ Kreiran ciklus za OBLAK TEHNOLOGIJE, datum: 2026-05-04, status: active
+  ✅ Kreiran ciklus za HOMNET doo, datum: 2026-06-19, status: active
+  ✅ Kreiran ciklus za Industry Facility Installation, datum: 2026-03-08, status: active
+  ✅ Kreiran ciklus za BEXEL CONSULTING, datum: 2026-05-14, status: active
+  ✅ Kreiran ciklus za GALVANOPLAST, datum: 2026-02-22, status: active
+  ✅ Kreiran ciklus za MARSONIJA MONTAŽA d.o.o, datum: 2026-07-09, status: active
+  ⚠️  Ciklus već postoji za MARSONIJA MONTAŽA d.o.o, datum: 2026-07-09
+  ✅ Kreiran ciklus za TRGOVINSKO, USLUŽNO I PROIZVODNO PREDUZEĆE AGROMARKET EXPORT-IMPORT DOO VETERNIK, datum: 2026-07-07, status: active
+  ✅ Kreiran ciklus za JAVOR INŽENJERING PROFESIONAL DOO / JAVOR INŽENJERING DOO, datum: 2026-04-25, status: active
+  ✅ Kreiran ciklus za LJUBA-INVEST d.o.o., datum: 2026-06-06, status: active
+  ✅ Kreiran ciklus za RENOVATIC POLAND Sp. z o.o., datum: 2026-07-18, status: active
+  ✅ Kreiran ciklus za GRADINA d.o.o., datum: 2026-05-29, status: active
+  ✅ Kreiran ciklus za PD INV MITROVIC, datum: 2026-06-17, status: active
+  ✅ Kreiran ciklus za ABA GROUP, datum: 2026-04-16, status: active
+  ✅ Kreiran ciklus za ELINGZO, datum: 2026-03-25, status: active
+  ✅ Kreiran ciklus za SONIREX, datum: 2026-04-09, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2026-07-31, status: active
+  ✅ Kreiran ciklus za STRUJA, datum: 2026-05-30, status: active
+  ✅ Kreiran ciklus za KATIC, datum: 2025-12-08, status: active
+  ✅ Kreiran ciklus za HIDROKONTROL DOO NIŠ, datum: 2025-07-23, status: active
+  ✅ Kreiran ciklus za TARGET ŠPED d.o.o., datum: 2026-07-29, status: active
+  ✅ Kreiran ciklus za AG-MA d.o.o., datum: 2026-08-05, status: active
+  ✅ Kreiran ciklus za Euroteamlogist doo /  Međunarodna špedicija ZR Agent doo, datum: 2026-06-23, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2026-07-05, status: active
+  ✅ Kreiran ciklus za GRAFOKARTONKA, datum: 2026-04-26, status: active
+  ✅ Kreiran ciklus za Triplex Yu List d.o.o, datum: 2026-05-30, status: active
+  ✅ Kreiran ciklus za ŠKORPION, datum: 2026-04-29, status: active
+  ✅ Kreiran ciklus za TKS Group d.o.o., datum: 2026-08-08, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2026-08-09, status: active
+  ✅ Kreiran ciklus za BrightMarbles Group Holding B.V., datum: 2026-05-26, status: active
+  ✅ Kreiran ciklus za JAVOR INŽENJERING PROFESIONAL DOO / JAVOR INŽENJERING DOO, datum: 2026-07-29, status: active
+  ✅ Kreiran ciklus za Ecomita tehnologije doo, datum: 2026-07-02, status: active
+  ✅ Kreiran ciklus za MAKER IVANJICA, datum: 2026-05-28, status: active
+  ✅ Kreiran ciklus za NSV DOO NOVI SAD, datum: 2026-08-11, status: active
+  ✅ Kreiran ciklus za MOLIBDEN DOO, datum: 2026-08-16, status: active
+  ✅ Kreiran ciklus za MAREX STROJI d.o.o., datum: 2026-08-23, status: active
+  ✅ Kreiran ciklus za MAROPACK DOO LEDINCI, datum: 2026-08-22, status: active
+  ✅ Kreiran ciklus za MSA IP – MILOJEVIĆ SEKULIĆ AOD ADVOKATI, datum: 2026-07-07, status: active
+  ✅ Kreiran ciklus za PWO SEE d.o.o. Čačak, datum: 2026-08-23, status: active
+  ✅ Kreiran ciklus za INFOPLAN, datum: 2026-07-13, status: active
+  ✅ Kreiran ciklus za Bas Čelik 018 DOO, datum: 2026-05-27, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2026-08-22, status: active
+  ✅ Kreiran ciklus za EP-ING d.o.o., datum: 2026-07-06, status: active
+  ✅ Kreiran ciklus za DELTA CLEANROOM DOO BEOGRAD, datum: 2026-08-21, status: active
+  ✅ Kreiran ciklus za VMPS  DOO, datum: 2026-08-15, status: active
+  ✅ Kreiran ciklus za MIO OPREMA d.o.o., datum: 2026-08-25, status: active
+  ✅ Kreiran ciklus za MAREX d.o.o., datum: 2026-08-31, status: active
+  ✅ Kreiran ciklus za GEODIGIT doo, datum: 2026-04-15, status: active
+  ✅ Kreiran ciklus za DOO FERRO CASA SOMBOR / SMART TECH SOLUTIONS DOO SOMBOR, datum: 2026-08-27, status: active
+  ✅ Kreiran ciklus za STUDIO A&D ARCHITECTS DOO BEOGRAD-VRAČAR, datum: 2026-07-15, status: active
+  ✅ Kreiran ciklus za MONTORA SOFTWARE, datum: 2026-06-23, status: active
+  ✅ Kreiran ciklus za INTERCOMO, datum: 2026-07-02, status: active
+  ✅ Kreiran ciklus za USPON, datum: 2026-08-21, status: active
+  ✅ Kreiran ciklus za V.I.P. SECURITY DOO BEOGRAD, datum: 2026-08-05, status: active
+  ✅ Kreiran ciklus za STEF TRANS  DOO, datum: 2026-08-01, status: active
+  ✅ Kreiran ciklus za KB ARMATURE, datum: 2026-07-25, status: active
+  ✅ Kreiran ciklus za MNG Plastic Gogic D.O.O., datum: 2026-08-07, status: active
+  ✅ Kreiran ciklus za Aquadyn doo, datum: 2026-08-12, status: active
+  ✅ Kreiran ciklus za GREEN GOLD d.o.o., datum: 2026-09-13, status: active
+  ✅ Kreiran ciklus za NEPO SYSTEM, datum: 2026-02-22, status: active
+  ✅ Kreiran ciklus za DIM ENERGY d.o.o., datum: 2026-09-19, status: active
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2023-10-08, status: archived
+  ✅ Kreiran ciklus za SIS SOFTWARE, datum: 2026-08-31, status: active
+  ⚠️  Ciklus već postoji za SIS SOFTWARE, datum: 2026-08-31
+  ✅ Kreiran ciklus za GEACHEM, datum: 2023-08-12, status: archived
+  ✅ Kreiran ciklus za GEACHEM, datum: 2026-08-09, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2026-07-27, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2026-07-28, status: active
+  ✅ Kreiran ciklus za KP EKO-DIM DOO BEOGRAD, datum: 2026-09-11, status: active
+  ✅ Kreiran ciklus za CROONUS TECHNOLOGIES DOO ČAČAK, datum: 2026-09-02, status: active
+  ✅ Kreiran ciklus za JUGOGRADNJA d.o.o., datum: 2026-09-12, status: active
+  ✅ Kreiran ciklus za ITERRO INC, datum: 2026-09-14, status: active
+  ✅ Kreiran ciklus za MIL BUILD d.o.o., datum: 2026-09-27, status: active
+  ✅ Kreiran ciklus za MIL BUILD d.o.o., datum: 2026-09-29, status: active
+  ✅ Kreiran ciklus za MIL BUILD d.o.o., datum: 2026-09-07, status: active
+  ✅ Kreiran ciklus za GUM-ING d.o.o., datum: 2026-09-27, status: active
+  ✅ Kreiran ciklus za D.C. ENERGOCOOP DOO, datum: 2026-08-29, status: active
+  ✅ Kreiran ciklus za TIM INDUSTRIEL STEEL doo, datum: 2026-09-28, status: active
+  ✅ Kreiran ciklus za DSD EUROLINE, datum: 2026-07-23, status: active
+  ✅ Kreiran ciklus za 97 ENERGETIKA-TERMOTEHNIKA DOO BEOGRAD, datum: 2026-09-23, status: active
+  ✅ Kreiran ciklus za LUXOL SINCE 1884 doo, datum: 2026-08-24, status: active
+  ✅ Kreiran ciklus za ILIJANUM, datum: 2026-07-31, status: active
+  ✅ Kreiran ciklus za Tehnogradnja doo, datum: 2026-06-06, status: active
+  ✅ Kreiran ciklus za MPM International Sp. z o.o., datum: 2026-10-10, status: active
+  ✅ Kreiran ciklus za STANKO MLADENOVIĆ Pr Radnja za izradu građevinske konstrukcije PROGRESPROJEKT LM Počekovina, datum: 2026-02-01, status: active
+  ✅ Kreiran ciklus za STANKO MLADENOVIĆ Pr Radnja za izradu građevinske konstrukcije PROGRESPROJEKT LM Počekovina, datum: 2025-08-13, status: active
+  ✅ Kreiran ciklus za HOLYCODE DOO / Holysap doo, datum: 2026-10-07, status: active
+  ✅ Kreiran ciklus za PWO SEE d.o.o. Čačak, datum: 2026-10-15, status: active
+  ✅ Kreiran ciklus za GEOURB Group d.o.o., datum: 2026-09-25, status: active
+  ✅ Kreiran ciklus za BOŠKO SUBOTIĆ PR SMB-PLUS, datum: 2026-10-18, status: active
+  ✅ Kreiran ciklus za SUNTECH DOO, datum: 2026-10-19, status: active
+  ✅ Kreiran ciklus za BRAINEERING IT SOLUTIONS doo, datum: 2026-10-23, status: active
+  ✅ Kreiran ciklus za EUROSALON FABRIKA, datum: 2026-09-06, status: active
+  ✅ Kreiran ciklus za Naissus A&S Construction DOO Nis, datum: 2026-10-23, status: active
+  ✅ Kreiran ciklus za GRADCOOP  d.o.o., datum: 2026-10-13, status: active
+  ✅ Kreiran ciklus za VOUK d.o.o., datum: 2026-10-20, status: active
+  ✅ Kreiran ciklus za COVELS, datum: 2026-09-07, status: active
+  ✅ Kreiran ciklus za DS INZENJERING, datum: 2026-09-08, status: active
+  ✅ Kreiran ciklus za PUTEVI UŽICE, datum: 2026-09-19, status: active
+  ✅ Kreiran ciklus za EUROGRAF d.o.o, datum: 2026-10-29, status: active
+  ✅ Kreiran ciklus za I.C. MONT d.o.o., datum: 2026-10-29, status: active
+  ✅ Kreiran ciklus za PROBOX d.o.o., datum: 2026-10-31, status: active
+  ✅ Kreiran ciklus za GOMARK d.o.o., datum: 2026-10-29, status: active
+  ✅ Kreiran ciklus za KERAMIKA LIBOJE d.o.o., datum: 2026-11-02, status: active
+  ✅ Kreiran ciklus za LBM ORODJARSTVO d.o.o., datum: 2026-10-30, status: active
+  ✅ Kreiran ciklus za MAK METAL d.o.o., datum: 2026-11-02, status: active
+  ✅ Kreiran ciklus za TENZOR d.o.o., datum: 2026-11-02, status: active
+  ✅ Kreiran ciklus za PROINTER, datum: 2026-03-09, status: active
+  ✅ Kreiran ciklus za PRIVREDNO DRUŠTVO ZA PROIZVODNJU I USLUGE KRISTAL, datum: 2026-11-01, status: active
+  ✅ Kreiran ciklus za BAJIĆI KOP, datum: 2026-10-01, status: active
+  ✅ Kreiran ciklus za MAPSOFT doo, datum: 2026-08-20, status: active
+  ✅ Kreiran ciklus za PREMIUM CARGO, datum: 2026-09-28, status: active
+  ✅ Kreiran ciklus za GILBARCO ACIS DOO, datum: 2026-11-09, status: active
+  ✅ Kreiran ciklus za TELEFON INŽENJERING DOO BEOGRAD, ZEMUN, datum: 2026-11-08, status: active
+  ✅ Kreiran ciklus za RSB FIN Oy, datum: 2026-11-07, status: active
+  ✅ Kreiran ciklus za KHAOTICEN d.o.o., datum: 2026-11-11, status: active
+
+✅ Import završen! Log sačuvan u import_log.txt
