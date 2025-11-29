@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.db import transaction
 from company.models import (
     Company, CertificationCycle, CycleAudit, CycleStandard,
-    StandardDefinition, IAFEACCode, CompanyIAFEACCode
+    StandardDefinition, IAFEACCode, CompanyIAFEACCode, Certificate
 )
 from datetime import datetime
 import openpyxl
@@ -192,40 +192,65 @@ class Command(BaseCommand):
                     cert_status = status_map.get(str(certificate_status).upper(), 'active')
                     
                     # Kreiraj ili ažuriraj kompaniju
-                    # VAŽNO: Prvo proveravamo da li postoji kompanija sa istim brojem sertifikata
+                    # VAŽNO: Prvo proveravamo da li postoji sertifikat sa istim brojem
                     # jer ista kompanija može imati različite nazive u Excel-u
                     # (npr. "ADAM ŠPED SYSTEM" i "ADAM-ŠPED SYSTEM DOO" su ista kompanija)
                     company = None
+                    certificate = None
                     created = False
                     
                     if certificate_number:
-                        # Prvo tražimo po broju sertifikata
-                        company = Company.objects.filter(
+                        # Prvo tražimo sertifikat po broju
+                        certificate = Certificate.objects.filter(
                             certificate_number=str(certificate_number)
                         ).first()
+                        if certificate:
+                            company = certificate.company
                     
                     if not company:
-                        # Ako nema po broju sertifikata, tražimo po imenu
+                        # Ako nema po broju sertifikata, tražimo kompaniju po imenu
                         company = Company.objects.filter(name=company_name).first()
                     
                     if company:
                         # Kompanija već postoji
-                        if sheet_name.lower() not in ['dupli', 'duplicate', 'duplicates']:
-                            company.certificate_number = str(certificate_number) if certificate_number else company.certificate_number
-                            company.certificate_status = cert_status
-                            company.suspension_until_date = suspension_until_date or company.suspension_until_date
-                            company.save()
+                        # Ažuriraj ili kreiraj sertifikat za ovu kompaniju
+                        if certificate_number and not certificate:
+                            # Kreiraj novi sertifikat za postojeću kompaniju
+                            certificate, cert_created = Certificate.objects.get_or_create(
+                                certificate_number=str(certificate_number),
+                                defaults={
+                                    'company': company,
+                                    'status': cert_status,
+                                    'suspension_until_date': suspension_until_date,
+                                }
+                            )
+                            if not cert_created and sheet_name.lower() not in ['dupli', 'duplicate', 'duplicates']:
+                                # Ažuriraj postojeći sertifikat
+                                certificate.status = cert_status
+                                certificate.suspension_until_date = suspension_until_date or certificate.suspension_until_date
+                                certificate.save()
+                        elif certificate and sheet_name.lower() not in ['dupli', 'duplicate', 'duplicates']:
+                            # Ažuriraj postojeći sertifikat
+                            certificate.status = cert_status
+                            certificate.suspension_until_date = suspension_until_date or certificate.suspension_until_date
+                            certificate.save()
                         sheet_updated += 1
                     else:
                         # Kreiraj novu kompaniju
                         company = Company.objects.create(
                             name=company_name,
-                            certificate_number=str(certificate_number) if certificate_number else None,
-                            certificate_status=cert_status,
-                            suspension_until_date=suspension_until_date,
                         )
                         created = True
                         sheet_created += 1
+                        
+                        # Kreiraj sertifikat za novu kompaniju
+                        if certificate_number:
+                            certificate = Certificate.objects.create(
+                                company=company,
+                                certificate_number=str(certificate_number),
+                                status=cert_status,
+                                suspension_until_date=suspension_until_date,
+                            )
                     
                     # Čuvamo kompaniju i dodatne podatke za ciklus
                     # VAŽNO: standard_codes se čuva da bi se znalo koji standardi pripadaju ovom company_id

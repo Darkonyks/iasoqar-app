@@ -10,25 +10,65 @@
 {% block extrajs %}
 <script src="{% static 'js/company/company-detail.js' %}"></script>
 <script src="{% static 'plugins/select2/js/select2.full.min.js' %}"></script>
+
+<!-- Globalna funkcija za brisanje standarda - mora biti definisana pre document.ready -->
+<script>
+  // Globalna funkcija za otvaranje modala za brisanje standarda
+  function openDeleteModal(standardId, standardName) {
+    console.log('=== BRISANJE STANDARDA ===');
+    console.log('Standard ID:', standardId);
+    console.log('Standard Name:', standardName);
+    
+    if (!standardId) {
+      alert('Greška: Nedostaje ID standarda!');
+      return;
+    }
+    
+    // Postavljanje podataka u modal
+    $('#standard-name-to-delete').text(standardName);
+    
+    // Kreiranje URL-a za brisanje
+    var deleteUrl = '/company/companies/{{ company.id }}/standards/' + standardId + '/delete/';
+    console.log('Delete URL:', deleteUrl);
+    $('#delete-standard-form').attr('action', deleteUrl);
+    
+    // Prikazivanje modala
+    $('#deleteStandardModal').modal('show');
+  }
+</script>
+
 <script>
   $(document).ready(function() {
-    // Initialize Select2 Elements
-    $('.select2').select2({
-      theme: 'bootstrap4'
+    // ========== ČUVANJE AKTIVNOG TABA ==========
+    var storageKey = 'companyDetailActiveTab';
+    
+    // Proveri da li postoji sačuvani tab u localStorage ili URL hash
+    var savedTab = localStorage.getItem(storageKey);
+    var hashTab = window.location.hash;
+    
+    // Prioritet: URL hash > localStorage
+    if (hashTab && $(hashTab + '-tab').length) {
+        // Aktiviraj tab iz URL hash-a
+        $('#companyTabs a[href="' + hashTab + '"]').tab('show');
+    } else if (savedTab && $(savedTab).length) {
+        // Aktiviraj sačuvani tab
+        $('#companyTabs a[href="' + savedTab + '"]').tab('show');
+    }
+    
+    // Sačuvaj aktivni tab kada se promeni
+    $('#companyTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var tabId = $(e.target).attr('href');
+        localStorage.setItem(storageKey, tabId);
+        // Ažuriraj URL hash bez scroll-a
+        history.replaceState(null, null, tabId);
     });
     
-    // Funkcionalnost za dugme za brisanje standarda
-    $('.delete-standard').on('click', function() {
-      const standardId = $(this).data('standard-id');
-      const standardName = $(this).data('standard-name');
-      
-      // Postavljanje podataka u modal
-      $('#standard-name-to-delete').text(standardName);
-      $('#delete-standard-form').attr('action', '{% url "company:standard_delete" company_id=company.id pk=0 %}'.replace('0', standardId));
-      
-      // Prikazivanje modala
-      $('#deleteStandardModal').modal('show');
-    });
+    // Initialize Select2 Elements (sa proverom da li postoji)
+    if (typeof $.fn.select2 !== 'undefined') {
+      $('.select2').select2({
+        theme: 'bootstrap4'
+      });
+    }
     
     
     // Funkcija za automatsko izračunavanje datuma isteka sertifikata (3 godine od datuma izdavanja)
@@ -110,7 +150,12 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" id="standards-tab" data-toggle="tab" href="#standards" role="tab">
-                <i class="fas fa-certificate mr-1"></i> Standardi i Sertifikati
+                <i class="fas fa-award mr-1"></i> Standardi
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="certificates-tab" data-toggle="tab" href="#certificates" role="tab">
+                <i class="fas fa-certificate mr-1"></i> Sertifikati
               </a>
             </li>
             <li class="nav-item">
@@ -186,14 +231,6 @@
                         <td>{{ company.get_industry_display }}</td>
                       </tr>
                       <tr>
-                        <td>Status sertifikata:</td>
-                        <td><span class="status-badge status-{{ company.certificate_status }}">{{ company.get_certificate_status_display }}</span></td>
-                      </tr>
-                      <tr>
-                        <td>Broj sertifikata:</td>
-                        <td>{% if company.certificate_number %}{{ company.certificate_number }}{% else %}<span class="text-muted">Nije unet</span>{% endif %}</td>
-                      </tr>
-                      <tr>
                         <td>Broj zaposlenih:</td>
                         <td>{{ company.number_of_employees|default:"Nije unet" }}</td>
                       </tr>
@@ -228,7 +265,7 @@
           </div>
         </div>
         
-        <!-- Standardi i Sertifikati Tab -->
+        <!-- Standardi Tab -->
         <div class="tab-pane fade" id="standards" role="tabpanel" aria-labelledby="standards-tab">
           <div class="row">
             <div class="col-12">
@@ -291,7 +328,10 @@
                                   <a href="{% url 'company:standard_update' company_id=company.id pk=standard_item.standard.id %}" class="btn btn-warning btn-sm" title="Izmeni">
                                     <i class="fas fa-edit"></i>
                                   </a>
-                                  <button type="button" class="btn btn-danger btn-sm delete-standard" title="Obriši" data-standard-id="{{ standard_item.standard.id }}" data-standard-name="{{ standard_item.standard.standard_definition.code }}">
+                                  <button type="button" class="btn btn-danger btn-sm delete-standard" title="Obriši" 
+                                    data-standard-id="{{ standard_item.standard.id }}" 
+                                    data-standard-name="{{ standard_item.standard.standard_definition.code }}"
+                                    onclick="console.log('Kliknuto!', this.dataset); openDeleteModal({{ standard_item.standard.id }}, '{{ standard_item.standard.standard_definition.code|escapejs }}');">
                                     <i class="fas fa-trash"></i>
                                   </button>
                                 </div>
@@ -303,6 +343,84 @@
                     </div>
                   {% else %}
                     <p class="text-muted">Nema dodeljenih standarda</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Sertifikati Tab -->
+        <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h3 class="card-title">Sertifikati</h3>
+                  <a href="{% url 'company:certificate_create' company_id=company.id %}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus"></i> Novi sertifikat
+                  </a>
+                </div>
+                <div class="card-body">
+                  {% if company.certificates.all %}
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Broj sertifikata</th>
+                            <th>Status</th>
+                            <th>Datum izdavanja</th>
+                            <th>Datum isteka</th>
+                            <th>Suspenzija do</th>
+                            <th>Napomene</th>
+                            <th>Akcije</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for certificate in company.certificates.all %}
+                            <tr>
+                              <td><strong>{{ certificate.certificate_number }}</strong></td>
+                              <td>
+                                {% if certificate.status == 'active' %}
+                                  <span class="badge badge-success">{{ certificate.get_status_display }}</span>
+                                {% elif certificate.status == 'suspended' %}
+                                  <span class="badge badge-warning">{{ certificate.get_status_display }}</span>
+                                {% elif certificate.status == 'withdrawn' %}
+                                  <span class="badge badge-danger">{{ certificate.get_status_display }}</span>
+                                {% elif certificate.status == 'expired' %}
+                                  <span class="badge badge-secondary">{{ certificate.get_status_display }}</span>
+                                {% elif certificate.status == 'pending' %}
+                                  <span class="badge badge-info">{{ certificate.get_status_display }}</span>
+                                {% elif certificate.status == 'cancelled' %}
+                                  <span class="badge badge-dark">{{ certificate.get_status_display }}</span>
+                                {% else %}
+                                  <span class="badge badge-light">{{ certificate.get_status_display }}</span>
+                                {% endif %}
+                              </td>
+                              <td>{% if certificate.issue_date %}{{ certificate.issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                              <td>{% if certificate.expiry_date %}{{ certificate.expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                              <td>{% if certificate.suspension_until_date %}{{ certificate.suspension_until_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                              <td>{% if certificate.notes %}{{ certificate.notes|truncatechars:30 }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                              <td>
+                                <div class="btn-group btn-group-sm">
+                                  <a href="{% url 'company:certificate_update' company_id=company.id pk=certificate.id %}" class="btn btn-warning" title="Izmeni">
+                                    <i class="fas fa-edit"></i>
+                                  </a>
+                                  <a href="{% url 'company:certificate_delete' company_id=company.id pk=certificate.id %}" class="btn btn-danger" title="Obriši">
+                                    <i class="fas fa-trash"></i>
+                                  </a>
+                                </div>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <div class="alert alert-info">
+                      <i class="fas fa-info-circle"></i> Nema sertifikata za ovu kompaniju.
+                      <a href="{% url 'company:certificate_create' company_id=company.id %}" class="alert-link">Dodajte prvi sertifikat</a>.
+                    </div>
                   {% endif %}
                 </div>
               </div>

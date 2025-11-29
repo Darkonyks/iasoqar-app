@@ -9,6 +9,7 @@ from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from .calendar_models import CalendarEvent, Appointment
 from .cycle_models import CertificationCycle, CycleAudit, CycleStandard
 from .srbija_tim_models import SrbijaTim
+from .certificate_models import Certificate
 
 # Inline klase za model Company
 class KontaktOsobaInline(admin.TabularInline):
@@ -31,6 +32,11 @@ class CompanyIAFEACCodeInline(admin.TabularInline):
     extra = 1
     fields = ['iaf_eac_code', 'is_primary']
 
+class CertificateInline(admin.TabularInline):
+    model = Certificate
+    extra = 1
+    fields = ['certificate_number', 'status', 'issue_date', 'expiry_date', 'suspension_until_date']
+
 # Admin klase
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ['name', 'pib', 'mb', 'city']
@@ -38,7 +44,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_filter = ['city', 'is_active']
     fieldsets = [
         ('Osnovne informacije', {
-            'fields': ['name', 'pib', 'mb', 'industry', 'number_of_employees', 'certificate_status']
+            'fields': ['name', 'pib', 'mb', 'industry', 'number_of_employees']
         }),
         ('Adresa', {
             'fields': ['street', 'street_number', 'city', 'postal_code', 'country']
@@ -50,7 +56,7 @@ class CompanyAdmin(admin.ModelAdmin):
             'fields': ['notes', 'is_active']
         }),
     ]
-    inlines = [KontaktOsobaInline, OstalaLokacijaInline, CompanyStandardInline, CompanyIAFEACCodeInline]
+    inlines = [CertificateInline, KontaktOsobaInline, OstalaLokacijaInline, CompanyStandardInline, CompanyIAFEACCodeInline]
 
 class KontaktOsobaAdmin(admin.ModelAdmin):
     list_display = ['ime_prezime', 'company', 'pozicija', 'email']
@@ -154,6 +160,7 @@ admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)
 admin.site.register(CycleStandard)
 admin.site.register(CycleAudit)
+admin.site.register(Certificate)
 
 # Srbija Tim Admin
 @admin.register(SrbijaTim)

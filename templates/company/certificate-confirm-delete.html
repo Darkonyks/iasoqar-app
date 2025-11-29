@@ -1,0 +1,100 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:detail' pk=company.id %}#certificates" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card card-danger">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-exclamation-triangle"></i> Potvrda brisanja
+              </h3>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                Da li ste sigurni da želite da obrišete sertifikat <strong>{{ certificate.certificate_number }}</strong>?
+              </div>
+              
+              <table class="table table-bordered">
+                <tr>
+                  <th>Broj sertifikata:</th>
+                  <td>{{ certificate.certificate_number }}</td>
+                </tr>
+                <tr>
+                  <th>Kompanija:</th>
+                  <td>{{ company.name }}</td>
+                </tr>
+                <tr>
+                  <th>Status:</th>
+                  <td>
+                    {% if certificate.status == 'active' %}
+                      <span class="badge badge-success">{{ certificate.get_status_display }}</span>
+                    {% elif certificate.status == 'suspended' %}
+                      <span class="badge badge-warning">{{ certificate.get_status_display }}</span>
+                    {% elif certificate.status == 'withdrawn' %}
+                      <span class="badge badge-danger">{{ certificate.get_status_display }}</span>
+                    {% else %}
+                      <span class="badge badge-secondary">{{ certificate.get_status_display }}</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% if certificate.issue_date %}
+                <tr>
+                  <th>Datum izdavanja:</th>
+                  <td>{{ certificate.issue_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endif %}
+                {% if certificate.expiry_date %}
+                <tr>
+                  <th>Datum isteka:</th>
+                  <td>{{ certificate.expiry_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endif %}
+              </table>
+              
+              <div class="alert alert-danger mt-3">
+                <i class="fas fa-warning"></i>
+                <strong>Upozorenje:</strong> Ova akcija je nepovratna!
+              </div>
+            </div>
+            <div class="card-footer">
+              <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-trash"></i> Da, obriši sertifikat
+                </button>
+                <a href="{% url 'company:detail' pk=company.id %}#certificates" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Otkaži
+                </a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

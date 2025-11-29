@@ -98,10 +98,8 @@ class CompanyForm(forms.ModelForm):
         fields = [
             # Osnovne informacije
             'name', 'pib', 'mb', 'industry', 'number_of_employees',
-            'certificate_status', 'certificate_number',
             
-            # Informacije o sertifikatu
-            'suspension_until_date',
+            # Informacije o sertifikatu (prebačeno u Certificate model)
             'oblast_registracije',
             
             # Adresa
@@ -114,9 +112,6 @@ class CompanyForm(forms.ModelForm):
             'notes'
         ]
         widgets = {
-            # Datumska polja
-            'suspension_until_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            
             # Numerička polja
             'number_of_employees': forms.NumberInput(attrs={'class': 'form-control'}),
             

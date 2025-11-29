@@ -83,7 +83,12 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="standards-tab" data-toggle="tab" href="#standards" role="tab" aria-controls="standards" aria-selected="false">
-                  <i class="fas fa-certificate"></i> Standardi i Sertifikati
+                  <i class="fas fa-award"></i> Standardi
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="certificates-tab" data-toggle="tab" href="#certificates" role="tab" aria-controls="certificates" aria-selected="false">
+                  <i class="fas fa-certificate"></i> Sertifikati
                 </a>
               </li>
               <li class="nav-item">
@@ -177,70 +182,12 @@
                     </div>
                   </div>
                   
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="{{ form.certificate_status.id_for_label }}">Status sertifikata *</label>
-                      {{ form.certificate_status.errors }}
-                      <select name="{{ form.certificate_status.name }}" id="{{ form.certificate_status.id_for_label }}" 
-                              class="form-control {% if form.certificate_status.errors %}is-invalid{% endif %}" required>
-                        <option value="">Izaberite status</option>
-                        {% for value, text in form.fields.certificate_status.choices %}
-                          <option value="{{ value }}" {% if form.certificate_status.value == value %}selected{% endif %}>
-                            {{ text }}
-                          </option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                  </div>
                 </div>
               </div>
               
-              <!-- Tab: Sertifikat je uklonjen; sadržaj je prebačen u tab 'Standardi i Sertifikati' -->
-              
-              <!-- Tab: Standardi i Sertifikati -->
+              <!-- Tab: Standardi -->
               <div class="tab-pane fade" id="standards" role="tabpanel" aria-labelledby="standards-tab">
-                <h5 class="mb-3">Standardi i Sertifikati</h5>
-                <!-- Sekcija: Podaci o sertifikatu (prebačeno iz posebnog taba) -->
-                <div class="card card-info mb-3">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="fas fa-id-badge"></i> Podaci o sertifikatu</h3>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.certificate_number.id_for_label }}">Broj sertifikata</label>
-                          {{ form.certificate_number.errors }}
-                          <input type="text" name="{{ form.certificate_number.name }}" id="{{ form.certificate_number.id_for_label }}" 
-                                 class="form-control {% if form.certificate_number.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.certificate_number.value|default:'' }}">
-                        </div>
-                      </div>
-
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.suspension_until_date.id_for_label }}">Suspenzija do datuma</label>
-                          {{ form.suspension_until_date.errors }}
-                          <input type="date" name="{{ form.suspension_until_date.name }}" id="{{ form.suspension_until_date.id_for_label }}" 
-                                 class="form-control {% if form.suspension_until_date.errors %}is-invalid{% endif %}" 
-                                 value="{{ form.suspension_until_date.value|date:'Y-m-d'|default:'' }}">
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
-                          {{ form.oblast_registracije.errors }}
-                          <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
-                               class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
-                               rows="3">{{ form.oblast_registracije.value|default:'' }}</textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <h5 class="mb-3">Standardi</h5>
                 <div class="card">
                   <div class="card-body">
                     <div class="table-responsive mb-4">
@@ -354,6 +301,97 @@
                             <i class="fas fa-plus"></i> Dodaj standard
                           </button>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Tab: Sertifikati -->
+              <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
+                <h5 class="mb-3">Sertifikati</h5>
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title"><i class="fas fa-certificate"></i> Sertifikati kompanije</h3>
+                    {% if object %}
+                    <a href="{% url 'company:certificate_create' company_id=object.id %}" class="btn btn-success btn-sm">
+                      <i class="fas fa-plus"></i> Novi sertifikat
+                    </a>
+                    {% endif %}
+                  </div>
+                  <div class="card-body">
+                    {% if object and object.certificates.all %}
+                      <div class="table-responsive">
+                        <table class="table table-striped">
+                          <thead>
+                            <tr>
+                              <th>Broj sertifikata</th>
+                              <th>Status</th>
+                              <th>Datum izdavanja</th>
+                              <th>Datum isteka</th>
+                              <th>Suspenzija do</th>
+                              <th>Napomene</th>
+                              <th>Akcije</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for certificate in object.certificates.all %}
+                              <tr>
+                                <td><strong>{{ certificate.certificate_number }}</strong></td>
+                                <td>
+                                  {% if certificate.status == 'active' %}
+                                    <span class="badge badge-success">{{ certificate.get_status_display }}</span>
+                                  {% elif certificate.status == 'suspended' %}
+                                    <span class="badge badge-warning">{{ certificate.get_status_display }}</span>
+                                  {% elif certificate.status == 'withdrawn' %}
+                                    <span class="badge badge-danger">{{ certificate.get_status_display }}</span>
+                                  {% elif certificate.status == 'expired' %}
+                                    <span class="badge badge-secondary">{{ certificate.get_status_display }}</span>
+                                  {% elif certificate.status == 'pending' %}
+                                    <span class="badge badge-info">{{ certificate.get_status_display }}</span>
+                                  {% elif certificate.status == 'cancelled' %}
+                                    <span class="badge badge-dark">{{ certificate.get_status_display }}</span>
+                                  {% else %}
+                                    <span class="badge badge-light">{{ certificate.get_status_display }}</span>
+                                  {% endif %}
+                                </td>
+                                <td>{% if certificate.issue_date %}{{ certificate.issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                <td>{% if certificate.expiry_date %}{{ certificate.expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                <td>{% if certificate.suspension_until_date %}{{ certificate.suspension_until_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                <td>{% if certificate.notes %}{{ certificate.notes|truncatechars:30 }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
+                                <td>
+                                  <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'company:certificate_update' company_id=object.id pk=certificate.id %}" class="btn btn-warning" title="Izmeni">
+                                      <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'company:certificate_delete' company_id=object.id pk=certificate.id %}" class="btn btn-danger" title="Obriši">
+                                      <i class="fas fa-trash"></i>
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Nema sertifikata za ovu kompaniju.
+                        {% if object %}
+                        <a href="{% url 'company:certificate_create' company_id=object.id %}" class="alert-link">Dodajte prvi sertifikat</a>.
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                    
+                    <!-- Oblast registracije -->
+                    <div class="mt-4">
+                      <h6 class="font-weight-bold mb-3">Oblast registracije</h6>
+                      <div class="form-group">
+                        <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
+                        {{ form.oblast_registracije.errors }}
+                        <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
+                             class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
+                             rows="3" placeholder="Unesite oblast registracije kompanije">{{ form.oblast_registracije.value|default:'' }}</textarea>
                       </div>
                     </div>
                   </div>
@@ -1051,154 +1089,9 @@
 <div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header bg-danger">
-        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardToDeleteName"></strong>?</p>
-        <input type="hidden" id="standardToDeleteId" name="standardToDeleteId" value="">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Otkaži</button>
-        <button type="button" class="btn btn-danger" id="confirmDeleteStandard">Obriši</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Koristićemo lokalne biblioteke koje sada poslužuje Nginx sa ispravnim MIME tipovima -->
-
-<!-- Inicijalizacija modalnih dijaloga i Select2 komponente -->
-<script>
-  $(document).ready(function() {
-    // Inicijalizacija Select2 za auditors polje
-    $('#auditors').select2({
-        placeholder: "Izaberite auditore...",
-        allowClear: true,
-        width: '100%'
-    });
-    
-    // Inicijalizacija Select2 za standard auditors polje
-    $('#standard_auditors').select2({
-        placeholder: "Izaberite auditore za standard...",
-        allowClear: true,
-        width: '100%'
-    });
-    
-    // Osiguraj da modalni dijalozi budu pravilno inicijalzovani
-    $('#deleteStandardModal').modal({
-      show: false, // Ne prikazuj automatski
-      backdrop: 'static' // Spreči zatvaranje klikom van modala
-    });
-    
-    console.log('Modal dialog initialized:', $('#deleteStandardModal').length > 0);
-    console.log('Select2 initialized for auditors');
-    
-    // Handler za direktno dodavanje standarda
-    $('#directStandardAdd').off('click').on('click', function() {
-      // Validacija forme pre slanja
-      var standardId = $('#standard_definition').val();
-      if (!standardId) {
-        alert('Morate izabrati standard!');
-        return false;
-      }
-      
-      // Pošalji formu
-      $('#standardAddForm').submit();
-    });
-    
-    // Handler za dugme za brisanje standarda
-    $('#standards-list').off('click', '.btn-remove-standard').on('click', '.btn-remove-standard', function() {
-      var standardId = $(this).data('id');
-      var standardName = $(this).closest('tr').find('td:first-child strong').text();
-      console.log('Clicked remove button, standardId:', standardId);
-      console.log('Standard name:', standardName);
-      
-      // Postavi vrednosti u modalni dijalog
-      $('#standardToDeleteName').text(standardName);
-      $('#standardToDeleteId').val(standardId);
-      
-      // Prikaži modalni dijalog
-      $('#deleteStandardModal').modal('show');
-    });
-    
-    // Handler za potvrdu brisanja standarda
-    $('#confirmDeleteStandard').off('click').on('click', function() {
-      var standardId = $('#standardToDeleteId').val();
-      console.log('Confirming deletion of standard ID:', standardId);
-      
-      // Dobavi CSRF token iz dokumenta
-      var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-      
-      // Pošalji AJAX zahtev za brisanje standarda
-      $.ajax({
-        url: '{% url "company:delete_standard" %}',
-        type: 'POST',
-        data: {
-          'standard_id': standardId,
-          'csrfmiddlewaretoken': csrfToken
-        },
-        success: function(response) {
-          console.log('Standard successfully deleted:', response);
-          
-          // Sakrij modalni dijalog
-          $('#deleteStandardModal').modal('hide');
-          
-          // Ukloni red iz tabele
-          $('#standard-' + standardId).remove();
-          
-          // Prikaži poruku o uspešnom brisanju
-          toastr.success('Standard je uspešno obrisan.');
-        },
-        error: function(xhr, status, error) {
-          console.error('Error deleting standard:', error);
-          
-          // Sakrij modalni dijalog
-          $('#deleteStandardModal').modal('hide');
-          
-          // Prikaži poruku o grešci
-          toastr.error('Došlo je do greške pri brisanju standarda.');
-        }
-      });
-    });
-  });
-</script>
-
-<!-- Modal za potvrdu brisanja standarda -->
-<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
-        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
-        <form id="deleteStandardForm" method="post" action="">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Obriši</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal za potvrdu brisanja standarda -->
-<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -1227,6 +1120,91 @@
 {% load static %}
 <!-- Učitavanje Select2 biblioteke -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Inicijalizacija Select2 komponenti i čuvanje aktivnog taba -->
+<script>
+$(document).ready(function() {
+    // ========== ČUVANJE AKTIVNOG TABA ==========
+    var storageKey = 'companyFormActiveTab';
+    
+    // Proveri da li postoji sačuvani tab u localStorage ili URL hash
+    var savedTab = localStorage.getItem(storageKey);
+    var hashTab = window.location.hash;
+    
+    // Prioritet: URL hash > localStorage
+    if (hashTab && $(hashTab + '-tab').length) {
+        // Aktiviraj tab iz URL hash-a
+        $('#companyFormTabs a[href="' + hashTab + '"]').tab('show');
+    } else if (savedTab && $(savedTab).length) {
+        // Aktiviraj sačuvani tab
+        $('#companyFormTabs a[href="' + savedTab + '"]').tab('show');
+    }
+    
+    // Sačuvaj aktivni tab kada se promeni
+    $('#companyFormTabs a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var tabId = $(e.target).attr('href');
+        localStorage.setItem(storageKey, tabId);
+        // Ažuriraj URL hash bez scroll-a
+        history.replaceState(null, null, tabId);
+    });
+    
+    // ========== INICIJALIZACIJA SELECT2 ==========
+    // Inicijalizacija Select2 za auditors polje
+    if ($('#auditors').length) {
+        $('#auditors').select2({
+            placeholder: "Izaberite auditore...",
+            allowClear: true,
+            width: '100%'
+        });
+    }
+    
+    // Inicijalizacija Select2 za standard auditors polje
+    if ($('#standard_auditors').length) {
+        $('#standard_auditors').select2({
+            placeholder: "Izaberite auditore za standard...",
+            allowClear: true,
+            width: '100%'
+        });
+    }
+    
+    // Inicijalizacija Select2 za IAF/EAC kod polje sa pretragom
+    if ($('#iaf_eac_code_select').length) {
+        $('#iaf_eac_code_select').select2({
+            placeholder: "Pretražite i izaberite IAF/EAC kod...",
+            allowClear: true,
+            width: '100%',
+            language: {
+                noResults: function() {
+                    return "Nema rezultata";
+                },
+                searching: function() {
+                    return "Pretraživanje...";
+                }
+            }
+        });
+        console.log('Select2 initialized for IAF/EAC codes');
+    }
+    
+    // Inicijalizacija Select2 za standard polje sa pretragom
+    if ($('#standard_definition').length) {
+        $('#standard_definition').select2({
+            placeholder: "Pretražite i izaberite standard...",
+            allowClear: true,
+            width: '100%',
+            language: {
+                noResults: function() {
+                    return "Nema rezultata";
+                },
+                searching: function() {
+                    return "Pretraživanje...";
+                }
+            }
+        });
+        console.log('Select2 initialized for standards');
+    }
+});
+</script>
+
 <!-- Privremeno ugrađene JavaScript funkcije umesto eksternih fajlova dok ne rešimo problem sa statičkim fajlovima -->
 <script>
 /**
@@ -1399,15 +1377,17 @@
                     $btn.html(originalBtnText);
                     $btn.prop('disabled', false);
                     
-                    // Očisti formu
-                    $('#standard_definition').val('');
+                    // Sačuvaj naziv standarda PRE čišćenja
+                    var standardName = $('#standard_definition option:selected').text() || 'Odabrani standard';
+                    
+                    // Očisti formu (sa Select2 resetom)
+                    $('#standard_definition').val('').trigger('change');
                     $('#standard_issue_date').val('');
                     $('#standard_expiry_date').val('');
                     $('#standard_notes').val('');
                     $('#standard_auditors').val(null).trigger('change');
                     
                     // Prikaži poruku sa nazivom standarda
-                    var standardName = $('#standard_definition option:selected').text();
                     showMessage('Standard uspešno dodat', 'Standard "' + standardName + '" je uspešno dodat kompaniji!', 'success');
                     
                     // Osvežavanje stranice nakon kratke pauze
@@ -1565,8 +1545,8 @@
                         fullCodeName = response.iaf_code;
                     }
                     
-                    // Čišćenje forme
-                    $('#iaf_eac_code_select').val('');
+                    // Čišćenje forme (sa Select2 resetom)
+                    $('#iaf_eac_code_select').val('').trigger('change');
                     $('#iaf_eac_code_notes').val('');
                     $('#iaf_eac_is_primary').prop('checked', false);
                     
@@ -1988,35 +1968,45 @@
         createDeleteModal();
         
         // Poveži event handler za dugmad za brisanje
-        $(document).on('click', '.btn-delete-standard', function(e) {
+        $('.btn-delete-standard').off('click').on('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             
-            var standardId = $(this).data('standard-id');
-            var standardName = $(this).data('standard-name');
-            var companyId = $(this).data('company-id');
+            var $btn = $(this);
+            var standardId = $btn.data('standard-id');
+            var standardName = $btn.data('standard-name');
+            var companyId = $btn.data('company-id');
             
-            console.log('Kliknuto brisanje standarda:', standardId, standardName, companyId);
+            console.log('=== BRISANJE STANDARDA ===');
+            console.log('Standard ID:', standardId);
+            console.log('Standard Name:', standardName);
+            console.log('Company ID:', companyId);
+            
+            if (!standardId || !companyId) {
+                alert('Greška: Nedostaju podaci za brisanje!');
+                return;
+            }
             
             // Postavljanje vrednosti u modalu
             $('#standardNameToDelete').text(standardName);
             
             // Postavljanje URL-a za brisanje
             var deleteUrl = '/company/companies/' + companyId + '/standards/' + standardId + '/delete/';
+            console.log('Delete URL:', deleteUrl);
             $('#deleteStandardForm').attr('action', deleteUrl);
             
             // Prikazivanje modala
-            $('#deleteStandardModal').modal('show');
+            var $modal = $('#deleteStandardModal');
+            console.log('Modal element found:', $modal.length > 0);
+            
+            if ($modal.length > 0) {
+                $modal.modal('show');
+            } else {
+                alert('Greška: Modal za brisanje nije pronađen!');
+            }
         });
         
-        // Kada se modal pojavi
-        $(document).on('shown.bs.modal', '#deleteStandardModal', function() {
-            console.log('Modal za brisanje standarda je prikazan.');
-        });
-        
-        // Kada se modal zatvori
-        $(document).on('hidden.bs.modal', '#deleteStandardModal', function() {
-            console.log('Modal za brisanje standarda je zatvoren.');
-        });
+        console.log('Handler za brisanje standarda inicijalizovan.');
     });
     
 })(jQuery);

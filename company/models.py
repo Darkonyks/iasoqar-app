@@ -47,3 +47,8 @@ from .cycle_models import (
 from .srbija_tim_models import (
     SrbijaTim,
 )
+
+# Import Certificate models
+from .certificate_models import (
+    Certificate,
+)

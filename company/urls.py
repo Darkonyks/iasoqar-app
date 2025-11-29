@@ -2,6 +2,7 @@ from django.urls import path
 from .auditor_views import AuditorListView, AuditorDetailView, AuditorDeleteView, AuditorCreateView, AuditorUpdateView, auditor_standard_create, auditor_standard_update, auditor_standard_delete, auditor_standard_iaf_eac_create, auditor_standard_iaf_eac_update, auditor_standard_iaf_eac_delete, get_auditor_details, get_qualified_auditors
 from .auditor_direct_iaf_views import auditor_direct_iaf_eac_create, auditor_direct_iaf_eac_update, auditor_direct_iaf_eac_delete
 from .contact_views import kontakt_osoba_create, kontakt_osoba_update, kontakt_osoba_delete
+from .certificate_views import certificate_create, certificate_update, certificate_delete, certificate_ajax_create, certificate_ajax_delete
 from .location_views import LocationListView, LocationDetailView, LocationCreateView, LocationUpdateView, LocationDeleteView
 from .iaf_views import IAFEACCodeListView
 from .views_cycles import (CertificationCycleListView, CertificationCycleDetailView, CertificationCycleCreateView, 
@@ -76,6 +77,15 @@ urlpatterns = [
     path('companies/<int:company_id>/standards/<int:pk>/', company_standard_detail, name='standard_detail'),
     path('companies/<int:company_id>/standards/<int:pk>/update/', company_standard_update, name='standard_update'),
     path('companies/<int:company_id>/standards/<int:pk>/delete/', company_standard_delete, name='standard_delete'),
+    
+    # Sertifikati CRUD URLs
+    path('companies/<int:company_id>/certificates/add/', certificate_create, name='certificate_create'),
+    path('companies/<int:company_id>/certificates/<int:pk>/update/', certificate_update, name='certificate_update'),
+    path('companies/<int:company_id>/certificates/<int:pk>/delete/', certificate_delete, name='certificate_delete'),
+    
+    # Sertifikati AJAX URLs
+    path('api/companies/<int:company_id>/certificates/add/', certificate_ajax_create, name='certificate_ajax_create'),
+    path('api/companies/<int:company_id>/certificates/<int:pk>/delete/', certificate_ajax_delete, name='certificate_ajax_delete'),
     
     # AJAX URL-ovi za standarde
     path('api/standards/delete/', delete_standard, name='api_standard_delete'),

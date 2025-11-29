@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">{{ title }}</h1>
+        </div>
+        <div class="col-sm-6">
+          <div class="float-sm-right">
+            <a href="{% url 'company:detail' pk=company.id %}#certificates" class="btn btn-secondary">
+              <i class="fas fa-arrow-left"></i> Nazad
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-certificate"></i>
+                {% if certificate %}Izmena sertifikata{% else %}Novi sertifikat{% endif %}
+              </h3>
+            </div>
+            <form method="post">
+              {% csrf_token %}
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="certificate_number">Broj sertifikata <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="certificate_number" name="certificate_number" 
+                             value="{{ certificate.certificate_number|default:'' }}" required
+                             placeholder="Unesite broj sertifikata">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="status">Status</label>
+                      <select class="form-control" id="status" name="status">
+                        {% for value, label in status_choices %}
+                          <option value="{{ value }}" {% if certificate.status == value %}selected{% endif %}>
+                            {{ label }}
+                          </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="issue_date">Datum izdavanja</label>
+                      <input type="date" class="form-control" id="issue_date" name="issue_date" 
+                             value="{% if certificate.issue_date %}{{ certificate.issue_date|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="expiry_date">Datum isteka</label>
+                      <input type="date" class="form-control" id="expiry_date" name="expiry_date" 
+                             value="{% if certificate.expiry_date %}{{ certificate.expiry_date|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="suspension_until_date">Suspenzija do</label>
+                      <input type="date" class="form-control" id="suspension_until_date" name="suspension_until_date" 
+                             value="{% if certificate.suspension_until_date %}{{ certificate.suspension_until_date|date:'Y-m-d' }}{% endif %}">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="notes">Napomene</label>
+                  <textarea class="form-control" id="notes" name="notes" rows="3" 
+                            placeholder="Unesite napomene (opciono)">{{ certificate.notes|default:'' }}</textarea>
+                </div>
+              </div>
+              
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> {% if certificate %}Sačuvaj izmene{% else %}Kreiraj sertifikat{% endif %}
+                </button>
+                <a href="{% url 'company:detail' pk=company.id %}#certificates" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Otkaži
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card card-info">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-building"></i> Kompanija</h3>
+            </div>
+            <div class="card-body">
+              <p><strong>{{ company.name }}</strong></p>
+              {% if company.pib %}
+                <p class="mb-1"><small class="text-muted">PIB:</small> {{ company.pib }}</p>
+              {% endif %}
+              {% if company.mb %}
+                <p class="mb-1"><small class="text-muted">MB:</small> {{ company.mb }}</p>
+              {% endif %}
+              {% if company.city %}
+                <p class="mb-0"><small class="text-muted">Grad:</small> {{ company.get_city_display }}</p>
+              {% endif %}
+            </div>
+          </div>
+          
+          {% if certificate %}
+          <div class="card card-warning">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-info-circle"></i> Informacije</h3>
+            </div>
+            <div class="card-body">
+              <p class="mb-1"><small class="text-muted">Kreiran:</small> {{ certificate.created_at|date:"d.m.Y H:i" }}</p>
+              <p class="mb-0"><small class="text-muted">Ažuriran:</small> {{ certificate.updated_at|date:"d.m.Y H:i" }}</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+  // Automatsko izračunavanje datuma isteka (3 godine od izdavanja)
+  document.getElementById('issue_date').addEventListener('change', function() {
+    const issueDate = this.value;
+    if (issueDate) {
+      const date = new Date(issueDate);
+      date.setFullYear(date.getFullYear() + 3);
+      const expiryDate = date.toISOString().split('T')[0];
+      
+      // Postavi datum isteka samo ako nije već unet
+      const expiryField = document.getElementById('expiry_date');
+      if (!expiryField.value) {
+        expiryField.value = expiryDate;
+      }
+    }
+  });
+</script>
+{% endblock %}

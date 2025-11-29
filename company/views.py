@@ -50,7 +50,7 @@ class CompanyListView(ListView):
                 Q(iaf_eac_codes__iaf_eac_code__iaf_code__icontains=search_query)
             ).distinct()
         
-        # Date range filter za istek sertifikata
+        # Date range filter za istek sertifikata (koristi Certificate model)
         expiry_from = self.request.GET.get('expiry_from')
         expiry_to = self.request.GET.get('expiry_to')
         
@@ -58,9 +58,9 @@ class CompanyListView(ListView):
             try:
                 from datetime import datetime
                 expiry_from_date = datetime.strptime(expiry_from, '%Y-%m-%d').date()
-                # Filtriraj kompanije koje imaju bar jedan standard sa datumom isteka >= expiry_from
+                # Filtriraj kompanije koje imaju bar jedan sertifikat sa datumom isteka >= expiry_from
                 queryset = queryset.filter(
-                    company_standards__expiry_date__gte=expiry_from_date
+                    certificates__expiry_date__gte=expiry_from_date
                 ).distinct()
             except ValueError:
                 pass
@@ -69,9 +69,9 @@ class CompanyListView(ListView):
             try:
                 from datetime import datetime
                 expiry_to_date = datetime.strptime(expiry_to, '%Y-%m-%d').date()
-                # Filtriraj kompanije koje imaju bar jedan standard sa datumom isteka <= expiry_to
+                # Filtriraj kompanije koje imaju bar jedan sertifikat sa datumom isteka <= expiry_to
                 queryset = queryset.filter(
-                    company_standards__expiry_date__lte=expiry_to_date
+                    certificates__expiry_date__lte=expiry_to_date
                 ).distinct()
             except ValueError:
                 pass
@@ -79,7 +79,8 @@ class CompanyListView(ListView):
         # Prefetch related data for better performance
         return queryset.prefetch_related(
             'iaf_eac_codes__iaf_eac_code',
-            'company_standards__standard_definition'
+            'company_standards__standard_definition',
+            'certificates'
         ).order_by('name')
     
     def get_context_data(self, **kwargs):
@@ -1246,8 +1247,8 @@ def appointment_calendar_json(request):
         },
         'surveillance_2': {
             'name': 'Druga nadzorna provera',
-            'color_planned': '#FF9800',      # Narandžasta - planirano
-            'color_scheduled': '#F44336',    # Crvena - zakazano
+            'color_planned': '#9C27B0',      # Ljubičasta - planirano (razlikuje se od surveillance_1)
+            'color_scheduled': '#7B1FA2',    # Tamno ljubičasta - zakazano
             'color_postponed': '#9E9E9E',    # Siva - odloženo
             'color_completed': '#4CAF50',    # Zelena - završeno
             'color_cancelled': '#424242'     # Tamno siva - otkazano
@@ -1404,9 +1405,15 @@ def appointment_calendar_json(request):
         except Exception:
             has_actual_day = False
         
-        # Add planned audit only if not completed with an actual date
-        # Ako je audit završen i postoji stvarni datum, ne prikazuj planirani događaj
-        if audit.planned_date and not (is_completed and audit.actual_date):
+        # Helper: proveri da li je datum validan (nije 0001-01-01 ili sličan nevažeći datum)
+        def is_valid_date(d):
+            return d and d.year >= 2000
+        
+        has_valid_actual = is_valid_date(audit.actual_date)
+        has_valid_planned = is_valid_date(audit.planned_date)
+        
+        # UVEK prikaži planirani datum ako je validan (bez obzira na status)
+        if has_valid_planned:
             events.append({
                 'id': f'cycle_audit_planned_{audit.id}',
                 'title': f'{audit_name} - {company_name} ({status_text})',
@@ -1430,8 +1437,8 @@ def appointment_calendar_json(request):
                 }
             })
         
-        # Add completed audit uvek (dozvoli prikaz glavnog termina)
-        if audit.actual_date:
+        # Add completed audit only if actual_date is VALID
+        if has_valid_actual:
             events.append({
                 'id': f'cycle_audit_actual_{audit.id}',
                 'title': f'{company_name} - {audit_name} ({status_text})',
@@ -1457,6 +1464,13 @@ def appointment_calendar_json(request):
     
     logger.info(f"Total events returned: {len(events)}")
     logger.info(f"Events summary - Appointments: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'appointment'])}, Audit days: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'audit_day'])}, Cycle audits: {len([e for e in events if e.get('extendedProps', {}).get('eventType') == 'cycle_audit'])}")
+    
+    # Debug: proveri surveillance_2 audite
+    surv2_events = [e for e in events if e.get('extendedProps', {}).get('audit_type') == 'surveillance_2']
+    logger.info(f"DEBUG surveillance_2 events count: {len(surv2_events)}")
+    for e in surv2_events:
+        logger.info(f"DEBUG surveillance_2: {e.get('title')} on {e.get('start')}")
+    
     return JsonResponse(events, safe=False)
 
 def appointment_detail(request, pk):
@@ -1783,8 +1797,11 @@ def company_standard_delete(request, company_id, pk):
         messages.success(request, f"Standard '{standard_name}' je uspešno obrisan.")
     else:
         messages.error(request, "Nije moguće obrisati standard. Potreban je POST zahtev.")
-        
-    return redirect('company:update', pk=company_id)
+    
+    # Redirect na stranicu za izmenu sa hash-om za tab standardi
+    from django.urls import reverse
+    redirect_url = reverse('company:update', kwargs={'pk': company_id}) + '#standards'
+    return redirect(redirect_url)
 
 
 def company_standard_detail(request, company_id, pk):

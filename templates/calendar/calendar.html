@@ -25,8 +25,30 @@
     width: 100%;
   }
 
-  .fc-view-harness {
+  /* Mesečni prikaz - fiksna visina */
+  .fc-dayGridMonth-view .fc-view-harness {
     height: 600px !important;
+  }
+  
+  /* Godišnji prikaz - automatska visina sa max ograničenjem */
+  .fc-multiMonthYear-view {
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+  }
+  
+  .fc-multiMonthYear-view .fc-view-harness {
+    height: auto !important;
+  }
+  
+  /* Card body overflow za kalendar */
+  .card-body:has(#calendar) {
+    overflow: visible;
+  }
+  
+  /* Alternativno - ako :has() nije podržan */
+  .calendar-card .card-body {
+    overflow-x: auto;
+    overflow-y: visible;
   }
 
   /* Standardni stilovi - ne koristimo agresivan override */
@@ -229,8 +251,8 @@
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-body">
+          <div class="card calendar-card">
+            <div class="card-body" style="overflow: visible;">
               <div id="calendar-container">
                 <div id="calendar"></div>
               </div>
@@ -1699,7 +1721,8 @@
             locale: 'sr',
             initialView: '{{ initial_view|default:"dayGridMonth" }}',
             height: 'auto',
-            contentHeight: 600,
+            dayMaxEvents: 4,  // Prikaži max 4 događaja po danu, ostali idu u "+more" link
+            moreLinkClick: 'popover',  // Klik na "+more" otvara popover sa svim događajima
             headerToolbar: {
               left: 'prev,next today',
               center: 'title',
