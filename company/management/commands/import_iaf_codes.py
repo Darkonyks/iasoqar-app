@@ -32,13 +32,27 @@ class Command(BaseCommand):
             )
 
         try:
-            # Učitaj Excel fajl
-            df = pd.read_excel(excel_file, sheet_name='Sheet1')
+            # Učitaj oba sheet-a iz Excel fajla
+            sheets_to_load = ['Sheet1', 'Sheet11']
+            all_groups = []
             
-            # Parse podatke u grupe
-            groups = self.parse_excel_data(df)
+            for sheet_name in sheets_to_load:
+                try:
+                    df = pd.read_excel(excel_file, sheet_name=sheet_name)
+                    self.stdout.write(f'Učitavam sheet: {sheet_name}')
+                    
+                    # Parse podatke u grupe
+                    groups = self.parse_excel_data(df)
+                    all_groups.extend(groups)
+                    
+                    self.stdout.write(f'  - Pronađeno {len(groups)} grupa u {sheet_name}')
+                except ValueError as e:
+                    self.stdout.write(
+                        self.style.WARNING(f'Sheet "{sheet_name}" nije pronađen, preskačem...')
+                    )
             
-            self.stdout.write(f'Pronađeno {len(groups)} IAF Scope Reference grupa')
+            groups = all_groups
+            self.stdout.write(f'\nUkupno pronađeno {len(groups)} IAF Scope Reference grupa')
             total_codes = sum(len(g['codes']) for g in groups)
             self.stdout.write(f'Ukupno {total_codes} IAF/EAC kodova')
             
