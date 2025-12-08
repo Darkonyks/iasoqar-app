@@ -26,7 +26,7 @@ djangorestframework==3.16.1
 
 # Production deployment
 gunicorn==23.0.0
-psycopg[binary]>=3.2,<3.3
+psycopg[binary]>=3.2,<3.4
 
 # Date handling
 python-dateutil==2.9.0.post0
