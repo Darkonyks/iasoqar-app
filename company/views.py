@@ -1,6 +1,5 @@
 import json
 import logging
-import random
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -10,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -22,8 +21,8 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 
 from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
-from .cycle_models import CertificationCycle, CycleStandard, CycleAudit
-from .forms import AuditForm, CompanyForm, CertificationCycleForm, CycleAuditForm
+from .cycle_models import CertificationCycle, CycleStandard, CycleAudit, AuditDay, AuditorReservation
+from .forms import CompanyForm, CertificationCycleForm, CycleAuditForm
 from .models import Company, Appointment, KontaktOsoba, OstalaLokacija, IAFEACCode, CompanyIAFEACCode
 from .standard_models import StandardDefinition, CompanyStandard
 
@@ -102,7 +101,7 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
             audit = get_object_or_404(CycleAudit, id=edit_audit, certification_cycle__company=company)
             return redirect('company:cycle_audit_update', pk=audit.id)
         
-        # Ako nema edit_audit parametra, nastavljamo normalno sa view-om
+        # Ako nema edit_audit parametra, nastavljamo normalno са view-ом
         return super().get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -173,7 +172,7 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
             if form.is_valid():
                 cycle = form.save()
                 messages.success(request, 'Ciklus sertifikacije je uspešno sačuvan.')
-                return redirect('company:detail', pk=company.id)
+                return redirect('company:detail', pk=self.object.pk)
             else:
                 context = self.get_context_data(**kwargs)
                 context['cycle_form'] = form
@@ -196,7 +195,7 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
             if form.is_valid():
                 audit = form.save()
                 messages.success(request, 'Audit je uspešno sačuvan.')
-                return redirect('company:detail', pk=company.id)
+                return redirect('company:detail', pk=self.object.pk)
             else:
                 context = self.get_context_data(**kwargs)
                 context['audit_form'] = form
@@ -243,19 +242,21 @@ class CompanyUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Izmena kompanije'
         context['submit_text'] = 'Sačuvaj izmene'
-        # Dodaj sve IAF/EAC kodove za izbor
         context['all_iaf_eac_codes'] = IAFEACCode.objects.all().order_by('iaf_code')
-        context['iaf_codes'] = IAFEACCode.objects.all().order_by('iaf_code')  # Potrebno za IAF tab
-        # Dodaj sve definicije standarda za izbor
-        from .standard_models import StandardDefinition
+        context['iaf_codes'] = IAFEACCode.objects.all().order_by('iaf_code')
         context['all_standard_definitions'] = StandardDefinition.objects.filter(active=True).order_by('code')
-        
-        # Dodaj sve auditore za izbor prilikom dodavanja standarda
         context['all_auditors'] = Auditor.objects.all().order_by('ime_prezime')
         
-        # Dodaj kontakt osobe za prikaz u kontakt tab-u
         if self.object:
             context['kontakt_osobe'] = self.object.kontakt_osobe.all().order_by('-is_primary', 'ime_prezime')
+            
+            cycles = CertificationCycle.objects.filter(
+                company=self.object
+            ).prefetch_related('cycle_standards__standard_definition', 'audits').order_by('-planirani_datum')
+            
+            # Jednostavnije - samo dodaj cikluse bez pozivanja nepostojećih metoda
+            context['certification_cycles'] = cycles
+            
         return context
     
     def get_success_url(self):
@@ -470,66 +471,28 @@ class CompanyAuditDetailView(LoginRequiredMixin, DetailView):
 
 
 class AuditCreateView(LoginRequiredMixin, CreateView):
-    """Kreiranje novog audit zapisa - preusmereno na kreiranje CycleAudit"""
-    form_class = AuditForm  # Ažurirati formu kasnije
-    template_name = 'audit/audit_form.html'
-    
-    # Ova klasa je zadržana za kompatibilnost, ali treba preusmeriti na novi sistem audita
+    """Kreiranje novog CycleAudit zapisa"""
+    template_name = 'audit/cycle_audit_form.html'
+    form_class = CycleAuditForm
     success_url = reverse_lazy('company:audit_list')
     
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         
-        # Ako je kompanija već izabrana, filtriramo auditore koji su kvalifikovani za tu kompaniju
+        # Ako je kompanija već izabrana, filtriramo cikluse za tu kompaniju
         company_id = self.request.GET.get('company', None)
         if company_id:
-            try:
-                from .audit_utils import get_qualified_auditors_for_company
-                
-                # Dobijamo rečnik kvalifikovanih auditora po standardima
-                qualified_auditors_dict = get_qualified_auditors_for_company(company_id)
-                
-                # Pronalazimo auditore koji su kvalifikovani za sve standarde kompanije
-                if qualified_auditors_dict:
-                    # Prvo dobijamo sve standarde koje kompanija ima
-                    all_standards = set(qualified_auditors_dict.keys())
-                    
-                    # Zatim pronalazimo auditore koji su kvalifikovani za sve standarde
-                    qualified_auditors = []
-                    all_auditors_by_id = {}
-                    
-                    # Prikupljamo sve auditore iz svih standarda
-                    for standard_id, auditors in qualified_auditors_dict.items():
-                        for auditor in auditors:
-                            if auditor.id not in all_auditors_by_id:
-                                all_auditors_by_id[auditor.id] = {
-                                    'auditor': auditor,
-                                    'standards': set([standard_id])
-                                }
-                            else:
-                                all_auditors_by_id[auditor.id]['standards'].add(standard_id)
-                    
-                    # Filtriramo samo one koji su kvalifikovani za sve standarde
-                    for auditor_id, data in all_auditors_by_id.items():
-                        if data['standards'] == all_standards:
-                            qualified_auditors.append(data['auditor'])
-                    
-                    # Ažuriramo queryset za polje auditor
-                    if qualified_auditors:
-                        form.fields['auditor'].queryset = Auditor.objects.filter(id__in=[a.id for a in qualified_auditors])
-                        form.fields['auditor'].help_text = _('Prikazani su samo auditori kvalifikovani za sve standarde kompanije')
-            except Exception as e:
-                # U slučaju greške, ne filtriramo auditore
-                pass
+            form.fields['certification_cycle'].queryset = CertificationCycle.objects.filter(
+                company_id=company_id
+            ).order_by('-planirani_datum')
         
         return form
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Nova nadzorna provera'
+        context['title'] = 'Novi audit'
         context['submit_text'] = 'Sačuvaj'
         
-        # If company_id is provided in GET parameters, pre-select that company
         company_id = self.request.GET.get('company', None)
         if company_id:
             try:
@@ -541,76 +504,20 @@ class AuditCreateView(LoginRequiredMixin, CreateView):
         return context
     
     def form_valid(self, form):
-        messages.success(self.request, f"Nadzorna provera za kompaniju {form.instance.company.name} je uspešno kreirana.")
+        cycle = form.cleaned_data.get('certification_cycle')
+        messages.success(self.request, f"Audit za kompaniju {cycle.company.name} je uspešno kreiran.")
         return super().form_valid(form)
 
 
 class AuditUpdateView(LoginRequiredMixin, UpdateView):
-    """Izmena postojećeg audit zapisa - preusmereno na izmenu CycleAudit"""
-    form_class = AuditForm  # Ažurirati formu kasnije
-    template_name = 'audit/audit_form.html'
-    
-    def get_object(self):
-        # Sada koristimo samo CycleAudit model
-        from .cycle_models import CycleAudit
-        return CycleAudit.objects.get(pk=self.kwargs['pk'])
-    
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        
-        # Dobavljamo trenutnu kompaniju iz instance
-        company = self.object.certification_cycle.company
-        
-        if company:
-            try:
-                from .audit_utils import get_qualified_auditors_for_company
-                
-                # Dobijamo rečnik kvalifikovanih auditora po standardima
-                qualified_auditors_dict = get_qualified_auditors_for_company(company.id)
-                
-                # Pronalazimo auditore koji su kvalifikovani za sve standarde kompanije
-                if qualified_auditors_dict:
-                    # Prvo dobijamo sve standarde koje kompanija ima
-                    all_standards = set(qualified_auditors_dict.keys())
-                    
-                    # Zatim pronalazimo auditore koji su kvalifikovani za sve standarde
-                    qualified_auditors = []
-                    all_auditors_by_id = {}
-                    
-                    # Prikupljamo sve auditore iz svih standarda
-                    for standard_id, auditors in qualified_auditors_dict.items():
-                        for auditor in auditors:
-                            if auditor.id not in all_auditors_by_id:
-                                all_auditors_by_id[auditor.id] = {
-                                    'auditor': auditor,
-                                    'standards': set([standard_id])
-                                }
-                            else:
-                                all_auditors_by_id[auditor.id]['standards'].add(standard_id)
-                    
-                    # Filtriramo samo one koji su kvalifikovani za sve standarde
-                    for auditor_id, data in all_auditors_by_id.items():
-                        if data['standards'] == all_standards:
-                            qualified_auditors.append(data['auditor'])
-                    
-                    # Dodajemo trenutnog auditora u listu ako postoji
-                    current_auditor = self.object.auditor
-                    if current_auditor and current_auditor.id not in [a.id for a in qualified_auditors]:
-                        qualified_auditors.append(current_auditor)
-                    
-                    # Ažuriramo queryset za polje auditor
-                    if qualified_auditors:
-                        form.fields['auditor'].queryset = Auditor.objects.filter(id__in=[a.id for a in qualified_auditors])
-                        form.fields['auditor'].help_text = _('Prikazani su samo auditori kvalifikovani za sve standarde kompanije')
-            except Exception as e:
-                # U slučaju greške, ne filtriramo auditore
-                pass
-        
-        return form
+    """Izmena postojećeg CycleAudit zapisa"""
+    model = CycleAudit
+    template_name = 'audit/cycle_audit_form.html'
+    form_class = CycleAuditForm
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Izmena nadzorne provere'
+        context['title'] = 'Izmena audita'
         context['submit_text'] = 'Sačuvaj izmene'
         return context
     
@@ -618,24 +525,21 @@ class AuditUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy('company:audit_detail', kwargs={'pk': self.object.pk})
     
     def form_valid(self, form):
-        messages.success(self.request, f"Nadzorna provera za kompaniju {form.instance.company.name} je uspešno izmenjena.")
+        messages.success(self.request, f"Audit za kompaniju {form.instance.certification_cycle.company.name} je uspešno izmenjen.")
         return super().form_valid(form)
 
 
 class AuditDeleteView(LoginRequiredMixin, DeleteView):
-    """Brisanje audita"""
+    """Brisanje CycleAudit zapisa"""
+    model = CycleAudit
     template_name = 'audit/audit-confirm-delete.html'
     success_url = reverse_lazy('company:audit_list')
-    
-    def get_object(self):
-        # Sada koristimo samo CycleAudit model
-        from .cycle_models import CycleAudit
-        return CycleAudit.objects.get(pk=self.kwargs['pk'])
     context_object_name = 'audit'
     
     def delete(self, request, *args, **kwargs):
         audit = self.get_object()
-        messages.success(request, f"Nadzorna provera za kompaniju {audit.certification_cycle.company.name} je uspešno obrisana.")
+        company_name = audit.certification_cycle.company.name
+        messages.success(request, f"Audit za kompaniju {company_name} je uspešno obrisan.")
         return super().delete(request, *args, **kwargs)
 
 
@@ -1133,13 +1037,8 @@ def appointment_calendar_json(request):
     # Get all appointments with optimized queries
     appointments = Appointment.objects.select_related('company').all()
     
-    # Napomena: Appointment model trenutno nema 'auditors' polje
-    # Ovaj filter neće raditi dok se ne doda to polje u model
-    # if auditor_id:
-    #     appointments = appointments.filter(auditors__id=auditor_id)
-    
     # Za sada, ako je auditor selektovan, ne prikazuj Appointment objekte
-    # jer ne možemo da ih filtriramo
+    # jer nemaju direktnu vezu sa auditorima
     if auditor_id:
         appointments = appointments.none()
     
@@ -1147,7 +1046,7 @@ def appointment_calendar_json(request):
     
     # Bulk load related audit days to avoid N+1 queries
     from django.utils import timezone as dj_tz
-    from .cycle_models import AuditDay as _AuditDay
+    from .cycle_models import AuditDay
     
     # Kreiraj mapu appointment_id -> related_day_id za brže lookup
     appointment_related_days = {}
@@ -1163,7 +1062,7 @@ def appointment_calendar_json(request):
         # Bulk query za sve related days
         if appointment_dates:
             date_company_pairs = list(set(appointment_dates.values()))
-            related_days_qs = _AuditDay.objects.filter(
+            related_days_qs = AuditDay.objects.filter(
                 date__in=[d for d, c in date_company_pairs],
                 audit__certification_cycle__company_id__in=[c for d, c in date_company_pairs]
             ).select_related('audit')
@@ -1200,7 +1099,6 @@ def appointment_calendar_json(request):
                 'location': appointment.location or ('Online' if appointment.is_online else 'N/A'),
                 'eventType': 'appointment',
                 'appointment_id': appointment.id,
-                # Link ka Danu audita ako postoji na isti datum
                 'related_audit_day_id': related_day.id if related_day else None,
                 'related_audit_id': related_day.audit_id if related_day else None,
                 'related_is_planned': related_day.is_planned if related_day else None,
@@ -1208,9 +1106,7 @@ def appointment_calendar_json(request):
             }
         })
     
-    # Stari model NaredneProvere je uklonjen - sada se koristi samo novi model CycleAudit
-    
-    # Get all audit dates from the new model (CycleAudit)
+    # Get all cycle audits
     from .cycle_models import CycleAudit, AuditDay
     from django.db.models import Q
     
@@ -1220,7 +1116,6 @@ def appointment_calendar_json(request):
     ).prefetch_related('audit_team').all()
     
     # Filtriraj CycleAudit po auditoru ako je selektovan
-    # Auditor može biti vodeći auditor ili član tima
     if auditor_id:
         cycle_audits = cycle_audits.filter(
             Q(lead_auditor__id=auditor_id) | Q(audit_team__id=auditor_id)
@@ -1276,8 +1171,7 @@ def appointment_calendar_json(request):
         else:  # planned
             return audit_type_info.get('color_planned', '#3788d8'), 'planiran'
     
-    # Get all audit days - prikazuj sve dane bez obzira na status audita
-    # Boja će se odrediti na osnovu statusa audita
+    # Get all audit days
     audit_days = (
         AuditDay.objects
         .select_related('audit__certification_cycle__company', 'audit__lead_auditor')
@@ -1593,50 +1487,43 @@ def company_standard_create(request, company_id):
     
     try:
         standard_id = request.POST.get('standard_definition')
+        certificate_number = request.POST.get('certificate_number', '')
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
         auditor_ids = request.POST.getlist('auditors[]')
         
-        # Validacija
         if not standard_id:
             return JsonResponse({'success': False, 'error': 'Morate izabrati standard.'}, status=400)
         
-        # Provera da li standard već postoji za kompaniju
         if CompanyStandard.objects.filter(company=company, standard_definition_id=standard_id).exists():
             return JsonResponse({'success': False, 'error': 'Kompanija već ima dodeljen ovaj standard.'}, status=400)
-            
-        # Napomena: Automatsko izračunavanje datuma isteka se vrši u metodi save() modela CompanyStandard
         
-        # Konverzija string datuma u date objekte ako su stringovi
+        # Konverzija datuma
         if issue_date and isinstance(issue_date, str):
-            from datetime import datetime
             issue_date = datetime.strptime(issue_date, '%Y-%m-%d').date()
         
         if expiry_date and isinstance(expiry_date, str):
-            from datetime import datetime
             expiry_date = datetime.strptime(expiry_date, '%Y-%m-%d').date()
         
         # Kreiranje standarda
         company_standard = CompanyStandard.objects.create(
             company=company,
             standard_definition_id=standard_id,
+            certificate_number=certificate_number,
             issue_date=issue_date,
             expiry_date=expiry_date,
             notes=notes
         )
         
-        # Dodavanje auditora za standard
-        # Konvertujemo auditor_ids u listu integera za lakše poređenje
+        # Dodavanje auditora
         auditor_ids_int = [int(aid) for aid in auditor_ids if aid]
         added_auditors = 0
         
-        # Dodajemo veze za izabrane auditore
         for auditor_id in auditor_ids_int:
             try:
                 auditor = Auditor.objects.get(id=auditor_id)
-                # Kreiramo novu vezu između auditora i standarda
-                auditor_standard = AuditorStandard.objects.create(
+                AuditorStandard.objects.create(
                     auditor=auditor,
                     standard_id=standard_id,
                     datum_potpisivanja=datetime.now().date(),
@@ -1644,12 +1531,11 @@ def company_standard_create(request, company_id):
                 )
                 added_auditors += 1
             except Exception as e:
-                print(f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
+                logger.error(f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
         
-        # Pripremi odgovor
         message = f"Standard je uspešno dodat"
         if added_auditors > 0:
-            message += f" sa {added_auditors} auditora"
+            message += f" sa {added_auditors} auditor(a)"
         message += "."
         
         return JsonResponse({
@@ -1660,128 +1546,98 @@ def company_standard_create(request, company_id):
         })
         
     except Exception as e:
+        logger.error(f"Greška pri dodavanju standarda: {str(e)}")
         return JsonResponse({'success': False, 'error': f'Greška pri dodavanju standarda: {str(e)}'}, status=500)
 
 
-def company_standard_update(request, company_id, pk):
+def company_standard_update(request, pk):
     """
     View za ažuriranje postojećeg standarda kompanije
     """
-    company = get_object_or_404(Company, pk=company_id)
-    standard = get_object_or_404(CompanyStandard, pk=pk, company=company)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Samo POST zahtevi su dozvoljeni.'}, status=405)
     
-    if request.method == 'POST':
+    company_standard = get_object_or_404(CompanyStandard, pk=pk)
+    company = company_standard.company
+    
+    try:
         standard_id = request.POST.get('standard_definition')
+        certificate_number = request.POST.get('certificate_number', '')
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
         auditor_ids = request.POST.getlist('auditors[]')
         
-        # Validacija
         if not standard_id:
-            messages.error(request, "Morate izabrati standard.")
-            return redirect('company:update', pk=company_id)
+            return JsonResponse({'success': False, 'error': 'Morate izabrati standard.'}, status=400)
             
-        # Napomena: Automatsko izračunavanje datuma isteka se vrši na backend strani
-        
-        # Konverzija string datuma u date objekte ako su stringovi
+        # Konverzija datuma
         if issue_date and isinstance(issue_date, str):
-            from datetime import datetime
             issue_date = datetime.strptime(issue_date, '%Y-%m-%d').date()
         
         if expiry_date and isinstance(expiry_date, str):
-            from datetime import datetime
             expiry_date = datetime.strptime(expiry_date, '%Y-%m-%d').date()
         
         # Ažuriranje standarda
-        standard.standard_definition_id = standard_id
-        standard.issue_date = issue_date
-        standard.expiry_date = expiry_date
-        standard.notes = notes
-        standard.save()
+        company_standard.standard_definition_id = standard_id
+        company_standard.certificate_number = certificate_number
+        company_standard.issue_date = issue_date
+        company_standard.expiry_date = expiry_date
+        company_standard.notes = notes
+        company_standard.save()
         
-        # Ažuriranje auditora za standard
-        standard_def_id = standard.standard_definition_id
-        
-        # Dobavljamo sve postojeće veze između auditora i ovog standarda
+        # Ažuriranje auditora
+        standard_def_id = company_standard.standard_definition_id
         existing_auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
         existing_auditor_ids = [as_obj.auditor.id for as_obj in existing_auditor_standards]
         
-        # Konvertujemo auditor_ids u listu integera za lakše poređenje
-        auditor_ids_int = [int(aid) for aid in auditor_ids]
-        
-        # Auditori koje treba dodati (oni koji su u novom spisku ali nisu u postojećim vezama)
+        auditor_ids_int = [int(aid) for aid in auditor_ids if aid]
         auditors_to_add = [aid for aid in auditor_ids_int if aid not in existing_auditor_ids]
-        
-        # Auditori koje treba ukloniti (oni koji su u postojećim vezama ali nisu u novom spisku)
         auditors_to_remove = [aid for aid in existing_auditor_ids if aid not in auditor_ids_int]
         
-        # Dodajemo nove veze za izabrane auditore
         for auditor_id in auditors_to_add:
             try:
                 auditor = Auditor.objects.get(id=auditor_id)
-                # Kreiramo novu vezu između auditora i standarda
-                auditor_standard = AuditorStandard.objects.create(
+                AuditorStandard.objects.create(
                     auditor=auditor,
                     standard_id=standard_def_id,
                     datum_potpisivanja=datetime.now().date(),
                     napomena=f"Dodeljen za kompaniju {company.name}"
                 )
-                messages.info(request, f"Auditor {auditor.ime_prezime} je uspešno dodeljen standardu.")
             except Exception as e:
-                messages.warning(request, f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
+                logger.error(f"Greška pri dodavanju auditora ID {auditor_id}: {str(e)}")
                 
-        # Uklanjamo veze za auditore koji više nisu izabrani
         if auditors_to_remove:
-            removed_count = AuditorStandard.objects.filter(
+            AuditorStandard.objects.filter(
                 standard_id=standard_def_id, 
                 auditor_id__in=auditors_to_remove
-            ).delete()[0]
-            if removed_count > 0:
-                messages.info(request, f"Uklonjeno {removed_count} auditora sa standarda.")
+            ).delete()
         
+        return JsonResponse({'success': True, 'message': 'Standard je uspešno ažuriran.'})
         
-        messages.success(request, "Standard i auditori su uspešno ažurirani.")
-        return redirect('company:update', pk=company_id)
-    
-    # GET zahtev
-    # Dobavljamo sve auditore koji su kvalifikovani za ovaj standard
-    all_auditors = Auditor.objects.all().order_by('ime_prezime')
-    
-    # Dobavljamo ID-jeve auditora koji su već dodeljeni ovom standardu
-    selected_auditors = []
-    standard_def_id = standard.standard_definition_id
-    auditor_standards = AuditorStandard.objects.filter(standard_id=standard_def_id)
-    selected_auditors = [as_obj.auditor.id for as_obj in auditor_standards]
-    
-    context = {
-        'company': company,
-        'standard': standard,
-        'all_standard_definitions': StandardDefinition.objects.filter(active=True).order_by('code'),
-        'all_auditors': all_auditors,
-        'selected_auditors': selected_auditors,
-    }
-    return render(request, 'company/standard-update-form.html', context)
+    except Exception as e:
+        logger.error(f"Greška pri ažuriranju standarda: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
-def company_standard_delete(request, company_id, pk):
+def company_standard_delete(request, pk):
     """
     View za brisanje standarda kompanije
     """
-    company = get_object_or_404(Company, pk=company_id)
-    standard = get_object_or_404(CompanyStandard, pk=pk, company=company)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Potreban je POST zahtev.'}, status=405)
     
-    if request.method == 'POST':
-        standard_name = standard.standard_definition.standard
-        standard.delete()
-        messages.success(request, f"Standard '{standard_name}' je uspešno obrisan.")
-    else:
-        messages.error(request, "Nije moguće obrisati standard. Potreban je POST zahtev.")
+    company_standard = get_object_or_404(CompanyStandard, pk=pk)
     
-    # Redirect na stranicu za izmenu sa hash-om za tab standardi
-    from django.urls import reverse
-    redirect_url = reverse('company:update', kwargs={'pk': company_id}) + '#standards'
-    return redirect(redirect_url)
+    try:
+        standard_name = company_standard.standard_definition.standard
+        company_id = company_standard.company.id
+        company_standard.delete()
+        
+        return JsonResponse({'success': True, 'message': f'Standard "{standard_name}" je uspešno obrisan.'})
+    except Exception as e:
+        logger.error(f"Greška pri brisanju standarda: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 def company_standard_detail(request, company_id, pk):
@@ -1798,11 +1654,6 @@ def company_standard_detail(request, company_id, pk):
     
     # Dobavljamo IAF/EAC kodove za ovaj standard (ako postoje)
     iaf_eac_codes = []
-    try:
-        from company.iaf_eac_models import CompanyStandardIafEac
-        iaf_eac_codes = CompanyStandardIafEac.objects.filter(company_standard=standard)
-    except ImportError:
-        pass
     
     context = {
         'company': company,

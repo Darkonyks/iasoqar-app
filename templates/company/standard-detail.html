@@ -49,6 +49,10 @@
                     <td>{{ standard.standard_definition.code }}</td>
                   </tr>
                   <tr>
+                    <th>Broj sertifikata:</th>
+                    <td>{% if standard.certificate_number %}{{ standard.certificate_number }}{% else %}<span class="text-muted">Nije unet</span>{% endif %}</td>
+                  </tr>
+                  <tr>
                     <th>Kompanija:</th>
                     <td><a href="{% url 'company:detail' pk=company.id %}">{{ company.name }}</a></td>
                   </tr>

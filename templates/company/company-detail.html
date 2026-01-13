@@ -142,11 +142,6 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="certificates-tab" data-toggle="tab" href="#certificates" role="tab">
-                <i class="fas fa-certificate mr-1"></i> Sertifikati
-              </a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" id="iaf-eac-tab" data-toggle="tab" href="#iaf-eac" role="tab">
                 <i class="fas fa-tags mr-1"></i> IAF/EAC Kodovi
               </a>
@@ -268,6 +263,7 @@
                         <thead>
                           <tr>
                             <th>Standard</th>
+                            <th>Broj sertifikata</th>
                             <th>Status</th>
                             <th>Datum izdavanja</th>
                             <th>Datum isteka</th>
@@ -279,7 +275,19 @@
                           {% for standard_item in standards %}
                             <tr>
                               <td>{{ standard_item.standard.standard_definition.code }}</td>
-                              <td><span class="status-badge status-active">Aktivan</span></td>
+                              <td>{% if standard_item.standard.certificate_number %}{{ standard_item.standard.certificate_number }}{% else %}-{% endif %}</td>
+                              <td>
+                                {% if standard_item.standard.expiry_date %}
+                                  {% now "Y-m-d" as today %}
+                                  {% if standard_item.standard.expiry_date|date:"Y-m-d" < today %}
+                                    <span class="badge badge-danger">Istekao</span>
+                                  {% else %}
+                                    <span class="badge badge-success">Aktivan</span>
+                                  {% endif %}
+                                {% else %}
+                                  <span class="badge badge-warning">Nema datuma</span>
+                                {% endif %}
+                              </td>
                               <td>{% if standard_item.standard.issue_date %}{{ standard_item.standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                               <td>{% if standard_item.standard.expiry_date %}{{ standard_item.standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                               <td>
@@ -331,84 +339,6 @@
                     </div>
                   {% else %}
                     <p class="text-muted">Nema dodeljenih standarda</p>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Sertifikati Tab -->
-        <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
-          <div class="row">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                  <h3 class="card-title">Sertifikati</h3>
-                  <a href="{% url 'company:certificate_create' company_id=company.id %}" class="btn btn-success btn-sm">
-                    <i class="fas fa-plus"></i> Novi sertifikat
-                  </a>
-                </div>
-                <div class="card-body">
-                  {% if company.certificates.all %}
-                    <div class="table-responsive">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>Broj sertifikata</th>
-                            <th>Status</th>
-                            <th>Datum izdavanja</th>
-                            <th>Datum isteka</th>
-                            <th>Suspenzija do</th>
-                            <th>Napomene</th>
-                            <th>Akcije</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for certificate in company.certificates.all %}
-                            <tr>
-                              <td><strong>{{ certificate.certificate_number }}</strong></td>
-                              <td>
-                                {% if certificate.status == 'active' %}
-                                  <span class="badge badge-success">{{ certificate.get_status_display }}</span>
-                                {% elif certificate.status == 'suspended' %}
-                                  <span class="badge badge-warning">{{ certificate.get_status_display }}</span>
-                                {% elif certificate.status == 'withdrawn' %}
-                                  <span class="badge badge-danger">{{ certificate.get_status_display }}</span>
-                                {% elif certificate.status == 'expired' %}
-                                  <span class="badge badge-secondary">{{ certificate.get_status_display }}</span>
-                                {% elif certificate.status == 'pending' %}
-                                  <span class="badge badge-info">{{ certificate.get_status_display }}</span>
-                                {% elif certificate.status == 'cancelled' %}
-                                  <span class="badge badge-dark">{{ certificate.get_status_display }}</span>
-                                {% else %}
-                                  <span class="badge badge-light">{{ certificate.get_status_display }}</span>
-                                {% endif %}
-                              </td>
-                              <td>{% if certificate.issue_date %}{{ certificate.issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                              <td>{% if certificate.expiry_date %}{{ certificate.expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                              <td>{% if certificate.suspension_until_date %}{{ certificate.suspension_until_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                              <td>{% if certificate.notes %}{{ certificate.notes|truncatechars:30 }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                              <td>
-                                <div class="btn-group btn-group-sm">
-                                  <a href="{% url 'company:certificate_update' company_id=company.id pk=certificate.id %}" class="btn btn-warning" title="Izmeni">
-                                    <i class="fas fa-edit"></i>
-                                  </a>
-                                  <a href="{% url 'company:certificate_delete' company_id=company.id pk=certificate.id %}" class="btn btn-danger" title="Obriši">
-                                    <i class="fas fa-trash"></i>
-                                  </a>
-                                </div>
-                              </td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </div>
-                  {% else %}
-                    <div class="alert alert-info">
-                      <i class="fas fa-info-circle"></i> Nema sertifikata za ovu kompaniju.
-                      <a href="{% url 'company:certificate_create' company_id=company.id %}" class="alert-link">Dodajte prvi sertifikat</a>.
-                    </div>
                   {% endif %}
                 </div>
               </div>

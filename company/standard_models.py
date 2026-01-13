@@ -131,6 +131,13 @@ class CompanyStandard(models.Model):
         verbose_name=_("Standard"),
         help_text=_("Izaberite standard iz liste definisanih standarda")
     )
+    certificate_number = models.CharField(
+        _('Broj sertifikata'),
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text=_('Broj sertifikata za ovaj standard')
+    )
     issue_date = models.DateField(_('Datum izdavanja'), blank=True, null=True)
     expiry_date = models.DateField(_('Datum isteka'), blank=True, null=True)
     notes = models.TextField(_('Napomene'), blank=True, null=True)
@@ -146,16 +153,6 @@ class CompanyStandard(models.Model):
     def __str__(self):
         standard_name = self.standard_definition.name if self.standard_definition else self.standard
         return f"{self.company.name} - {standard_name}"
-    
-    def save(self, *args, **kwargs):
-        # Automatski izračunaj datum isteka ako je datum izdavanja postavljen
-        # Uvek ažuriramo datum isteka kada se promeni datum izdavanja
-        if self.issue_date:
-            # Dodaj tačno 3 godine na datum izdavanja (isti dan i mesec, samo 3 godine kasnije)
-            from dateutil.relativedelta import relativedelta
-            self.expiry_date = self.issue_date + relativedelta(years=3)
-        
-        super().save(*args, **kwargs)
 
 
 # Alias za kompatibilnost sa postojećim kodom

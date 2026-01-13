@@ -9,7 +9,7 @@ from .auditor_models import Auditor, AuditorStandard, AuditorStandardIAFEACCode
 from .calendar_models import CalendarEvent, Appointment
 from .cycle_models import CertificationCycle, CycleAudit, CycleStandard
 from .srbija_tim_models import SrbijaTim
-from .certificate_models import Certificate
+# Certificate model uklonjen - sertifikati su sada deo CompanyStandard modela
 
 # Inline klase za model Company
 class KontaktOsobaInline(admin.TabularInline):
@@ -32,10 +32,7 @@ class CompanyIAFEACCodeInline(admin.TabularInline):
     extra = 1
     fields = ['iaf_eac_code', 'is_primary']
 
-class CertificateInline(admin.TabularInline):
-    model = Certificate
-    extra = 1
-    fields = ['certificate_number', 'status', 'issue_date', 'expiry_date', 'suspension_until_date']
+# CertificateInline uklonjen - sertifikati su sada deo CompanyStandard modela
 
 # Admin klase
 class CompanyAdmin(admin.ModelAdmin):
@@ -56,7 +53,7 @@ class CompanyAdmin(admin.ModelAdmin):
             'fields': ['notes', 'is_active']
         }),
     ]
-    inlines = [CertificateInline, KontaktOsobaInline, OstalaLokacijaInline, CompanyStandardInline, CompanyIAFEACCodeInline]
+    inlines = [KontaktOsobaInline, OstalaLokacijaInline, CompanyStandardInline, CompanyIAFEACCodeInline]
 
 class KontaktOsobaAdmin(admin.ModelAdmin):
     list_display = ['ime_prezime', 'company', 'pozicija', 'email']
@@ -141,6 +138,29 @@ class AppointmentAdmin(admin.ModelAdmin):
         })
     ]
 
+
+class CompanyStandardAdmin(admin.ModelAdmin):
+    """Admin konfiguracija za CompanyStandard model"""
+    list_display = ['company', 'standard_definition', 'certificate_number', 'issue_date', 'expiry_date', 'created_at']
+    list_filter = ['standard_definition', 'issue_date', 'expiry_date']
+    search_fields = ['company__name', 'certificate_number', 'standard_definition__name', 'standard_definition__code']
+    ordering = ['-issue_date']
+    date_hierarchy = 'issue_date'
+    
+    fieldsets = [
+        ('Osnovni podaci', {
+            'fields': ['company', 'standard_definition', 'certificate_number']
+        }),
+        ('Datumi', {
+            'fields': ['issue_date', 'expiry_date']
+        }),
+        ('Napomene', {
+            'fields': ['notes'],
+            'classes': ['collapse']
+        })
+    ]
+
+
 # Registracija svih modela
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(KontaktOsoba, KontaktOsobaAdmin)
@@ -150,7 +170,7 @@ admin.site.register(IAFEACCode)
 admin.site.register(CompanyIAFEACCode)
 admin.site.register(StandardDefinition)
 admin.site.register(StandardIAFScopeReference)
-admin.site.register(CompanyStandard)
+admin.site.register(CompanyStandard, CompanyStandardAdmin)
 admin.site.register(Auditor)
 admin.site.register(AuditorStandard)
 admin.site.register(AuditorStandardIAFEACCode)
@@ -160,7 +180,7 @@ admin.site.register(Appointment, AppointmentAdmin)
 admin.site.register(CertificationCycle, CertificationCycleAdmin)
 admin.site.register(CycleStandard)
 admin.site.register(CycleAudit)
-admin.site.register(Certificate)
+# Certificate registracija uklonjena - sertifikati su sada deo CompanyStandard modela
 
 # Srbija Tim Admin
 @admin.register(SrbijaTim)

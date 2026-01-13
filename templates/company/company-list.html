@@ -177,28 +177,17 @@
           <table id="companiesTable" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Broj sertifikata</th>
                 <th>Naziv</th>
                 <th>IAF/EAC kodovi</th>
                 <th>Grad</th>
                 <th>Država</th>
                 <th>Standardi</th>
-                <th>Status sertifikata</th>
                 <th>Akcije</th>
               </tr>
             </thead>
             <tbody>
               {% for company in companies %}
               <tr>
-                <td>
-                  {% with first_cert=company.certificates.first %}
-                    {% if first_cert %}
-                      {{ first_cert.certificate_number }}
-                    {% else %}
-                      <span class="text-muted">Nije dodeljen</span>
-                    {% endif %}
-                  {% endwith %}
-                </td>
                 <td>{{ company.name }}</td>
                 <td>
                   {% if company.iaf_eac_codes.all %}
@@ -220,9 +209,10 @@
                 <td>{{ company.get_country_display|default:"Nije uneto" }}</td>
                 <td>
                   {% if company.company_standards.all %}
+                    {% now "Y-m-d" as today %}
                     <ul class="list-unstyled mb-0">
                       {% for company_standard in company.company_standards.all %}
-                        <li class="mb-1">
+                        <li class="mb-1 d-flex align-items-center">
                           {% with standard_code=company_standard.standard_definition.standard|default:company_standard.standard_definition.code %}
                           {% if 'ISO 9001' in standard_code %}
                             <span class="badge badge-primary p-2">{{ standard_code }}</span>
@@ -256,35 +246,23 @@
                             <span class="badge badge-dark p-2">{{ standard_code }}</span>
                           {% endif %}
                           {% endwith %}
+                          <span class="ml-2">
+                            {% if company_standard.expiry_date %}
+                              {% if company_standard.expiry_date|date:"Y-m-d" < today %}
+                                <span class="badge badge-danger">Istekao</span>
+                              {% else %}
+                                <span class="badge badge-success">Aktivan</span>
+                              {% endif %}
+                            {% else %}
+                              <span class="badge badge-warning">Nema datuma</span>
+                            {% endif %}
+                          </span>
                         </li>
                       {% endfor %}
                     </ul>
                   {% else %}
                     <span class="text-muted">Nema standarda</span>
                   {% endif %}
-                </td>
-                <td>
-                  {% with first_cert=company.certificates.first %}
-                    {% if first_cert %}
-                      {% if first_cert.status == 'active' %}
-                        <span class="badge badge-success">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'suspended' %}
-                        <span class="badge badge-warning">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'withdrawn' %}
-                        <span class="badge badge-danger">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'expired' %}
-                        <span class="badge badge-secondary">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'pending' %}
-                        <span class="badge badge-info">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'cancelled' %}
-                        <span class="badge badge-dark">{{ first_cert.get_status_display }}</span>
-                      {% else %}
-                        <span class="badge badge-light">{{ first_cert.get_status_display }}</span>
-                      {% endif %}
-                    {% else %}
-                      <span class="text-muted">Nema sertifikata</span>
-                    {% endif %}
-                  {% endwith %}
                 </td>
                 <td class="action-buttons">
                   <a href="{% url 'company:detail' company.id %}" class="btn btn-sm btn-info" title="Detalji">

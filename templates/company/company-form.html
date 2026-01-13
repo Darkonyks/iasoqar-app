@@ -87,11 +87,6 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="certificates-tab" data-toggle="tab" href="#certificates" role="tab" aria-controls="certificates" aria-selected="false">
-                  <i class="fas fa-certificate"></i> Sertifikati
-                </a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" id="iaf-tab" data-toggle="tab" href="#iaf" role="tab" aria-controls="iaf" aria-selected="false">
                   <i class="fas fa-tags"></i> IAF/EAC Kodovi
                 </a>
@@ -194,10 +189,11 @@
                       <table class="table table-sm table-striped table-hover">
                         <thead class="thead-light">
                           <tr>
-                            <th width="30%">Standard</th>
-                            <th width="15%">Datum izdavanja</th>
-                            <th width="15%">Datum isteka</th>
-                            <th width="25%">Napomena</th>
+                            <th width="25%">Standard</th>
+                            <th width="15%">Broj sertifikata</th>
+                            <th width="12%">Datum izdavanja</th>
+                            <th width="12%">Datum isteka</th>
+                            <th width="21%">Napomena</th>
                             <th width="15%">Akcije</th>
                           </tr>
                         </thead>
@@ -206,6 +202,7 @@
                             {% for standard in object.company_standards.all %}
                               <tr>
                                 <td><strong>{{ standard.standard_definition.standard }}</strong></td>
+                                <td>{% if standard.certificate_number %}{{ standard.certificate_number }}{% else %}-{% endif %}</td>
                                 <td>{% if standard.issue_date %}{{ standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{% if standard.expiry_date %}{{ standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{{ standard.notes|default:"-" }}</td>
@@ -245,7 +242,7 @@
                       <h6 class="font-weight-bold mb-3">Dodaj novi standard</h6>
                       
                       <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <div class="form-group">
                             <label for="standard_definition">Izaberite standard</label>
                             <select id="standard_definition" name="standard_definition" class="form-control" required>
@@ -260,6 +257,12 @@
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
+                            <label for="standard_certificate_number">Broj sertifikata</label>
+                            <input type="text" id="standard_certificate_number" name="certificate_number" class="form-control" placeholder="Broj sertifikata">
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
                             <label for="standard_issue_date">Datum izdavanja</label>
                             <input type="date" id="standard_issue_date" name="issue_date" class="form-control issue-date-input" placeholder="Datum izdavanja">
                           </div>
@@ -270,7 +273,7 @@
                             <input type="date" id="standard_expiry_date" name="expiry_date" class="form-control expiry-date-input" placeholder="Datum isteka">
                           </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                           <div class="form-group">
                             <label for="standard_notes">Napomena</label>
                             <input type="text" id="standard_notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
@@ -301,97 +304,6 @@
                             <i class="fas fa-plus"></i> Dodaj standard
                           </button>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Tab: Sertifikati -->
-              <div class="tab-pane fade" id="certificates" role="tabpanel" aria-labelledby="certificates-tab">
-                <h5 class="mb-3">Sertifikati</h5>
-                <div class="card">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title"><i class="fas fa-certificate"></i> Sertifikati kompanije</h3>
-                    {% if object %}
-                    <a href="{% url 'company:certificate_create' company_id=object.id %}" class="btn btn-success btn-sm">
-                      <i class="fas fa-plus"></i> Novi sertifikat
-                    </a>
-                    {% endif %}
-                  </div>
-                  <div class="card-body">
-                    {% if object and object.certificates.all %}
-                      <div class="table-responsive">
-                        <table class="table table-striped">
-                          <thead>
-                            <tr>
-                              <th>Broj sertifikata</th>
-                              <th>Status</th>
-                              <th>Datum izdavanja</th>
-                              <th>Datum isteka</th>
-                              <th>Suspenzija do</th>
-                              <th>Napomene</th>
-                              <th>Akcije</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for certificate in object.certificates.all %}
-                              <tr>
-                                <td><strong>{{ certificate.certificate_number }}</strong></td>
-                                <td>
-                                  {% if certificate.status == 'active' %}
-                                    <span class="badge badge-success">{{ certificate.get_status_display }}</span>
-                                  {% elif certificate.status == 'suspended' %}
-                                    <span class="badge badge-warning">{{ certificate.get_status_display }}</span>
-                                  {% elif certificate.status == 'withdrawn' %}
-                                    <span class="badge badge-danger">{{ certificate.get_status_display }}</span>
-                                  {% elif certificate.status == 'expired' %}
-                                    <span class="badge badge-secondary">{{ certificate.get_status_display }}</span>
-                                  {% elif certificate.status == 'pending' %}
-                                    <span class="badge badge-info">{{ certificate.get_status_display }}</span>
-                                  {% elif certificate.status == 'cancelled' %}
-                                    <span class="badge badge-dark">{{ certificate.get_status_display }}</span>
-                                  {% else %}
-                                    <span class="badge badge-light">{{ certificate.get_status_display }}</span>
-                                  {% endif %}
-                                </td>
-                                <td>{% if certificate.issue_date %}{{ certificate.issue_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                <td>{% if certificate.expiry_date %}{{ certificate.expiry_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                <td>{% if certificate.suspension_until_date %}{{ certificate.suspension_until_date|date:"d.m.Y" }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                <td>{% if certificate.notes %}{{ certificate.notes|truncatechars:30 }}{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                <td>
-                                  <div class="btn-group btn-group-sm">
-                                    <a href="{% url 'company:certificate_update' company_id=object.id pk=certificate.id %}" class="btn btn-warning" title="Izmeni">
-                                      <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'company:certificate_delete' company_id=object.id pk=certificate.id %}" class="btn btn-danger" title="Obriši">
-                                      <i class="fas fa-trash"></i>
-                                    </a>
-                                  </div>
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    {% else %}
-                      <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Nema sertifikata za ovu kompaniju.
-                        {% if object %}
-                        <a href="{% url 'company:certificate_create' company_id=object.id %}" class="alert-link">Dodajte prvi sertifikat</a>.
-                        {% endif %}
-                      </div>
-                    {% endif %}
-                    
-                    <!-- Oblast registracije -->
-                    <div class="mt-4">
-                      <h6 class="font-weight-bold mb-3">Oblast registracije</h6>
-                      <div class="form-group">
-                        <label for="{{ form.oblast_registracije.id_for_label }}">Oblast registracije</label>
-                        {{ form.oblast_registracije.errors }}
-                        <textarea name="{{ form.oblast_registracije.name }}" id="{{ form.oblast_registracije.id_for_label }}" 
-                             class="form-control {% if form.oblast_registracije.errors %}is-invalid{% endif %}" 
-                             rows="3" placeholder="Unesite oblast registracije kompanije">{{ form.oblast_registracije.value|default:'' }}</textarea>
                       </div>
                     </div>
                   </div>
@@ -449,15 +361,9 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text bg-light"><i class="fas fa-city text-primary"></i></span>
                             </div>
-                            <select name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
-                                    class="form-control {% if form.city.errors %}is-invalid{% endif %}" required>
-                              <option value="">Izaberite grad</option>
-                              {% for value, text in form.fields.city.choices %}
-                                <option value="{{ value }}" {% if form.city.value == value %}selected{% endif %}>
-                                  {{ text }}
-                                </option>
-                              {% endfor %}
-                            </select>
+                            <input type="text" name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                                   class="form-control {% if form.city.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.city.value|default:'' }}" required placeholder="npr. Beograd">
                           </div>
                         </div>
                       </div>
@@ -487,14 +393,9 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text bg-light"><i class="fas fa-flag text-primary"></i></span>
                             </div>
-                            <select name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" 
-                                    class="form-control {% if form.country.errors %}is-invalid{% endif %}" required>
-                              {% for value, text in form.fields.country.choices %}
-                                <option value="{{ value }}" {% if form.country.value == value %}selected{% endif %}>
-                                  {{ text }}
-                                </option>
-                              {% endfor %}
-                            </select>
+                            <input type="text" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" 
+                                   class="form-control {% if form.country.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.country.value|default:'' }}" required placeholder="npr. Srbija">
                           </div>
                         </div>
                       </div>
@@ -714,17 +615,72 @@
                         </div>
                         {% endif %}
                       </div>
-                      <div class="card-body">
+                      <div class="card-body p-0">
                         {% if object and object.id %}
-                          <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i> Cikluse sertifikacije možete dodati nakon što sačuvate osnovne podatke o kompaniji.
-                            <a href="{% url 'company:company_cycle_create' object.id %}" class="btn btn-primary btn-sm ml-2">
-                              <i class="fas fa-plus"></i> Dodaj ciklus sertifikacije
-                            </a>
-                          </div>
+                          {% if certification_cycles %}
+                            <div class="table-responsive">
+                              <table class="table table-hover" id="audits-table">
+                                <thead>
+                                  <tr>
+                                    <th>Planirani datum</th>
+                                    <th>Status</th>
+                                    <th>Standardi</th>
+                                    <th>Auditi</th>
+                                    <th>Akcije</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {% for cycle in certification_cycles %}
+                                    <tr {% if cycle.status == 'active' %}class="table-success"{% endif %}>
+                                      <td>
+                                        <strong>{{ cycle.planirani_datum|date:"d.m.Y" }}</strong>
+                                      </td>
+                                      <td>
+                                        {% if cycle.status == 'active' %}
+                                          <span class="badge badge-success">Aktivan</span>
+                                        {% elif cycle.status == 'completed' %}
+                                          <span class="badge badge-secondary">Završen</span>
+                                        {% elif cycle.status == 'cancelled' %}
+                                          <span class="badge badge-danger">Otkazan</span>
+                                        {% else %}
+                                          <span class="badge badge-warning">{{ cycle.get_status_display }}</span>
+                                        {% endif %}
+                                      </td>
+                                      <td>
+                                        {% for standard in cycle.cycle_standards.all %}
+                                          <span class="badge badge-info">{{ standard.standard_definition.code }} {{ standard.standard_definition.name }}</span>
+                                        {% empty %}
+                                          <span class="text-muted">Nema standarda</span>
+                                        {% endfor %}
+                                      </td>
+                                      <td>{{ cycle.audits.count }}</td>
+                                      <td>
+                                        <a href="{% url 'company:cycle_detail' cycle.id %}" class="btn btn-info btn-sm" title="Detalji">
+                                          <i class="fas fa-eye"></i> Detalji
+                                        </a>
+                                      </td>
+                                    </tr>
+                                  {% empty %}
+                                    <tr>
+                                      <td colspan="5" class="text-center">Nema ciklusa sertifikacije za ovu kompaniju</td>
+                                    </tr>
+                                  {% endfor %}
+                                </tbody>
+                              </table>
+                            </div>
+                          {% else %}
+                            <div class="p-3">
+                              <p class="text-muted"><i class="fas fa-info-circle"></i> Nema ciklusa sertifikacije. Kreirajte prvi ciklus.</p>
+                              <a href="{% url 'company:company_cycle_create' object.id %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Novi Ciklus Sertifikacije
+                              </a>
+                            </div>
+                          {% endif %}
                         {% else %}
-                          <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i> Sačuvajte kompaniju prvo da biste mogli dodati cikluse sertifikacije.
+                          <div class="p-3">
+                            <div class="alert alert-warning mb-0">
+                              <i class="fas fa-exclamation-triangle"></i> Sačuvajte kompaniju prvo da biste mogli dodati cikluse sertifikacije.
+                            </div>
                           </div>
                         {% endif %}
                       </div>
@@ -955,6 +911,151 @@
     </div>
   </div>
 </div>
+
+<!-- Modal za potvrdu brisanja standarda -->
+<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+        <form id="deleteStandardForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal za dodavanje kontakt osobe -->
+<div class="modal fade" id="addContactModal" tabindex="-1" role="dialog" aria-labelledby="addContactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" action="{% if object %}{% url 'company:kontakt_create' company_id=object.id %}{% endif %}" id="addContactForm">
+        {% csrf_token %}
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="addContactModalLabel"><i class="fas fa-user-plus"></i> Nova kontakt osoba</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="contact_ime_prezime">Ime i prezime <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="contact_ime_prezime" name="ime_prezime" required placeholder="Unesite ime i prezime">
+          </div>
+          <div class="form-group">
+            <label for="contact_pozicija">Pozicija</label>
+            <input type="text" class="form-control" id="contact_pozicija" name="pozicija" placeholder="npr. Direktor, Menadžer kvaliteta...">
+          </div>
+          <div class="form-group">
+            <label for="contact_email">Email</label>
+            <input type="email" class="form-control" id="contact_email" name="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="contact_telefon">Telefon</label>
+            <input type="text" class="form-control" id="contact_telefon" name="telefon" placeholder="+381 11 123 4567">
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="contact_is_primary" name="is_primary">
+              <label class="custom-control-label" for="contact_is_primary">Primarni kontakt</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Sačuvaj</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal za uređivanje kontakt osobe -->
+<div class="modal fade" id="editContactModal" tabindex="-1" role="dialog" aria-labelledby="editContactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method="post" action="" id="editContactForm">
+        {% csrf_token %}
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title" id="editContactModalLabel"><i class="fas fa-user-edit"></i> Izmena kontakt osobe</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit_contact_ime_prezime">Ime i prezime <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="edit_contact_ime_prezime" name="ime_prezime" required>
+          </div>
+          <div class="form-group">
+            <label for="edit_contact_pozicija">Pozicija</label>
+            <input type="text" class="form-control" id="edit_contact_pozicija" name="pozicija">
+          </div>
+          <div class="form-group">
+            <label for="edit_contact_email">Email</label>
+            <input type="email" class="form-control" id="edit_contact_email" name="email">
+          </div>
+          <div class="form-group">
+            <label for="edit_contact_telefon">Telefon</label>
+            <input type="text" class="form-control" id="edit_contact_telefon" name="telefon">
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="edit_contact_is_primary" name="is_primary">
+              <label class="custom-control-label" for="edit_contact_is_primary">Primarni kontakt</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+          <button type="submit" class="btn btn-warning"><i class="fas fa-save"></i> Sačuvaj izmene</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal za potvrdu brisanja kontakt osobe -->
+<div class="modal fade" id="deleteContactModal" tabindex="-1" role="dialog" aria-labelledby="deleteContactModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteContactModalLabel">Potvrda brisanja kontakta</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Da li ste sigurni da želite da obrišete kontakt osobu <strong id="contactNameToDelete"></strong>?</p>
+        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+        <form id="deleteContactForm" method="post" action="">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Obriši</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modali za uspeh i greške pri radu sa standardima -->
+{% include 'company/standard-success-modal.html' %}
+{% include 'company/standard-validation-modal.html' %}
+
 {% endblock %}
 
 {% block script %}
@@ -1029,7 +1130,7 @@
 
     // Funkcija za dodavanje novog standarda
     function addStandard() {
-      var standardSelect = $('#standard_definition_select');
+      var standardSelect = $('#standard_definition');
       var standardId = standardSelect.val();
       
       if (!standardId) {
@@ -1084,35 +1185,6 @@
     updateStandardsTable();
     // IAF/EAC kodovi se učitavaju iz posebne JS datoteke
 </script>
-
-<!-- Modal za potvrdu brisanja standarda -->
-<div class="modal fade" id="deleteStandardModal" tabindex="-1" role="dialog" aria-labelledby="deleteStandardModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteStandardModalLabel">Potvrda brisanja standarda</h5>
-        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Da li ste sigurni da želite da obrišete standard <strong id="standardNameToDelete"></strong>?</p>
-        <p class="text-danger"><i class="fas fa-exclamation-triangle"></i> Ova akcija je nepovratna!</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
-        <form id="deleteStandardForm" method="post" action="">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Obriši</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modali za uspeh i greške pri radu sa standardima -->
-{% include 'company/standard-success-modal.html' %}
-{% include 'company/standard-validation-modal.html' %}
 
 {% endblock %}
 
@@ -1334,9 +1406,10 @@ $(document).ready(function() {
             
             // Validacija polja
             var standardId = $('#standard_definition').val();
+            var certificateNumber = $('#standard_certificate_number').val();
             var issueDate = $('#standard_issue_date').val();
             var expiryDate = $('#standard_expiry_date').val();
-            var notes = $('#standard_notes').val();
+            var notes = $('#standard_notes').val() || '';
             var auditorIds = $('#standard_auditors').val() || [];
             
             if (!standardId) {
@@ -1362,6 +1435,7 @@ $(document).ready(function() {
                 type: 'POST',
                 data: {
                     'standard_definition': standardId,
+                    'certificate_number': certificateNumber,
                     'issue_date': issueDate,
                     'expiry_date': expiryDate,
                     'notes': notes,
@@ -1380,6 +1454,7 @@ $(document).ready(function() {
                     
                     // Očisti formu (sa Select2 resetom)
                     $('#standard_definition').val('').trigger('change');
+                    $('#standard_certificate_number').val('');
                     $('#standard_issue_date').val('');
                     $('#standard_expiry_date').val('');
                     $('#standard_notes').val('');
@@ -1558,7 +1633,7 @@ $(document).ready(function() {
                         window.location.reload();
                     }, 2500);
                     
-                    // VAŽNO: Ne pokušavaj sa drugim URL-ovima jer je ovaj uspeo!
+                    // VAŽNO
                     return;
                 },
                 error: function(xhr, status, error) {
@@ -2256,4 +2331,51 @@ $(document).ready(function() {
 
 <!-- IAF/EAC kodovi JavaScript -->
 <script src="{% static 'js/company/company-iaf-eac.js' %}"></script>
+
+<!-- Kontakt osobe JavaScript -->
+<script>
+$(document).ready(function() {
+    // ========== EDIT CONTACT ==========
+    $('.edit-contact').on('click', function() {
+        var contactId = $(this).data('contact-id');
+        var contactName = $(this).data('contact-name');
+        var contactPosition = $(this).data('contact-position');
+        var contactEmail = $(this).data('contact-email');
+        var contactPhone = $(this).data('contact-phone');
+        var contactPrimary = $(this).data('contact-primary');
+        
+        // Popuni formu sa podacima
+        $('#edit_contact_ime_prezime').val(contactName);
+        $('#edit_contact_pozicija').val(contactPosition);
+        $('#edit_contact_email').val(contactEmail);
+        $('#edit_contact_telefon').val(contactPhone);
+        $('#edit_contact_is_primary').prop('checked', contactPrimary === true || contactPrimary === 'true');
+        
+        // Postavi action URL za formu
+        var companyId = {{ object.id|default:0 }};
+        var actionUrl = '/company/companies/' + companyId + '/kontakt/' + contactId + '/update/';
+        $('#editContactForm').attr('action', actionUrl);
+        
+        // Prikaži modal
+        $('#editContactModal').modal('show');
+    });
+    
+    // ========== DELETE CONTACT ==========
+    $('.delete-contact').on('click', function() {
+        var contactId = $(this).data('contact-id');
+        var contactName = $(this).data('contact-name');
+        
+        // Postavi ime kontakta u modal
+        $('#contactNameToDelete').text(contactName);
+        
+        // Postavi action URL za formu
+        var companyId = {{ object.id|default:0 }};
+        var actionUrl = '/company/companies/' + companyId + '/kontakt/' + contactId + '/delete/';
+        $('#deleteContactForm').attr('action', actionUrl);
+        
+        // Prikaži modal
+        $('#deleteContactModal').modal('show');
+    });
+});
+</script>
 {% endblock %}

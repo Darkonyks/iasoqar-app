@@ -39,7 +39,7 @@
                 {% csrf_token %}
                 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="standard_definition"><i class="fas fa-certificate"></i> Standard</label>
                             <select id="standard_definition" name="standard_definition" class="form-control select2" required>
@@ -50,6 +50,13 @@
                                     </option>
                                 {% endfor %}
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="certificate_number"><i class="fas fa-hashtag"></i> Broj sertifikata</label>
+                            <input type="text" id="certificate_number" name="certificate_number" class="form-control" 
+                                   value="{{ standard.certificate_number|default:'' }}" placeholder="Unesite broj sertifikata">
                         </div>
                     </div>
                     <div class="col-md-3">
