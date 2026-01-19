@@ -624,7 +624,7 @@
                                   {% for cycle in certification_cycles %}
                                     <tr {% if cycle.status == 'active' %}class="table-success"{% endif %}>
                                       <td>
-                                        <strong>{{ cycle.planirani_datum|date:"d.m.Y" }}</strong>
+                                        <strong>{{ cycle.get_last_planned_date|date:"d.m.Y" }}</strong>
                                       </td>
                                       <td>
                                         {% if cycle.status == 'active' %}

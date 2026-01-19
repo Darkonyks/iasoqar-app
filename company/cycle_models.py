@@ -95,6 +95,16 @@ class CertificationCycle(models.Model):
     def __str__(self):
         return f"{self.company.name} - {self.planirani_datum.strftime('%Y-%m-%d')} ({self.get_status_display()})"
     
+    def get_last_planned_date(self):
+        """
+        Vraća poslednji planirani datum audita iz ovog ciklusa.
+        Ako nema audita, vraća planirani datum ciklusa.
+        """
+        last_audit = self.audits.order_by('-planned_date').first()
+        if last_audit and last_audit.planned_date:
+            return last_audit.planned_date
+        return self.planirani_datum
+    
     def save(self, *args, **kwargs):
         # Detektujemo prethodnu vrednost stvarnog datuma inicijalne provere
         prev_actual_date = None

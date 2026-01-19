@@ -71,11 +71,42 @@ class CompanyListView(ListView):
             except ValueError:
                 pass
         
+        # Date range filter za planirani datum nadzora (poslednji planirani audit)
+        audit_from = self.request.GET.get('audit_from')
+        audit_to = self.request.GET.get('audit_to')
+        
+        if audit_from or audit_to:
+            from .cycle_models import CycleAudit
+            from datetime import datetime
+            
+            # Subquery za pronalaženje kompanija sa auditima u opsegu
+            audit_filters = Q(certification_cycles__audits__isnull=False)
+            
+            if audit_from:
+                try:
+                    audit_from_date = datetime.strptime(audit_from, '%Y-%m-%d').date()
+                    audit_filters &= Q(certification_cycles__audits__planned_date__gte=audit_from_date)
+                except ValueError:
+                    pass
+            
+            if audit_to:
+                try:
+                    audit_to_date = datetime.strptime(audit_to, '%Y-%m-%d').date()
+                    audit_filters &= Q(certification_cycles__audits__planned_date__lte=audit_to_date)
+                except ValueError:
+                    pass
+            
+            # Filtriraj samo aktivne cikluse
+            audit_filters &= Q(certification_cycles__status='active')
+            
+            queryset = queryset.filter(audit_filters).distinct()
+        
         # Prefetch related data for better performance
         return queryset.prefetch_related(
             'iaf_eac_codes__iaf_eac_code',
             'company_standards__standard_definition',
-            'certificates'
+            'certificates',
+            'certification_cycles__audits'
         ).order_by('name')
     
     def get_context_data(self, **kwargs):
@@ -83,6 +114,8 @@ class CompanyListView(ListView):
         context['search_query'] = self.request.GET.get('search', '')
         context['expiry_from'] = self.request.GET.get('expiry_from', '')
         context['expiry_to'] = self.request.GET.get('expiry_to', '')
+        context['audit_from'] = self.request.GET.get('audit_from', '')
+        context['audit_to'] = self.request.GET.get('audit_to', '')
         return context
 
 

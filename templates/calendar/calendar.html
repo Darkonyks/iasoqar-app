@@ -2128,10 +2128,79 @@
                 // Posebno rukovanje za cycle_audit događaje
                 // Prikaži modal za potvrdu promene datuma
                 showDateChangeConfirmationModal(event, newDate, function (confirmed) {
+                  console.log('cycle_audit: showDateChangeConfirmationModal callback pozvan, confirmed:', confirmed);
                   if (confirmed) {
+                    console.log('cycle_audit: Korisnik je potvrdio. Pozivam updateEventDate sa:', {
+                      eventType: eventType,
+                      eventId: eventId,
+                      newDate: newDate
+                    });
                     // Korisnik je potvrdio promenu, ažuriraj datum na serveru
+                    // Proveri da li updateEventDate funkcija postoji
+                    if (typeof updateEventDate !== 'function') {
+                      console.error('updateEventDate funkcija nije definisana! Direktno pozivam AJAX...');
+                      // Direktno pozovi AJAX ako funkcija nije dostupna
+                      const csrftoken = getCookie('csrftoken');
+                      const payload = {
+                        eventType: eventType,
+                        eventId: eventId,
+                        newDate: newDate.toISOString()
+                      };
+                      console.log('Šaljem AJAX zahtev sa payload:', payload);
+                      $.ajax({
+                        url: '/company/api/events/update-date/',
+                        type: 'POST',
+                        data: JSON.stringify(payload),
+                        contentType: 'application/json',
+                        headers: { 'X-CSRFToken': csrftoken },
+                        success: function(response) {
+                          console.log('AJAX uspešan:', response);
+                          if (response.success) {
+                            // Prvo osveži kalendar
+                            refreshCalendar();
+                            // Zatim prikaži poruku o uspehu
+                            Swal.fire({
+                              title: 'Uspešno!',
+                              text: response.message || 'Datum audita je uspešno promenjen.',
+                              icon: 'success',
+                              confirmButtonText: 'U redu',
+                              timer: 2000,
+                              timerProgressBar: true
+                            });
+                          } else {
+                            console.error('Server vratio success: false:', response.error);
+                            Swal.fire({
+                              title: 'Greška',
+                              text: response.error || 'Došlo je do greške prilikom čuvanja.',
+                              icon: 'error',
+                              confirmButtonText: 'U redu'
+                            });
+                            info.revert();
+                          }
+                        },
+                        error: function(xhr, status, error) {
+                          console.error('AJAX greška:', { xhr: xhr, status: status, error: error });
+                          info.revert();
+                          refreshCalendar();
+                        }
+                      });
+                      return;
+                    }
                     updateEventDate(eventType, eventId, newDate, {
-                      onSuccess: function () { try { refreshCalendar(); } catch (e) { /* ignore */ } },
+                      onSuccess: function (response) { 
+                        console.log('cycle_audit: updateEventDate uspešno završen');
+                        // Prvo osveži kalendar
+                        try { refreshCalendar(); } catch (e) { console.error('refreshCalendar greška:', e); }
+                        // Zatim prikaži poruku o uspehu
+                        Swal.fire({
+                          title: 'Uspešno!',
+                          text: (response && response.message) || 'Datum audita je uspešno promenjen.',
+                          icon: 'success',
+                          confirmButtonText: 'U redu',
+                          timer: 2000,
+                          timerProgressBar: true
+                        });
+                      },
                       onError: function (xhr, message) {
                         try {
                           // Prikaži detaljan error modal za konflikt auditora
@@ -2728,6 +2797,56 @@
       } else {
         console.error('initializeCalendar funkcija nije definisana!');
       }
+
+      // FIX: Osiguraj da se kalendar pravilno renderuje nakon povratka sa back-forward cache (bfcache)
+      // Ovo rešava problem kada korisnik edituje termin, vrati se na kalendar, i kalendar je prazan
+      window.addEventListener('pageshow', function(event) {
+        console.log('pageshow event triggered, persisted:', event.persisted);
+        // event.persisted je true ako je stranica učitana iz bfcache
+        if (event.persisted) {
+          console.log('Stranica učitana iz bfcache - osvežavam kalendar...');
+          // Proveri da li kalendar postoji i ponovo ga renderuj
+          if (window.calendar) {
+            try {
+              // Ponovo renderuj kalendar
+              window.calendar.render();
+              // Osveži događaje
+              setTimeout(function() {
+                window.calendar.refetchEvents();
+                console.log('Kalendar osvežen nakon povratka iz bfcache');
+              }, 100);
+            } catch (e) {
+              console.error('Greška pri osvežavanju kalendara iz bfcache:', e);
+              // Ako ne uspe, ponovo inicijalizuj kalendar
+              if (typeof initializeCalendar === 'function') {
+                initializeCalendar();
+              }
+            }
+          } else {
+            // Kalendar nije inicijalizovan, pokreni inicijalizaciju
+            console.log('Kalendar nije pronađen, pokrećem inicijalizaciju...');
+            if (typeof initializeCalendar === 'function') {
+              initializeCalendar();
+            }
+          }
+        }
+      });
+
+      // Dodatni fix: Osiguraj renderovanje kalendara kada se prozor ponovo fokusira
+      // (pomaže u nekim edge case scenarijima sa tabovima)
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && window.calendar) {
+          console.log('Tab je ponovo vidljiv - proveravam kalendar...');
+          var calendarEl = document.getElementById('calendar');
+          if (calendarEl && calendarEl.offsetHeight === 0) {
+            console.log('Kalendar ima nultu visinu - ponovo renderujem...');
+            window.calendar.render();
+            setTimeout(function() {
+              window.calendar.refetchEvents();
+            }, 100);
+          }
+        }
+      });
 
       // Druga verzija openAppointmentModal funkcije je uklonjena jer je duplirana
 
