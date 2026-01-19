@@ -144,7 +144,8 @@ class Command(BaseCommand):
                     'ta_codes': set(),
                     'standards': set(),
                     'eac_codes': set(),
-                    'ta_eac_mapping': {}  # Mapiranje TA -> EAC kodovi
+                    'ta_eac_mapping': {},  # Mapiranje TA -> EAC kodovi
+                    'standard_eac_mapping': {}  # NOVO: Mapiranje STANDARD -> EAC kodovi
                 }
             
             # Dodaj TA kod
@@ -158,9 +159,16 @@ class Command(BaseCommand):
                 if eac_code:
                     auditor_dict[key]['ta_eac_mapping'][ta_code].add(eac_code)
             
-            # Dodaj standard
+            # Dodaj standard i kreiraj mapiranje STANDARD -> EAC
             if standard:
                 auditor_dict[key]['standards'].add(standard)
+                
+                # NOVO: Kreiraj mapiranje STANDARD -> EAC kodovi
+                if standard not in auditor_dict[key]['standard_eac_mapping']:
+                    auditor_dict[key]['standard_eac_mapping'][standard] = set()
+                
+                if eac_code:
+                    auditor_dict[key]['standard_eac_mapping'][standard].add(eac_code)
             
             # Dodaj EAC kod
             if eac_code:
@@ -299,6 +307,8 @@ class Command(BaseCommand):
                         )
             else:
                 # Ostale kategorije: dodeljuju se standardi + EAC kodovi povezani sa standardima
+                standard_eac_mapping = data.get('standard_eac_mapping', {})
+                
                 if 'SVI' in standards or 'ALL' in standards:
                     # Dodeli sve standarde
                     all_standards = StandardDefinition.objects.filter(active=True)
@@ -312,7 +322,7 @@ class Command(BaseCommand):
                         if created:
                             assigned_standards += 1
                         
-                        # Dodeli EAC kodove ovom standardu
+                        # Za "SVI" standarde, dodeli sve EAC kodove (jer nemamo specifično mapiranje)
                         for eac_code_str in eac_codes:
                             # Normalizuj EAC kod (dodaj vodeću nulu ako je potrebno)
                             normalized_code = self.normalize_eac_code(eac_code_str)
@@ -345,24 +355,30 @@ class Command(BaseCommand):
                         if created:
                             assigned_standards += 1
                         
-                        # Dodeli EAC kodove ovom standardu
-                        for eac_code_str in eac_codes:
-                            # Normalizuj EAC kod (dodaj vodeću nulu ako je potrebno)
-                            normalized_code = self.normalize_eac_code(eac_code_str)
-                            try:
-                                eac_code = IAFEACCode.objects.get(iaf_code=normalized_code)
-                                AuditorStandardIAFEACCode.objects.get_or_create(
-                                    auditor_standard=auditor_standard,
-                                    iaf_eac_code=eac_code,
-                                    defaults={'notes': f'Uvezen iz tabele - TA: {auditor.technical_area_code}'}
-                                )
-                                assigned_eac_codes += 1
-                            except IAFEACCode.DoesNotExist:
-                                self.stdout.write(
-                                    self.style.WARNING(f'    EAC kod "{eac_code_str}" (normalizovan: "{normalized_code}") ne postoji u bazi')
-                                )
+                        # ISPRAVLJENO: Dodeli samo EAC kodove koji pripadaju OVOM standardu
+                        standard_specific_codes = standard_eac_mapping.get(standard_code, set())
                         
-                        self.stdout.write(f'    Dodeljen standard: {standard.code}')
+                        if standard_specific_codes:
+                            # Imamo specifične kodove za ovaj standard
+                            for eac_code_str in standard_specific_codes:
+                                # Normalizuj EAC kod (dodaj vodeću nulu ako je potrebno)
+                                normalized_code = self.normalize_eac_code(eac_code_str)
+                                try:
+                                    eac_code = IAFEACCode.objects.get(iaf_code=normalized_code)
+                                    AuditorStandardIAFEACCode.objects.get_or_create(
+                                        auditor_standard=auditor_standard,
+                                        iaf_eac_code=eac_code,
+                                        defaults={'notes': f'Uvezen iz tabele - TA: {auditor.technical_area_code}'}
+                                    )
+                                    assigned_eac_codes += 1
+                                except IAFEACCode.DoesNotExist:
+                                    self.stdout.write(
+                                        self.style.WARNING(f'    EAC kod "{eac_code_str}" (normalizovan: "{normalized_code}") ne postoji u bazi')
+                                    )
+                            self.stdout.write(f'    Dodeljen standard: {standard.code} sa {len(standard_specific_codes)} EAC kodova')
+                        else:
+                            # Nema specifičnih kodova za ovaj standard
+                            self.stdout.write(f'    Dodeljen standard: {standard.code} (bez EAC kodova)')
         
         self.stdout.write(
             self.style.SUCCESS(
