@@ -262,13 +262,37 @@ class CompanyUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('company:detail', kwargs={'pk': self.object.pk})
     
+    def post(self, request, *args, **kwargs):
+        # Debug: ispisivanje POST podataka
+        logger.info(f"=== COMPANY UPDATE POST ===")
+        logger.info(f"POST data: {dict(request.POST)}")
+        logger.info(f"Street value: {request.POST.get('street')}")
+        logger.info(f"City value: {request.POST.get('city')}")
+        logger.info(f"Phone value: {request.POST.get('phone')}")
+        return super().post(request, *args, **kwargs)
+    
     def form_valid(self, form):
+        # Debug: ispisivanje cleaned_data
+        logger.info(f"=== FORM VALID ===")
+        logger.info(f"Cleaned data: {form.cleaned_data}")
+        logger.info(f"Street cleaned: {form.cleaned_data.get('street')}")
+        logger.info(f"City cleaned: {form.cleaned_data.get('city')}")
+        
         # Sačuvaj formu sa commit=True da bi se obradili hidden podaci
         # za standarde i IAF/EAC kodove definisani u CompanyForm.save() metodi
         self.object = form.save(commit=True)
         
+        logger.info(f"=== AFTER SAVE ===")
+        logger.info(f"Saved street: {self.object.street}")
+        logger.info(f"Saved city: {self.object.city}")
+        
         messages.success(self.request, f"Kompanija {form.instance.name} je uspešno izmenjena.")
         return HttpResponseRedirect(self.get_success_url())
+    
+    def form_invalid(self, form):
+        logger.error(f"=== FORM INVALID ===")
+        logger.error(f"Form errors: {form.errors}")
+        return super().form_invalid(form)
 
 
 class CompanyDeleteView(DeleteView):
@@ -1488,6 +1512,7 @@ def company_standard_create(request, company_id):
     try:
         standard_id = request.POST.get('standard_definition')
         certificate_number = request.POST.get('certificate_number', '')
+        certificate_status = request.POST.get('certificate_status', 'pending')
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
@@ -1511,6 +1536,7 @@ def company_standard_create(request, company_id):
             company=company,
             standard_definition_id=standard_id,
             certificate_number=certificate_number,
+            certificate_status=certificate_status,
             issue_date=issue_date,
             expiry_date=expiry_date,
             notes=notes
@@ -1550,26 +1576,50 @@ def company_standard_create(request, company_id):
         return JsonResponse({'success': False, 'error': f'Greška pri dodavanju standarda: {str(e)}'}, status=500)
 
 
-def company_standard_update(request, pk):
+def company_standard_update(request, company_id, pk):
     """
     View za ažuriranje postojećeg standarda kompanije
+    GET: Prikaži formu za ažuriranje
+    POST: Ažuriraj standard i vrati JSON odgovor ili redirekciju
     """
-    if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Samo POST zahtevi su dozvoljeni.'}, status=405)
-    
-    company_standard = get_object_or_404(CompanyStandard, pk=pk)
+    company_standard = get_object_or_404(CompanyStandard, pk=pk, company_id=company_id)
     company = company_standard.company
     
+    # GET zahtev - prikaži formu za uređivanje
+    if request.method == 'GET':
+        # Dohvati sve definicije standarda za dropdown
+        all_standard_definitions = StandardDefinition.objects.all().order_by('code')
+        # Dohvati sve auditore za dropdown
+        all_auditors = Auditor.objects.all().order_by('ime_prezime')
+        # Dohvati auditore trenutno dodeljene ovom standardu
+        current_auditor_ids = list(
+            AuditorStandard.objects.filter(standard_id=company_standard.standard_definition_id)
+            .values_list('auditor_id', flat=True)
+        )
+        
+        context = {
+            'company': company,
+            'standard': company_standard,
+            'all_standard_definitions': all_standard_definitions,
+            'all_auditors': all_auditors,
+            'current_auditor_ids': current_auditor_ids,
+            'certificate_status_choices': CompanyStandard.CERTIFICATE_STATUS_CHOICES,
+        }
+        return render(request, 'company/standard-update-form.html', context)
+    
+    # POST zahtev - ažuriraj standard
     try:
         standard_id = request.POST.get('standard_definition')
         certificate_number = request.POST.get('certificate_number', '')
+        certificate_status = request.POST.get('certificate_status', 'pending')
         issue_date = request.POST.get('issue_date') or None
         expiry_date = request.POST.get('expiry_date') or None
         notes = request.POST.get('notes', '')
         auditor_ids = request.POST.getlist('auditors[]')
         
         if not standard_id:
-            return JsonResponse({'success': False, 'error': 'Morate izabrati standard.'}, status=400)
+            messages.error(request, 'Morate izabrati standard.')
+            return redirect('company:standard_update', company_id=company_id, pk=pk)
             
         # Konverzija datuma
         if issue_date and isinstance(issue_date, str):
@@ -1581,6 +1631,7 @@ def company_standard_update(request, pk):
         # Ažuriranje standarda
         company_standard.standard_definition_id = standard_id
         company_standard.certificate_number = certificate_number
+        company_standard.certificate_status = certificate_status
         company_standard.issue_date = issue_date
         company_standard.expiry_date = expiry_date
         company_standard.notes = notes
@@ -1613,25 +1664,33 @@ def company_standard_update(request, pk):
                 auditor_id__in=auditors_to_remove
             ).delete()
         
-        return JsonResponse({'success': True, 'message': 'Standard je uspešno ažuriran.'})
+        # Proveri da li je AJAX zahtev
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'message': 'Standard je uspešno ažuriran.'})
+        
+        # Ako nije AJAX, redirektuj nazad na kompaniju
+        messages.success(request, 'Standard je uspešno ažuriran.')
+        return redirect('company:update', pk=company_id)
         
     except Exception as e:
         logger.error(f"Greška pri ažuriranju standarda: {str(e)}")
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        messages.error(request, f'Greška: {str(e)}')
+        return redirect('company:standard_update', company_id=company_id, pk=pk)
 
 
-def company_standard_delete(request, pk):
+def company_standard_delete(request, company_id, pk):
     """
     View za brisanje standarda kompanije
     """
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Potreban je POST zahtev.'}, status=405)
     
-    company_standard = get_object_or_404(CompanyStandard, pk=pk)
+    company_standard = get_object_or_404(CompanyStandard, pk=pk, company_id=company_id)
     
     try:
         standard_name = company_standard.standard_definition.standard
-        company_id = company_standard.company.id
         company_standard.delete()
         
         return JsonResponse({'success': True, 'message': f'Standard "{standard_name}" je uspešno obrisan.'})
@@ -1659,7 +1718,8 @@ def company_standard_detail(request, company_id, pk):
         'company': company,
         'standard': standard,
         'auditors': auditors,
-        'iaf_eac_codes': iaf_eac_codes
+        'iaf_eac_codes': iaf_eac_codes,
+        'certificate_status_choices': CompanyStandard.CERTIFICATE_STATUS_CHOICES,
     }
     
     return render(request, 'company/standard-detail.html', context)

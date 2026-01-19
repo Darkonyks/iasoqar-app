@@ -205,8 +205,8 @@
                     <span class="text-muted">Nema kodova</span>
                   {% endif %}
                 </td>
-                <td>{{ company.get_city_display|default:"Nije uneto" }}</td>
-                <td>{{ company.get_country_display|default:"Nije uneto" }}</td>
+                <td>{{ company.city|default:"Nije uneto" }}</td>
+                <td>{{ company.country|default:"Nije uneto" }}</td>
                 <td>
                   {% if company.company_standards.all %}
                     {% now "Y-m-d" as today %}

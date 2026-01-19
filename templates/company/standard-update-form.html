@@ -59,7 +59,19 @@
                                    value="{{ standard.certificate_number|default:'' }}" placeholder="Unesite broj sertifikata">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="certificate_status"><i class="fas fa-flag"></i> Status sertifikata</label>
+                            <select id="certificate_status" name="certificate_status" class="form-control">
+                                {% for value, label in certificate_status_choices %}
+                                    <option value="{{ value }}" {% if standard.certificate_status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="issue_date"><i class="fas fa-calendar-plus"></i> Datum izdavanja</label>
                             <div class="input-group">
@@ -71,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="expiry_date"><i class="fas fa-calendar-times"></i> Datum isteka</label>
                             <div class="input-group">

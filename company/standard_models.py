@@ -115,6 +115,15 @@ class CompanyStandard(models.Model):
     Model za povezivanje kompanija sa standardima.
     Jedna kompanija može imati više standarda.
     """
+    
+    CERTIFICATE_STATUS_CHOICES = [
+        ('active', _('Aktivan')),
+        ('suspended', _('Suspendovan')),
+        ('withdrawn', _('Povučen')),
+        ('expired', _('Istekao')),
+        ('pending', _('U procesu')),
+    ]
+    
     company = models.ForeignKey('Company', on_delete=models.CASCADE, verbose_name=_("Kompanija"), related_name='company_standards')
     standard = models.CharField(
         _("Standard (staro)"),
@@ -137,6 +146,13 @@ class CompanyStandard(models.Model):
         blank=True,
         null=True,
         help_text=_('Broj sertifikata za ovaj standard')
+    )
+    certificate_status = models.CharField(
+        _('Status sertifikata'),
+        max_length=20,
+        choices=CERTIFICATE_STATUS_CHOICES,
+        default='pending',
+        help_text=_('Status sertifikata za ovaj standard')
     )
     issue_date = models.DateField(_('Datum izdavanja'), blank=True, null=True)
     expiry_date = models.DateField(_('Datum isteka'), blank=True, null=True)

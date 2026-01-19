@@ -53,6 +53,24 @@
                     <td>{% if standard.certificate_number %}{{ standard.certificate_number }}{% else %}<span class="text-muted">Nije unet</span>{% endif %}</td>
                   </tr>
                   <tr>
+                    <th>Status sertifikata:</th>
+                    <td>
+                      {% if standard.certificate_status == 'active' %}
+                        <span class="badge badge-success">Aktivan</span>
+                      {% elif standard.certificate_status == 'suspended' %}
+                        <span class="badge badge-warning">Suspendovan</span>
+                      {% elif standard.certificate_status == 'withdrawn' %}
+                        <span class="badge badge-danger">Povučen</span>
+                      {% elif standard.certificate_status == 'expired' %}
+                        <span class="badge badge-secondary">Istekao</span>
+                      {% elif standard.certificate_status == 'pending' %}
+                        <span class="badge badge-info">U procesu</span>
+                      {% else %}
+                        <span class="badge badge-light">-</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  <tr>
                     <th>Kompanija:</th>
                     <td><a href="{% url 'company:detail' pk=company.id %}">{{ company.name }}</a></td>
                   </tr>

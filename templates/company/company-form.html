@@ -178,6 +178,98 @@
                   </div>
                   
                 </div>
+                
+                <!-- Adresa kompanije -->
+                <h5 class="mt-4 mb-3"><i class="fas fa-map-marker-alt text-primary"></i> Adresa</h5>
+                
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <label for="{{ form.street.id_for_label }}">Ulica</label>
+                      {{ form.street.errors }}
+                      <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
+                             class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
+                             value="{{ form.street.value|default:'' }}" placeholder="npr. Bulevar oslobođenja">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="{{ form.street_number.id_for_label }}">Broj</label>
+                      {{ form.street_number.errors }}
+                      <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
+                             class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
+                             value="{{ form.street_number.value|default:'' }}" placeholder="npr. 76">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="{{ form.city.id_for_label }}">Grad</label>
+                      {{ form.city.errors }}
+                      <input type="text" name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
+                             class="form-control {% if form.city.errors %}is-invalid{% endif %}" 
+                             value="{{ form.city.value|default:'' }}" placeholder="npr. Beograd">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="{{ form.postal_code.id_for_label }}">Poštanski broj</label>
+                      {{ form.postal_code.errors }}
+                      <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
+                             class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
+                             value="{{ form.postal_code.value|default:'' }}" placeholder="npr. 11000">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.country.id_for_label }}">Država</label>
+                      {{ form.country.errors }}
+                      <input type="text" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" 
+                             class="form-control {% if form.country.errors %}is-invalid{% endif %}" 
+                             value="{{ form.country.value|default:'Srbija' }}" placeholder="npr. Srbija">
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Kontakt informacije -->
+                <h5 class="mt-4 mb-3"><i class="fas fa-address-card text-primary"></i> Kontakt informacije</h5>
+                
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.phone.id_for_label }}">Telefon</label>
+                      {{ form.phone.errors }}
+                      <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                             class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                             value="{{ form.phone.value|default:'' }}" placeholder="npr. +381 11 123-4567">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.email.id_for_label }}">Email</label>
+                      {{ form.email.errors }}
+                      <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                             class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                             value="{{ form.email.value|default:'' }}" placeholder="npr. info@kompanija.rs">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="{{ form.website.id_for_label }}">Website</label>
+                      {{ form.website.errors }}
+                      <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
+                             class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
+                             value="{{ form.website.value|default:'' }}" placeholder="https://www.kompanija.rs">
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <!-- Tab: Standardi -->
@@ -189,10 +281,11 @@
                       <table class="table table-sm table-striped table-hover">
                         <thead class="thead-light">
                           <tr>
-                            <th width="25%">Standard</th>
-                            <th width="15%">Broj sertifikata</th>
-                            <th width="12%">Datum izdavanja</th>
-                            <th width="12%">Datum isteka</th>
+                            <th width="20%">Standard</th>
+                            <th width="12%">Broj sertifikata</th>
+                            <th width="12%">Status</th>
+                            <th width="10%">Datum izdavanja</th>
+                            <th width="10%">Datum isteka</th>
                             <th width="21%">Napomena</th>
                             <th width="15%">Akcije</th>
                           </tr>
@@ -203,6 +296,21 @@
                               <tr>
                                 <td><strong>{{ standard.standard_definition.standard }}</strong></td>
                                 <td>{% if standard.certificate_number %}{{ standard.certificate_number }}{% else %}-{% endif %}</td>
+                                <td>
+                                  {% if standard.certificate_status == 'active' %}
+                                    <span class="badge badge-success">Aktivan</span>
+                                  {% elif standard.certificate_status == 'suspended' %}
+                                    <span class="badge badge-warning">Suspendovan</span>
+                                  {% elif standard.certificate_status == 'withdrawn' %}
+                                    <span class="badge badge-danger">Povučen</span>
+                                  {% elif standard.certificate_status == 'expired' %}
+                                    <span class="badge badge-secondary">Istekao</span>
+                                  {% elif standard.certificate_status == 'pending' %}
+                                    <span class="badge badge-info">U procesu</span>
+                                  {% else %}
+                                    <span class="badge badge-light">-</span>
+                                  {% endif %}
+                                </td>
                                 <td>{% if standard.issue_date %}{{ standard.issue_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{% if standard.expiry_date %}{{ standard.expiry_date|date:"d.m.Y" }}{% else %}-{% endif %}</td>
                                 <td>{{ standard.notes|default:"-" }}</td>
@@ -226,7 +334,7 @@
                             {% endfor %}
                           {% else %}
                             <tr>
-                              <td colspan="5" class="text-center">
+                              <td colspan="7" class="text-center">
                                 <div class="alert alert-info mb-0">
                                   <i class="fas fa-info-circle"></i> Kompaniji nisu dodeljeni standardi. Dodajte standarde ispod.
                                 </div>
@@ -263,6 +371,18 @@
                         </div>
                         <div class="col-md-2">
                           <div class="form-group">
+                            <label for="standard_certificate_status">Status sertifikata</label>
+                            <select id="standard_certificate_status" name="certificate_status" class="form-control">
+                              <option value="pending">U procesu</option>
+                              <option value="active">Aktivan</option>
+                              <option value="suspended">Suspendovan</option>
+                              <option value="withdrawn">Povučen</option>
+                              <option value="expired">Istekao</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
                             <label for="standard_issue_date">Datum izdavanja</label>
                             <input type="date" id="standard_issue_date" name="issue_date" class="form-control issue-date-input" placeholder="Datum izdavanja">
                           </div>
@@ -273,7 +393,10 @@
                             <input type="date" id="standard_expiry_date" name="expiry_date" class="form-control expiry-date-input" placeholder="Datum isteka">
                           </div>
                         </div>
-                        <div class="col-md-3">
+                      </div>
+                      
+                      <div class="row">
+                        <div class="col-md-12">
                           <div class="form-group">
                             <label for="standard_notes">Napomena</label>
                             <input type="text" id="standard_notes" name="notes" class="form-control" placeholder="Unesite napomenu (opciono)">
@@ -312,144 +435,12 @@
               
               <!-- Tab: Lokacije -->
               <div class="tab-pane fade" id="locations" role="tabpanel" aria-labelledby="locations-tab">
-                <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Lokacije kompanije</h5>
+                <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Dodatne lokacije kompanije</h5>
                 
-                <!-- Glavna lokacija -->
-                <div class="card card-primary card-outline mb-4 shadow-sm">
-                  <div class="card-header bg-primary text-white">
-                    <h3 class="card-title"><i class="fas fa-home"></i> Glavna lokacija</h3>
-                  </div>
-                  <div class="card-body">
-                    <h5 class="mb-3"><i class="fas fa-map"></i> Adresa</h5>
-                    
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label for="{{ form.street.id_for_label }}"><i class="fas fa-road"></i> Ulica *</label>
-                          {{ form.street.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-road text-primary"></i></span>
-                            </div>
-                            <input type="text" name="{{ form.street.name }}" id="{{ form.street.id_for_label }}" 
-                                   class="form-control {% if form.street.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.street.value|default:'' }}" required placeholder="npr. Bulevar oslobođenja">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-2">
-                        <div class="form-group">
-                          <label for="{{ form.street_number.id_for_label }}"><i class="fas fa-hashtag"></i> Broj *</label>
-                          {{ form.street_number.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-hashtag text-primary"></i></span>
-                            </div>
-                            <input type="text" name="{{ form.street_number.name }}" id="{{ form.street_number.id_for_label }}" 
-                                   class="form-control {% if form.street_number.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.street_number.value|default:'' }}" required placeholder="npr. 76">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.city.id_for_label }}"><i class="fas fa-city"></i> Grad *</label>
-                          {{ form.city.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-city text-primary"></i></span>
-                            </div>
-                            <input type="text" name="{{ form.city.name }}" id="{{ form.city.id_for_label }}" 
-                                   class="form-control {% if form.city.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.city.value|default:'' }}" required placeholder="npr. Beograd">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.postal_code.id_for_label }}"><i class="fas fa-mail-bulk"></i> Poštanski broj</label>
-                          {{ form.postal_code.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-mail-bulk text-primary"></i></span>
-                            </div>
-                            <input type="text" name="{{ form.postal_code.name }}" id="{{ form.postal_code.id_for_label }}" 
-                                   class="form-control {% if form.postal_code.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.postal_code.value|default:'' }}" placeholder="npr. 11000">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.country.id_for_label }}"><i class="fas fa-flag"></i> Država *</label>
-                          {{ form.country.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-flag text-primary"></i></span>
-                            </div>
-                            <input type="text" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" 
-                                   class="form-control {% if form.country.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.country.value|default:'' }}" required placeholder="npr. Srbija">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h5 class="mt-4 mb-3"><i class="fas fa-address-card"></i> Kontakt informacije</h5>
-                    
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.phone.id_for_label }}"><i class="fas fa-phone"></i> Telefon</label>
-                          {{ form.phone.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-phone text-primary"></i></span>
-                            </div>
-                            <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
-                                   class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.phone.value|default:'' }}" placeholder="npr. +381 11 123-4567">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.email.id_for_label }}"><i class="fas fa-envelope"></i> Email</label>
-                          {{ form.email.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-envelope text-primary"></i></span>
-                            </div>
-                            <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
-                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.email.value|default:'' }}" placeholder="npr. info@kompanija.rs">
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="{{ form.website.id_for_label }}"><i class="fas fa-globe"></i> Website</label>
-                          {{ form.website.errors }}
-                          <div class="input-group">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text bg-light"><i class="fas fa-globe text-primary"></i></span>
-                            </div>
-                            <input type="url" name="{{ form.website.name }}" id="{{ form.website.id_for_label }}" 
-                                   class="form-control {% if form.website.errors %}is-invalid{% endif %}" 
-                                   value="{{ form.website.value|default:'' }}" placeholder="https://www.kompanija.rs">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="alert alert-info mb-4">
+                  <i class="fas fa-info-circle"></i> 
+                  <strong>Napomena:</strong> Ovde možete dodati dodatne lokacije kompanije (filijale, poslovnice, proizvodna postrojenja i sl.). 
+                  Glavna adresa i kontakt podaci kompanije se unose na tabu "Osnovni podaci".
                 </div>
                 
                 <!-- Ostale lokacije -->
@@ -465,7 +456,7 @@
                     {% endif %}
                   </div>
                   <div class="card-body">
-                    {% if object and object.locations.exists %}
+                    {% if object and object.ostale_lokacije.exists %}
                     <div class="table-responsive">
                       <table class="table table-striped table-hover">
                         <thead class="thead-light">
@@ -477,7 +468,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for location in object.locations.all %}
+                          {% for location in object.ostale_lokacije.all %}
                           <tr>
                             <td><strong>{{ location.name }}</strong></td>
                             <td>
@@ -1407,6 +1398,7 @@ $(document).ready(function() {
             // Validacija polja
             var standardId = $('#standard_definition').val();
             var certificateNumber = $('#standard_certificate_number').val();
+            var certificateStatus = $('#standard_certificate_status').val() || 'pending';
             var issueDate = $('#standard_issue_date').val();
             var expiryDate = $('#standard_expiry_date').val();
             var notes = $('#standard_notes').val() || '';
@@ -1436,6 +1428,7 @@ $(document).ready(function() {
                 data: {
                     'standard_definition': standardId,
                     'certificate_number': certificateNumber,
+                    'certificate_status': certificateStatus,
                     'issue_date': issueDate,
                     'expiry_date': expiryDate,
                     'notes': notes,
@@ -1455,6 +1448,7 @@ $(document).ready(function() {
                     // Očisti formu (sa Select2 resetom)
                     $('#standard_definition').val('').trigger('change');
                     $('#standard_certificate_number').val('');
+                    $('#standard_certificate_status').val('pending');
                     $('#standard_issue_date').val('');
                     $('#standard_expiry_date').val('');
                     $('#standard_notes').val('');

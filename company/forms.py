@@ -99,9 +99,6 @@ class CompanyForm(forms.ModelForm):
             # Osnovne informacije
             'name', 'pib', 'mb', 'industry', 'number_of_employees',
             
-            # Informacije o sertifikatu (prebačeno u Certificate model)
-            'oblast_registracije',
-            
             # Adresa
             'street', 'street_number', 'city', 'postal_code', 'country',
             
