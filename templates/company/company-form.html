@@ -851,9 +851,8 @@
                           // Šalji formu
                           form.submit();
                           
-                          // Ako uspešno pošalje, dodajemo event za kada se stranica vrati nakon slanja
-                          // URL će imati ?success=true ako je backend dodao taj parametar
-                          localStorage.setItem('company_form_submitted', 'true');
+                          // Postavi marker u sessionStorage (automatski se briše kad se zatvori tab)
+                          sessionStorage.setItem('company_form_submitted', 'true');
                         } else {
                           // Prikaži grešku ako forma nije pronađena
                           if (typeof window.showDirectModal === 'function') {
@@ -887,32 +886,26 @@
                   }
                   
                   // Proveri da li je forma upravo poslata i prikaži poruku o uspehu ako jeste
-                  if (localStorage.getItem('company_form_submitted') === 'true') {
+                  // Koristimo sessionStorage umesto localStorage da se marker automatski obriše kada se zatvori tab
+                  // Takođe brišemo stari localStorage marker ako postoji
+                  localStorage.removeItem('company_form_submitted');
+                  
+                  var formSubmittedMarker = sessionStorage.getItem('company_form_submitted');
+                  if (formSubmittedMarker === 'true') {
                     console.log('Forma je uspešno poslata, prikazujem poruku o uspehu');
-                    // Izbriši marker
-                    localStorage.removeItem('company_form_submitted');
+                    // Odmah izbriši marker da se ne prikaže ponovo
+                    sessionStorage.removeItem('company_form_submitted');
                     
-                    // Funkcija za prikazivanje poruke o uspehu
-                    var showSuccessMessage = function() {
+                    // Prikaži poruku samo jednom nakon kratkog odlaganja
+                    setTimeout(function() {
                       if (typeof window.showDirectModal === 'function') {
                         window.showDirectModal(
                           'Uspešno sačuvano',
                           'Podaci o kompaniji su uspešno sačuvani.',
                           'success'
                         );
-                      } else {
-                        console.warn('showDirectModal funkcija nije dostupna');
                       }
-                    };
-                    
-                    // Pokušaj odmah prikazati poruku
-                    showSuccessMessage();
-                    
-                    // Ako nije uspelo, pokušaj ponovo nakon kratkog odlaganja
-                    setTimeout(showSuccessMessage, 500);
-                    
-                    // I još jednom nakon dužeg odlaganja za svaki slučaj
-                    setTimeout(showSuccessMessage, 1000);
+                    }, 300);
                   }
                 });
               </script>
