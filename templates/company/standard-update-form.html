@@ -39,7 +39,7 @@
                 {% csrf_token %}
                 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="standard_definition"><i class="fas fa-certificate"></i> Standard</label>
                             <select id="standard_definition" name="standard_definition" class="form-control select2" required>
@@ -52,7 +52,26 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="certificate_number"><i class="fas fa-hashtag"></i> Broj sertifikata</label>
+                            <input type="text" id="certificate_number" name="certificate_number" class="form-control" 
+                                   value="{{ standard.certificate_number|default:'' }}" placeholder="Unesite broj sertifikata">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="certificate_status"><i class="fas fa-flag"></i> Status sertifikata</label>
+                            <select id="certificate_status" name="certificate_status" class="form-control">
+                                {% for value, label in certificate_status_choices %}
+                                    <option value="{{ value }}" {% if standard.certificate_status == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="issue_date"><i class="fas fa-calendar-plus"></i> Datum izdavanja</label>
                             <div class="input-group">
@@ -64,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label for="expiry_date"><i class="fas fa-calendar-times"></i> Datum isteka</label>
                             <div class="input-group">

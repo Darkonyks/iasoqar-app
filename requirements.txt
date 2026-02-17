@@ -1,15 +1,15 @@
 asgiref==3.11.0
-Django==5.2.8
-django-admin-rangefilter==0.13.5
+Django==6.0
+django-admin-rangefilter==0.13.3
 django-jazzmin==3.0.1
 django-mass-edit==3.5.0
 django-nested-admin==4.1.6
 pillow==12.0.0
 python-monkey-business==1.1.0
 python-slugify==8.0.4
-sqlparse==0.5.4
+sqlparse==0.5.5
 text-unidecode==1.3
-tzdata==2025.2
+tzdata==2025.3
 
 # Calendar functionality
 # django-fullcalendar==1.1.1 # Privremeno iskljuceno za Docker build
@@ -18,7 +18,7 @@ pytz==2025.2
 # Export functionality
 # xhtml2pdf==0.2.17  # Zakomentirano zbog pycairo build problema
 weasyprint==67.0  # Alternativa za PDF export (koristi cairocffi umesto pycairo)
-reportlab==4.4.5
+reportlab==4.4.7
 
 # REST API (if needed for calendar frontend)
 djangochannelsrestframework==1.3.0

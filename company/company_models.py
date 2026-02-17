@@ -52,19 +52,17 @@ class Company(models.Model):
     street_number = models.CharField(_("Broj"), max_length=20, blank=True, null=True)
     city = models.CharField(
         _("Grad"),
-        max_length=50,
-        choices=SERBIA_CITY_CHOICES,
-        help_text=_("Izaberite grad"),
+        max_length=100,
+        help_text=_("Unesite grad"),
         blank=True,
         null=True
     )
     postal_code = models.CharField(_("Poštanski broj"), max_length=10, blank=True, null=True)
     country = models.CharField(
         _("Država"),
-        max_length=2,
-        choices=EUROPEAN_COUNTRY_CHOICES,
-        default="RS",
-        help_text=_("Izaberite državu")
+        max_length=100,
+        default="Srbija",
+        help_text=_("Unesite državu")
     )
     
     # Contact Information
@@ -174,18 +172,16 @@ class OstalaLokacija(models.Model):
     street_number = models.CharField(_("Broj"), max_length=20, blank=True, null=True)
     city = models.CharField(
         _("Grad"),
-        max_length=50,
-        choices=SERBIA_CITY_CHOICES,
+        max_length=100,
         blank=True,
         null=True
     )
     postal_code = models.CharField(_("Poštanski broj"), max_length=10, blank=True, null=True)
     country = models.CharField(
         _("Država"),
-        max_length=2,
-        choices=EUROPEAN_COUNTRY_CHOICES,
-        default="RS",
-        help_text=_("Izaberite državu")
+        max_length=100,
+        default="Srbija",
+        help_text=_("Unesite državu")
     )
     notes = models.TextField(_("Napomene"), blank=True, null=True)
     created_at = models.DateTimeField(_("Kreirano"), default=timezone.now)

@@ -150,24 +150,42 @@
             {% endif %}
           </div>
           
-          <!-- Date range filter za istek sertifikata -->
-          <form method="get" class="form-inline">
-            <div class="form-group mr-3">
-              <label for="expiry_from" class="mr-2"><i class="fas fa-calendar-alt"></i> Istek sertifikata od:</label>
-              <input type="date" id="expiry_from" name="expiry_from" class="form-control" value="{{ expiry_from }}">
+          <!-- Date range filteri -->
+          <form method="get" class="mb-3">
+            <!-- Filter za istek sertifikata -->
+            <div class="form-inline mb-2">
+              <div class="form-group mr-3">
+                <label for="expiry_from" class="mr-2"><i class="fas fa-certificate text-warning"></i> Istek sertifikata od:</label>
+                <input type="date" id="expiry_from" name="expiry_from" class="form-control form-control-sm" value="{{ expiry_from }}">
+              </div>
+              <div class="form-group mr-3">
+                <label for="expiry_to" class="mr-2">do:</label>
+                <input type="date" id="expiry_to" name="expiry_to" class="form-control form-control-sm" value="{{ expiry_to }}">
+              </div>
             </div>
-            <div class="form-group mr-3">
-              <label for="expiry_to" class="mr-2">do:</label>
-              <input type="date" id="expiry_to" name="expiry_to" class="form-control" value="{{ expiry_to }}">
+            
+            <!-- Filter za planirane datume audita -->
+            <div class="form-inline mb-2">
+              <div class="form-group mr-3">
+                <label for="audit_from" class="mr-2"><i class="fas fa-clipboard-check text-info"></i> Planirani nadzor od:</label>
+                <input type="date" id="audit_from" name="audit_from" class="form-control form-control-sm" value="{{ audit_from }}">
+              </div>
+              <div class="form-group mr-3">
+                <label for="audit_to" class="mr-2">do:</label>
+                <input type="date" id="audit_to" name="audit_to" class="form-control form-control-sm" value="{{ audit_to }}">
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary mr-2">
-              <i class="fas fa-filter"></i> Filtriraj
-            </button>
-            {% if expiry_from or expiry_to %}
-            <a href="{% url 'company:list' %}" class="btn btn-secondary">
-              <i class="fas fa-times"></i> Resetuj
-            </a>
-            {% endif %}
+            
+            <div class="form-inline">
+              <button type="submit" class="btn btn-primary mr-2">
+                <i class="fas fa-filter"></i> Filtriraj
+              </button>
+              {% if expiry_from or expiry_to or audit_from or audit_to %}
+              <a href="{% url 'company:list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Resetuj filtere
+              </a>
+              {% endif %}
+            </div>
           </form>
         </div>
       </div>
@@ -177,28 +195,18 @@
           <table id="companiesTable" class="table table-bordered table-striped">
             <thead>
               <tr>
-                <th>Broj sertifikata</th>
                 <th>Naziv</th>
                 <th>IAF/EAC kodovi</th>
                 <th>Grad</th>
                 <th>Država</th>
                 <th>Standardi</th>
-                <th>Status sertifikata</th>
+                <th>Sledeći nadzor</th>
                 <th>Akcije</th>
               </tr>
             </thead>
             <tbody>
               {% for company in companies %}
               <tr>
-                <td>
-                  {% with first_cert=company.certificates.first %}
-                    {% if first_cert %}
-                      {{ first_cert.certificate_number }}
-                    {% else %}
-                      <span class="text-muted">Nije dodeljen</span>
-                    {% endif %}
-                  {% endwith %}
-                </td>
                 <td>{{ company.name }}</td>
                 <td>
                   {% if company.iaf_eac_codes.all %}
@@ -216,13 +224,14 @@
                     <span class="text-muted">Nema kodova</span>
                   {% endif %}
                 </td>
-                <td>{{ company.get_city_display|default:"Nije uneto" }}</td>
-                <td>{{ company.get_country_display|default:"Nije uneto" }}</td>
+                <td>{{ company.city|default:"Nije uneto" }}</td>
+                <td>{{ company.country|default:"Nije uneto" }}</td>
                 <td>
                   {% if company.company_standards.all %}
+                    {% now "Y-m-d" as today %}
                     <ul class="list-unstyled mb-0">
                       {% for company_standard in company.company_standards.all %}
-                        <li class="mb-1">
+                        <li class="mb-1 d-flex align-items-center">
                           {% with standard_code=company_standard.standard_definition.standard|default:company_standard.standard_definition.code %}
                           {% if 'ISO 9001' in standard_code %}
                             <span class="badge badge-primary p-2">{{ standard_code }}</span>
@@ -256,6 +265,17 @@
                             <span class="badge badge-dark p-2">{{ standard_code }}</span>
                           {% endif %}
                           {% endwith %}
+                          <span class="ml-2">
+                            {% if company_standard.expiry_date %}
+                              {% if company_standard.expiry_date|date:"Y-m-d" < today %}
+                                <span class="badge badge-danger">Istekao</span>
+                              {% else %}
+                                <span class="badge badge-success">Aktivan</span>
+                              {% endif %}
+                            {% else %}
+                              <span class="badge badge-warning">Nema datuma</span>
+                            {% endif %}
+                          </span>
                         </li>
                       {% endfor %}
                     </ul>
@@ -264,25 +284,17 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% with first_cert=company.certificates.first %}
-                    {% if first_cert %}
-                      {% if first_cert.status == 'active' %}
-                        <span class="badge badge-success">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'suspended' %}
-                        <span class="badge badge-warning">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'withdrawn' %}
-                        <span class="badge badge-danger">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'expired' %}
-                        <span class="badge badge-secondary">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'pending' %}
-                        <span class="badge badge-info">{{ first_cert.get_status_display }}</span>
-                      {% elif first_cert.status == 'cancelled' %}
-                        <span class="badge badge-dark">{{ first_cert.get_status_display }}</span>
-                      {% else %}
-                        <span class="badge badge-light">{{ first_cert.get_status_display }}</span>
-                      {% endif %}
+                  {% with active_cycle=company.certification_cycles.all|first %}
+                    {% if active_cycle %}
+                      {% with last_date=active_cycle.get_last_planned_date %}
+                        {% if last_date %}
+                          <span class="badge badge-info p-2">{{ last_date|date:"d.m.Y" }}</span>
+                        {% else %}
+                          <span class="text-muted">-</span>
+                        {% endif %}
+                      {% endwith %}
                     {% else %}
-                      <span class="text-muted">Nema sertifikata</span>
+                      <span class="text-muted">Nema ciklusa</span>
                     {% endif %}
                   {% endwith %}
                 </td>

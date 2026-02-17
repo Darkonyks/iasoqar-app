@@ -68,6 +68,7 @@ def profile_view(request):
     
     if request.method == 'POST':
         action = request.POST.get('action', 'update_profile')
+        print(f"DEBUG: action={action}, POST data keys: {list(request.POST.keys())}")
         
         if action == 'update_profile':
             user_form = UserForm(request.POST, instance=request.user)
@@ -84,6 +85,9 @@ def profile_view(request):
         
         elif action == 'change_password':
             password_form = CustomPasswordChangeForm(request.user, request.POST)
+            print(f"DEBUG password_form.data: {dict(request.POST)}")
+            print(f"DEBUG password_form.is_valid(): {password_form.is_valid()}")
+            print(f"DEBUG password_form.errors: {password_form.errors}")
             
             if password_form.is_valid():
                 user = password_form.save()

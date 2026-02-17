@@ -95,6 +95,16 @@ class CertificationCycle(models.Model):
     def __str__(self):
         return f"{self.company.name} - {self.planirani_datum.strftime('%Y-%m-%d')} ({self.get_status_display()})"
     
+    def get_last_planned_date(self):
+        """
+        Vraća poslednji planirani datum audita iz ovog ciklusa.
+        Ako nema audita, vraća planirani datum ciklusa.
+        """
+        last_audit = self.audits.order_by('-planned_date').first()
+        if last_audit and last_audit.planned_date:
+            return last_audit.planned_date
+        return self.planirani_datum
+    
     def save(self, *args, **kwargs):
         # Detektujemo prethodnu vrednost stvarnog datuma inicijalne provere
         prev_actual_date = None
@@ -291,7 +301,65 @@ class CertificationCycle(models.Model):
         # Sada se umesto nje koristi extend_with_new_audits
         return None
 
-
+    def get_last_planned_audit_date(self):
+        """
+        Vraća poslednji planirani datum audita u ovom ciklusu.
+        Gleda sve audite u ciklusu i vraća najkasniji planned_date.
+        """
+        from django.db.models import Max
+        
+        last_audit = self.audits.aggregate(Max('planned_date'))
+        return last_audit['planned_date__max']
+    
+    def get_next_planned_audit_date(self):
+        """
+        Vraća sledeći planirani datum audita (u budućnosti).
+        """
+        from datetime import date
+        today = date.today()
+        
+        next_audit = self.audits.filter(
+            planned_date__gte=today,
+            audit_status__in=['planned', 'scheduled']
+        ).order_by('planned_date').first()
+        
+        return next_audit.planned_date if next_audit else None
+    
+    def get_latest_audit_info(self):
+        """
+        Vraća informacije o poslednjem planiranom auditu.
+        Ako postoji budući audit, vraća njega, inače poslednji.
+        """
+        from datetime import date
+        today = date.today()
+        
+        # Prvo pokušaj da nađeš budući audit
+        future_audit = self.audits.filter(
+            planned_date__gte=today,
+            audit_status__in=['planned', 'scheduled']
+        ).order_by('planned_date').first()
+        
+        if future_audit:
+            return {
+                'date': future_audit.planned_date,
+                'type': future_audit.get_audit_type_display(),
+                'status': future_audit.get_audit_status_display(),
+                'is_future': True
+            }
+        
+        # Ako nema budućih, vrati poslednji planirani
+        last_audit = self.audits.order_by('-planned_date').first()
+        
+        if last_audit:
+            return {
+                'date': last_audit.planned_date,
+                'type': last_audit.get_audit_type_display(),
+                'status': last_audit.get_audit_status_display(),
+                'is_future': False
+            }
+        
+        return None
+    
 class CycleStandard(models.Model):
     """Model koji povezuje ciklus sertifikacije sa standardima koji su uključeni u taj ciklus."""
     certification_cycle = models.ForeignKey(

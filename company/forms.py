@@ -99,9 +99,6 @@ class CompanyForm(forms.ModelForm):
             # Osnovne informacije
             'name', 'pib', 'mb', 'industry', 'number_of_employees',
             
-            # Informacije o sertifikatu (prebačeno u Certificate model)
-            'oblast_registracije',
-            
             # Adresa
             'street', 'street_number', 'city', 'postal_code', 'country',
             
@@ -109,14 +106,15 @@ class CompanyForm(forms.ModelForm):
             'phone', 'email', 'website',
             
             # Dodatne informacije
-            'notes'
+            'oblast_registracije', 'notes'
         ]
         widgets = {
             # Numerička polja
             'number_of_employees': forms.NumberInput(attrs={'class': 'form-control'}),
             
             # Tekstualna polja
-            'oblast_registracije': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'oblast_registracije': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Unesite oblast registracije kompanije'}),
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Unesite napomene o kompaniji'}),
         }
     
     def save(self, commit=True):
