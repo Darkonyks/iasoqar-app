@@ -46,6 +46,11 @@ jobs:
         # pip install psycopg2-binary
         pip install -r requirements.txt
 
+    - name: Initialize clean CI database
+      run: |
+        rm -f db.sqlite3
+        echo "DATABASE_URL=sqlite:///$RUNNER_TEMP/ci.sqlite3" >> $GITHUB_ENV
+
     - name: Prep DB (SQLite by default)
       run: python manage.py migrate --noinput
       env:
