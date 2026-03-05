@@ -11,7 +11,6 @@ class LocationForm(forms.ModelForm):
             'company', 'name', 'street', 'street_number', 'city', 'postal_code', 'country', 'notes'
         ]
         widgets = {
-            'company': forms.HiddenInput(),
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Unesite naziv lokacije'
@@ -55,6 +54,7 @@ class LocationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         company_id = kwargs.pop('company_id', None)
         super().__init__(*args, **kwargs)
+        self._company_from_param = None
         
         # Postavi podrazumevanu vrednost za državu
         if not self.instance.pk and not self.initial.get('country'):
@@ -63,9 +63,17 @@ class LocationForm(forms.ModelForm):
         if company_id:
             try:
                 company = Company.objects.get(pk=company_id)
+                self._company_from_param = company
                 self.fields['company'].widget = forms.HiddenInput()
+                self.fields['company'].required = False
                 self.fields['company'].initial = company
                 if not self.instance.pk:
                     self.instance.company = company
             except Company.DoesNotExist:
                 pass
+
+    def clean_company(self):
+        company = self.cleaned_data.get('company')
+        if company is None and self._company_from_param is not None:
+            return self._company_from_param
+        return company
