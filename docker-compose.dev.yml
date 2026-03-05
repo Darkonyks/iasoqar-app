@@ -24,6 +24,18 @@ services:
     entrypoint: ["./entrypoint.sh"]
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
+  # Nginx servis (development)
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "84:80"
+    depends_on:
+      - web
+
   # PostgreSQL baza (development)
   db:
     image: postgres:14
