@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,8 +99,22 @@ WSGI_APPLICATION = 'isoqar_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Use PostgreSQL in production, SQLite for development
-if os.environ.get('DATABASE_URL', '') in ['postgres', 'postgresql']:
+# Use PostgreSQL in production/CI, SQLite for local development fallback
+database_url = os.environ.get('DATABASE_URL', '').strip()
+
+if database_url.startswith(('postgres://', 'postgresql://')):
+    parsed_db = urlparse(database_url)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': (parsed_db.path or '/isoqar').lstrip('/'),
+            'USER': parsed_db.username or os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': parsed_db.password or os.environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': parsed_db.hostname or os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': str(parsed_db.port or os.environ.get('POSTGRES_PORT', '5432')),
+        }
+    }
+elif database_url in ['postgres', 'postgresql']:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
